@@ -1,4 +1,4 @@
-"""쓰레드용 카드 이미지(1080×1350). 조합 폴더 위주, 폴더마다 1경기는 가려서 사이트로 오게 한다.
+"""쓰레드용 카드 이미지(1080×1350). 조합 폴더 위주, 카드마다 일부 경기를 가려서 사이트로 오게 한다.
 
 카드: ① 적중 확률 높은 경기 ② 역배 후보 ③ 공격형 조합 ④ 로또폴더 ⑤ 사이트 주소
 배당은 사이트 화면과 같이 베트맨(구매) 배당. HTML 로 그려 Playwright(Chromium)로 PNG 저장.
@@ -38,6 +38,20 @@ def _key(l: dict) -> str:
     return f"{l.get('kickoff', '')[:16]}|{l.get('home')}|{l.get('away')}"
 
 
+def _round(legs: list[dict]) -> str:
+    rs = []
+    for l in legs:
+        t = str(l.get("round") or "")
+        lb = f"{int(t[2:])}회차" if t.isdigit() and len(t) == 6 else ""
+        if lb and lb not in rs:
+            rs.append(lb)
+    return " · ".join(rs)
+
+
+def _no(l: dict) -> str:
+    return f"{l['game_no']}번 · " if l.get("game_no") else ""
+
+
 def _day(d: str) -> str:
     x = date.fromisoformat(d)
     return f"{x.month}월 {x.day}일 ({WEEK[x.weekday()]})"
@@ -55,7 +69,9 @@ CSS = f"""
 .mark{{width:46px;height:46px;border-radius:50%;background:conic-gradient(from 90deg,#ff3d7f,#ffd23d,#18c4b0,#6c7bff,#ff3d7f);box-shadow:inset 0 0 0 6px rgba(255,255,255,.4)}}
 .brand{{font:400 36px DH;color:#121414}}.brand b{{font:800 20px UB;color:#ff3d7f;margin-left:4px}}
 .date{{margin-left:auto}}
-h1{{font:400 84px/1.1 DH;margin:44px 0 10px}}
+.body{{flex:1;display:flex;flex-direction:column;justify-content:center}}
+.body h1,.body .sub,.body .note{{text-align:center}}
+h1{{font:400 84px/1.1 DH;margin:0 0 10px}}
 .sub{{font:500 30px PT;color:#5c6662;margin:0 0 34px}}
 .list{{display:flex;flex-direction:column;gap:18px}}
 .row{{background:#fff;border:2px solid #d9e2de;border-radius:28px;padding:26px 30px;display:grid;grid-template-columns:1fr auto;gap:6px 20px;align-items:center}}
@@ -82,7 +98,7 @@ h1{{font:400 84px/1.1 DH;margin:44px 0 10px}}
 .foot b{{color:#ff3d7f;font-weight:700}}
 .cta{{align-items:center;justify-content:center;text-align:center;background:radial-gradient(circle at 50% 40%,#202426 0,#121414 65%);color:#fff}}
 .cta .big{{width:300px;height:300px;border-radius:50%;background:conic-gradient(from 90deg,#ff3d7f,#ffd23d,#18c4b0,#6c7bff,#ff3d7f);box-shadow:inset 0 0 0 36px rgba(255,255,255,.4),0 0 120px rgba(108,123,255,.35)}}
-.cta h2{{font:400 64px/1.25 DH;margin:70px 0 30px}}
+.cta h2{{font:400 72px/1.25 DH;margin:0 0 50px}}
 .url{{display:inline-flex;align-items:center;gap:18px;background:#fff;color:#121414;border-radius:999px;padding:26px 46px;font:400 64px DH}}
 .url b{{font:800 34px UB;color:#ff3d7f}}
 .url .lockic{{font-size:40px}}
@@ -92,50 +108,67 @@ h1{{font:400 84px/1.1 DH;margin:44px 0 10px}}
 """
 
 
-def _top(d: str) -> str:
-    return f'<div class="top"><span class="mark"></span><span class="brand">스포츠분석<b>.kr</b></span><span class="date">{_e(_day(d))}</span></div>'
+def _top(d: str, legs: list[dict] | None = None) -> str:
+    rd = _round(legs or [])
+    return (f'<div class="top"><span class="mark"></span><span class="brand">스포츠분석<b>.kr</b></span>'
+            f'<span class="date">{_e(_day(d))}{(" · 베트맨 " + _e(rd)) if rd else ""}</span></div>')
+
+
+def _page(d: str, legs: list[dict], body: str) -> str:
+    return f'<div class="card">{_top(d, legs)}<div class="body">{body}</div></div>'
+
+
+def _locked_row() -> str:
+    return ('<div class="row lock"><div class="meta">🔒 숨김</div><div class="right"><span class="bub">?</span></div>'
+            '<div class="match">사이트에서 공개</div></div>')
+
+
+def _hidden(items: list[dict], n: int) -> set[int]:
+    """확률이 가장 높은 n개를 가린다(가장 궁금한 선택은 사이트에서만)."""
+    order = sorted(range(len(items)), key=lambda i: -items[i].get("p", 0))
+    return set(order[:max(0, min(n, len(items) - 1))])
 
 
 def _row(l: dict, right: str) -> str:
-    return (f'<div class="row"><div class="meta">{_e(l.get("league", ""))} · {_e(_when(l))}</div>'
+    return (f'<div class="row"><div class="meta">{_e(_no(l))}{_e(l.get("league", ""))} · {_e(_when(l))}</div>'
             f'<div class="right">{right}</div><div class="match">{_e(l["home"])}<i>vs</i>{_e(l["away"])}</div></div>')
 
 
-def card_picks(d: str, picks: list[dict]) -> str:
-    rows = "".join(_row(l, f'<span class="bub">{_e(_bub(l))}</span><span class="pct">{l["p"] * 100:.0f}% · {l["odds"]:.2f}배</span>') for l in picks)
-    return f'<div class="card">{_top(d)}<h1>적중 확률 높은 경기</h1><p class="sub">해외 배당 기준 분석 · 배당은 베트맨</p><div class="list">{rows}</div>{_foot()}</div>'
+def card_picks(d: str, picks: list[dict], hide: int = 2) -> str:
+    hid = _hidden(picks, hide)
+    rows = "".join(_locked_row() if i in hid else _row(l, f'<span class="bub">{_e(_bub(l))}</span><span class="pct">{l["p"] * 100:.0f}% · {l["odds"]:.2f}배</span>')
+                   for i, l in enumerate(picks))
+    return _page(d, picks, f'<h1>적중 확률 높은 경기</h1><p class="sub">해외 배당 기준 분석 · 배당은 베트맨</p><div class="list">{rows}</div>')
 
 
-def card_upsets(d: str, ups: list[dict]) -> str:
-    rows = "".join(_row(l, f'<span class="bub">{_e(_bub(l))}</span><span class="odds">{l["odds"]:.2f}</span>') for l in ups)
-    return f'<div class="card">{_top(d)}<h1>역배 후보</h1><p class="sub">해외 시장은 열세로 보지만 기록·레이팅이 받쳐주는 팀</p><div class="list">{rows}</div>{_foot()}</div>'
+def card_upsets(d: str, ups: list[dict], hide: int = 2) -> str:
+    hid = _hidden(ups, hide)
+    rows = "".join(_locked_row() if i in hid else _row(l, f'<span class="bub">{_e(_bub(l))}</span><span class="odds">{l["odds"]:.2f}</span>')
+                   for i, l in enumerate(ups))
+    return _page(d, ups, f'<h1>역배 후보</h1><p class="sub">해외 시장은 열세로 보지만 기록·레이팅이 받쳐주는 팀</p><div class="list">{rows}</div>')
 
 
-def card_combo(d: str, title: str, c: dict) -> str:
+def card_combo(d: str, title: str, c: dict, hide: int = 2) -> str:
     legs = sorted(c["legs"], key=lambda l: l.get("kickoff", ""))
-    hide = max(legs, key=lambda l: l.get("p", 0))  # 가장 확실한 한 경기는 사이트에서만
+    hid = _hidden(legs, hide)  # 가장 확실한 경기들은 사이트에서만
     rows = []
-    for l in legs:
-        if l is hide:
-            rows.append('<div class="leg lock"><div><div class="meta">🔒 1경기 숨김</div><div class="match">사이트에서 공개</div></div>'
+    for i, l in enumerate(legs):
+        if i in hid:
+            rows.append('<div class="leg lock"><div><div class="meta">🔒 숨김</div><div class="match">사이트에서 공개</div></div>'
                         '<span class="bub">?</span><span class="odds">?.??</span></div>')
         else:
-            rows.append(f'<div class="leg"><div><div class="meta">{_e(l.get("league", ""))} · {_e(_when(l))}</div>'
+            rows.append(f'<div class="leg"><div><div class="meta">{_e(_no(l))}{_e(l.get("league", ""))} · {_e(_when(l))}</div>'
                         f'<div class="match">{_e(l["home"])}<i>vs</i>{_e(l["away"])}</div></div>'
                         f'<span class="bub">{_e(_bub(l))}</span><span class="odds">{l["odds"]:.2f}</span></div>')
-    return (f'<div class="card">{_top(d)}<h1>{_e(title)}</h1><p class="sub">예상 적중률 {c["joint_p"] * 100:.1f}% · 1만 원 적중 시 {c["payout"]:,}원</p>'
-            f'<div class="ticket{" many" if len(legs) >= 6 else ""}"><div class="thead"><span class="total">×{c["total_odds"]:.2f}</span><span class="size">{c["size"]}폴더</span></div>{"".join(rows)}</div>'
-            f'<p class="note">숨긴 1경기와 나머지 조합은 사이트에서 확인하세요.</p>{_foot()}</div>')
+    return _page(d, legs, f'<h1>{_e(title)}</h1><p class="sub">예상 적중률 {c["joint_p"] * 100:.1f}% · 1만 원 적중 시 {c["payout"]:,}원</p>'
+                 f'<div class="ticket{" many" if len(legs) >= 6 else ""}"><div class="thead"><span class="total">×{c["total_odds"]:.2f}</span><span class="size">{c["size"]}폴더</span></div>{"".join(rows)}</div>'
+                 f'<p class="note">숨긴 {len(hid)}경기는 사이트에서 확인하세요.</p>')
 
 
 def card_cta(d: str) -> str:
-    return ('<div class="card cta"><div class="big"></div><h2>숨긴 경기와<br>전체 조합은 여기서</h2>'
+    return ('<div class="card cta"><h2>숨긴 경기와<br>전체 조합은 여기서</h2>'
             '<div class="url"><span class="lockic">🔗</span>스포츠분석<b>.kr</b></div>'
             '<p>매일 밤 10시 · 아침 7시 업데이트<br>만 19세 이상 · 체육진흥투표권은 베트맨 공식 채널에서만</p></div>')
-
-
-def _foot() -> str:
-    return '<div class="foot"><span>전체 분석 <b>스포츠분석.kr</b></span><span>만 19세 이상</span></div>'
 
 
 def _best(cs: list[dict]) -> dict | None:
@@ -168,17 +201,17 @@ def build(rep: dict, slot: str = "night", exclude: set[str] | None = None) -> tu
         tops = sorted(tops + list(rep.get("handi_picks") or []) + list(rep.get("ou_picks") or []), key=lambda l: -l["p"])
     picks = take(tops, 4)
     if picks:
-        out.append(card_picks(d, picks))
+        out.append(card_picks(d, picks, 2))
     ups = take(list(rep.get("upsets") or []), 4)
     if ups:
-        out.append(card_upsets(d, ups))
+        out.append(card_upsets(d, ups, 2))
     for key, title in (("aggressive", "공격형 조합"), ("lotto", "로또폴더")):
         cs = list((rep.get("combos") or {}).get(key) or [])
         # 아침에는 밤에 올린 조합과 경기가 덜 겹치는 조합을 고른다
         cs.sort(key=lambda c: (sum(_key(l) in (exclude or ()) for l in c["legs"]), -c.get("joint_p", 0)))
         c = cs[0] if cs and slot == "morning" else _best(cs)
         if c:
-            out.append(card_combo(d, title, c))
+            out.append(card_combo(d, title, c, 4 if key == "lotto" else 2))
             shown += [_key(l) for l in c["legs"]]
     out.append(card_cta(d))
     return out, shown
