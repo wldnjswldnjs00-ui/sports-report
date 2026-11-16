@@ -111,8 +111,7 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
             nf = F.attach(analyzed, F.build(betman_history.load_all(), reps, rbd))
             ni = injuries.attach(analyzed)
             status["form"] = f"{nf}개 마켓"
-            if ni:
-                status["injuries"] = f"NBA {ni}개 마켓"
+            status["injuries"] = injuries.LAST_STATUS
             for m in analyzed:
                 inj = m.get("injuries") or {}
                 a = m.get("analysis")

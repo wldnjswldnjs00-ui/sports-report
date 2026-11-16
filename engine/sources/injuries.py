@@ -17,7 +17,8 @@ STATUS_KO = {"Out": "결장", "Doubtful": "결장 유력", "Questionable": "출�
 
 def fetch_nba() -> dict[str, list[dict[str, Any]]]:
     try:
-        data = http("GET", URL, retries=2).json()
+        data = http("GET", URL, retries=2, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36",
+                                                  "Accept": "application/json"}).json()
     except Exception as e:  # noqa: BLE001
         log.warning("NBA 부상자 조회 실패: %s", e)
         return {}
@@ -38,12 +39,18 @@ def fetch_nba() -> dict[str, list[dict[str, Any]]]:
     return out
 
 
+LAST_STATUS = ""
+
+
 def attach(markets: list[dict]) -> int:
+    global LAST_STATUS
     nba = [m for m in markets if m.get("league") == "NBA"]
     if not nba:
+        LAST_STATUS = "NBA 경기 없음"
         return 0
     table = fetch_nba()
     if not table:
+        LAST_STATUS = "조회 실패"
         return 0
     amap = alias_map()
     n = 0
@@ -53,4 +60,5 @@ def attach(markets: list[dict]) -> int:
         if h or a:
             m["injuries"] = {"home": h or [], "away": a or []}
             n += 1
+    LAST_STATUS = f"{len(table)}팀 조회, {n}개 마켓 매칭"
     return n
