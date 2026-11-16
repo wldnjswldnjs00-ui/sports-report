@@ -115,8 +115,8 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
         if locked:
             keys = {c["key"] for c in locked}
             fresh = [c for c in combos.get(name, []) if c["key"] not in keys]
-            merged = locked + fresh
-            combos[name] = merged[: C.STRATEGIES[name]["top"] + len(locked)]
+            top_n = C.STRATEGIES[name]["top"]
+            combos[name] = (locked[:top_n] + fresh)[:top_n]  # 고정된 조합 우선, 전략별 개수는 그대로
     value = C.value_legs(proto)
 
     legs = C.legs_from(proto)

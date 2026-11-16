@@ -77,7 +77,11 @@ def backfill(max_rounds: int = 8) -> int:
     except Exception as e:  # noqa: BLE001
         log.warning("백필 접속 실패: %s", e)
         return 0
-    ts = cur - 2  # 바로 앞 회차는 결과가 덜 나왔을 수 있어 하나 건너뛴다
+    # 최근 회차는 결과가 늦게 채워질 수 있어 다시 받는다
+    for recent in range(cur - 4, cur):
+        if _path(recent).exists():
+            _path(recent).unlink()
+    ts = cur - 1
     while ts >= OLDEST and done < max_rounds:
         # 연도 경계: 260001 아래는 2025년 마지막 회차로 건너뛴다
         if ts % 10000 == 0:
