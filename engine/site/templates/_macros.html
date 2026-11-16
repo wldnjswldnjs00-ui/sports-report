@@ -21,9 +21,10 @@
   <header class="combo-head">
     <span class="combo-rank">{{ '%02d' % c.rank }}</span>
     <span class="combo-size">{{ c.size }}폴더</span>
-    <span class="combo-odds" title="종합배당"><b>{{ c.total_odds|odds }}</b>배</span>
+    <span class="combo-odds" title="종합배당"><b>×{{ c.total_odds|odds }}</b></span>
     {{ result_tag(c.result) }}
   </header>
+  <div class="perf" aria-hidden="true"></div>
   <ol class="combo-legs">
     {% for l in c.legs %}
     <li class="{% if l.result == 'hit' %}is-hit{% elif l.result == 'miss' %}is-miss{% endif %}">
@@ -34,6 +35,7 @@
     </li>
     {% endfor %}
   </ol>
+  <div class="meter" aria-hidden="true"><i style="--w:{{ [c.joint_p * 120, 100]|min|round(1) }}%"></i></div>
   <dl class="combo-foot">
     <div><dt>예상 적중률</dt><dd>{{ c.joint_p|pct(1) }}</dd></div>
     <div><dt>기대값</dt><dd class="{{ ev_class(c.ev) }}">{{ c.ev|signed }}</dd></div>

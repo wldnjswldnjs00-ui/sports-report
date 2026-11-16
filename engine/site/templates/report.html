@@ -11,25 +11,21 @@
 {% set mk = {} %}{% for m in r.markets %}{% set _ = mk.update({m.id: m}) %}{% endfor %}
 
 <section class="hero">
-  <div class="wrap hero-grid">
-    <div class="hero-copy">
-      <p class="kicker">{% if is_home %}오늘의 리포트{% else %}리포트{% endif %} · {{ r.date|kdate }}</p>
-      <h1 class="hero-title">{{ r.headline }}</h1>
-      <ul class="stat-row" aria-label="오늘 분석 규모">
-        <li><b data-count="{{ r.stats.matches }}">{{ r.stats.matches }}</b><span>경기</span></li>
-        <li><b data-count="{{ r.stats.markets }}">{{ r.stats.markets }}</b><span>마켓</span></li>
-        <li><b data-count="{{ r.stats.combos }}">{{ r.stats.combos }}</b><span>조합</span></li>
-        <li><b data-count="{{ (r.value_picks or [])|length }}">{{ r.value_picks|length }}</b><span>가치 선택</span></li>
-      </ul>
-      <p class="stamp">분석 {{ r.updated_at|kdt }} KST 기준{% if r.sources %} · 소스 {% for k, v in r.sources.items() %}<span class="src" title="{{ v }}">{{ {'betman':'베트맨','manual':'수동입력','odds_api':'해외배당','sample':'샘플'}.get(k, k) }}</span>{% endfor %}{% endif %}</p>
-    </div>
-    <div class="hero-stage" data-stage data-balls='{{ balls|tojson }}' aria-hidden="true">
-      <canvas class="stage-canvas"></canvas>
-      <div class="stage-fallback">
-        <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="80" fill="var(--ball)"/><path d="M20 100h160M100 20v160M43 43c30 30 30 84 0 114M157 43c-30 30-30 84 0 114" stroke="var(--ink)" stroke-width="4" fill="none"/></svg>
-      </div>
-      <p class="stage-hint">끌어서 돌리기 · 눌러서 튕기기</p>
-    </div>
+  <div class="hero-stage" data-stage data-balls='{{ balls|tojson }}' aria-hidden="true">
+    <canvas class="stage-canvas"></canvas>
+    <div class="stage-fallback"><span></span><span></span><span></span></div>
+    <p class="stage-hint">공을 눌러 보세요</p>
+  </div>
+  <div class="wrap hero-copy">
+    <p class="kicker">{% if is_home %}TODAY{% else %}REPORT{% endif %} · {{ r.date|kdate }}</p>
+    <h1 class="hero-title"><span class="hero-en">{% if is_home %}TODAY'S PICK{% else %}PROTO REPORT{% endif %}</span>{{ r.headline }}</h1>
+    <ul class="stat-row" aria-label="분석 규모">
+      <li><b data-count="{{ r.stats.matches }}">{{ r.stats.matches }}</b><span>오늘 경기</span></li>
+      <li><b data-count="{{ r.stats.get('upcoming', 0) }}">{{ r.stats.get('upcoming', 0) }}</b><span>미리보기</span></li>
+      <li><b data-count="{{ r.stats.markets }}">{{ r.stats.markets }}</b><span>마켓</span></li>
+      <li><b data-count="{{ r.stats.combos }}">{{ r.stats.combos }}</b><span>조합</span></li>
+    </ul>
+    <p class="stamp">{{ r.updated_at|kdt }} KST 업데이트{% if r.sources %} · {% for k, v in r.sources.items() %}<span class="src" title="{{ v }}">{{ {'betman':'베트맨','manual':'수동입력','odds_api':'해외배당','sample':'샘플'}.get(k, k) }}</span>{% endfor %}{% endif %}</p>
   </div>
 </section>
 

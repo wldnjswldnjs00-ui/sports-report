@@ -25,14 +25,17 @@
 <meta name="twitter:image" content="{{ cfg.SITE_URL }}/static/og.png">
 {% for ld in (jsonld or []) %}<script type="application/ld+json">{{ ld|safe }}</script>
 {% endfor %}
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#191a20" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#edf2ef" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1413" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Do+Hyeon&display=swap">
 <link rel="stylesheet" href="/static/style.css?v={{ asset_v }}">
 <script>document.documentElement.classList.add('js');setTimeout(function(){if(!window.__app)document.documentElement.classList.remove('js')},3000);try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 {% if cfg.ADSENSE_CLIENT %}
@@ -43,28 +46,23 @@
 <body class="{% block bodyclass %}{% endblock %}">
 <a class="skip" href="#main">본문 바로가기</a>
 <header class="mast">
-  <div class="timing" aria-hidden="true"></div>
-  <div class="mast-top wrap">
-    <span class="mast-date">{{ now.strftime('%Y.%m.%d') }} · {{ '월화수목금토일'[now.weekday()] }}요일</span>
-    <span class="mast-meta">모델 {{ cfg.MODEL_VERSION }}</span>
-    <button class="theme-btn" type="button" aria-label="화면 밝기 전환" data-theme-toggle>
-      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z" fill="currentColor"/></svg>
-    </button>
-  </div>
   <div class="mast-main wrap">
     <a class="logo" href="/" aria-label="{{ cfg.SITE_NAME }} 홈">
       <span class="logo-mark" aria-hidden="true"></span>
       <span class="logo-word">스포츠분석</span><span class="logo-tld">.kr</span>
     </a>
+    <nav id="nav" class="nav" aria-label="주요 메뉴">
+      {% for href, label in nav %}
+      <a href="{{ href }}" {% if (href == '/' and path == '/') or (href != '/' and path.startswith(href)) %}aria-current="page"{% endif %}>{{ label }}</a>
+      {% endfor %}
+    </nav>
     <button class="nav-btn" type="button" aria-expanded="false" aria-controls="nav" data-nav-toggle>
       <span></span><span></span><span class="sr">메뉴</span>
     </button>
+    <button class="theme-btn" type="button" aria-label="화면 밝기 전환" data-theme-toggle>
+      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z" fill="currentColor"/></svg>
+    </button>
   </div>
-  <nav id="nav" class="nav wrap" aria-label="주요 메뉴">
-    {% for href, label in nav %}
-    <a href="{{ href }}" {% if (href == '/' and path == '/') or (href != '/' and path.startswith(href)) %}aria-current="page"{% endif %}>{{ label }}</a>
-    {% endfor %}
-  </nav>
 </header>
 
 {% if demo %}
@@ -76,7 +74,6 @@
 </main>
 
 <footer class="foot">
-  <div class="timing" aria-hidden="true"></div>
   <div class="wrap foot-grid">
     <div>
       <p class="foot-brand">스포츠분석<span>.kr</span></p>

@@ -62,6 +62,20 @@
     $$("[data-reveal]").forEach(function (el) { el.classList.add("is-in"); });
   }
 
+  /* 카드 3D 기울기 + 손가락 위치 빛 */
+  function tiltCards(root) {
+    if (reduce || !matchMedia("(hover: hover)").matches) return;
+    $$(".combo, .top-pick", root).forEach(function (n) {
+      n.addEventListener("pointermove", function (e) {
+        var r = n.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+        n.style.transform = "perspective(900px) rotateX(" + ((0.5 - y) * 6) + "deg) rotateY(" + ((x - 0.5) * 8) + "deg)";
+        n.style.setProperty("--mx", (x * 100) + "%"); n.style.setProperty("--my", (y * 100) + "%");
+      });
+      n.addEventListener("pointerleave", function () { n.style.transform = ""; });
+    });
+  }
+  tiltCards(doc);
+
   /* 탭 */
   $$("[data-tabs]").forEach(function (tabs) {
     var btns = $$("[role=tab]", tabs), ink = $(".tabs-ink", tabs);

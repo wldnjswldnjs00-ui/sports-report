@@ -1,7 +1,8 @@
-/* 메인 3D 무대: 시즌 종목 공 두 개. 끌어서 회전, 눌러서 튕기기.
-   - three.js 는 무대가 화면에 보일 때만 불러온다(첫 화면 속도 보호).
-   - 화면 밖이거나 탭이 숨겨지면 렌더링을 멈춘다(CPU·배터리 보호).
-   - WebGL 이 없거나 실패하면 SVG 대체 이미지를 그대로 둔다. */
+/* 메인 3D 무대: 스포츠 공 4종(축구·배구·야구·농구).
+   - 크롬 반사 조명, 공마다 떠다니는 리듬이 다르고 누르면 튀며 회전한다.
+   - 시즌 종목(data-balls 첫 두 개)이 앞쪽 가운데에 크게 놓인다.
+   - three.js 는 무대가 보일 때만 불러오고, 화면 밖이거나 탭이 숨겨지면 멈춘다.
+   - WebGL 이 없으면 대체 이미지를 그대로 둔다. */
 (function () {
   "use strict";
   var stage = document.querySelector("[data-stage]");
@@ -18,12 +19,9 @@
   function loadThree(cb) {
     if (window.THREE) return cb();
     var s = document.createElement("script");
-    s.src = THREE_URL; s.async = true; s.crossOrigin = "anonymous";
-    s.onload = cb;
-    s.onerror = function () { /* 대체 이미지 유지 */ };
+    s.src = THREE_URL; s.async = true; s.crossOrigin = "anonymous"; s.onload = cb;
     document.head.appendChild(s);
   }
-
   var started = false;
   var io = new IntersectionObserver(function (es) {
     es.forEach(function (e) {
@@ -33,242 +31,234 @@
   }, { threshold: 0.05 });
   io.observe(stage);
 
-  /* ── 절차적 텍스처 ── */
+  /* ── 절차적 텍스처 (정거원통 투영 1024×512) ── */
+  var W = 1024, H = 512;
   function hash(x, y) { var h = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return h - Math.floor(h); }
-
-  function equirect(w, h, shade) {
-    var c = document.createElement("canvas"); c.width = w; c.height = h;
-    var bump = document.createElement("canvas"); bump.width = w; bump.height = h;
-    var ctx = c.getContext("2d"), bctx = bump.getContext("2d");
-    var img = ctx.createImageData(w, h), bimg = bctx.createImageData(w, h);
-    for (var y = 0; y < h; y++) {
-      var lat = (0.5 - (y + 0.5) / h) * Math.PI, cl = Math.cos(lat), sl = Math.sin(lat);
-      for (var x = 0; x < w; x++) {
-        var lon = ((x + 0.5) / w) * 2 * Math.PI - Math.PI;
-        // three.js SphereGeometry UV 와 같은 방향
-        var nx = -Math.cos(lon) * cl, ny = sl, nz = Math.sin(lon) * cl;
-        var out = shade(nx, ny, nz, x, y);
-        var i = (y * w + x) * 4;
-        img.data[i] = out[0]; img.data[i + 1] = out[1]; img.data[i + 2] = out[2]; img.data[i + 3] = 255;
-        bimg.data[i] = bimg.data[i + 1] = bimg.data[i + 2] = out[3]; bimg.data[i + 3] = 255;
-      }
+  function dirAt(px, py) {
+    var lat = (0.5 - (py + 0.5) / H) * Math.PI, lon = ((px + 0.5) / W) * 2 * Math.PI - Math.PI, cl = Math.cos(lat);
+    return [-Math.cos(lon) * cl, Math.sin(lat), Math.sin(lon) * cl];
+  }
+  function toUV(v) { // 방향 → 픽셀 좌표 (dirAt 의 역변환)
+    var len = Math.hypot(v[0], v[1], v[2]), x = v[0] / len, y = v[1] / len, z = v[2] / len;
+    var lat = Math.asin(y), lon = Math.atan2(z, -x);
+    return [((lon + Math.PI) / (2 * Math.PI)) * W, (0.5 - lat / Math.PI) * H];
+  }
+  function perPixel(fn) {
+    var c = document.createElement("canvas"); c.width = W; c.height = H;
+    var ctx = c.getContext("2d"), img = ctx.createImageData(W, H), d = img.data;
+    for (var py = 0; py < H; py++) for (var px = 0; px < W; px++) {
+      var o = fn(dirAt(px, py), px, py), i = (py * W + px) * 4;
+      d[i] = o[0]; d[i + 1] = o[1]; d[i + 2] = o[2]; d[i + 3] = 255;
     }
-    ctx.putImageData(img, 0, 0); bctx.putImageData(bimg, 0, 0);
-    return { map: c, bump: bump };
+    ctx.putImageData(img, 0, 0);
+    return c;
   }
-
-  function basketball() {
-    var W = 0.012, C0 = 0.63;
-    return equirect(1024, 512, function (nx, ny, nz, x, y) {
-      // 적도 + 극을 지나는 큰 원(z=0 평면) + 큰 원 평면에 수직인 ±z 축 둘레의 곡선 두 개
-      var d = Math.min(Math.abs(ny), Math.abs(nz), Math.abs(Math.abs(nz) - C0) * 1.25);
-      var n = hash(x, y), n2 = hash(x * 0.5 | 0, y * 0.5 | 0);
-      var pebble = n2 > 0.55 ? 1 : 0;
-      var r = 206 + (pebble ? 10 : -6) + (n - 0.5) * 14, g = 92 + (pebble ? 6 : -4) + (n - 0.5) * 8, b = 40 + (n - 0.5) * 6;
-      var bh = pebble ? 200 : 150;
-      if (d < W) { var k = d / W; r = g = b = 22 + 20 * k; bh = 40 + 40 * k; }
-      else if (d < W * 1.8) { var t = (d - W) / (W * 0.8); r *= 0.75 + 0.25 * t; g *= 0.75 + 0.25 * t; b *= 0.8 + 0.2 * t; bh = 90 + 60 * t; }
-      return [r, g, b, bh];
+  // 야구공·테니스공의 8자형 솔기 곡선
+  function seamPoints(n) {
+    var pts = [], a = 0.42;
+    for (var i = 0; i <= n; i++) {
+      var t = i / n * Math.PI * 2;
+      pts.push([Math.cos(t) - a * Math.cos(3 * t), Math.sin(t) + a * Math.sin(3 * t), 2 * Math.sqrt(a) * Math.sin(2 * t)]);
+    }
+    return pts;
+  }
+  function strokeOnSphere(ctx, pts, width, color, dash) {
+    ctx.strokeStyle = color; ctx.lineWidth = width; ctx.lineCap = "round";
+    if (dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+    ctx.beginPath();
+    var prev = null;
+    pts.forEach(function (p) {
+      var uv = toUV(p);
+      if (prev && Math.abs(uv[0] - prev[0]) > W / 2) { ctx.stroke(); ctx.beginPath(); ctx.moveTo(uv[0], uv[1]); }
+      else if (!prev) ctx.moveTo(uv[0], uv[1]); else ctx.lineTo(uv[0], uv[1]);
+      prev = uv;
     });
+    ctx.stroke();
   }
 
-  function volleyball() {
-    var COLS = [[244, 196, 48], [32, 82, 168], [246, 244, 236]];
-    var W = 0.018;
-    return equirect(1024, 512, function (nx, ny, nz, x, y) {
-      var ax = Math.abs(nx), ay = Math.abs(ny), az = Math.abs(nz), face, u, v;
-      if (ax >= ay && ax >= az) { face = nx > 0 ? 0 : 1; u = ny / ax; v = nz / ax; }
-      else if (ay >= az) { face = ny > 0 ? 2 : 3; u = nz / ay; v = nx / ay; }
-      else { face = nz > 0 ? 4 : 5; u = nx / az; v = ny / az; }
-      // 이웃 면끼리 줄무늬 방향을 엇갈리게
-      var s = (face >> 1) % 2 === 0 ? u : v;
-      var strip = Math.min(2, Math.floor((s + 1) / 2 * 3));
-      var edgeStrip = Math.abs(((s + 1) / 2 * 3) - Math.round((s + 1) / 2 * 3)) / 3;
-      var edgeFace = 1 - Math.max(Math.abs(u), Math.abs(v));
-      var col = COLS[(strip + face) % 3];
-      var n = hash(x, y) - 0.5;
-      var r = col[0] + n * 6, g = col[1] + n * 6, b = col[2] + n * 6, bh = 170 + n * 10;
-      var e = Math.min(edgeStrip * 1.5, edgeFace * 0.9);
-      if (e < W) { var k = e / W; r *= 0.55 + 0.45 * k; g *= 0.55 + 0.45 * k; b *= 0.55 + 0.45 * k; bh = 60 + 110 * k; }
-      return [r, g, b, bh];
-    });
-  }
+  var PHI = (1 + Math.sqrt(5)) / 2;
+  var ICO = [[-1, PHI, 0], [1, PHI, 0], [-1, -PHI, 0], [1, -PHI, 0], [0, -1, PHI], [0, 1, PHI], [0, -1, -PHI], [0, 1, -PHI], [PHI, 0, -1], [PHI, 0, 1], [-PHI, 0, -1], [-PHI, 0, 1]]
+    .map(function (v) { var l = Math.hypot(v[0], v[1], v[2]); return [v[0] / l, v[1] / l, v[2] / l]; });
+  var FACES = (function () { // 정이십면체 면 중심 20개 = 축구공 육각형 중심
+    var out = [];
+    for (var i = 0; i < 12; i++) for (var j = i + 1; j < 12; j++) for (var k = j + 1; k < 12; k++) {
+      var a = ICO[i], b = ICO[j], c = ICO[k], dab = a[0] * b[0] + a[1] * b[1] + a[2] * b[2], dbc = b[0] * c[0] + b[1] * c[1] + b[2] * c[2], dac = a[0] * c[0] + a[1] * c[1] + a[2] * c[2];
+      if (dab > 0.4 && dbc > 0.4 && dac > 0.4) { var m = [a[0] + b[0] + c[0], a[1] + b[1] + c[1], a[2] + b[2] + c[2]], l = Math.hypot(m[0], m[1], m[2]); out.push([m[0] / l, m[1] / l, m[2] / l]); }
+    }
+    return out;
+  })();
 
-  var MAKERS = { basketball: basketball, volleyball: volleyball };
+  var MAKE = {
+    soccer: function () {
+      var centers = ICO.map(function (v) { return { v: v, pent: true }; }).concat(FACES.map(function (v) { return { v: v, pent: false }; }));
+      return perPixel(function (n, px, py) {
+        var best = -2, second = -2, pent = false;
+        for (var i = 0; i < centers.length; i++) {
+          var c = centers[i].v, d = n[0] * c[0] + n[1] * c[1] + n[2] * c[2];
+          if (d > best) { second = best; best = d; pent = centers[i].pent; } else if (d > second) second = d;
+        }
+        var edge = best - second, g = hash(px, py) * 8;
+        if (edge < 0.012) return [40, 40, 44];
+        return pent ? [24 + g, 24 + g, 30 + g] : [244 - g, 244 - g, 240 - g];
+      });
+    },
+    volleyball: function () {
+      var cols = [[255, 61, 127], [24, 196, 176], [250, 250, 245]];
+      return perPixel(function (n, px, py) {
+        var ax = Math.abs(n[0]), ay = Math.abs(n[1]), az = Math.abs(n[2]), f, u, v;
+        if (ax >= ay && ax >= az) { f = n[0] > 0 ? 0 : 1; u = n[1] / ax; v = n[2] / ax; }
+        else if (ay >= az) { f = n[1] > 0 ? 2 : 3; u = n[2] / ay; v = n[0] / ay; }
+        else { f = n[2] > 0 ? 4 : 5; u = n[0] / az; v = n[1] / az; }
+        var s = (f >> 1) % 2 === 0 ? u : v, k = (s + 1) / 2 * 3, st = Math.min(2, Math.floor(k));
+        var e = Math.min(Math.abs(k - Math.round(k)) / 1.5, (1 - Math.max(Math.abs(u), Math.abs(v))) * 0.9);
+        var c = cols[(st + f) % 3], g = hash(px, py) * 6;
+        if (e < 0.018) return [c[0] * .55, c[1] * .55, c[2] * .55];
+        return [c[0] - g, c[1] - g, c[2] - g];
+      });
+    },
+    basketball: function () {
+      return perPixel(function (n, px, py) {
+        var d = Math.min(Math.abs(n[1]), Math.abs(n[2]), Math.abs(Math.abs(n[2]) - 0.63) * 1.25), p = hash(px >> 1, py >> 1) > .55 ? 10 : -6;
+        if (d < 0.011) return [26, 22, 20];
+        return [214 + p, 98 + p * .6, 40];
+      });
+    },
+    baseball: function () {
+      var c = perPixel(function (n, px, py) { var g = hash(px, py) * 10; return [246 - g, 243 - g, 234 - g]; });
+      var ctx = c.getContext("2d"), pts = seamPoints(600);
+      strokeOnSphere(ctx, pts, 4, "rgba(190,175,160,.95)");
+      strokeOnSphere(ctx, pts, 14, "#d3222a", [4, 6]);
+      return c;
+    }
+  };
+  var MAT = { // 재질: 거칠기·금속감·요철 세기
+    soccer: { rough: .28, metal: .05, scale: [1, 1, 1], r: 1 },
+    volleyball: { rough: .22, metal: .15, scale: [1, 1, 1], r: 1 },
+    basketball: { rough: .6, metal: 0, scale: [1, 1, 1], r: 1.05 },
+    baseball: { rough: .5, metal: 0, scale: [1, 1, 1], r: .62 }
+
+  };
 
   function init() {
     var T = window.THREE;
     if (!T) return;
-    var canvas = stage.querySelector("canvas");
-    var renderer;
+    var canvas = stage.querySelector("canvas"), renderer;
     try { renderer = new T.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true, powerPreference: "low-power" }); }
     catch (e) { return; }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = T.PCFSoftShadowMap;
     renderer.outputEncoding = T.sRGBEncoding;
     renderer.toneMapping = T.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.05;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = T.PCFSoftShadowMap;
 
     var scene = new T.Scene();
-    var cam = new T.PerspectiveCamera(30, 1, 0.1, 100);
-    cam.position.set(0, 1.6, 9.2);
-    cam.lookAt(0, 0.6, 0);
+    var cam = new T.PerspectiveCamera(32, 1, 0.1, 100);
+    cam.position.set(0, 0.2, 11);
 
-    scene.add(new T.HemisphereLight(0xfff4e6, 0x3a2f25, 0.75));
-    var key = new T.DirectionalLight(0xffffff, 1.35);
-    key.position.set(-2.5, 9, 3.5);
-    key.castShadow = true;
-    key.shadow.mapSize.set(1024, 1024);
-    key.shadow.camera.left = -5; key.shadow.camera.right = 5; key.shadow.camera.top = 5; key.shadow.camera.bottom = -5;
-    key.shadow.radius = 6;
+    // 무지갯빛 환경 반사(홀로그램 느낌)
+    try {
+      var pm = new T.PMREMGenerator(renderer), env = new T.Scene();
+      var ec = document.createElement("canvas"); ec.width = 512; ec.height = 256;
+      var ex = ec.getContext("2d"), gg = ex.createLinearGradient(0, 0, 512, 256);
+      gg.addColorStop(0, "#ff3d7f"); gg.addColorStop(.35, "#ffd23d"); gg.addColorStop(.65, "#18c4b0"); gg.addColorStop(1, "#6c7bff");
+      ex.fillStyle = gg; ex.fillRect(0, 0, 512, 256);
+      env.add(new T.Mesh(new T.SphereGeometry(20, 32, 16), new T.MeshBasicMaterial({ map: new T.CanvasTexture(ec), side: T.BackSide })));
+      scene.environment = pm.fromScene(env, 0.04).texture;
+    } catch (e) { /* 환경맵 없이도 동작 */ }
+    scene.add(new T.AmbientLight(0xffffff, 0.45));
+    var key = new T.DirectionalLight(0xffffff, 1.25);
+    key.position.set(3, 6, 7); key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.radius = 8;
+    key.shadow.camera.left = -8; key.shadow.camera.right = 8; key.shadow.camera.top = 6; key.shadow.camera.bottom = -6;
     scene.add(key);
-    var rim = new T.DirectionalLight(0xffd2b0, 0.55);
-    rim.position.set(5, 2, -4);
-    scene.add(rim);
-
-    var floorMat = new T.ShadowMaterial({ opacity: 0.18 });
-    var floor = new T.Mesh(new T.PlaneGeometry(30, 30), floorMat);
-    floor.rotation.x = -Math.PI / 2;
-    floor.receiveShadow = true;
-    scene.add(floor);
-
+    var floorMat = new T.ShadowMaterial({ opacity: 0.12 });
+    var floor = new T.Mesh(new T.PlaneGeometry(40, 40), floorMat);
+    floor.rotation.x = -Math.PI / 2; floor.position.y = -2.1; floor.receiveShadow = true; scene.add(floor);
     function themeShadow() {
-      var dark = document.documentElement.dataset.theme === "dark" ||
-        (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
-      floorMat.opacity = dark ? 0.45 : 0.18;
+      var de = document.documentElement, dark = de.dataset.theme === "dark" || (!de.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+      floorMat.opacity = dark ? 0.35 : 0.12;
     }
-    themeShadow();
-    document.addEventListener("themechange", themeShadow);
+    themeShadow(); document.addEventListener("themechange", themeShadow);
 
-    var kinds = [];
-    try { kinds = JSON.parse(stage.dataset.balls || "[]"); } catch (e) {}
-    kinds = kinds.filter(function (k) { return MAKERS[k]; });
-    if (!kinds.length) kinds = ["basketball", "volleyball"];
-
-    var R = 1.05;
-    var geo = new T.SphereGeometry(R, 96, 64);
-    var balls = kinds.slice(0, 2).map(function (kind, i) {
-      var tex = MAKERS[kind]();
-      var map = new T.CanvasTexture(tex.map); map.encoding = T.sRGBEncoding; map.anisotropy = 4;
-      var bump = new T.CanvasTexture(tex.bump);
-      var mat = new T.MeshStandardMaterial({
-        map: map, bumpMap: bump, bumpScale: kind === "basketball" ? 0.018 : 0.01,
-        roughness: kind === "basketball" ? 0.72 : 0.5, metalness: 0
-      });
-      var mesh = new T.Mesh(geo, mat);
-      mesh.castShadow = true;
-      var x = i === 0 ? -1.25 : 1.3, z = i === 0 ? 0.2 : -0.6;
-      mesh.position.set(x, R, z);
-      mesh.rotation.set(0.35 + i, i * 1.7, 0.2);
+    var season = [];
+    try { season = JSON.parse(stage.dataset.balls || "[]"); } catch (e) {}
+    var order = season.filter(function (k) { return MAKE[k]; });
+    ["volleyball", "basketball", "soccer", "baseball"].forEach(function (k) { if (order.indexOf(k) < 0) order.push(k); });
+    // 배치: 앞쪽 큰 공 2개(시즌), 뒤쪽 2개
+    var SLOTS = [[1.5, 0.1, 1.1, 1.25], [-1.6, -0.35, 0.5, 1.05], [3.9, 1.05, -1.6, .95], [-3.7, 1.15, -1.8, 1.05]];
+    var balls = order.slice(0, 4).map(function (kind, i) {
+      var m = MAT[kind], tex = new T.CanvasTexture(MAKE[kind]());
+      tex.encoding = T.sRGBEncoding; tex.anisotropy = 4;
+      var mesh = new T.Mesh(new T.SphereGeometry(1, 96, 64), new T.MeshStandardMaterial({ map: tex, roughness: m.rough, metalness: m.metal, envMapIntensity: 1.1 }));
+      var s = SLOTS[i], size = m.r * s[3];
+      mesh.scale.set(m.scale[0] * size, m.scale[1] * size, m.scale[2] * size);
+      mesh.position.set(s[0], s[1], s[2]); mesh.castShadow = true;
+      mesh.rotation.set(Math.random() * 2, Math.random() * 6, 0);
       scene.add(mesh);
-      return {
-        mesh: mesh, kind: kind, baseX: x, z: z,
-        y: R + 0.6 + i * 0.4, vy: 0, // 첫 등장: 위에서 떨어져 튄다
-        spin: new T.Vector2(0.0025 * (i ? -1 : 1), 0.004), squash: 0, phase: i * 2.1
-      };
+      return { mesh: mesh, kind: kind, base: new T.Vector3(s[0], s[1], s[2]), phase: i * 1.7, spin: new T.Vector2(0.002 + i * 0.0006, 0.004 + i * 0.0008), y: 0, vy: 0, size: size };
     });
-    balls.forEach(function (b, i) { b.y = R + 2.4 + i * 0.9; });
 
     function resize() {
       var w = stage.clientWidth, h = stage.clientHeight;
       if (!w || !h) return;
-      renderer.setSize(w, h, false);
-      cam.aspect = w / h;
-      cam.fov = w / h < 1.1 ? 38 : 30;
+      renderer.setSize(w, h, false); cam.aspect = w / h;
+      cam.position.z = w / h < 1 ? 15 : w / h < 1.6 ? 12.5 : 11; // 좁은 화면에서는 뒤로 물러나 모두 보이게
       cam.updateProjectionMatrix();
     }
-    resize();
-    window.addEventListener("resize", resize);
+    resize(); window.addEventListener("resize", resize);
 
-    /* 상호작용 */
-    var ray = new T.Raycaster(), ptr = new T.Vector2();
-    var drag = null, last = { x: 0, y: 0, t: 0 };
+    var ray = new T.Raycaster(), ptr = new T.Vector2(), mx = 0, my = 0, drag = null;
     function pick(e) {
       var r = canvas.getBoundingClientRect();
-      ptr.x = ((e.clientX - r.left) / r.width) * 2 - 1;
-      ptr.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+      ptr.x = ((e.clientX - r.left) / r.width) * 2 - 1; ptr.y = -((e.clientY - r.top) / r.height) * 2 + 1;
       ray.setFromCamera(ptr, cam);
       var hit = ray.intersectObjects(balls.map(function (b) { return b.mesh; }))[0];
       return hit ? balls.filter(function (b) { return b.mesh === hit.object; })[0] : null;
     }
-    canvas.addEventListener("pointerdown", function (e) {
-      var b = pick(e);
-      if (!b) return;
-      drag = { ball: b, x0: e.clientX, y0: e.clientY, moved: 0 };
-      last = { x: e.clientX, y: e.clientY, t: performance.now() };
-      canvas.setPointerCapture(e.pointerId);
+    canvas.addEventListener("pointermove", function (e) {
+      var r = canvas.getBoundingClientRect();
+      mx = (e.clientX - r.left) / r.width - 0.5; my = (e.clientY - r.top) / r.height - 0.5;
+      if (drag) {
+        var dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.moved += Math.abs(dx) + Math.abs(dy);
+        drag.b.spin.set(dy * 0.004, dx * 0.004); drag.x = e.clientX; drag.y = e.clientY;
+      } else canvas.style.cursor = pick(e) ? "pointer" : "";
       wake();
     });
-    canvas.addEventListener("pointermove", function (e) {
-      if (!drag) { canvas.style.cursor = pick(e) ? "pointer" : ""; return; }
-      var dx = e.clientX - last.x, dy = e.clientY - last.y;
-      drag.moved += Math.abs(dx) + Math.abs(dy);
-      drag.ball.mesh.rotation.y += dx * 0.012;
-      drag.ball.mesh.rotation.x += dy * 0.012;
-      var dt = Math.max(16, performance.now() - last.t);
-      drag.ball.spin.set(dy * 0.012 * 16 / dt, dx * 0.012 * 16 / dt);
-      last = { x: e.clientX, y: e.clientY, t: performance.now() };
-      wake();
+    canvas.addEventListener("pointerdown", function (e) {
+      var b = pick(e); if (!b) return;
+      drag = { b: b, x: e.clientX, y: e.clientY, moved: 0 }; canvas.setPointerCapture(e.pointerId); wake();
     });
     function up() {
-      if (!drag) return;
-      if (drag.moved < 6) { // 클릭: 튕기기
-        var b = drag.ball;
-        b.vy = 7.2 + Math.random() * 1.2;
-        b.spin.set((Math.random() - 0.5) * 0.08, (Math.random() - 0.5) * 0.12);
-      }
-      drag = null;
-      wake();
+      if (drag && drag.moved < 6) { var b = drag.b; b.vy = 5 + Math.random(); b.spin.set((Math.random() - .5) * .25, (Math.random() - .5) * .35); }
+      drag = null; wake();
     }
-    canvas.addEventListener("pointerup", up);
-    canvas.addEventListener("pointercancel", up);
+    canvas.addEventListener("pointerup", up); canvas.addEventListener("pointercancel", up);
 
-    /* 루프 */
-    var visible = true, running = false, lastT = 0, idleSince = performance.now();
+    var visible = true, running = false, lastT = 0;
     window.__stageVisible = function (v) { visible = v; if (v) wake(); };
     document.addEventListener("visibilitychange", function () { if (!document.hidden) wake(); });
-    function wake() { idleSince = performance.now(); if (!running && visible && !document.hidden) { running = true; lastT = 0; requestAnimationFrame(tick); } }
+    function wake() { if (!running && visible && !document.hidden) { running = true; lastT = 0; requestAnimationFrame(tick); } }
 
-    var G = -16, REST = 0.58;
     function tick(t) {
       if (!visible || document.hidden) { running = false; return; }
-      var dt = lastT ? Math.min(0.033, (t - lastT) / 1000) : 0.016;
-      lastT = t;
-      var anyMoving = false;
+      var dt = lastT ? Math.min(0.033, (t - lastT) / 1000) : 0.016; lastT = t;
+      var sec = t / 1000;
       balls.forEach(function (b) {
-        // 중력과 바닥 반발
-        if (b.y > R + 0.0005 || b.vy > 0) {
-          b.vy += G * dt;
-          b.y += b.vy * dt;
-          if (b.y < R) {
-            b.y = R;
-            if (Math.abs(b.vy) > 1.2) { b.squash = Math.min(0.22, Math.abs(b.vy) * 0.022); b.vy = -b.vy * REST; }
-            else b.vy = 0;
-          }
-          anyMoving = true;
+        if (b.y > 0 || b.vy > 0) { b.vy -= 14 * dt; b.y = Math.max(0, b.y + b.vy * dt); if (b.y === 0 && b.vy < 0) b.vy = Math.abs(b.vy) > 1.5 ? -b.vy * 0.45 : 0; }
+        var bob = reduce ? 0 : Math.sin(sec * (0.8 + b.phase * 0.1) + b.phase) * 0.12;
+        b.mesh.position.set(b.base.x + mx * 0.25 * (1 + b.base.z * 0.1), b.base.y + bob + b.y, b.base.z);
+        if (!(drag && drag.b === b)) {
+          b.mesh.rotation.x += b.spin.x; b.mesh.rotation.y += b.spin.y;
+          b.spin.x += (0.002 - b.spin.x) * 0.02; b.spin.y += (0.004 * (b.phase % 2 ? -1 : 1) - b.spin.y) * 0.02;
         }
-        b.squash *= 0.82;
-        var float = reduce ? 0 : Math.sin(t / 1000 * 1.3 + b.phase) * 0.04;
-        var sq = b.squash;
-        b.mesh.scale.set(1 + sq * 0.6, 1 - sq, 1 + sq * 0.6);
-        b.mesh.position.set(b.baseX, b.y - sq * R + (b.vy === 0 ? float + 0.04 : 0), b.z);
-        if (drag && drag.ball === b) return;
-        b.mesh.rotation.x += b.spin.x;
-        b.mesh.rotation.y += b.spin.y;
-        b.spin.multiplyScalar(0.975);
-        var idleX = 0.0012, idleY = 0.0035 * (b.kind === "volleyball" ? -1 : 1);
-        b.spin.x += (idleX - b.spin.x) * 0.02;
-        b.spin.y += (idleY - b.spin.y) * 0.02;
-        if (Math.abs(b.spin.y) > 0.01) anyMoving = true;
       });
+      cam.position.x += (mx * 1.2 - cam.position.x) * 0.05;
+      cam.position.y += (0.2 - my * 0.8 - cam.position.y) * 0.05;
+      cam.lookAt(0, 0.1, 0);
       renderer.render(scene, cam);
       if (!stage.classList.contains("is-live")) stage.classList.add("is-live");
-      // 움직임을 줄이는 설정이면 정지 화면 한 장만 그린다
-      if (reduce && !anyMoving && !drag) { running = false; return; }
+      if (reduce && !drag && balls.every(function (b) { return b.y === 0; })) { running = false; return; }
       requestAnimationFrame(tick);
     }
-    if (reduce) balls.forEach(function (b) { b.y = R; });
     wake();
   }
 })();
