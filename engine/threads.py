@@ -1,4 +1,4 @@
-"""Threads 자동 게시(선택). THREADS_USER_ID / THREADS_TOKEN 이 있을 때만 하루 한 번 올린다.
+"""Threads 자동 게시(선택). THREADS_TOKEN 이 있을 때만 하루 한 번 올린다(THREADS_USER_ID 는 없으면 토큰으로 알아낸다).
 
 Threads API: 글 컨테이너 생성 → 게시 두 단계. 토큰(장기 60일)은 게시할 때마다 갱신을 시도한다.
 """
@@ -35,8 +35,16 @@ def compose(rep: dict) -> str:
 
 def post_daily() -> bool:
     uid, token = os.getenv("THREADS_USER_ID", "").strip(), os.getenv("THREADS_TOKEN", "").strip()
-    if not uid or not token:
+    token = "".join(token.split()).strip('"\'')  # 복사할 때 붙은 공백·줄바꿈·따옴표 제거
+    if not token:
         return False
+    if not uid.isdigit():
+        # 사용자 ID 를 따로 넣지 않아도 토큰으로 알아낸다
+        try:
+            uid = str(http("GET", f"{API}/me", params={"fields": "id", "access_token": token}, retries=2).json()["id"])
+        except Exception as e:  # noqa: BLE001
+            log.warning("Threads 사용자 ID 확인 실패(토큰을 다시 확인): %s", type(e).__name__)
+            return False
     day = config.today_kst()
     st = read_json(STATE, {}) or {}
     if st.get("last") == day:
