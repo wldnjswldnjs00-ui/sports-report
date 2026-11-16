@@ -25,7 +25,12 @@ CONTACT_EMAIL = os.getenv("CONTACT_EMAIL", "")
 
 # 애드센스: 승인 후 ca-pub-XXXXXXXX 값을 넣으면 광고 슬롯이 자동 활성화된다.
 ADSENSE_CLIENT = os.getenv("ADSENSE_CLIENT", "").strip()
-COUPANG_NOTICE = os.getenv("COUPANG_NOTICE", "") == "1"
+# 쿠팡 파트너스 다이나믹 배너: 파트너스에서 만든 배너 코드의 id 숫자와 trackingCode(AF...)
+COUPANG_BANNER_ID = "".join(ch for ch in os.getenv("COUPANG_BANNER_ID", "") if ch.isdigit())
+COUPANG_TRACKING = "".join(ch for ch in os.getenv("COUPANG_TRACKING", "").strip() if ch.isalnum())
+COUPANG_TEMPLATE = os.getenv("COUPANG_TEMPLATE", "carousel").strip() or "carousel"
+# 배너를 걸면 수수료 고지 문구는 자동으로 켠다(쿠팡 파트너스 의무 사항)
+COUPANG_NOTICE = os.getenv("COUPANG_NOTICE", "") == "1" or bool(COUPANG_BANNER_ID and COUPANG_TRACKING)
 SUPPORT_URL = os.getenv("SUPPORT_URL", "").strip()
 # 후원: 카카오페이 송금 링크(https://qr.kakaopay.com/...), 토스 익명 송금 링크(https://toss.me/...)
 SUPPORT_KAKAOPAY = os.getenv("SUPPORT_KAKAOPAY", "").strip()

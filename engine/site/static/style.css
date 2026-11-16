@@ -631,3 +631,5 @@ html:not(.is-mobile):not(.is-pc) .mo-only { display: none; }
   .match-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "meta res" "teams pick" "also also"; }
   .m-also { grid-area: also; grid-column: auto; grid-row: auto; margin-top: 0; }
 }
+.ad-cp { overflow: hidden; }
+.ad-cp iframe { max-width: 100%; border: 0; display: block; }
