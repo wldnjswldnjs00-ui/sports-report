@@ -22,17 +22,17 @@ STRATEGIES = {
     },
     "balanced": {
         "label": "밸런스형", "sizes": (2, 3, 4), "min_leg_p": 0.50, "min_conf": 40,
-        "odds_range": (2.5, 8.0), "min_joint": 0.15, "top": 6, "pool": 18,
+        "odds_range": (2.5, 8.0), "min_joint": 0.08, "top": 6, "pool": 18,
         "desc": "적중 가능성과 배당의 균형을 맞춘 3~4경기 조합입니다.",
     },
     "aggressive": {
         "label": "공격형", "sizes": (3, 4, 5), "min_leg_p": 0.38, "min_conf": 30,
-        "odds_range": (7.0, 80.0), "min_joint": 0.03, "top": 6, "pool": 18,
+        "odds_range": (7.0, 80.0), "min_joint": 0.01, "top": 6, "pool": 18,
         "desc": "역배를 섞어 7배 이상을 노리는 조합입니다.",
     },
     "lotto": {
-        "label": "로또폴더", "sizes": (5, 6, 7, 8), "min_leg_p": 0.30, "min_conf": 25,
-        "odds_range": (40.0, 5000.0), "min_joint": 0.0008, "top": 3, "pool": 16,
+        "label": "로또폴더", "sizes": (5, 6, 7, 8), "min_leg_p": 0.22, "min_conf": 25,
+        "odds_range": (40.0, 5000.0), "min_joint": 0.0002, "top": 3, "pool": 16,
         "desc": "5~8경기를 묶어 수십 배 이상을 노리는 한 장입니다.",
     },
 }
@@ -136,7 +136,20 @@ def strategy_combos(legs: list[dict[str, Any]], name: str) -> list[dict[str, Any
         if per.get(l["match"], 0) < (1 if name in ("aggressive", "lotto") else 2):
             diverse.append(l)
             per[l["match"]] = per.get(l["match"], 0) + 1
-    pool = diverse[: cfg["pool"]]
+    if name in ("aggressive", "lotto"):
+        # 점수 좋은 선택 절반 + 배당 큰 선택 절반을 섞어야 높은 배당 구간 조합이 나온다
+        half = cfg["pool"] // 2
+        by_odds = sorted(diverse, key=lambda l: -l["odds"])
+        pool, used = [], set()
+        for l in diverse[:half] + by_odds:
+            if l["match"] in used:
+                continue
+            used.add(l["match"])
+            pool.append(l)
+            if len(pool) >= cfg["pool"]:
+                break
+    else:
+        pool = diverse[: cfg["pool"]]
     lo, hi = cfg["odds_range"]
     cands = []
     for size in cfg["sizes"]:
@@ -159,12 +172,26 @@ def strategy_combos(legs: list[dict[str, Any]], name: str) -> list[dict[str, Any
         cands.sort(key=lambda c: -c["ev"])
 
     chosen: list[dict[str, Any]] = []
-    for c in cands:
-        if any(_overlap(c, x) > (0.8 if name == "lotto" else 0.67) for x in chosen):
-            continue
-        chosen.append(c)
-        if len(chosen) >= cfg["top"]:
-            break
+    max_overlap = 0.8 if name == "lotto" else 0.67
+
+    def take(pool_c, n):
+        for c in pool_c:
+            if len(chosen) >= cfg["top"] or n <= 0:
+                break
+            if c in chosen or any(_overlap(c, x) > max_overlap or abs(c["total_odds"] / x["total_odds"] - 1) < 0.04 for x in chosen):
+                continue
+            chosen.append(c)
+            n -= 1
+
+    # 배당이 한 구간에 몰리지 않게: 구간별로 가장 좋은 조합을 먼저 뽑고, 모자라면 전체에서 채운다
+    tiers = {"lotto": [(40, 80, 1), (80, 200, 1), (200, 5000, 1)],
+             "aggressive": [(7, 12, 2), (12, 25, 2), (25, 80, 2)],
+             "balanced": [(2.5, 3.5, 2), (3.5, 5, 2), (5, 8, 2)]}.get(name)
+    if tiers:
+        for lo_t, hi_t, n_t in tiers:
+            take([c for c in cands if lo_t <= c["total_odds"] < hi_t], n_t)
+    take(cands, cfg["top"])
+    chosen.sort(key=lambda c: c["total_odds"])
     for i, c in enumerate(chosen, 1):
         c["strategy"] = name
         c["rank"] = i

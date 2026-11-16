@@ -118,19 +118,6 @@
     <div class="slip-act"><button type="button" class="btn ghost" data-slip-clear>비우기</button><a class="btn" href="/tool/">금액 계산하기</a></div>
   </section>
 </div>
-<dialog class="reveal" data-reveal-dialog aria-labelledby="reveal-title">
-  <form method="dialog"><button class="x" aria-label="닫기">×</button></form>
-  <h2 id="reveal-title">전체 조합</h2>
-  <p class="reveal-odds" data-reveal-odds></p>
-  <ol class="combo-legs" data-reveal-legs></ol>
-  <dl class="combo-foot" data-reveal-foot></dl>
-  {% if cfg.ADSENSE_CLIENT %}
-  <aside class="ad in-dialog" aria-label="광고"><span class="ad-label">광고</span>
-    <ins class="adsbygoogle" style="display:block" data-ad-client="{{ cfg.ADSENSE_CLIENT }}" data-ad-format="rectangle" data-full-width-responsive="true"></ins>
-  </aside>
-  {% endif %}
-  <button type="button" class="btn" data-reveal-add>내 조합에 담기</button>
-</dialog>
 <div class="toast" role="status" aria-live="polite" data-toast></div>
 
 <script src="/static/app.js?v={{ asset_v }}" defer></script>

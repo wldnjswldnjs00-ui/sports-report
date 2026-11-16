@@ -25,7 +25,6 @@
 {% endmacro %}
 
 {% macro combo_card(c, r) %}
-{% set hide = (c.size // 2) if c.result != 'win' else 0 %}
 <article class="combo" data-combo data-key="{{ c.key }}">
   <header class="combo-head">
     <span class="combo-odds" title="종합배당"><b>×{{ c.total_odds|odds }}</b></span>
@@ -33,20 +32,15 @@
     {{ result_tag(c.result) }}
   </header>
   <div class="perf" aria-hidden="true"></div>
-  <ol class="combo-legs" data-legs>
-    {% for l in c.legs %}
-      {% if loop.index0 < c.size - hide %}{{ leg_row(l) }}
-      {% else %}<li class="masked" data-masked><span class="leg-no">?</span><span class="leg-match">나머지 경기</span><span class="bub">?</span><span class="leg-odds">?.??</span></li>{% endif %}
-    {% endfor %}
+  <ol class="combo-legs">
+    {% for l in c.legs %}{{ leg_row(l) }}{% endfor %}
   </ol>
-  <template data-full>{% for l in c.legs %}{{ leg_row(l) }}{% endfor %}</template>
   <div class="meter" aria-hidden="true"><i style="--w:{{ [c.joint_p * 120, 100]|min|round(1) }}%"></i></div>
   <dl class="combo-foot">
     <div><dt>예상 적중률</dt><dd>{{ c.joint_p|pct(1) }}</dd></div>
     <div><dt>1만 원 적중 시</dt><dd>{{ c.payout|won }}</dd></div>
   </dl>
-  {% if hide %}<button type="button" class="combo-add reveal" data-reveal-combo>전체 조합 보기</button>{% endif %}
-  <button type="button" class="combo-add{% if hide %} after-reveal{% endif %}" data-add-combo='{{ c.legs|map(attribute="market_id")|list|tojson }}' data-add-outcomes='{{ c.legs|map(attribute="outcome")|list|tojson }}'{% if hide %} hidden{% endif %}>내 조합에 담기</button>
+  <button type="button" class="combo-add" data-add-combo='{{ c.legs|map(attribute="market_id")|list|tojson }}' data-add-outcomes='{{ c.legs|map(attribute="outcome")|list|tojson }}'>내 조합에 담기</button>
 </article>
 {% endmacro %}
 

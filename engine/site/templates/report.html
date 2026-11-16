@@ -14,7 +14,6 @@
   <div class="hero-stage" data-stage data-balls='{{ balls|tojson }}' aria-hidden="true">
     <canvas class="stage-canvas"></canvas>
     <div class="stage-fallback"><span></span><span></span><span></span></div>
-    <p class="stage-hint">공을 눌러 보세요</p>
   </div>
   <div class="wrap hero-copy">
     <p class="slogan">데이터와 수학으로, 분석을 <em>똑똑하게</em></p>
@@ -44,7 +43,7 @@
 {% set tps = r.top_picks or ([r.top_pick] if r.top_pick else []) %}
 {% if tps %}
 <section class="wrap block tp-wrap" data-reveal>
-  <header class="block-head"><h2>적중 확률이 높아 보이는 경기</h2>{% if tps|length > 1 %}<p>{{ tps|length }}경기 · 옆으로 넘겨 보세요</p>{% endif %}</header>
+  <header class="block-head"><h2>적중 확률이 높아 보이는 경기</h2></header>
   <div class="tp-rail" data-rail tabindex="0" aria-label="적중 확률이 높아 보이는 경기">
   {% for t in tps %}{% set tm = mk.get(t.market_id) %}{% if tm %}
     <article class="top-pick">
