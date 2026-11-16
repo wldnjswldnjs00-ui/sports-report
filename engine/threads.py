@@ -1,8 +1,8 @@
 """Threads 자동 게시(선택). THREADS_TOKEN 이 있을 때만 올린다(THREADS_USER_ID 는 없으면 토큰으로 알아낸다).
 
 하루 두 번:
-  - 밤 23:05 (night)  : 다음 구매일 분석 공개 — "내일 08시 발매"
-  - 아침 07:00 (morning): 발매 1시간 전 — "오늘 08시 발매"
+  - 밤 22:00 (night)   : 다음 구매일 분석 공개 — "내일 08시 발매" (22:00 실행이 다음 구매일 리포트를 미리 만든다)
+  - 아침 07:00 (morning): 같은 구매일, 발매 1시간 전 — "오늘 08시 발매"
 같은 구매일·같은 시간대에는 한 번만 올린다. 그 밖의 시각(수동 실행 포함)에는 올리지 않는다.
 Threads API: 글 컨테이너 생성 → 게시 두 단계. 글자 수 제한(500자) 안에서 자른다.
 배당은 사이트 화면과 같이 베트맨(구매) 배당으로 적는다.
@@ -25,7 +25,7 @@ WEEK = "월화수목금토일"
 
 def slot_now() -> str | None:
     h = config.now_kst().hour
-    if h >= 22 or h < 3:
+    if h >= 21 or h < 3:
         return "night"
     if 5 <= h < 11:
         return "morning"
@@ -80,7 +80,9 @@ def compose(rep: dict, slot: str = "night") -> str:
 
 def post_daily(dry: bool = False, slot: str | None = None) -> bool:
     slot = slot or slot_now()
-    day = config.today_kst()
+    # 밤 게시는 다음 구매일(22시 기준 내일, 실행이 늦어 23시를 넘겨도 같은 날), 아침 게시는 오늘 구매일
+    from datetime import timedelta
+    day = (config.now_kst() + timedelta(hours=3)).strftime("%Y-%m-%d") if slot == "night" else config.today_kst()
     rep = read_json(config.REPORTS / f"{day}.json")
     if dry:
         print(compose(rep, slot or "night") if rep else "리포트가 없습니다.")
