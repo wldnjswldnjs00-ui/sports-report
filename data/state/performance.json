@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-16T23:26:05+09:00",
+ "updated": "2026-11-16T23:31:31+09:00",
  "picks": {
   "all": {
    "n": 11,
@@ -87,16 +87,16 @@
   },
   "lotto": {
    "all": {
-    "n": 0,
-    "win_rate": null,
-    "expected": null,
-    "roi": null
+    "n": 3,
+    "win_rate": 0.0,
+    "expected": 0.0127,
+    "roi": -1.0
    },
    "30d": {
-    "n": 0,
-    "win_rate": null,
-    "expected": null,
-    "roi": null
+    "n": 3,
+    "win_rate": 0.0,
+    "expected": 0.0127,
+    "roi": -1.0
    }
   }
  },
