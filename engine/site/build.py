@@ -221,7 +221,7 @@ def _slip_payload(r: dict | None) -> dict:
 
 
 def _xbook_payload(r: dict | None) -> dict:
-    """배당 분석 계산기용: 해외 기록 구도표 + 오늘 경기의 해외 배당(불러오기용)."""
+    """배당 분석 계산기용: 해외 기록 구도표 + 오늘 경기의 해외 배당(승패·해외 핸디·해외 합계, 불러오기용)."""
     from ..analysis import xbook
     out = xbook.page_payload(xbook.load())
     games: dict[str, dict] = {}
@@ -233,11 +233,7 @@ def _xbook_payload(r: dict | None) -> dict:
         g = games.setdefault(f"{m['kickoff']}|{m['home']}|{m['away']}", {
             "sport": m["sport"], "label": f"{m['home']} vs {m['away']}", "league": m["league"], "ko": m["kickoff"],
             "h2h": x.get("h2h_odds") or {k: round(1 / v, 2) for k, v in x["h2h"].items() if v > 0},
-            "total": x.get("total"), "hcp": [], "ou": []})
-        if m.get("line") is not None and m["market"] in ("HANDICAP", "OU"):
-            lst = g["hcp" if m["market"] == "HANDICAP" else "ou"]
-            if m["line"] not in lst:
-                lst.append(m["line"])
+            "spread": x.get("spread"), "total": x.get("total")})
     out["today"] = sorted(games.values(), key=lambda g: g["ko"])
     return out
 

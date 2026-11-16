@@ -24,14 +24,14 @@
       <button type="button" class="chip" data-xo-mk="ou" aria-pressed="false">언더오버</button>
     </div>
     <div class="xo-inputs" data-xo-inputs></div>
-    <p class="fine xo-hint">해외 배당을 넣으세요. 경기 화면의 '해외 배당' 칸 값입니다. 베트맨 배당은 발행처 몫이 커서 넣으면 결과가 달라집니다.</p>
+    <p class="fine xo-hint">해외 배당을 넣으세요. 핸디캡·언더오버는 해외 기준점과 그 기준점의 해외 배당을 넣습니다. '오늘 경기에서 불러오기'를 쓰면 자동으로 채워집니다.</p>
   </div>
   <div class="xo-out" data-xo-out aria-live="polite"><p class="muted">불러오는 중…</p></div>
 </section>
 <section class="wrap block">
   <details class="rule">
     <summary>어떻게 계산하나요</summary>
-    <p class="fine">넣은 배당에서 발행처 몫을 걷어낸 확률(공정확률)을 구하고, 해외 마감 배당의 공정확률이 같은 구간에 있던 과거 경기를 모읍니다. 그 경기들의 실제 점수 차와 총점 분포로 승무패, 각 핸디캡 기준점, 각 언더오버 기준점의 결과를 셉니다. 표본이 {{ 250 }}경기보다 적으면 이웃 구간까지 넓혀서 셉니다.</p>
+    <p class="fine">넣은 배당에서 발행처 몫을 걷어낸 확률(공정확률)을 구하고, 해외 마감 배당의 공정확률이 같은 구간에 있던 과거 경기를 모읍니다. 핸디캡·언더오버는 그 해외 기준점에서 해외 확률이 비슷했던 경기를 모읍니다. 그 경기들의 실제 점수 차와 총점 분포로 각 기준점의 결과를 셉니다. 표본이 {{ 250 }}경기보다 적으면 이웃 구간까지 넓혀서 셉니다.</p>
     <p class="fine">기록: 유럽 축구 16개 리그 최근 6시즌(football-data.co.uk), NBA·MLB 2011~2021 시즌(sportsbookreviewsonline 기록). MLB 기록은 배당 기록 시점이 섞인 경기가 있어 NBA보다 오차가 큽니다. 베트맨 지난 회차 기록은 분석에 쓰지 않습니다.</p>
   </details>
 </section>
