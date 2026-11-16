@@ -302,6 +302,12 @@
     }
     $$(".opick[data-leg]").forEach(function (b) { b.classList.toggle("is-on", slip.ids.indexOf(b.dataset.leg) >= 0); });
     renderTool(legs);
+    $$(".tl-game").forEach(function (li) {
+      var n = $$(".opick", li).filter(function (b) { return slip.ids.indexOf(b.dataset.leg) >= 0; }).length, h = $(".tl-head", li), c = $(".tl-n", li);
+      if (!h || !c) return;
+      h.classList.toggle("has-pick", n > 0);
+      c.textContent = n ? n + "개 담음" : "마켓 " + $$(".tl-mk", li).length + "개";
+    });
   }
   if (slipEl) {
     $("[data-slip-open]").addEventListener("click", function () { slipEl.classList.toggle("is-open"); });
@@ -392,34 +398,64 @@
     $("[data-t-stake]").textContent = won(s.stake);
     $("[data-t-pay]").textContent = won(pay);
     var fp = (s.f * 100).toFixed(s.f < 0.01 ? 2 : 1).replace(/\.?0+$/, "") + "%";
-    adv.textContent = "총 시드 " + won(B) + "의 " + fp + (s.capped ? "는 1회 한도를 넘어 " : "인 ") + won(s.stake) + "만 거는 것을 권장합니다. 맞을 확률은 " + pct(c.p) +
+    adv.textContent = "총 시드 " + won(B) + "의 " + fp + (s.capped ? "는 1회 한도를 넘어 " : "인 ") + won(s.stake) + " 베팅을 권장합니다. 맞을 확률은 " + pct(c.p) +
       "이고, 맞으면 " + won(pay) + "을 받습니다." + (legs.length === 1 ? " 한 경기 구매는 베트맨에서 '한경기구매' 표시가 있는 경기만 가능합니다." : "");
   }
+  /* 경기 고르기: 경기 하나 = 한 줄. 누르면 승무패·핸디캡·언더오버가 펼쳐진다 */
+  var toolOpen = {};
   function renderToolList(q) {
     var ul = $("[data-tool-list]");
     if (!data || !data.legs.length) { ul.innerHTML = '<li class="muted">지금 발매 중인 경기가 없습니다.</li>'; return; }
-    var groups = {};
-    data.legs.forEach(function (l) { (groups[l.match + "|" + l.mk] = groups[l.match + "|" + l.mk] || []).push(l); });
+    var games = {}, order = [];
+    data.legs.forEach(function (l) {
+      var g = games[l.match];
+      if (!g) { g = games[l.match] = { key: l.match, first: l, mks: {}, mkOrder: [] }; order.push(g); }
+      var mk = l.mk || "";
+      if (!g.mks[mk]) { g.mks[mk] = []; g.mkOrder.push(mk); }
+      g.mks[mk].push(l);
+    });
+    order.sort(function (a, b) { return a.first.ko < b.first.ko ? -1 : a.first.ko > b.first.ko ? 1 : 0; });
     ul.innerHTML = "";
     q = (q || "").trim().toLowerCase();
-    Object.keys(groups).forEach(function (k) {
-      var g = groups[k], first = g[0];
-      if (q && first.label.toLowerCase().indexOf(q) < 0) return;
-      var li = doc.createElement("li"), head = doc.createElement("div"), row = doc.createElement("div");
-      head.className = "tl-head"; head.innerHTML = "<small></small>";
-      head.querySelector("small").textContent = (first.no ? first.no + "번 " : "") + first.league + (first.mkl ? " · " + first.mkl : "");
-      head.appendChild(doc.createTextNode(first.label));
-      row.className = "odds-pick";
-      g.forEach(function (l) {
-        var b = doc.createElement("button");
-        b.type = "button"; b.className = "opick"; b.dataset.leg = l.id;
-        b.innerHTML = "<span></span><b></b>";
-        b.querySelector("span").textContent = l.pick;
-        b.querySelector("b").textContent = l.odds.toFixed(2);
-        row.appendChild(b);
+    order.forEach(function (g) {
+      var f = g.first;
+      if (q && f.label.toLowerCase().indexOf(q) < 0 && String(f.league).toLowerCase().indexOf(q) < 0) return;
+      var li = doc.createElement("li"), head = doc.createElement("button"), body = doc.createElement("div");
+      li.className = "tl-game";
+      head.type = "button"; head.className = "tl-head";
+      head.innerHTML = '<span class="tl-meta"></span><span class="tl-name"></span><span class="tl-n"></span><span class="tl-caret" aria-hidden="true"></span>';
+      var ko = String(f.ko || "");
+      $(".tl-meta", head).textContent = (f.no ? f.no + "번 · " : "") + f.league + (ko ? " · " + (+ko.slice(5, 7)) + "/" + (+ko.slice(8, 10)) + " " + ko.slice(11, 16) : "");
+      $(".tl-name", head).textContent = f.label;
+      var picked = g.mkOrder.reduce(function (n, mk) { return n + g.mks[mk].filter(function (l) { return slip.ids.indexOf(l.id) >= 0; }).length; }, 0);
+      $(".tl-n", head).textContent = picked ? picked + "개 담음" : "마켓 " + g.mkOrder.length + "개";
+      if (picked) head.classList.add("has-pick");
+      var open = !!toolOpen[g.key] || !!q;
+      head.setAttribute("aria-expanded", String(open));
+      body.className = "tl-body"; body.hidden = !open;
+      g.mkOrder.forEach(function (mk) {
+        var legs = g.mks[mk], row = doc.createElement("div"), lab = doc.createElement("p"), picks = doc.createElement("div");
+        row.className = "tl-mk"; lab.className = "tl-mkl"; lab.textContent = legs[0].mkl || "";
+        picks.className = "odds-pick";
+        legs.forEach(function (l) {
+          var bt = doc.createElement("button");
+          bt.type = "button"; bt.className = "opick"; bt.dataset.leg = l.id;
+          bt.innerHTML = "<span></span><b></b>";
+          bt.querySelector("span").textContent = l.pick;
+          bt.querySelector("b").textContent = l.odds.toFixed(2);
+          picks.appendChild(bt);
+        });
+        row.appendChild(lab); row.appendChild(picks); body.appendChild(row);
       });
-      li.appendChild(head); li.appendChild(row); ul.appendChild(li);
+      head.addEventListener("click", function () {
+        var now = head.getAttribute("aria-expanded") !== "true";
+        toolOpen[g.key] = now;
+        head.setAttribute("aria-expanded", String(now));
+        body.hidden = !now;
+      });
+      li.appendChild(head); li.appendChild(body); ul.appendChild(li);
     });
+    if (!ul.children.length) ul.innerHTML = '<li class="muted">검색 결과가 없습니다.</li>';
     render();
   }
   if (tool) {

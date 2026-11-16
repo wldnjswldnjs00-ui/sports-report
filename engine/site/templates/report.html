@@ -50,8 +50,7 @@
       <div class="tp-body">
         <p class="tp-league">{{ SPORT_LABEL[t.sport] }} · {{ t.league }} · {{ t.kickoff|kdt }}</p>
         <h3 class="tp-match">{{ t.home }} <i>vs</i> {{ t.away }}</h3>
-        {% set xo = ((tm.analysis.x_odds or {}).get(t.outcome)) if tm.analysis else none %}
-        <p class="tp-pick"><span class="bub on">{{ outcome(t, t.outcome) }}</span> {% if xo %}<span>해외 {{ xo|odds }}배</span><small>베트맨 {{ t.odds|odds }}배</small>{% else %}<span>{{ t.odds|odds }}배</span>{% endif %}</p>
+        <p class="tp-pick"><span class="bub on">{{ outcome(t, t.outcome) }}</span> <span>{{ t.odds|odds }}배</span></p>
         {{ prob_bar(tm) }}
         {{ oreo_block(tm) }}
       </div>
@@ -59,7 +58,7 @@
         <div><dt>추정 확률</dt><dd>{{ t.p|pct(1) }}</dd></div>
         <div><dt>신뢰도</dt><dd>{{ t.confidence }}</dd></div>
         <div><dt>이변 위험</dt><dd>{{ t.upset_risk }}</dd></div>
-        {% if xo %}<div><dt>해외 배당{{ ' (환산)' if tm.analysis.x_kind == '환산' }}</dt><dd>{{ xo|odds }}</dd></div>{% else %}<div><dt>베트맨 배당</dt><dd>{{ t.odds|odds }}</dd></div>{% endif %}
+        <div><dt>배당</dt><dd>{{ t.odds|odds }}</dd></div>
       </dl>
     </article>
   {% endif %}{% endfor %}
