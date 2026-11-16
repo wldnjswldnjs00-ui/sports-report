@@ -467,32 +467,16 @@
     $("[data-tool-search]").addEventListener("input", function (e) { renderToolList(e.target.value); });
   }
 
-  /* 조합 카드 권장 금액: "시드 30만 원의 1.5% = 4,500원" (계산기와 같은 시드·같은 기준) */
-  var seedEl = $("[data-seed]");
-  function seedVal() {
-    var v = seedEl ? parseInt(String(seedEl.value).replace(/[^0-9]/g, ""), 10) : 0;
-    if (!v) v = parseInt(store.get("budget"), 10) || 300000;
-    return Math.min(MAX_SEED, v);
-  }
+  /* 조합 카드 권장 금액: 금액 계산기에 넣은 시드(없으면 30만 원) 기준 "시드 30만 원의 1.5% · 4,500원 베팅 권장" */
   function paintStakes() {
-    var B = seedVal();
+    var B = Math.min(MAX_SEED, parseInt(store.get("budget"), 10) || 300000);
     $$("[data-stake]").forEach(function (el) {
       var p = parseFloat(el.dataset.p), o = parseFloat(el.dataset.odds);
       if (!(p > 0) || !(o > 1)) { el.hidden = true; return; }
       var s = stakeFor(p, o, B), fp = (s.f * 100).toFixed(s.f < 0.01 ? 2 : 1).replace(/\.?0+$/, "") + "%";
-      el.innerHTML = "<span></span><b></b>";
-      el.querySelector("span").textContent = "시드 " + won(B) + "의 " + fp + (s.capped ? " (1회 한도)" : "");
-      el.querySelector("b").textContent = won(s.stake) + " 권장";
-    });
-  }
-  if (seedEl) {
-    var sv = parseInt(store.get("budget"), 10);
-    if (sv) seedEl.value = sv.toLocaleString("ko-KR");
-    seedEl.addEventListener("input", function () {
-      var v = Math.min(MAX_SEED, parseInt(String(seedEl.value).replace(/[^0-9]/g, ""), 10) || 0);
-      seedEl.value = v ? v.toLocaleString("ko-KR") : "";
-      if (v) store.set("budget", v);
-      paintStakes();
+      el.innerHTML = '<a href="/tool/" title="시드는 금액 계산기에서 바꿀 수 있습니다"></a><b></b>';
+      el.querySelector("a").textContent = "시드 " + won(B) + "의 " + fp + (s.capped ? " (1회 한도)" : "");
+      el.querySelector("b").textContent = won(s.stake) + " 베팅 권장";
     });
   }
   paintStakes();
