@@ -63,6 +63,12 @@ jobs:
           if [ -z "$THREADS_TOKEN" ]; then echo "토큰 없음"; exit 0; fi
           pip install -q playwright==1.47.0 && python -m playwright install --with-deps chromium >/dev/null
           python -m engine threads --prepare
+      - name: 자동 점검(커밋 전에 실행해 연속 실패 기록을 남김, 문제가 이어지면 GitHub 이슈로 알림 → 이메일)
+        if: always()
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python -m engine health
       - name: 사이트 빌드 검증
         id: build
         if: always()
@@ -98,12 +104,6 @@ jobs:
             if git pull --rebase -X theirs origin "${GITHUB_REF_NAME}" && git push; then exit 0; fi
             sleep $((i * 5))
           done
-      - name: 자동 점검(문제가 이어지면 GitHub 이슈로 알림 → 이메일)
-        if: always()
-        continue-on-error: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python -m engine health
       - name: 검색엔진에 새 페이지 알림(IndexNow)
         if: steps.commit.outputs.pushed == '1'
         continue-on-error: true
