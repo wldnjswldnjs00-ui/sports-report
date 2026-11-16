@@ -284,7 +284,7 @@
       $("[data-slip-odds]").textContent = c ? c.odds.toFixed(2) : "–";
       $("[data-slip-p]").textContent = c ? pct(c.p) : "–";
       $("[data-slip-pay]").textContent = c ? won(Math.floor(10000 * c.odds / 10) * 10) : "–";
-      $("[data-slip-warn]").textContent = legs.length === 1 ? "프로토 승부식은 2경기 이상 묶어야 합니다." : "";
+      $("[data-slip-warn]").textContent = "";
     }
     $$(".opick[data-leg]").forEach(function (b) { b.classList.toggle("is-on", slip.ids.indexOf(b.dataset.leg) >= 0); });
     renderTool(legs);
@@ -369,16 +369,16 @@
     var c = calc(legs), adv = $("[data-t-advice]"), B = budget();
     $("[data-t-odds]").textContent = c ? c.odds.toFixed(2) + "배" : "–";
     $("[data-t-p]").textContent = c ? pct(c.p) : "–";
-    if (!c || c.p == null || legs.length < 2 || !B) {
+    if (!c || c.p == null || !B) {
       $("[data-t-stake]").textContent = "–"; $("[data-t-pay]").textContent = "–";
-      adv.textContent = !B ? "예산을 입력하세요." : legs.length < 2 ? "경기를 2개 이상 고르면 권장 금액이 나옵니다." : "";
+      adv.textContent = !B ? "예산을 입력하세요." : !legs.length ? "경기를 고르면 권장 금액이 나옵니다." : "";
       return;
     }
     var s = stakeFor(c.p, B), pay = Math.floor(s.stake * c.odds / 10) * 10;
     $("[data-t-stake]").textContent = won(s.stake);
     $("[data-t-pay]").textContent = won(pay);
     adv.textContent = "예산 " + won(B) + " 중 " + Math.round(s.f * 100) + "%인 " + won(s.stake) + "을 권장합니다. 이 조합이 맞을 확률은 " + pct(c.p) +
-      "이고, 맞으면 " + won(pay) + "을 받습니다. 남은 " + won(B - s.stake) + "은 다른 조합에 나눠 쓰세요.";
+      "이고, 맞으면 " + won(pay) + "을 받습니다." + (legs.length === 1 ? " 한 경기 구매는 베트맨에서 '한경기구매' 표시가 있는 경기만 가능합니다." : "") + " 남은 " + won(B - s.stake) + "은 다른 조합에 나눠 쓰세요.";
   }
   function renderToolList(q) {
     var ul = $("[data-tool-list]");

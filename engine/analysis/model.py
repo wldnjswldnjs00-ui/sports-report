@@ -35,7 +35,7 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
     used = []
     if ref:
         # 해외 배당이 있으면 그것을 기준으로 삼는다(가장 크고 정확한 시장). 나머지는 보조.
-        sources.append((ref, 0.80)); used.append("해외 배당")
+        sources.append((ref, 0.80)); used.append("해외 배당(기준점 환산)" if m.get("ref_kind") == "환산" else "해외 배당")
         if p_elo:
             sources.append((p_elo, 0.08)); used.append("Elo")
         if p_hist:

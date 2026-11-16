@@ -49,20 +49,74 @@ def _save_quota(r) -> None:
                                                           "at": config.now_kst().isoformat(timespec="seconds")})
 
 
+def active_sports() -> set[str] | None:
+    """지금 제공되는 종목 키 목록(무료 호출). 하루 한 번만 확인."""
+    path = config.STATE / "odds_api_sports.json"
+    st = read_json(path, {}) or {}
+    if st.get("date") == config.today_kst() and st.get("keys"):
+        return set(st["keys"])
+    try:
+        r = http("GET", f"{BASE}/sports", params={"apiKey": config.ODDS_API_KEY}, retries=2)
+        rows = r.json()
+        keys = sorted(x["key"] for x in rows if x.get("active"))
+        write_json(path, {"date": config.today_kst(), "keys": keys, "titles": {x["key"]: x.get("title") for x in rows if x.get("active")}})
+        return set(keys)
+    except Exception as e:  # noqa: BLE001
+        log.warning("Odds API 종목 목록 실패: %s", type(e).__name__)
+        return set(st["keys"]) if st.get("keys") else None
+
+
 def _fetch_sport(sport_key: str, day: str, refresh: bool) -> list[dict]:
-    path = CACHE / f"{day}_{sport_key}.json"
+    path = CACHE / f"{day}_{sport_key}_m3.json"
     cached = read_json(path)
-    if cached is not None and (not refresh or not _credits_ok(200)):
+    if cached is not None and (not refresh or not _credits_ok(250)):
         return cached  # 갱신은 크레딧 여유가 있을 때만
     if not _credits_ok():
         log.warning("Odds API 크레딧 부족, 캐시 사용")
         return cached or []
     r = http("GET", f"{BASE}/sports/{sport_key}/odds", params={
-        "apiKey": config.ODDS_API_KEY, "regions": "eu", "markets": "h2h", "oddsFormat": "decimal"})
+        "apiKey": config.ODDS_API_KEY, "regions": "eu", "markets": "h2h,spreads,totals", "oddsFormat": "decimal"})
     _save_quota(r)
     data = r.json()
     write_json(path, data)
     return data
+
+
+def _two_way(rows: list[tuple[float, float, float]]) -> list | None:
+    """[(기준점, 왼쪽 배당, 오른쪽 배당)] → [가장 흔한 기준점, 왼쪽 공정확률]."""
+    if not rows:
+        return None
+    from collections import Counter
+    line = Counter(r[0] for r in rows).most_common(1)[0][0]
+    sel = [r for r in rows if r[0] == line]
+    a, b = median(r[1] for r in sel), median(r[2] for r in sel)
+    pa, pb = 1 / a, 1 / b
+    return [line, round(pa / (pa + pb), 4)]
+
+
+def parse_event(event: dict) -> dict:
+    """해외 배당 요약: 승패 공정확률·원 배당, 홈 핸디 기준점과 커버 확률, 합계 기준점과 오버 확률."""
+    if "_x" in event:
+        return event["_x"]
+    home, away = event["home_team"], event["away_team"]
+    books = event.get("bookmakers") or []
+    pick = [b for b in books if b.get("key") in SHARP] or books
+    spreads, totals = [], []
+    for b in pick:
+        for mk in b.get("markets", []):
+            oc = {o["name"]: o for o in mk.get("outcomes", [])}
+            try:
+                if mk.get("key") == "spreads" and home in oc and away in oc:
+                    spreads.append((float(oc[home]["point"]), float(oc[home]["price"]), float(oc[away]["price"])))
+                elif mk.get("key") == "totals" and "Over" in oc and "Under" in oc:
+                    totals.append((float(oc["Over"]["point"]), float(oc["Over"]["price"]), float(oc["Under"]["price"])))
+            except (KeyError, TypeError, ValueError):
+                continue
+    x = {"h2h": _fair(event), "h2h_odds": event.get("_med"), "spread": _two_way(spreads), "total": _two_way(totals)}
+    if x["h2h"]:
+        x["h2h"] = {k: round(v, 4) for k, v in x["h2h"].items()}
+    event["_x"] = x
+    return x
 
 
 def _fair(event: dict) -> dict[str, float] | None:
@@ -113,14 +167,19 @@ def _match(m: dict, events: list[dict], amap: dict[str, str]) -> dict | None:
 
 
 def reference(markets: list[dict[str, Any]], day: str, refresh: bool = False) -> tuple[dict[str, dict], str]:
-    """{market_id: 공정확률} 과 상태 문자열."""
+    """{market_id: 해외 배당 기준 확률} 과 상태 문자열. 핸디캡·언더오버는 베트맨 기준점으로 환산한다."""
     if not config.ODDS_API_KEY:
         return {}, "키 없음"
+    from ..analysis.derive import from_overseas
     amap = alias_map()
     out: dict[str, dict] = {}
-    sports = {odds_api_key_for(m["league"]) for m in markets if m["market"] in ("1X2", "WL")} - {None}
-    errors = 0
+    sports = {odds_api_key_for(m["league"]) for m in markets} - {None}
+    active = active_sports()
+    errors, skipped = 0, 0
     for sk in sorted(sports):
+        if active is not None and sk not in active:
+            skipped += 1  # 지금 해외 시장에 없는 대회
+            continue
         try:
             events = _fetch_sport(sk, day, refresh)
         except Exception as e:  # noqa: BLE001
@@ -128,24 +187,22 @@ def reference(markets: list[dict[str, Any]], day: str, refresh: bool = False) ->
             errors += 1
             continue
         for m in markets:
-            if odds_api_key_for(m["league"]) != sk or m["market"] not in ("1X2", "WL"):
+            if odds_api_key_for(m["league"]) != sk:
                 continue
             e = _match(m, events, amap)
             if not e:
                 continue
-            fair = _fair(e)
-            if not fair:
+            x = parse_event(e)
+            m["x"] = {k: v for k, v in x.items() if v}
+            p = from_overseas(m)
+            if not p:
                 continue
-            if m["market"] == "WL" and "D" in fair:
-                # 승패 마켓(연장 포함)에는 무승부를 비례 배분
-                d = fair.pop("D")
-                t = fair["H"] + fair["A"]
-                fair = {"H": fair["H"] + d * fair["H"] / t, "A": fair["A"] + d * fair["A"] / t}
-            if set(fair) == set(m["odds"]):
-                out[m["id"]] = fair
-                m["ref_event"] = e["id"]
-                m["ref_odds"] = e.get("_med")
-    status = f"{len(out)}개 매칭" + (f", 오류 {errors}" if errors else "")
+            out[m["id"]] = p
+            m["ref_event"] = e["id"]
+            if m["market"] in ("1X2", "WL"):
+                m["ref_odds"] = x.get("h2h_odds")
+            m["ref_kind"] = "직접" if m["market"] in ("1X2", "WL") else "환산"
+    status = f"{len(out)}개 매칭" + (f", 제공 안 됨 {skipped}" if skipped else "") + (f", 오류 {errors}" if errors else "")
     return out, status
 
 

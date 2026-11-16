@@ -87,12 +87,20 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
     # R: 가장 강한 근거부터 최대 2개
     reasons: list[str] = []
     ref, bet = a.get("p_ref") or {}, a.get("p_betman") or {}
-    if pick in ref:
+    if pick in ref and m.get("ref_kind") != "환산":
         gap = (ref[pick] - bet.get(pick, ref[pick])) * 100
         if abs(gap) >= 3:
             reasons.append(f"해외 시장은 이 결과를 {_pct(ref[pick])}로 본다. 베트맨 내재확률({_pct(bet[pick])})보다 {'높다' if gap > 0 else '낮다'}")
         else:
             reasons.append(f"해외 시장 확률({_pct(ref[pick])})과 베트맨 배당이 같은 방향을 가리킨다")
+    x = m.get("x") or {}
+    if m.get("ref_kind") == "환산" and pick in ref:
+        if m["market"] == "OU" and x.get("total"):
+            reasons.append(f"해외 시장의 합계 기준점은 {x['total'][0]:g}이다. 이를 베트맨 기준점 {m.get('line'):g}로 환산하면 이 결과가 {_pct(ref[pick])}")
+        elif m["market"] == "HANDICAP" and x.get("spread"):
+            reasons.append(f"해외 시장의 핸디캡 기준점은 홈 {x['spread'][0]:+g}이다. 베트맨 기준점 {m.get('line'):+g}로 환산하면 이 결과가 {_pct(ref[pick])}")
+        elif m["market"] == "HANDICAP":
+            reasons.append(f"해외 승무패 배당을 베트맨 핸디캡 {m.get('line'):+g}로 환산하면 이 결과가 {_pct(ref[pick])}")
     fn = _flow_note(m, pick)
     if fn:
         reasons.append(fn)
