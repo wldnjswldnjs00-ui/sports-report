@@ -96,9 +96,15 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
     x = m.get("x") or {}
     if m.get("ref_kind") == "환산" and pick in ref:
         if m["market"] == "OU" and x.get("total"):
-            reasons.append(f"해외 시장의 합계 기준점은 {x['total'][0]:g}이다. 이를 베트맨 기준점 {m.get('line'):g}로 환산하면 이 결과가 {_pct(ref[pick])}")
+            if abs(x["total"][0] - (m.get("line") or 0)) < 0.01:
+                reasons.append(f"해외 시장도 같은 기준점 {x['total'][0]:g}에서 이 결과를 {_pct(ref[pick])}로 본다")
+            else:
+                reasons.append(f"해외 시장의 합계 기준점은 {x['total'][0]:g}이다. 베트맨 기준점 {m.get('line'):g}로 환산하면 이 결과가 {_pct(ref[pick])}")
         elif m["market"] == "HANDICAP" and x.get("spread"):
-            reasons.append(f"해외 시장의 핸디캡 기준점은 홈 {x['spread'][0]:+g}이다. 베트맨 기준점 {m.get('line'):+g}로 환산하면 이 결과가 {_pct(ref[pick])}")
+            if abs(x["spread"][0] - (m.get("line") or 0)) < 0.01:
+                reasons.append(f"해외 시장도 같은 핸디캡 {x['spread'][0]:+g}에서 이 결과를 {_pct(ref[pick])}로 본다")
+            else:
+                reasons.append(f"해외 시장의 핸디캡 기준점은 홈 {x['spread'][0]:+g}이다. 베트맨 기준점 {m.get('line'):+g}로 환산하면 이 결과가 {_pct(ref[pick])}")
         elif m["market"] == "HANDICAP":
             reasons.append(f"해외 승무패 배당을 베트맨 핸디캡 {m.get('line'):+g}로 환산하면 이 결과가 {_pct(ref[pick])}")
     fn = _flow_note(m, pick)
