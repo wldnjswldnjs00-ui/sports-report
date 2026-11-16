@@ -542,3 +542,10 @@ html:not(.is-mobile):not(.is-pc) .mo-only { display: none; }
 .mini { display: inline-block; width: 70px; height: 6px; border-radius: 3px; background: var(--card-2); overflow: hidden; vertical-align: middle; margin-right: 8px; }
 .mini i { display: block; height: 100%; background: var(--grad); }
 .line-tbl td { vertical-align: middle; white-space: nowrap; }
+
+.pickers { margin-bottom: 12px; gap: 12px; }
+.pickers label { display: grid; gap: 4px; font-size: 12px; font-weight: 700; color: var(--ink-3); }
+.pickers select { min-width: 150px; padding: 9px 12px; font-size: 14px; }
+.tblw.tall { max-height: 620px; overflow: auto; border: 1px solid var(--line); }
+.tblw.tall .tbl { border: 0; border-radius: 0; }
+.tblw.tall thead th { position: sticky; top: 0; z-index: 1; }

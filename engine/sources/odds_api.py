@@ -91,6 +91,7 @@ def _fair(event: dict) -> dict[str, float] | None:
     for r in rows:
         keys &= set(r)
     med = {k: median(r[k] for r in rows) for k in keys}
+    event["_med"] = {k: round(v, 2) for k, v in med.items()}
     s = sum(1 / v for v in med.values())
     return {k: (1 / v) / s for k, v in med.items()}
 
@@ -143,6 +144,7 @@ def reference(markets: list[dict[str, Any]], day: str, refresh: bool = False) ->
             if set(fair) == set(m["odds"]):
                 out[m["id"]] = fair
                 m["ref_event"] = e["id"]
+                m["ref_odds"] = e.get("_med")
     status = f"{len(out)}개 매칭" + (f", 오류 {errors}" if errors else "")
     return out, status
 

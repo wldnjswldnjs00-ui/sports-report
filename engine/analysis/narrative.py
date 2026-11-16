@@ -114,9 +114,10 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
     ev: list[str] = []
     pr = a.get("pair")
     if pr and pr["kind"] == "2way":
-        ev.append(f"과거 {pr['lo']:.1f}배 대 {pr['hi']:.1f}배 구도 {pr['n']:,}건에서 {pr['lo']:.1f}배 쪽이 {_pct(pr['lo_rate'])}, {pr['hi']:.1f}배 쪽이 {_pct(pr['hi_rate'])} 이겼다")
+        ev.append(f"과거 {pr['lo']:.2f}배 대 {pr['hi']:.2f}배와 같은 구도 {pr['n']:,}건에서 {pr['lo']:.2f}배 쪽이 {_pct(pr['lo_rate'])}, {pr['hi']:.2f}배 쪽이 {_pct(pr['hi_rate'])} 이겼다")
     elif pr and pr["kind"] == "1X2":
-        ev.append(f"과거 홈 {pr['ho']:.1f}배 대 원정 {pr['ao']:.1f}배 구도 {pr['n']:,}건은 홈승 {_pct(pr['H'])}, 무 {_pct(pr['D'])}, 원정승 {_pct(pr['A'])}였다")
+        src = "해외 배당 " if pr.get("src") == "해외" else ""
+        ev.append(f"{src}홈 {pr['ho']:.2f}배 대 원정 {pr['ao']:.2f}배와 같은 구도 {pr['n']:,}경기는 홈승 {_pct(pr['H'])}, 무 {_pct(pr['D'])}, 원정승 {_pct(pr['A'])}였다")
     h = (a.get("hist") or {}).get(pick)
     if h and not pr:
         ev.append(f"베트맨에서 {h['bucket']} 배당은 과거 {h['n']:,}건 중 {_pct(h['hit'])}가 맞았다")

@@ -285,7 +285,7 @@ def upset_legs(markets: list[dict[str, Any]], limit: int = 6) -> list[dict[str, 
                 reasons.append("해외 시장 기준 배당이 후함")
             pr = a.get("pair")
             if pr and pr["kind"] == "2way" and pr["hi_key"] == k and pr["hi_rate"] * o > 0.93:
-                reasons.append(f"과거 {pr['lo']:.1f} 대 {pr['hi']:.1f}배 구도에서 {pr['hi_rate'] * 100:.0f}% 승리")
+                reasons.append(f"과거 {pr['lo']:.2f} 대 {pr['hi']:.2f}배 구도에서 {pr['hi_rate'] * 100:.0f}% 승리")
             if pr and pr["kind"] == "1X2" and pr.get(k, 0) * o > 0.93:
                 reasons.append(f"과거 같은 배당 구도에서 {pr[k] * 100:.0f}% 승리")
             if not reasons or p < 0.2:

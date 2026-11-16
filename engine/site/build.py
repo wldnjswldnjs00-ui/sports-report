@@ -263,13 +263,25 @@ def build() -> None:
 
     summaries = [_report_summary(r) for r in reports]
     leagues = _leagues(reports[:60])
-    pair_rows = []
+    pair_rows, x_rows, xou_rows = [], [], []
     for k, v in ((book or {}).get("pairs") or {}).items():
         mk_, lo_, hi_ = k.split("|")
         if mk_ != "1X2" and v["n"] >= 25:
-            pair_rows.append({"mk": mk_, "lo": int(lo_) / 10, "hi": int(hi_) / 10, "n": v["n"], "hi_rate": v["hi"] / v["n"]})
+            pair_rows.append({"mk": mk_, "lo": int(lo_), "hi": int(hi_), "lo_l": OB.band_label(int(lo_)), "hi_l": OB.band_label(int(hi_)),
+                              "n": v["n"], "hi_rate": v["hi"] / v["n"]})
     pair_rows.sort(key=lambda x: (x["mk"], x["lo"], x["hi"]))
-    ctx = dict(pair_rows=pair_rows, book=book, best_buckets=OB.best_buckets(book) if book else [], ob_label=OB.label, perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues)
+    for k, v in ((book or {}).get("xpairs") or {}).items():
+        kind, a_, b_ = k.split("|")
+        if v["n"] < 30:
+            continue
+        if kind == "X":
+            x_rows.append({"h": int(a_), "a": int(b_), "h_l": OB.band_label(int(a_)), "a_l": OB.band_label(int(b_)), "n": v["n"],
+                           "H": v["h"] / v["n"], "D": v["d"] / v["n"], "A": v["a"] / v["n"]})
+        else:
+            xou_rows.append({"o": int(a_), "u": int(b_), "o_l": OB.band_label(int(a_)), "u_l": OB.band_label(int(b_)), "n": v["n"], "over": v["over"] / v["n"]})
+    x_rows.sort(key=lambda x: (x["h"], x["a"]))
+    xou_rows.sort(key=lambda x: (x["o"], x["u"]))
+    ctx = dict(pair_rows=pair_rows, x_rows=x_rows, xou_rows=xou_rows, book=book, best_buckets=OB.best_buckets(book) if book else [], ob_label=OB.label, perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues)
     urls: list[tuple[str, str]] = []
 
     def page(tpl: str, out: str, **kw):

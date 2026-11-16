@@ -45,8 +45,8 @@
   <section class="block" data-reveal>
     {% for m in g.markets %}{% set pr = m.analysis.pair if m.analysis else none %}{% if pr %}
     <p class="pairline">{{ MARKET_LABEL[m.market] }}{% if m.line is not none %} {{ m.line }}{% endif %} ·
-      {% if pr.kind == '2way' %}과거 <b>{{ '%.1f'|format(pr.lo) }}배 대 {{ '%.1f'|format(pr.hi) }}배</b> 구도 {{ pr.n }}건: {{ outcome(m, pr.lo_key) }}({{ '%.1f'|format(pr.lo) }}배) {{ pr.lo_rate|pct }} · {{ outcome(m, pr.hi_key) }}({{ '%.1f'|format(pr.hi) }}배) <b>{{ pr.hi_rate|pct }}</b>
-      {% else %}과거 <b>홈 {{ '%.1f'|format(pr.ho) }}배 대 원정 {{ '%.1f'|format(pr.ao) }}배</b> 구도 {{ pr.n }}건: 승 {{ pr.H|pct }} · 무 {{ pr.D|pct }} · 패 {{ pr.A|pct }}{% endif %}</p>
+      {% if pr.kind == '2way' %}<b>{{ pr.lo|odds }}배 대 {{ pr.hi|odds }}배</b>와 같은 구도 {{ pr.n }}건: {{ outcome(m, pr.lo_key) }}({{ pr.lo|odds }}) {{ pr.lo_rate|pct }} · {{ outcome(m, pr.hi_key) }}({{ pr.hi|odds }}) <b>{{ pr.hi_rate|pct }}</b>
+      {% else %}{{ '해외 배당 ' if pr.src == '해외' }}<b>홈 {{ pr.ho|odds }}배 대 원정 {{ pr.ao|odds }}배</b>와 같은 구도 {{ '{:,}'.format(pr.n) }}경기: 홈승 {{ pr.H|pct }} · 무 {{ pr.D|pct }} · 원정승 {{ pr.A|pct }}{% endif %}</p>
     {% endif %}{% endfor %}
     <div class="block-head"><h2>마켓별 배당과 확률</h2><p>배당 흐름은 첫 발매 배당에서 지금까지의 변화입니다. 배당이 내려간 쪽으로 구매가 몰립니다. 과거 적중률은 베트맨 지난 회차에서 같은 배당 구간이 실제로 맞은 비율입니다.</p></div>
     <table class="tbl">

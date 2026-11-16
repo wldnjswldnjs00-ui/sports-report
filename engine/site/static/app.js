@@ -91,6 +91,17 @@
     setInterval(next, 10000);
   });
 
+  /* 표 필터(배당 분석) */
+  $$("[data-filter-table]").forEach(function (tbl) {
+    var keys = tbl.dataset.filterTable.split(","), sels = keys.map(function (k) { return $('[data-filter="' + k + '"]'); });
+    function run() {
+      $$("tbody tr", tbl).forEach(function (tr) {
+        tr.hidden = !keys.every(function (k, i) { return !sels[i] || !sels[i].value || tr.dataset[k] === sels[i].value; });
+      });
+    }
+    sels.forEach(function (s) { if (s) s.addEventListener("change", run); });
+  });
+
   /* 탭 */
   $$("[data-tabs]").forEach(function (tabs) {
     var btns = $$("[role=tab]", tabs), ink = $(".tabs-ink", tabs);

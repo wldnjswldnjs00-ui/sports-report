@@ -298,10 +298,16 @@ def history(max_rounds: int = 8) -> None:
         betman_history.backfill(max_rounds)
     except Exception:  # noqa: BLE001
         log.exception("백필 실패")
+    from .sources import overseas_history
+    try:
+        overseas_history.backfill()
+    except Exception:  # noqa: BLE001
+        log.exception("해외 기록 수집 실패")
     rows = betman_history.load_all()
-    if rows:
-        oddsbook.save(oddsbook.build(rows))
-        log.info("배당 구간표 갱신: %d개 선택 기록", len(rows))
+    xrows = overseas_history.load_all()
+    if rows or xrows:
+        oddsbook.save(oddsbook.build(rows, xrows))
+        log.info("배당 구도표 갱신: 베트맨 %d건, 해외 %d경기", len(rows), len(xrows))
 
 
 def demo(days: int = 21) -> None:
