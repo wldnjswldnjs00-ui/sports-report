@@ -169,6 +169,21 @@ class BetmanResults(unittest.TestCase):
         self.assertEqual(settle(m, g(2)), "H")
 
 
+class OddsBook(unittest.TestCase):
+    def test_build_lookup(self):
+        from engine.analysis import oddsbook as OB
+        rows = []
+        for i in range(100):  # 1.25배 정배 100번 중 85번 적중, 승패 농구
+            rows.append(["basketball", "NBA", "WL", 0, 1.25, 0, 3.4, 0 if i < 85 else 2, 0, 0])
+        book = OB.build(rows)
+        s = OB.lookup(book, "basketball", "WL", "H", 1.27)
+        self.assertEqual(s["n"], 100)
+        self.assertAlmostEqual(s["hit"], 0.85)
+        self.assertAlmostEqual(s["roi"], 0.85 * 1.25 - 1, places=3)
+        p, info = OB.hist_probs(book, {"sport": "basketball", "market": "WL", "odds": {"H": 1.25, "A": 3.4}})
+        self.assertGreater(p["H"], 0.75)
+
+
 class Pipeline(unittest.TestCase):
     def test_demo_end_to_end_and_lock(self):
         from engine import config, pipeline

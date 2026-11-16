@@ -450,3 +450,7 @@ dd { margin: 3px 0 0; font: 300 22px/1.2 var(--font); letter-spacing: -0.02em; }
 .m-link a { color: var(--guide); text-decoration: none; font-weight: 500; }
 .prose-lite p { max-width: 70ch; color: var(--ink-2); }
 @media (max-width: 720px) { .match-sum { grid-template-columns: 1fr; } }
+
+.tag.flow { background: var(--guide-faint); color: var(--guide); border: 1px solid var(--guide-soft); }
+.hist-cell small { display: block; color: var(--ink-3); font-size: 11px; }
+[data-days] { margin-left: 0; }

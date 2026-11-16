@@ -35,6 +35,7 @@ def main(argv=None) -> int:
     elif a.cmd == "run":
         # 채점을 먼저 해서 Elo·보정값이 최신 상태로 분석에 들어가게 한다.
         failed = False
+        pipeline.history(int(a.days if a.days != 21 else 8))
         try:
             pipeline.grade(day, fetch_scores=not a.no_scores)
         except Exception:  # noqa: BLE001

@@ -68,9 +68,9 @@ MID_PROB = [
     "추정 {pp}에 배당 {po}배가 걸려 있다.",
 ]
 EV_NEG = [
-    "다만 기대값은 {ev}로, 배당이 확률을 충분히 보상하지 못한다.",
-    "기대값은 {ev}. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다.",
-    "배당 대비 기대값 {ev}. 조합의 안정 축으로만 쓸 만하다.",
+    "배당 대비 기대값은 {ev}.",
+    "기대값 {ev}. 조합의 안정 축으로 쓰기 좋은 경기다.",
+    "기대값 {ev}.",
 ]
 EV_POS = [
     "배당이 추정 확률보다 후하다. 기대값 {ev}.",
@@ -140,23 +140,21 @@ def describe(m: dict[str, Any]) -> str:
 
 
 def headline(report: dict[str, Any]) -> str:
-    """리포트 상단 한 줄 요약."""
+    """리포트 상단 한 줄: 그날 가장 볼 만한 경기를 짚는다."""
     r = _rng(report["date"])
     n = report["stats"]["matches"]
-    v = len(report.get("value_picks") or [])
     if n == 0:
         failed = any(str(v).startswith("실패") for v in (report.get("sources") or {}).values())
-        if failed:
-            return "발매 정보를 아직 받아오지 못했다. 다음 수집 때 다시 시도한다."
-        return "오늘은 분석할 발매 경기가 없다."
-    if v:
+        return "발매 정보를 불러오는 중입니다. 잠시 후 다시 확인해 주세요." if failed else "오늘은 발매된 경기가 없습니다."
+    t = report.get("top_pick")
+    up = report["stats"].get("upcoming", 0)
+    tail = f" 이후 {up}경기 미리보기 포함." if up else ""
+    if t:
+        side = t["home"] if t["outcome"] == "H" else t["away"] if t["outcome"] == "A" else "무승부"
+        how = {"H": "홈승", "A": "원정승", "D": "무승부"}.get(t["outcome"], "")
         opts = [
-            f"{n}경기 중 배당이 확률보다 후한 선택 {v}개.",
-            f"오늘 {n}경기. 기대값 플러스 선택은 {v}개로 추렸다.",
+            f"오늘 프로토 {n}경기. 가장 확실한 선택은 {side} {how}({t['p'] * 100:.0f}%).",
+            f"{n}경기 분석 완료. 오늘의 기준점은 {side} {how}, 추정 {t['p'] * 100:.0f}%.",
         ]
-    else:
-        opts = [
-            f"{n}경기를 봤다. 기대값이 플러스인 선택은 없다. 소액이거나 쉬는 날.",
-            f"오늘 {n}경기. 배당이 확률을 이기는 경기를 찾지 못했다.",
-        ]
-    return r.choice(opts)
+        return r.choice(opts) + tail
+    return f"오늘 프로토 {n}경기 분석 완료." + tail

@@ -33,9 +33,9 @@
   {% endif %}
 
   <section class="block" data-reveal>
-    <div class="block-head"><h2>마켓별 배당과 확률</h2><p>베트맨 발매 배당과 모델 추정 확률입니다. 결과 칸을 누르면 내 조합에 담깁니다.</p></div>
+    <div class="block-head"><h2>마켓별 배당과 확률</h2><p>배당 흐름은 첫 발매 배당에서 지금까지의 변화입니다. 배당이 내려간 쪽으로 구매가 몰립니다. 과거 적중률은 베트맨 지난 회차에서 같은 배당 구간이 실제로 맞은 비율입니다.</p></div>
     <table class="tbl">
-      <thead><tr><th>마켓</th><th>선택</th><th class="n">배당</th><th class="n">추정 확률</th><th class="n">기대값</th><th>결과</th></tr></thead>
+      <thead><tr><th>마켓</th><th>선택</th><th class="n">배당</th><th class="n">배당 흐름</th><th class="n">추정 확률</th><th class="n">같은 배당 과거 적중률</th><th class="n">기대값</th><th>결과</th></tr></thead>
       <tbody>
       {% for m in g.markets %}{% set a = m.analysis %}{% set o = outs.get(m.id) %}
         {% for k, od in m.odds.items() %}
@@ -43,7 +43,9 @@
           {% if loop.first %}<td rowspan="{{ m.odds|length }}">{{ MARKET_LABEL[m.market] }}{% if m.line is not none %} <span class="muted">{{ '%+g'|format(m.line) if m.market != 'OU' else m.line }}</span>{% endif %}</td>{% endif %}
           <td><button type="button" class="opick mini{% if a and k == a.pick %} is-model{% endif %}" data-leg="{{ m.id }}|{{ k }}"><span>{{ outcome(m, k) }}</span></button></td>
           <td class="n">{{ od|odds }}</td>
+          <td class="n">{% set f0 = (m.flow.from if m.flow else {}).get(k) %}{% if f0 and f0 != od %}<span class="{{ 'down' if od < f0 else 'up' }}">{{ f0|odds }}→{{ od|odds }}</span>{% else %}<span class="muted">–</span>{% endif %}</td>
           <td class="n">{% if a %}{{ a.p.get(k)|pct(1) }}{% endif %}</td>
+          <td class="n hist-cell">{% set h = (a.hist or {}).get(k) if a else none %}{% if h %}{{ h.hit|pct(1) }}<small>본전 {{ h.be|pct(1) }} · 수익률 {{ h.roi|signed }} · {{ h.n }}건</small>{% else %}<span class="muted">수집 중</span>{% endif %}</td>
           <td class="n {% if a %}{{ ev_class(a.p.get(k, 0) * od - 1) }}{% endif %}">{% if a %}{{ (a.p.get(k, 0) * od - 1)|signed }}{% endif %}</td>
           <td>{% if o and loop.first %}{{ result_tag('void' if o == 'VOID' else ('hit' if a and o == a.pick else 'miss')) }}{% endif %}</td>
         </tr>

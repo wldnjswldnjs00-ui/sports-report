@@ -105,17 +105,33 @@
     });
   });
 
-  /* 종목 필터 */
+  /* 날짜·종목 필터 */
+  var fDay = null, fSport = "all";
+  function applyFilters() {
+    $$(".match").forEach(function (m) {
+      m.hidden = !((fSport === "all" || m.dataset.sport === fSport) && (!fDay || m.dataset.day === fDay));
+    });
+  }
+  $$("[data-days]").forEach(function (box) {
+    var chips = $$(".chip", box);
+    if (chips[0]) fDay = chips[0].dataset.d;
+    chips.forEach(function (c) {
+      c.addEventListener("click", function () {
+        chips.forEach(function (x) { x.setAttribute("aria-pressed", String(x === c)); });
+        fDay = c.dataset.d; applyFilters();
+      });
+    });
+  });
   $$("[data-filters]").forEach(function (box) {
     var chips = $$(".chip", box);
     chips.forEach(function (c) {
       c.addEventListener("click", function () {
         chips.forEach(function (x) { x.setAttribute("aria-pressed", String(x === c)); });
-        var f = c.dataset.f;
-        $$(".match").forEach(function (m) { m.hidden = !(f === "all" || m.dataset.sport === f); });
+        fSport = c.dataset.f; applyFilters();
       });
     });
   });
+  applyFilters();
 
   /* 토스트 */
   var toastEl = $("[data-toast]"), toastT;

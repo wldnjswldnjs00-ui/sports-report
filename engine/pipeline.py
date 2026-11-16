@@ -84,6 +84,8 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
 
     elo = Elo.load()
     alpha = calibration_alpha()
+    from .analysis import oddsbook
+    book = oddsbook.load()
     now = config.now_kst()
     analyzed = []
     for m in markets:
@@ -94,13 +96,18 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
             old["odds_close"] = m["odds"]
             analyzed.append(old)
             continue
-        a = analyze_market(m, elo, ref.get(m["id"]), alpha)
+        a = analyze_market(m, elo, ref.get(m["id"]), alpha, book)
         a["odds_open"] = (old or {}).get("odds_open") or m["odds"]
         a["narrative"] = describe(a)
         analyzed.append(a)
     analyzed.sort(key=lambda m: (m["kickoff"], m.get("game_no") or 0))
+    # 오늘(당일 06시~익일 06시) 경기만 조합·채점 대상. 그 뒤 경기는 미리보기로만 보여준다
+    # (다음 날 리포트에서 본 경기로 다시 다뤄지므로 성과가 두 번 집계되지 않는다).
+    for m in analyzed:
+        m["preview"] = not betman.in_window(m["kickoff"], day)
+    primary = [m for m in analyzed if not m["preview"]]
 
-    proto = [m for m in analyzed if m.get("analysis") and m["pool"] == "proto"]
+    proto = [m for m in primary if m.get("analysis") and m["pool"] == "proto"]
     combos = C.all_combos(proto)
     # 이미 발행된 조합 중 경기가 시작된 것은 유지(사후 교체 방지)
     for name, old_list in (prev.get("combos") or {}).items():
@@ -119,7 +126,7 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
         key=lambda m: -m["analysis"]["upset_risk"],
     )[:5]
     moves = []
-    for m in analyzed:
+    for m in primary:
         o0, o1 = m.get("odds_open") or {}, m.get("odds_close") or m.get("odds") or {}
         for k in o1:
             if k in o0 and o0[k] and abs(o1[k] - o0[k]) / o0[k] >= 0.05:
@@ -141,7 +148,8 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
         "odds_moves": moves,
         "stats": {
             "markets": len(analyzed),
-            "matches": len({(m["home"], m["away"], m["kickoff"][:10]) for m in analyzed}),
+            "matches": len({(m["home"], m["away"], m["kickoff"][:10]) for m in primary}),
+            "upcoming": len({(m["home"], m["away"], m["kickoff"][:10]) for m in analyzed if m["preview"]}),
             "legs": len(legs),
             "combos": sum(len(v) for v in combos.values()),
         },
@@ -172,7 +180,7 @@ def _collect_results(rep: dict, fetch_scores: bool = True) -> dict:
     # 예전 형식(판정 코드 없는) 베트맨 결과는 다시 받는다
     for k in [k for k, v in rmap.items() if v.get("src") == "betman" and v.get("status") == "FT" and not v.get("outcome")]:
         del rmap[k]
-    pending = [m for m in rep.get("markets", []) if m["id"] not in rmap]
+    pending = [m for m in rep.get("markets", []) if m["id"] not in rmap and not m.get("preview")]
     if not pending:
         return res
 
@@ -228,6 +236,20 @@ def grade(today: str, lookback: int = 7, fetch_scores: bool = True) -> dict:
     G.save_state(perf, cal, elo)
     log.info("채점 완료: 픽 %s", perf["picks"]["all"])
     return perf
+
+
+def history(max_rounds: int = 8) -> None:
+    """과거 회차 백필 + 배당 구간표 재계산. 실패해도 다른 단계에 영향 없음."""
+    from .analysis import oddsbook
+    from .sources import betman_history
+    try:
+        betman_history.backfill(max_rounds)
+    except Exception:  # noqa: BLE001
+        log.exception("백필 실패")
+    rows = betman_history.load_all()
+    if rows:
+        oddsbook.save(oddsbook.build(rows))
+        log.info("배당 구간표 갱신: %d개 선택 기록", len(rows))
 
 
 def demo(days: int = 21) -> None:

@@ -7,7 +7,7 @@
 {% endif %}
 {% endmacro %}
 
-{% macro ev_class(x) %}{% if x is none %}{% elif x > 0 %}pos{% elif x > -0.1 %}mid{% else %}neg{% endif %}{% endmacro %}
+{% macro ev_class(x) %}{% if x is undefined or x is none %}{% elif x > 0 %}pos{% elif x > -0.1 %}mid{% else %}neg{% endif %}{% endmacro %}
 
 {% macro result_tag(res) %}
 {% if res == 'hit' or res == 'win' %}<span class="tag hit">적중</span>

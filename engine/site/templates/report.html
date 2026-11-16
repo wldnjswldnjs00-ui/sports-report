@@ -72,7 +72,7 @@
   <div class="tabs" role="tablist" data-tabs>
     {% for key, s in STRATEGIES.items() %}
     <button role="tab" type="button" id="tab-{{ key }}" aria-controls="panel-{{ key }}" aria-selected="{{ 'true' if loop.first else 'false' }}" tabindex="{{ 0 if loop.first else -1 }}">
-      {{ s.label }} <small>{{ r.combos[key]|length }}</small>
+      {{ s.label }} <small>{{ (r.combos.get(key) or [])|length }}</small>
     </button>
     {% endfor %}
     <span class="tabs-ink" aria-hidden="true"></span>
@@ -80,17 +80,14 @@
   {% for key, s in STRATEGIES.items() %}
   <div class="tab-panel" role="tabpanel" id="panel-{{ key }}" aria-labelledby="tab-{{ key }}" {% if not loop.first %}hidden{% endif %}>
     <p class="panel-desc">{{ s.desc }}</p>
-    {% if r.combos[key] %}
-    <div class="combo-grid">{% for c in r.combos[key] %}{{ combo_card(c, r) }}{% endfor %}</div>
+    {% if r.combos.get(key) %}
+    <div class="combo-grid">{% for c in r.combos.get(key) %}{{ combo_card(c, r) }}{% endfor %}</div>
     {% else %}
     <p class="none">조건을 통과한 조합이 없습니다. 억지로 만들지 않았습니다.</p>
     {% endif %}
   </div>
   {% endfor %}
-  {% set neg = r.combos.values()|sum(start=[])|selectattr('ev', 'lt', 0)|list|length %}
-  {% if neg and neg == r.stats.combos %}
-  <p class="honest">오늘 조합은 모두 기대값이 마이너스입니다. 베트맨 환급률 구조상 흔한 일이며, 장기적으로는 금액이 줄어든다는 뜻입니다. 재미 삼아 소액으로만 보시길 권합니다.</p>
-  {% endif %}
+
 </section>
 
 {{ ad('report-mid') }}
@@ -114,7 +111,12 @@
 
 <section class="wrap block" id="matches" data-reveal>
   <header class="block-head">
-    <h2>전체 경기</h2>
+    <h2>경기 분석</h2>
+    <div class="filters" data-days>
+      {% for d in r.markets|map(attribute='kickoff')|map('truncate', 10, True, '')|unique %}
+      <button type="button" class="chip" aria-pressed="{{ 'true' if loop.first else 'false' }}" data-d="{{ d }}">{{ d|kdate }}</button>
+      {% endfor %}
+    </div>
     <div class="filters" data-filters>
       <button type="button" class="chip" aria-pressed="true" data-f="all">전체</button>
       {% for sp in r.markets|map(attribute='sport')|unique %}
@@ -125,7 +127,7 @@
   <ol class="matches">
   {% for m in r.markets %}
     {% set a = m.analysis %}
-    <li class="match" data-sport="{{ m.sport }}" {% if m.id in r.caution %}data-caution{% endif %}>
+    <li class="match" data-sport="{{ m.sport }}" data-day="{{ m.kickoff[:10] }}" {% if m.id in r.caution %}data-caution{% endif %}>
       <button type="button" class="match-row" aria-expanded="false" data-expand>
         <span class="m-no">{{ m.game_no or '' }}</span>
         <span class="m-time">{{ m.kickoff|kdt }}</span>
@@ -135,7 +137,7 @@
         <span class="m-pick"><span class="bub on">{{ outcome(m, a.pick) }}</span><b>{{ a.pick_prob|pct }}</b></span>
         <span class="m-conf" style="--c:{{ a.confidence }}"><span></span>{{ a.confidence }}</span>
         {% else %}<span class="m-pick muted">데이터 부족</span><span></span>{% endif %}
-        <span class="m-res">{% set o = r.outcomes.get(m.id) %}{% if o and a %}{{ result_tag('void' if o == 'VOID' else ('hit' if o == a.pick else 'miss')) }}{% elif m.id in r.caution %}<span class="tag warn">주의</span>{% endif %}</span>
+        <span class="m-res">{% set o = r.outcomes.get(m.id) %}{% set fk = flow_key(m) %}{% if o and a %}{{ result_tag('void' if o == 'VOID' else ('hit' if o == a.pick else 'miss')) }}{% elif fk %}<span class="tag flow" title="배당이 내려간 쪽: 구매가 몰린 쪽">{{ outcome(m, fk) }}↘</span>{% elif m.id in r.caution %}<span class="tag warn">주의</span>{% endif %}</span>
       </button>
       {% if a %}
       <div class="match-more" hidden>
@@ -155,6 +157,7 @@
           <div><dt>이변 위험</dt><dd>{{ a.upset_risk }}</dd></div>
           <div><dt>데이터 충분성</dt><dd>{{ a.data_score }}</dd></div>
           <div><dt>환급률</dt><dd>{{ a.payout_rate|pct(1) }}</dd></div>
+          {% if a.hist and a.pick in a.hist %}{% set h = a.hist[a.pick] %}<div><dt>같은 배당 과거 적중률</dt><dd>{{ h.hit|pct(1) }} <small class="muted">({{ h.bucket }}, {{ h.n }}건)</small></dd></div>{% endif %}
           <div><dt>근거</dt><dd>{{ a.sources|join(', ') }}</dd></div>
           {% if a.flags %}<div><dt>표시</dt><dd>{{ a.flags|join(' · ') }}</dd></div>{% endif %}
         </dl>

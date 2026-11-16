@@ -13,7 +13,7 @@ from email.utils import format_datetime
 from pathlib import Path
 from typing import Any
 
-from jinja2 import Environment, FileSystemLoader, select_autoescape
+from jinja2 import Environment, FileSystemLoader, Undefined, select_autoescape
 
 from .. import config
 from ..analysis.combos import STRATEGIES
@@ -26,20 +26,24 @@ HERE = Path(__file__).resolve().parent
 WEEK = "월화수목금토일"
 
 
+def _none(x):
+    return x is None or isinstance(x, Undefined)
+
+
 def _pct(x, d=0):
-    return "–" if x is None else f"{x * 100:.{d}f}%"
+    return "–" if _none(x) else f"{x * 100:.{d}f}%"
 
 
 def _signed(x, d=1):
-    return "–" if x is None else f"{x * 100:+.{d}f}%"
+    return "–" if _none(x) else f"{x * 100:+.{d}f}%"
 
 
 def _odds(x):
-    return "–" if not x else f"{x:.2f}"
+    return "–" if _none(x) or not x else f"{x:.2f}"
 
 
 def _won(x):
-    return "–" if x is None else f"{int(x):,}원"
+    return "–" if _none(x) else f"{int(x):,}원"
 
 
 def _kdate(s: str, with_week=True):
@@ -68,6 +72,17 @@ def _outcome(m: dict, key: str) -> str:
     return OUTCOME_LABEL.get(key, key)
 
 
+def _flow_key(m: dict) -> str | None:
+    """배당이 3% 이상 가장 많이 내려간 선택(=구매가 몰린 쪽)."""
+    fl = m.get("flow") or {}
+    best, drop = None, 0.03
+    for k, v in (fl.get("to") or {}).items():
+        f0 = (fl.get("from") or {}).get(k)
+        if f0 and v and (f0 - v) / f0 >= drop:
+            best, drop = k, (f0 - v) / f0
+    return best
+
+
 def _env() -> Environment:
     env = Environment(
         loader=FileSystemLoader(HERE / "templates"),
@@ -77,7 +92,7 @@ def _env() -> Environment:
     env.filters.update(pct=_pct, signed=_signed, odds=_odds, won=_won, kdate=_kdate, ktime=_ktime, kdt=_kdt, slug=slug)
     env.globals.update(
         cfg=config, STRATEGIES=STRATEGIES, MARKET_LABEL=MARKET_LABEL, SPORT_LABEL=SPORT_LABEL,
-        outcome=_outcome, now=config.now_kst(), asset_v=config.now_kst().strftime("%Y%m%d%H%M"),
+        outcome=_outcome, flow_key=_flow_key, now=config.now_kst(), asset_v=config.now_kst().strftime("%Y%m%d%H%M"),
         nav=[("/", "오늘"), ("/reports/", "지난 리포트"), ("/leagues/", "리그"), ("/performance/", "성과"),
              ("/tool/", "조합 계산기"), ("/method/", "분석 방법"), ("/guide/", "가이드")],
     )
@@ -230,6 +245,8 @@ def build() -> None:
         if r and r.get("date"):
             reports.append(r)
     perf = load_perf()
+    from ..analysis import oddsbook as OB
+    book = OB.load()
     today = date.fromisoformat(config.today_kst())
     latest = next((r for r in reports if r["date"] <= today.isoformat()), reports[0] if reports else None)
     is_demo = any(r.get("demo") for r in reports[:1])
@@ -245,7 +262,7 @@ def build() -> None:
 
     summaries = [_report_summary(r) for r in reports]
     leagues = _leagues(reports[:60])
-    ctx = dict(perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues)
+    ctx = dict(book=book, best_buckets=OB.best_buckets(book) if book else [], ob_label=OB.label, perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues)
     urls: list[tuple[str, str]] = []
 
     def page(tpl: str, out: str, **kw):

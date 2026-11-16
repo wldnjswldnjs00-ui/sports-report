@@ -30,6 +30,11 @@ STRATEGIES = {
         "odds_range": (7.0, 80.0), "min_joint": 0.03, "top": 6, "pool": 18,
         "desc": "배당을 크게 노립니다. 맞을 확률은 낮습니다. 소액 전용입니다.",
     },
+    "lotto": {
+        "label": "로또폴더", "sizes": (5, 6, 7, 8), "min_leg_p": 0.30, "min_conf": 25,
+        "odds_range": (40.0, 5000.0), "min_joint": 0.0008, "top": 3, "pool": 16,
+        "desc": "5~8경기를 묶어 수십~수백 배를 노리는 한 장. 커피값으로 즐기는 용도입니다.",
+    },
 }
 
 CORR_PENALTY = 0.985  # 같은 리그·같은 날 한 쌍당 결합확률 감쇠
@@ -39,25 +44,31 @@ def match_key(m: dict[str, Any]) -> str:
     return f"{m['kickoff'][:10]}|{m['home']}|{m['away']}"
 
 
-def legs_from(markets: list[dict[str, Any]], use_value: bool = False) -> list[dict[str, Any]]:
+def legs_from(markets: list[dict[str, Any]], use_value: bool = False, all_outcomes: bool = False) -> list[dict[str, Any]]:
     legs = []
     for m in markets:
         a = m.get("analysis")
         if not a or m.get("pool") != "proto" or not m.get("odds"):
             continue
-        key = a["value_key"] if use_value else a["pick"]
-        if key is None or key not in m["odds"]:
-            continue
+        keys = list(m["odds"]) if all_outcomes else [a["value_key"] if use_value else a["pick"]]
+        for key in keys:
+            if key is None or key not in m["odds"] or key not in a["p"]:
+                continue
+            legs.append(_leg(m, a, key))
+    return legs
+
+
+def _leg(m: dict[str, Any], a: dict[str, Any], key: str) -> dict[str, Any]:
+    if True:
         p = a["p"][key]
         o = m["odds"][key]
-        legs.append({
+        return ({
             "market_id": m["id"], "match": match_key(m), "league": m["league"], "sport": m["sport"],
             "date": m["kickoff"][:10], "home": m["home"], "away": m["away"], "market": m["market"],
             "line": m.get("line"), "game_no": m.get("game_no"), "kickoff": m["kickoff"],
             "outcome": key, "p": p, "odds": o, "ev": p * o - 1, "confidence": a["confidence"],
             "upset_risk": a["upset_risk"],
         })
-    return legs
 
 
 def joint_prob(legs: list[dict[str, Any]]) -> float:
@@ -112,9 +123,20 @@ def strategy_combos(legs: list[dict[str, Any]], name: str) -> list[dict[str, Any
     pool = [l for l in legs if l["p"] >= cfg["min_leg_p"] and l["confidence"] >= cfg["min_conf"]]
     if name == "safe":
         pool.sort(key=lambda l: -l["p"])
+    elif name in ("aggressive", "lotto"):
+        # 큰 배당을 노리므로 1.45배 미만 정배는 빼고, 기대값이 덜 나쁜(배당이 공정한) 선택부터
+        pool = [l for l in pool if l["odds"] >= 1.45]
+        pool.sort(key=lambda l: -(l["ev"] + 0.15 * l["p"]))
     else:
         pool.sort(key=lambda l: -(l["ev"] + 0.3 * l["p"]))
-    pool = pool[: cfg["pool"]]
+    # 한 경기의 여러 마켓이 후보를 독식하지 않게 경기당 최대 2개까지만 남긴다
+    per: dict[str, int] = {}
+    diverse = []
+    for l in pool:
+        if per.get(l["match"], 0) < (1 if name in ("aggressive", "lotto") else 2):
+            diverse.append(l)
+            per[l["match"]] = per.get(l["match"], 0) + 1
+    pool = diverse[: cfg["pool"]]
     lo, hi = cfg["odds_range"]
     cands = []
     for size in cfg["sizes"]:
@@ -131,12 +153,14 @@ def strategy_combos(legs: list[dict[str, Any]], name: str) -> list[dict[str, Any
         cands.sort(key=lambda c: (-c["joint_p"], -c["ev"]))
     elif name == "balanced":
         cands.sort(key=lambda c: -(c["ev"] + 0.5 * c["joint_p"]))
+    elif name == "lotto":
+        cands.sort(key=lambda c: -(c["ev"] + 2 * c["joint_p"]))
     else:
         cands.sort(key=lambda c: -c["ev"])
 
     chosen: list[dict[str, Any]] = []
     for c in cands:
-        if any(_overlap(c, x) > 0.67 for x in chosen):
+        if any(_overlap(c, x) > (0.8 if name == "lotto" else 0.67) for x in chosen):
             continue
         chosen.append(c)
         if len(chosen) >= cfg["top"]:
@@ -148,8 +172,9 @@ def strategy_combos(legs: list[dict[str, Any]], name: str) -> list[dict[str, Any
 
 
 def all_combos(markets: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
-    legs = legs_from(markets)
-    return {name: strategy_combos(legs, name) for name in STRATEGIES}
+    picks = legs_from(markets)
+    every = legs_from(markets, all_outcomes=True)  # 공격형·로또는 확률이 충분한 역배도 후보
+    return {name: strategy_combos(every if name in ("aggressive", "lotto") else picks, name) for name in STRATEGIES}
 
 
 def value_legs(markets: list[dict[str, Any]], min_ev: float = 0.0) -> list[dict[str, Any]]:

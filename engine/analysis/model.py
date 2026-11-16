@@ -14,6 +14,7 @@ CAL_PATH = config.STATE / "calibration.json"
 W_REF = 0.60
 W_BETMAN = 0.25
 W_ELO = 0.15
+W_HIST = 0.20  # 베트맨 과거 배당 구간 적중률
 
 
 def _divergence(a: dict[str, float], b: dict[str, float]) -> float:
@@ -23,8 +24,10 @@ def _divergence(a: dict[str, float], b: dict[str, float]) -> float:
     return max(abs(a[k] - b[k]) for k in keys)
 
 
-def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, alpha: float) -> dict[str, Any]:
+def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, alpha: float, book: dict | None = None) -> dict[str, Any]:
     odds = m.get("odds") or {}
+    from .oddsbook import hist_probs
+    p_hist, hist_info = hist_probs(book or {}, m) if odds else (None, {})
     p_bet = remove_margin_power(odds) if odds else {}
     p_elo = elo.probs(m["sport"], m["home"], m["away"], m["market"]) if m["market"] in ("1X2", "WL") else None
 
@@ -36,6 +39,8 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
         sources.append((p_bet, W_BETMAN)); used.append("베트맨 배당")
     if p_elo:
         sources.append((p_elo, W_ELO)); used.append("Elo")
+    if p_hist:
+        sources.append((p_hist, W_HIST)); used.append("과거 배당 적중률")
     p = combine(sources)
     if not p:
         return {**m, "analysis": None}
@@ -94,6 +99,7 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
             "sources": used,
             "flags": flags,
             "payout_rate": round(1 / overround(odds), 4) if odds else None,
+            "hist": hist_info or None,
             "elo": {
                 "home": round(elo.rating(m["sport"], m["home"])),
                 "away": round(elo.rating(m["sport"], m["away"])),

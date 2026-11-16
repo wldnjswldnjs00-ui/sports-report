@@ -84,8 +84,30 @@ def _sport(row: dict) -> str:
     return "etc"
 
 
+def _flows(payload: dict) -> dict[int, dict]:
+    """tooltipList(베트맨 공개 배당 변동 이력) → 경기번호별 {왼칸/무/오른칸: [처음, 지금], 변동횟수}."""
+    out: dict[int, dict] = {}
+    rows = sorted(payload.get("tooltipList") or [], key=lambda t: str(t.get("CHG_DTM") or ""))
+    for t in rows:
+        try:
+            no = int(t.get("GM_SEQ"))
+        except (TypeError, ValueError):
+            continue
+        f = out.setdefault(no, {"n": 0, "first": {}, "last": {}, "at": None})
+        for side, b, a in (("W", "BCHG_W_ODDS", "ACHG_W_ODDS"), ("D", "BCHG_D_ODDS", "ACHG_D_ODDS"), ("L", "BCHG_L_ODDS", "ACHG_L_ODDS")):
+            bv, av = _num(t.get(b)), _num(t.get(a))
+            if bv > 1 and side not in f["first"]:
+                f["first"][side] = bv
+            if av > 1:
+                f["last"][side] = av
+        f["n"] += 1
+        f["at"] = str(t.get("CHG_DTM") or "")[:12]
+    return out
+
+
 def parse_round(payload: dict, gm_ts: str) -> list[dict[str, Any]]:
     out = []
+    flows = _flows(payload)
     for r in _rows(payload):
         home, away = r.get("homeName"), r.get("awayName")
         mk = _market(r)
@@ -114,6 +136,17 @@ def parse_round(payload: dict, gm_ts: str) -> list[dict[str, Any]]:
         if mk in ("HANDICAP", "OU") and line is None:
             continue
         no = r.get("matchSeq")
+        flow = None
+        fl = flows.get(no) if isinstance(no, int) else flows.get(int(no)) if str(no).isdigit() else None
+        if fl and fl["first"]:
+            if mk == "OU":
+                under_first = "O" not in odds or not str(r.get("winTxt") or "언더").startswith("오버")
+                side_map = {"W": "U" if under_first else "O", "L": "O" if under_first else "U"}
+            else:
+                side_map = {"W": "H", "D": "D", "L": "A"}
+            flow = {"changes": fl["n"], "at": fl["at"],
+                    "from": {side_map[k]: v for k, v in fl["first"].items() if k in side_map},
+                    "to": {side_map[k]: v for k, v in fl["last"].items() if k in side_map}}
         out.append({
             "id": f"betman:{GM_ID}:{gm_ts}:{no}",
             "source": "betman", "pool": "proto", "round": str(gm_ts),
@@ -123,6 +156,7 @@ def parse_round(payload: dict, gm_ts: str) -> list[dict[str, Any]]:
             "home": str(home).strip(), "away": str(away).strip(), "market": mk,
             "line": line, "odds": odds,
             "venue": (str(r.get("meetStadiumFullName")).strip() or None) if r.get("meetStadiumFullName") else None,
+            "flow": flow,
         })
     return out
 
@@ -258,7 +292,7 @@ def _fetch(day: str) -> list[dict[str, Any]]:
         raise RuntimeError("발매 중인 프로토 승부식 회차 없음")
 
     out: list[dict[str, Any]] = []
-    for g in rounds[:4]:
+    for g in sorted(rounds, key=lambda g: str(g['gmTs']))[:6]:
         ts = str(g["gmTs"])
         year = str(g.get("gmOsidTsYear") or ("20" + ts[:2]))
         slip = f"{BASE}/main/mainPage/gamebuy/gameSlip.do?gmId={GM_ID}&year={year}&gmTs={ts}"
@@ -273,10 +307,18 @@ def _fetch(day: str) -> list[dict[str, Any]]:
         out.extend(parse_round(doc, ts))
     if not out:
         raise RuntimeError("발매 회차는 있으나 배당이 공개된 경기가 없음(발매 시작 전일 수 있음)")
-    return [m for m in out if _in_window(m["kickoff"], day)]
+    return [m for m in out if in_horizon(m["kickoff"], day)]
 
 
-def _in_window(ko: str, day: str) -> bool:
+def in_window(ko: str, day: str) -> bool:
+    """리포트 날짜의 '오늘' 범위: 당일 06:00 ~ 다음날 06:00 KST (심야 해외 경기 포함)."""
     t = datetime.fromisoformat(ko)
     start = datetime.fromisoformat(day + "T06:00:00+09:00")
-    return 0 <= (t - start).total_seconds() < 86400 + 6 * 3600  # 다음날 정오까지 여유
+    return 0 <= (t - start).total_seconds() < 86400
+
+
+def in_horizon(ko: str, day: str, days: int = 3) -> bool:
+    """미리보기 범위: 당일 06:00 부터 3일."""
+    t = datetime.fromisoformat(ko)
+    start = datetime.fromisoformat(day + "T06:00:00+09:00")
+    return 0 <= (t - start).total_seconds() < 86400 * days

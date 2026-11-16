@@ -114,7 +114,7 @@ def aggregate(reports: list[dict[str, Any]], today: str) -> dict[str, Any]:
         for m in rep.get("markets", []):
             a = m.get("analysis")
             o = outs.get(m["id"])
-            if not a or o in (None, "VOID"):
+            if not a or o in (None, "VOID") or m.get("preview"):
                 continue
             pp = a["pick_prob"]
             hit = int(o == a["pick"])
@@ -177,7 +177,7 @@ def aggregate(reports: list[dict[str, Any]], today: str) -> dict[str, Any]:
              "expected": round(v["p_sum"] / v["n"], 4), "actual": round(v["hit"] / v["n"], 4)}
             for b, v in sorted(buckets.items()) if v["n"]
         ],
-        "strategies": {k: {"all": fin_s(strat[k]), "30d": fin_s(strat30[k])} for k in ("safe", "balanced", "aggressive")},
+        "strategies": {k: {"all": fin_s(strat[k]), "30d": fin_s(strat30[k])} for k in ("safe", "balanced", "aggressive", "lotto")},
         "value": {
             "n": value["n"],
             "hit_rate": round(value["hit"] / value["n"], 4) if value["n"] else None,
@@ -195,7 +195,7 @@ def fit_alpha(reports: list[dict[str, Any]]) -> dict[str, Any]:
         for m in rep.get("markets", []):
             a = m.get("analysis")
             o = outs.get(m["id"])
-            if a and o and o != "VOID" and o in a["p"]:
+            if a and o and o != "VOID" and o in a["p"] and not m.get("preview"):
                 rows.append((a["p"], o))
     if len(rows) < 200:
         return {"alpha": 0.03, "n": len(rows), "note": "표본 부족, 기본값"}
