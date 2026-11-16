@@ -25,6 +25,8 @@ CONTACT_EMAIL = os.getenv("CONTACT_EMAIL", "")
 
 # 애드센스: 승인 후 ca-pub-XXXXXXXX 값을 넣으면 광고 슬롯이 자동 활성화된다.
 ADSENSE_CLIENT = os.getenv("ADSENSE_CLIENT", "").strip()
+# 애드센스 디스플레이 광고 단위 ID(숫자). 없으면 페이지 안 광고 칸은 만들지 않고 자동 광고만 쓴다.
+ADSENSE_SLOT = "".join(ch for ch in os.getenv("ADSENSE_SLOT", "") if ch.isdigit())
 # 쿠팡 파트너스 다이나믹 배너(캐러셀 680×140): 배너 코드의 id 숫자와 trackingCode(AF...).
 # 페이지 소스에 공개되는 값이라 비밀이 아니다. 환경 변수로 바꿀 수 있고, 빈 값을 넣으면 끈다.
 COUPANG_BANNER_ID = "".join(ch for ch in os.getenv("COUPANG_BANNER_ID", "1051068") if ch.isdigit())

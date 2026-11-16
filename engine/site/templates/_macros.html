@@ -1,14 +1,14 @@
 {% macro ad(name) %}
 {% set cp = cfg.COUPANG_BANNER_ID and cfg.COUPANG_TRACKING %}
-{% if cp and (not cfg.ADSENSE_CLIENT or name.endswith('bottom')) %}
+{% if cp and (not (cfg.ADSENSE_CLIENT and cfg.ADSENSE_SLOT) or name.endswith('bottom')) %}
 {# 쿠팡 배너: 애드센스와 같이 쓰면 하단 자리만, 쿠팡만 있으면 모든 광고 자리 #}
 <aside class="ad ad-cp" aria-label="광고"><span class="ad-label">광고 · 쿠팡 파트너스 활동의 일환으로 일정액의 수수료를 받을 수 있습니다</span>
 <script src="https://ads-partners.coupang.com/g.js"></script>
 <script>(function(){try{var s=document.currentScript,w=Math.min(680,(s&&s.parentNode&&s.parentNode.clientWidth)||680);if(window.PartnersCoupang)new PartnersCoupang.G({"id":{{ cfg.COUPANG_BANNER_ID|int }},"template":{{ cfg.COUPANG_TEMPLATE|tojson }},"trackingCode":{{ cfg.COUPANG_TRACKING|tojson }},"width":String(w),"height":"140","tsource":""});}catch(e){}})();</script>
 </aside>
-{% elif cfg.ADSENSE_CLIENT %}
+{% elif cfg.ADSENSE_CLIENT and cfg.ADSENSE_SLOT %}
 <aside class="ad" aria-label="광고"><span class="ad-label">광고</span>
-<ins class="adsbygoogle" style="display:block" data-ad-client="{{ cfg.ADSENSE_CLIENT }}" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<ins class="adsbygoogle" style="display:block" data-ad-client="{{ cfg.ADSENSE_CLIENT }}" data-ad-slot="{{ cfg.ADSENSE_SLOT }}" data-ad-format="auto" data-full-width-responsive="true"></ins>
 <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
 </aside>
 {% endif %}
