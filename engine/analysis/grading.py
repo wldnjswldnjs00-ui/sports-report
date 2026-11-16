@@ -184,7 +184,7 @@ def aggregate(reports: list[dict[str, Any]], today: str) -> dict[str, Any]:
              "expected": round(v["p_sum"] / v["n"], 4), "actual": round(v["hit"] / v["n"], 4)}
             for b, v in sorted(buckets.items()) if v["n"]
         ],
-        "strategies": {k: {"all": fin_s(strat[k]), "30d": fin_s(strat30[k])} for k in ("safe", "balanced", "aggressive", "lotto")},
+        "strategies": {k: {"all": fin_s(strat[k]), "30d": fin_s(strat30[k])} for k in ("safe", "balanced", "aggressive", "upset", "lotto")},
         "value": {
             "n": value["n"],
             "hit_rate": round(value["hit"] / value["n"], 4) if value["n"] else None,

@@ -30,6 +30,11 @@ STRATEGIES = {
         "odds_range": (7.0, 80.0), "min_joint": 0.01, "top": 6, "pool": 18,
         "desc": "역배를 섞어 7배 이상을 노리는 조합입니다.",
     },
+    "upset": {
+        "label": "역배 조합", "sizes": (2, 3), "min_leg_p": 0.22, "min_conf": 25,
+        "odds_range": (4.0, 60.0), "min_joint": 0.02, "top": 4, "pool": 14,
+        "desc": "배당이 더 높은 쪽만 2~3경기 묶은 조합입니다.",
+    },
     "lotto": {
         "label": "로또폴더", "sizes": (5, 6, 7, 8), "min_leg_p": 0.22, "min_conf": 25,
         "odds_range": (40.0, 5000.0), "min_joint": 0.0002, "top": 3, "pool": 16,
@@ -54,7 +59,9 @@ def legs_from(markets: list[dict[str, Any]], use_value: bool = False, all_outcom
         for key in keys:
             if key is None or key not in m["odds"] or key not in a["p"]:
                 continue
-            legs.append(_leg(m, a, key))
+            leg = _leg(m, a, key)
+            leg["dog"] = key != "D" and m["odds"][key] > min(m["odds"].values())  # 그 경기에서 배당이 더 높은 쪽
+            legs.append(leg)
     return legs
 
 
@@ -123,6 +130,9 @@ def strategy_combos(legs: list[dict[str, Any]], name: str, used_all: dict[str, i
     pool = [l for l in legs if l["p"] >= cfg["min_leg_p"] and l["confidence"] >= cfg["min_conf"]]
     if name == "safe":
         pool.sort(key=lambda l: -l["p"])
+    elif name == "upset":
+        pool = [l for l in pool if l.get("dog")]
+        pool.sort(key=lambda l: -(l["ev"] + 0.2 * l["p"]))
     elif name in ("aggressive", "lotto"):
         # 큰 배당을 노리므로 1.45배 미만 정배는 빼고, 기대값이 덜 나쁜(배당이 공정한) 선택부터
         pool = [l for l in pool if l["odds"] >= 1.45]
@@ -133,7 +143,7 @@ def strategy_combos(legs: list[dict[str, Any]], name: str, used_all: dict[str, i
     per: dict[str, int] = {}
     diverse = []
     for l in pool:
-        if per.get(l["match"], 0) < (1 if name in ("aggressive", "lotto") else 2):
+        if per.get(l["match"], 0) < (1 if name in ("aggressive", "lotto", "upset") else 2):
             diverse.append(l)
             per[l["match"]] = per.get(l["match"], 0) + 1
     if name in ("aggressive", "lotto"):
@@ -166,6 +176,8 @@ def strategy_combos(legs: list[dict[str, Any]], name: str, used_all: dict[str, i
         cands.sort(key=lambda c: (-c["joint_p"], -c["ev"]))
     elif name == "balanced":
         cands.sort(key=lambda c: -(c["ev"] + 0.5 * c["joint_p"]))
+    elif name == "upset":
+        cands.sort(key=lambda c: -(c["ev"] + c["joint_p"]))
     elif name == "lotto":
         cands.sort(key=lambda c: -(c["ev"] + 2 * c["joint_p"]))
     else:
@@ -200,6 +212,7 @@ def strategy_combos(legs: list[dict[str, Any]], name: str, used_all: dict[str, i
     # 배당이 한 구간에 몰리지 않게: 구간별로 가장 좋은 조합을 먼저 뽑고, 모자라면 전체에서 채운다
     tiers = {"lotto": [(40, 80, 1), (80, 200, 1), (200, 5000, 1)],
              "aggressive": [(7, 12, 2), (12, 25, 2), (25, 80, 2)],
+             "upset": [(4, 8, 2), (8, 16, 1), (16, 60, 1)],
              "balanced": [(2.5, 3.5, 2), (3.5, 5, 2), (5, 8, 2)]}.get(name)
     # 같은 경기가 여러 조합에 반복되지 않게: 먼저 '경기당 1번'으로 뽑고, 모자랄 때만 2번·3번까지 허용
     for cap, cap_all in ((1, 3), (2, 4), (3, 6)):
@@ -221,7 +234,7 @@ def all_combos(markets: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]
     picks = legs_from(markets)
     every = legs_from(markets, all_outcomes=True)  # 공격형·로또는 확률이 충분한 역배도 후보
     used_all: dict[str, int] = {}
-    return {name: strategy_combos(every if name in ("aggressive", "lotto") else picks, name, used_all) for name in STRATEGIES}
+    return {name: strategy_combos(every if name in ("aggressive", "lotto", "upset") else picks, name, used_all) for name in STRATEGIES}
 
 
 def value_legs(markets: list[dict[str, Any]], min_ev: float = 0.0) -> list[dict[str, Any]]:
