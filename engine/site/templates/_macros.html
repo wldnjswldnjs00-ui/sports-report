@@ -29,7 +29,7 @@
     <li class="{% if l.result == 'hit' %}is-hit{% elif l.result == 'miss' %}is-miss{% endif %}">
       <span class="leg-no">{{ l.game_no or '' }}</span>
       <span class="leg-match">{{ l.home }} <i>vs</i> {{ l.away }}</span>
-      <span class="leg-pick">{{ outcome(l, l.outcome) }}</span>
+      <span class="bub on">{{ outcome(l, l.outcome) }}</span>
       <span class="leg-odds">{{ l.odds|odds }}</span>
     </li>
     {% endfor %}

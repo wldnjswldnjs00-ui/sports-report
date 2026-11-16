@@ -12,14 +12,14 @@
 <meta property="og:description" content="{{ self.desc() }}">
 <meta property="og:url" content="{{ cfg.SITE_URL }}{{ path }}">
 <meta property="og:locale" content="ko_KR">
-<meta name="theme-color" content="#f3efe6" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#191a20" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700;900&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap">
 <link rel="stylesheet" href="/static/style.css?v={{ asset_v }}">
 <script>document.documentElement.classList.add('js');setTimeout(function(){if(!window.__app)document.documentElement.classList.remove('js')},3000);try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 {% if cfg.ADSENSE_CLIENT %}
@@ -30,6 +30,7 @@
 <body class="{% block bodyclass %}{% endblock %}">
 <a class="skip" href="#main">본문 바로가기</a>
 <header class="mast">
+  <div class="timing" aria-hidden="true"></div>
   <div class="mast-top wrap">
     <span class="mast-date">{{ now.strftime('%Y.%m.%d') }} · {{ '월화수목금토일'[now.weekday()] }}요일</span>
     <span class="mast-meta">모델 {{ cfg.MODEL_VERSION }}</span>
@@ -62,6 +63,7 @@
 </main>
 
 <footer class="foot">
+  <div class="timing" aria-hidden="true"></div>
   <div class="wrap foot-grid">
     <div>
       <p class="foot-brand">스포츠분석<span>.kr</span></p>

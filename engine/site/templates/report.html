@@ -50,7 +50,7 @@
   <div class="tp-body">
     <p class="tp-league">{{ SPORT_LABEL[t.sport] }} · {{ t.league }} · {{ t.kickoff|kdt }}</p>
     <h2 class="tp-match">{{ t.home }} <i>vs</i> {{ t.away }}</h2>
-    <p class="tp-pick"><b>{{ outcome(t, t.outcome) }}</b> <span>{{ t.odds|odds }}배</span></p>
+    <p class="tp-pick"><span class="bub on">{{ outcome(t, t.outcome) }}</span> <span>{{ t.odds|odds }}배</span></p>
     {{ prob_bar(tm) }}
     <p class="tp-text">{{ tm.narrative }}</p>
   </div>
@@ -131,7 +131,7 @@
         <span class="m-league">{{ m.league }} <small>{{ MARKET_LABEL[m.market] }}{% if m.line is not none %} {{ '%+g'|format(m.line) }}{% endif %}</small></span>
         <span class="m-teams">{{ m.home }} <i>vs</i> {{ m.away }}</span>
         {% if a %}
-        <span class="m-pick">{{ outcome(m, a.pick) }} <b>{{ a.pick_prob|pct }}</b></span>
+        <span class="m-pick"><span class="bub on">{{ outcome(m, a.pick) }}</span><b>{{ a.pick_prob|pct }}</b></span>
         <span class="m-conf" style="--c:{{ a.confidence }}"><span></span>{{ a.confidence }}</span>
         {% else %}<span class="m-pick muted">데이터 부족</span><span></span>{% endif %}
         <span class="m-res">{% set o = r.outcomes.get(m.id) %}{% if o and a %}{{ result_tag('void' if o == 'VOID' else ('hit' if o == a.pick else 'miss')) }}{% elif m.id in r.caution %}<span class="tag warn">주의</span>{% endif %}</span>
