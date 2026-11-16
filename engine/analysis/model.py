@@ -112,6 +112,10 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
             "hist": hist_info or None,
             "pair": pair_stat(book or {}, m) if odds else None,
             "ref_odds": m.get("ref_odds"),
+            # 해외 배당: 승패·승무패는 해외 시장의 실제 배당, 핸디캡·언더오버는 해외 확률을 베트맨 기준점으로 환산한 배당
+            "x_odds": ({k: (m["ref_odds"][k] if m.get("ref_kind") == "직접" and (m.get("ref_odds") or {}).get(k) else round(1 / v, 2))
+                        for k, v in ref.items() if v > 0} if ref else None),
+            "x_kind": m.get("ref_kind"),
             "elo": {
                 "home": round(elo.rating(m["sport"], m["home"])),
                 "away": round(elo.rating(m["sport"], m["away"])),

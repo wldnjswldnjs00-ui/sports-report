@@ -155,14 +155,21 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
 
     # O: 쓰임새
     risk = a["upset_risk"]
+    xo = (a.get("x_odds") or {}).get(pick)
+    if odds and xo:
+        price = f"해외 배당 {xo:.2f}배, 베트맨 {odds:.2f}배"
+    elif odds:
+        price = f"베트맨 배당 {odds:.2f}배"
+    else:
+        price = ""
     if odds and odds < 1.2:
-        o2 = f"배당 {odds:.2f}배로 낮다. 단독보다는 조합의 축으로 쓴다."
+        o2 = f"{price}로 낮다. 단독보다는 조합의 축으로 쓴다."
     elif strong and risk < 30:
-        o2 = f"배당 {odds:.2f}배. 안정형·밸런스형 조합의 기준 경기로 적합하다." if odds else "안정형 조합의 기준 경기로 적합하다."
+        o2 = f"{price}. 안정형·밸런스형 조합의 기준 경기로 적합하다." if odds else "안정형 조합의 기준 경기로 적합하다."
     elif risk >= 45:
         o2 = f"이변 위험 {risk}로 높다. 넣는다면 폴더 수를 줄이고 금액을 낮춘다."
     else:
-        o2 = f"배당 {odds:.2f}배. 확률과 배당의 균형이 맞아 밸런스형에 어울린다." if odds else "밸런스형에 어울린다."
+        o2 = f"{price}. 확률과 배당의 균형이 맞아 밸런스형에 어울린다." if odds else "밸런스형에 어울린다."
     return {"o1": o1, "r": r_txt, "e": e_txt, "o2": o2}
 
 

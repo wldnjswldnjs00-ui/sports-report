@@ -50,7 +50,8 @@
       <div class="tp-body">
         <p class="tp-league">{{ SPORT_LABEL[t.sport] }} · {{ t.league }} · {{ t.kickoff|kdt }}</p>
         <h3 class="tp-match">{{ t.home }} <i>vs</i> {{ t.away }}</h3>
-        <p class="tp-pick"><span class="bub on">{{ outcome(t, t.outcome) }}</span> <span>{{ t.odds|odds }}배</span></p>
+        {% set xo = ((tm.analysis.x_odds or {}).get(t.outcome)) if tm.analysis else none %}
+        <p class="tp-pick"><span class="bub on">{{ outcome(t, t.outcome) }}</span> {% if xo %}<span>해외 {{ xo|odds }}배</span><small>베트맨 {{ t.odds|odds }}배</small>{% else %}<span>{{ t.odds|odds }}배</span>{% endif %}</p>
         {{ prob_bar(tm) }}
         {{ oreo_block(tm) }}
       </div>
@@ -58,7 +59,7 @@
         <div><dt>추정 확률</dt><dd>{{ t.p|pct(1) }}</dd></div>
         <div><dt>신뢰도</dt><dd>{{ t.confidence }}</dd></div>
         <div><dt>이변 위험</dt><dd>{{ t.upset_risk }}</dd></div>
-        <div><dt>배당</dt><dd>{{ t.odds|odds }}</dd></div>
+        {% if xo %}<div><dt>해외 배당{{ ' (환산)' if tm.analysis.x_kind == '환산' }}</dt><dd>{{ xo|odds }}</dd></div>{% else %}<div><dt>베트맨 배당</dt><dd>{{ t.odds|odds }}</dd></div>{% endif %}
       </dl>
     </article>
   {% endif %}{% endfor %}
@@ -168,7 +169,7 @@
         <div class="odds-pick" role="group" aria-label="결과 선택해서 내 조합에 담기">
           {% for k, o in m.odds.items() %}
           <button type="button" class="opick{% if k == a.pick %} is-model{% endif %}" data-leg="{{ m.id }}|{{ k }}">
-            <span>{{ outcome(m, k) }}</span><b>{{ o|odds }}</b>{% set ro = (m.ref_odds or {}).get(k) %}{% if ro %}<small class="ref" title="해외 배당">해외 {{ ro|odds }}</small>{% endif %}
+            <span>{{ outcome(m, k) }}</span><b>{{ o|odds }}</b>{% set ro = (a.x_odds or {}).get(k) %}{% if ro %}<small class="ref" title="해외 배당{{ ' (베트맨 기준점으로 환산)' if a.x_kind == '환산' }}">해외 {{ ro|odds }}</small>{% endif %}
             {% set open = (m.odds_open or {}).get(k) %}{% if open and open != o %}<small class="{{ 'up' if o > open else 'down' }}">{{ open|odds }}→</small>{% endif %}
           </button>
           {% endfor %}

@@ -26,7 +26,8 @@
         <div><dt>추정 확률</dt><dd>{{ main.analysis.pick_prob|pct(1) }}</dd></div>
         <div><dt>신뢰도</dt><dd>{{ main.analysis.confidence }}</dd></div>
         <div><dt>이변 위험</dt><dd>{{ main.analysis.upset_risk }}</dd></div>
-        <div><dt>배당</dt><dd>{{ main.analysis.pick_odds|odds }}</dd></div>
+        {% set mxo = (main.analysis.x_odds or {}).get(main.analysis.pick) %}
+        <div><dt>{{ '해외 배당' if mxo else '베트맨 배당' }}</dt><dd>{{ (mxo or main.analysis.pick_odds)|odds }}</dd></div>
       </dl>
     </div>
   </section>
@@ -57,7 +58,7 @@
         <tr>
           {% if loop.first %}<td rowspan="{{ m.odds|length }}">{{ MARKET_LABEL[m.market] }}{% if m.line is not none %} <span class="muted">{{ '%+g'|format(m.line) if m.market != 'OU' else m.line }}</span>{% endif %}</td>{% endif %}
           <td><button type="button" class="opick mini{% if a and k == a.pick %} is-model{% endif %}" data-leg="{{ m.id }}|{{ k }}"><span>{{ outcome(m, k) }}</span></button></td>
-          <td class="n">{% set ro = (m.ref_odds or {}).get(k) %}{% if ro %}{{ ro|odds }}{% else %}<span class="muted">–</span>{% endif %}</td>
+          <td class="n">{% set ro = (a.x_odds or {}).get(k) if a else none %}{% if ro %}{{ ro|odds }}{% if a.x_kind == '환산' %}<small class="muted"> 환산</small>{% endif %}{% else %}<span class="muted">–</span>{% endif %}</td>
           <td class="n">{{ od|odds }}</td>
           <td class="n">{% set f0 = (m.flow.from if m.flow else {}).get(k) %}{% if f0 and f0 != od %}<span class="{{ 'down' if od < f0 else 'up' }}">{{ f0|odds }}→{{ od|odds }}</span>{% else %}<span class="muted">–</span>{% endif %}</td>
           <td class="n">{% if a %}{{ a.p.get(k)|pct(1) }}{% endif %}</td>

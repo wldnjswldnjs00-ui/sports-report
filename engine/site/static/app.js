@@ -85,8 +85,15 @@
       var w = rail.clientWidth + 16, i = Math.round(rail.scrollLeft / w);
       rail.scrollTo({ left: ((i + 1) % n) * w, behavior: "smooth" });
     }
-    ["pointerdown", "touchstart", "wheel", "focusin", "mouseenter"].forEach(function (ev) {
-      rail.addEventListener(ev, function () { hold = true; clearTimeout(timer); timer = setTimeout(function () { hold = false; }, 9000); }, { passive: true });
+    var inside = false, touching = false, wheelT;
+    function sync() { hold = inside || touching; }
+    rail.addEventListener("mouseenter", function () { inside = true; sync(); });
+    rail.addEventListener("mouseleave", function () { inside = false; sync(); });
+    rail.addEventListener("focusin", function () { inside = true; sync(); });
+    rail.addEventListener("focusout", function () { inside = false; sync(); });
+    rail.addEventListener("touchstart", function () { touching = true; sync(); }, { passive: true });
+    ["touchend", "touchcancel"].forEach(function (ev) {
+      rail.addEventListener(ev, function () { clearTimeout(wheelT); wheelT = setTimeout(function () { touching = false; sync(); }, 1500); }, { passive: true });
     });
     setInterval(next, 10000);
   });
@@ -381,11 +388,8 @@
     $("[data-t-stake]").textContent = won(s.stake);
     $("[data-t-pay]").textContent = won(pay);
     var fp = (s.f * 100).toFixed(s.f < 0.01 ? 2 : 1).replace(/\.0$/, "") + "%";
-    adv.textContent = (s.mode === "kelly"
-        ? "켈리 값 " + (s.kelly * 100).toFixed(1) + "%의 1/4인 시드 " + fp
-        : "이 조합은 켈리 값이 0 이하라 기본 비율인 시드 " + fp) +
-      (s.capped ? "는 1회 한도를 넘어 " : ", 즉 ") + won(s.stake) + "을 권장합니다. 맞을 확률은 " + pct(c.p) + "이고, 맞으면 " + won(pay) + "을 받습니다." +
-      (legs.length === 1 ? " 한 경기 구매는 베트맨에서 '한경기구매' 표시가 있는 경기만 가능합니다." : "");
+    adv.textContent = "총 시드 " + won(B) + "의 " + fp + (s.capped ? "는 1회 한도를 넘어 " : "인 ") + won(s.stake) + "만 거는 것을 권장합니다. 맞을 확률은 " + pct(c.p) +
+      "이고, 맞으면 " + won(pay) + "을 받습니다." + (legs.length === 1 ? " 한 경기 구매는 베트맨에서 '한경기구매' 표시가 있는 경기만 가능합니다." : "");
   }
   function renderToolList(q) {
     var ul = $("[data-tool-list]");

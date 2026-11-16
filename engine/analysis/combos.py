@@ -73,7 +73,8 @@ def _leg(m: dict[str, Any], a: dict[str, Any], key: str) -> dict[str, Any]:
             "market_id": m["id"], "match": match_key(m), "league": m["league"], "sport": m["sport"],
             "date": m["kickoff"][:10], "home": m["home"], "away": m["away"], "market": m["market"],
             "line": m.get("line"), "game_no": m.get("game_no"), "round": m.get("round"), "kickoff": m["kickoff"],
-            "outcome": key, "p": p, "odds": o, "ev": p * o - 1, "confidence": a["confidence"],
+            "outcome": key, "p": p, "odds": o, "x_odds": (a.get("x_odds") or {}).get(key), "x_kind": a.get("x_kind"),
+            "ev": p * o - 1, "confidence": a["confidence"],
             "upset_risk": a["upset_risk"],
         })
 
