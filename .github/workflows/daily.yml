@@ -47,6 +47,7 @@ jobs:
         if: always()
         run: python -m engine build
       - name: 데이터 커밋
+        id: commit
         if: always() && steps.build.outcome == 'success'
         run: |
           git config user.name "report-bot"
@@ -55,7 +56,16 @@ jobs:
           if git diff --cached --quiet; then echo "변경 없음"; exit 0; fi
           git commit -m "data: $(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M') 자동 갱신"
           for i in 1 2 3 4; do
-            git pull --rebase -X theirs origin "${GITHUB_REF_NAME}" && git push && exit 0
+            if git pull --rebase -X theirs origin "${GITHUB_REF_NAME}" && git push; then
+              echo "pushed=1" >> "$GITHUB_OUTPUT"; exit 0
+            fi
             sleep $((i * 5))
           done
           exit 1
+      - name: 검색엔진에 새 페이지 알림(IndexNow)
+        if: steps.commit.outputs.pushed == '1'
+        continue-on-error: true
+        run: |
+          sleep 150   # Cloudflare 배포가 끝날 때까지 대기
+          python -m engine build >/dev/null
+          python -m engine indexnow

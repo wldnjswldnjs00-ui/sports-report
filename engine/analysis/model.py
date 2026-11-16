@@ -40,6 +40,8 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
     if not p:
         return {**m, "analysis": None}
     p = shrink(p, alpha)
+    order = ("H", "D", "A", "O", "U")  # 화면 표시 순서 고정(승·무·패, 오버·언더)
+    p = {k: p[k] for k in order if k in p}
 
     pick = max(p, key=p.get)
     pick_prob = p[pick]

@@ -9,6 +9,7 @@ import logging
 import shutil
 from collections import defaultdict
 from datetime import date, datetime
+from email.utils import format_datetime
 from pathlib import Path
 from typing import Any
 
@@ -157,6 +158,70 @@ def _slip_payload(r: dict | None) -> dict:
     return {"date": r["date"], "legs": legs}
 
 
+def _jsonld(*objs) -> list[str]:
+    """JSON-LD 문자열. </script> 조기 종료를 막기 위해 '</' 를 이스케이프."""
+    return [json.dumps(o, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/") for o in objs if o]
+
+
+def _org() -> dict:
+    return {"@type": "Organization", "@id": config.SITE_URL + "/#org", "name": config.SITE_NAME,
+            "url": config.SITE_URL + "/", "logo": config.SITE_URL + "/static/og.png"}
+
+
+def _crumbs(items: list[tuple[str, str]]) -> dict:
+    return {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": i + 1, "name": n, "item": config.SITE_URL + u} for i, (n, u) in enumerate(items)]}
+
+
+def _leagues_of(r: dict, n: int = 3) -> list[str]:
+    from collections import Counter
+    c = Counter((m["league"]) for m in r.get("markets", []))
+    return [k for k, _ in c.most_common(n)]
+
+
+def _matches(r: dict) -> list[dict]:
+    """리포트의 마켓을 경기 단위로 묶는다(승패·핸디·언오버가 한 경기)."""
+    groups: dict[str, dict] = {}
+    for m in r.get("markets", []):
+        key = f"{m['kickoff'][:10]}|{m['home']}|{m['away']}"
+        g = groups.get(key)
+        if not g:
+            g = groups[key] = {"key": key, "date": r["date"], "kickoff": m["kickoff"], "league": m["league"],
+                               "sport": m["sport"], "home": m["home"], "away": m["away"], "venue": m.get("venue"),
+                               "markets": [], "no": m.get("game_no")}
+        g["markets"].append(m)
+    used: set[str] = set()
+    out = []
+    for g in sorted(groups.values(), key=lambda g: (g["kickoff"], g["no"] or 0)):
+        base = slug(f"{g['home']} vs {g['away']}")
+        sl = base if base not in used else f"{base}-{g['no']}"
+        used.add(sl)
+        g["slug"] = sl
+        g["url"] = f"/matches/{r['date']}/{sl}/"
+        order = {"1X2": 0, "WL": 1, "HANDICAP": 2, "OU": 3}
+        g["markets"].sort(key=lambda m: order.get(m["market"], 9))
+        g["main"] = next((m for m in g["markets"] if m.get("analysis")), None)
+        out.append(g)
+    return out
+
+
+def _event_ld(g: dict) -> dict:
+    ev = {"@type": "SportsEvent", "name": f"{g['home']} vs {g['away']}", "startDate": g["kickoff"],
+          "sport": SPORT_LABEL.get(g["sport"], ""), "eventStatus": "https://schema.org/EventScheduled",
+          "homeTeam": {"@type": "SportsTeam", "name": g["home"]}, "awayTeam": {"@type": "SportsTeam", "name": g["away"]},
+          "competitor": [{"@type": "SportsTeam", "name": g["home"]}, {"@type": "SportsTeam", "name": g["away"]}],
+          "url": config.SITE_URL + g["url"], "description": f"{g['league']} {g['home']} 대 {g['away']} 경기 분석"}
+    if g.get("venue"):
+        ev["location"] = {"@type": "Place", "name": g["venue"]}
+    return ev
+
+
+def _article_ld(title: str, desc: str, url: str, published: str, modified: str) -> dict:
+    return {"@context": "https://schema.org", "@type": "Article", "headline": title[:110], "description": desc,
+            "inLanguage": "ko-KR", "mainEntityOfPage": config.SITE_URL + url, "datePublished": published,
+            "dateModified": modified, "author": _org(), "publisher": _org(), "image": [config.SITE_URL + "/static/og.png"]}
+
+
 def build() -> None:
     env = _env()
     reports = []
@@ -184,11 +249,44 @@ def build() -> None:
         _write(config.DIST / out.strip("/") / "index.html" if out != "/" else config.DIST / "index.html", html)
         urls.append((out, kw.get("lastmod") or today.isoformat()))
 
-    page("report.html", "/", r=latest, is_home=True, lastmod=(latest or {}).get("date"))
+    site_ld = {"@context": "https://schema.org", "@graph": [
+        {"@type": "WebSite", "@id": config.SITE_URL + "/#site", "name": config.SITE_NAME, "alternateName": config.SITE_DOMAIN_DISPLAY,
+         "url": config.SITE_URL + "/", "inLanguage": "ko-KR", "publisher": {"@id": config.SITE_URL + "/#org"}}, _org()]}
+
+    def report_ld(r, url):
+        if not r:
+            return []
+        ms = _matches(r)
+        title = f"{_kdate(r['date'])} 프로토 승부식 분석"
+        items = {"@context": "https://schema.org", "@type": "ItemList", "name": title, "itemListElement": [
+            {"@type": "ListItem", "position": i + 1, "item": _event_ld(g)} for i, g in enumerate(ms[:40])]}
+        return _jsonld(_article_ld(title, r.get("headline", ""), url, r.get("generated_at") or r["date"], r.get("updated_at") or r["date"]),
+                       items, _crumbs([("홈", "/"), ("지난 리포트", "/reports/"), (_kdate(r["date"]), f"/reports/{r['date']}/")]))
+
+    page("report.html", "/", r=latest, is_home=True, lastmod=(latest or {}).get("date"),
+         matches=_matches(latest) if latest else [], leagues_top=_leagues_of(latest) if latest else [],
+         jsonld=_jsonld(site_ld) + report_ld(latest, "/"))
+    rss_items = []
     for i, r in enumerate(reports):
         prev_d = reports[i + 1]["date"] if i + 1 < len(reports) else None
         next_d = reports[i - 1]["date"] if i > 0 else None
-        page("report.html", f"/reports/{r['date']}/", r=r, is_home=False, prev_d=prev_d, next_d=next_d, lastmod=r["date"])
+        ms = _matches(r)
+        url = f"/reports/{r['date']}/"
+        page("report.html", url, r=r, is_home=False, prev_d=prev_d, next_d=next_d, lastmod=r["date"],
+             matches=ms, leagues_top=_leagues_of(r), jsonld=report_ld(r, url))
+        if i < 30:
+            rss_items.append({"title": f"{_kdate(r['date'])} 프로토 승부식 분석 · {' · '.join(_leagues_of(r))}",
+                              "url": url, "desc": r.get("headline", ""), "date": r.get("generated_at") or r["date"] + "T06:00:00+09:00"})
+        if i < 45:  # 경기 페이지는 최근 45일분만 생성(빌드 시간·저장소 크기 보호)
+            outs = r.get("outcomes") or {}
+            for g in ms:
+                title = f"{g['home']} vs {g['away']} 분석 · {g['league']} {_kdt(g['kickoff'])}"
+                main = g.get("main")
+                desc = (main or {}).get("narrative") or f"{g['league']} {g['home']} 대 {g['away']} 경기 분석"
+                ld = _jsonld({"@context": "https://schema.org", **_event_ld(g)},
+                             _article_ld(title, desc[:160], g["url"], r.get("generated_at") or r["date"], r.get("updated_at") or r["date"]),
+                             _crumbs([("홈", "/"), (_kdate(r["date"]), url), (f"{g['home']} vs {g['away']}", g["url"])]))
+                page("match.html", g["url"], g=g, r=r, outs=outs, lastmod=r["date"], jsonld=ld, page_title=title, page_desc=desc[:155])
     page("archive.html", "/reports/")
     page("leagues.html", "/leagues/")
     for lg in leagues.values():
@@ -201,7 +299,13 @@ def build() -> None:
     _write(config.DIST / "404.html", env.get_template("404.html").render(**ctx, path="/404"))
     write_json(config.DIST / "data" / "today.json", _slip_payload(latest))
     _write(config.DIST / "sitemap.xml", env.get_template("sitemap.xml").render(urls=urls))
-    _write(config.DIST / "robots.txt", f"User-agent: *\nAllow: /\n\nSitemap: {config.SITE_URL}/sitemap.xml\n")
+    _write(config.DIST / "robots.txt", f"User-agent: *\nAllow: /\nDisallow: /data/\n\nSitemap: {config.SITE_URL}/sitemap.xml\n")
+    _write(config.DIST / "rss.xml", env.get_template("rss.xml").render(
+        items=[{**it, "pub": format_datetime(datetime.fromisoformat(it["date"]))} for it in rss_items],
+        built=format_datetime(config.now_kst())))
+    if config.INDEXNOW_KEY:
+        _write(config.DIST / f"{config.INDEXNOW_KEY}.txt", config.INDEXNOW_KEY)
+    write_json(config.DIST / "data" / "urls.json", [u for u, _ in urls])
     if config.ADSENSE_CLIENT:
         pub = config.ADSENSE_CLIENT.replace("ca-", "")
         _write(config.DIST / "ads.txt", f"google.com, {pub}, DIRECT, f08c47fec0942fa0\n")

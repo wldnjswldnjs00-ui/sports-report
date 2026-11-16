@@ -114,6 +114,7 @@ def parse_round(payload: dict, gm_ts: str) -> list[dict[str, Any]]:
             "kickoff": datetime.fromtimestamp(ko / 1000, config.KST).isoformat(timespec="minutes"),
             "home": str(home).strip(), "away": str(away).strip(), "market": mk,
             "line": line, "odds": odds,
+            "venue": (str(r.get("meetStadiumFullName")).strip() or None) if r.get("meetStadiumFullName") else None,
         })
     return out
 

@@ -28,6 +28,12 @@ ADSENSE_CLIENT = os.getenv("ADSENSE_CLIENT", "").strip()
 COUPANG_NOTICE = os.getenv("COUPANG_NOTICE", "") == "1"
 SUPPORT_URL = os.getenv("SUPPORT_URL", "").strip()
 
+# 검색엔진 소유 확인(서치 콘솔 / 네이버 서치어드바이저에서 받은 content 값)
+GOOGLE_SITE_VERIFICATION = os.getenv("GOOGLE_SITE_VERIFICATION", "").strip()
+NAVER_SITE_VERIFICATION = os.getenv("NAVER_SITE_VERIFICATION", "").strip()
+# IndexNow 키: 공개되어도 되는 값(사이트 루트의 /<키>.txt 로 소유를 증명). 네이버·빙에 새 페이지를 즉시 알린다.
+INDEXNOW_KEY = os.getenv("INDEXNOW_KEY", "4dbd24d706c1c5983c3c93c5a0a18f2b").strip()
+
 # 데모 모드: 실데이터가 없을 때 로컬 미리보기용 샘플을 만든다. 운영에서는 끈다.
 DEMO = os.getenv("DEMO", "0") == "1"
 

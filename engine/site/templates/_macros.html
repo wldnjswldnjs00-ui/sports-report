@@ -45,8 +45,8 @@
 
 {% macro prob_bar(m) %}
 {% set a = m.analysis %}
-<div class="pbar" role="img" aria-label="{% for k, v in a.p.items() %}{{ outcome(m, k) }} {{ v|pct }} {% endfor %}">
-  {% for k, v in a.p.items() %}
+<div class="pbar" role="img" aria-label="{% for k in ['H', 'D', 'A', 'O', 'U'] if k in a.p %}{{ outcome(m, k) }} {{ a.p[k]|pct }} {% endfor %}">
+  {% for k in ['H', 'D', 'A', 'O', 'U'] if k in a.p %}{% set v = a.p[k] %}
   <span class="seg seg-{{ k }}{% if k == a.pick %} is-pick{% endif %}" style="--w:{{ (v * 100)|round(1) }}%"><em>{{ v|pct }}</em></span>
   {% endfor %}
 </div>

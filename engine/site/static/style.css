@@ -436,3 +436,17 @@ dd { margin: 3px 0 0; font: 300 22px/1.2 var(--font); letter-spacing: -0.02em; }
   .seg { --fill: 1 !important; }
   .opick.is-on::before { transform: none; }
 }
+
+/* 경기 페이지 */
+.crumbs { padding-top: 22px; font-size: 12.5px; color: var(--ink-3); display: flex; flex-wrap: wrap; gap: 6px; }
+.crumbs a { text-decoration: none; color: var(--guide); }
+.page-head .vs { font-size: .5em; color: var(--ink-3); padding: 0 .2em; }
+.match-sum { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px; align-items: start; }
+.match-sum .kpis { grid-template-columns: 1fr 1fr; }
+.match-sum .kpis div:nth-child(-n+2) { border-bottom: 1px solid var(--guide-soft); }
+.match-sum .kpis div:nth-child(2) { border-right: 0; }
+.opick.mini { min-width: 0; padding: 3px 12px; }
+.m-link { margin: 4px 0 0; font-size: 13.5px; }
+.m-link a { color: var(--guide); text-decoration: none; font-weight: 500; }
+.prose-lite p { max-width: 70ch; color: var(--ink-2); }
+@media (max-width: 720px) { .match-sum { grid-template-columns: 1fr; } }

@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% from "_macros.html" import ad, combo_card, prob_bar, ev_class, result_tag %}
-{% block title %}{% if r %}{{ r.date|kdate }} 경기 분석 리포트{% if is_home %} · {{ cfg.SITE_NAME }}{% endif %}{% else %}{{ cfg.SITE_NAME }}{% endif %}{% endblock %}
-{% block desc %}{% if r %}{{ r.date|kdate(False) }} 베트맨 발매 {{ r.stats.matches }}경기 분석. {{ r.headline }}{% else %}{{ cfg.SITE_DESC }}{% endif %}{% endblock %}
+{% block title %}{% if r %}{% if is_home %}오늘의 프로토 승부식 분석 · {{ r.date|kdate }} | {{ cfg.SITE_NAME }}{% else %}{{ r.date|kdate }} 프로토 승부식 분석{% if leagues_top %} · {{ leagues_top|join(' · ') }}{% endif %} | {{ cfg.SITE_NAME }}{% endif %}{% else %}프로토 승부식 분석 | {{ cfg.SITE_NAME }}{% endif %}{% endblock %}
+{% block desc %}{% if r %}{{ r.date|kdate(False) }} 베트맨 프로토 승부식 {{ r.stats.matches }}경기 분석{% if leagues_top %}({{ leagues_top|join(', ') }}){% endif %}. 승패·핸디캡·언더오버 확률, 기대값, 안정형·공격형 조합 추천. {{ r.headline }}{% else %}{{ cfg.SITE_DESC }}{% endif %}{% endblock %}
+{% block ogtype %}{% if r and not is_home %}article{% else %}website{% endif %}{% endblock %}
 {% block bodyclass %}page-report{% endblock %}
 {% block main %}
 {% if not r %}
@@ -148,6 +149,7 @@
           {% endfor %}
         </div>
         <p class="m-text">{{ m.narrative }}</p>
+        {% for g in matches if g.home == m.home and g.away == m.away and g.kickoff[:10] == m.kickoff[:10] %}{% if loop.first %}<p class="m-link"><a href="{{ g.url }}">{{ m.home }} vs {{ m.away }} 경기 분석 전체 보기 →</a></p>{% endif %}{% endfor %}
         <dl class="m-nums">
           <div><dt>신뢰도</dt><dd>{{ a.confidence }}</dd></div>
           <div><dt>이변 위험</dt><dd>{{ a.upset_risk }}</dd></div>

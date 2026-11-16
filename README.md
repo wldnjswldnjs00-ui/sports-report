@@ -49,6 +49,11 @@ Cloudflare Pages → 프로젝트 → Settings → Environment variables에 추�
 
 그 밖의 설정: `CONTACT_EMAIL`(문의 페이지), `COUPANG_NOTICE=1`(쿠팡 파트너스 고지).
 
+### 4. 검색엔진 등록
+- 구글 서치 콘솔: 속성 추가 → URL 접두어 `https://스포츠분석.kr` → HTML 태그 방식의 content 값을 Cloudflare 변수 `GOOGLE_SITE_VERIFICATION`에 넣고 재배포 → 확인 → Sitemaps에 `sitemap.xml` 제출
+- 네이버 서치어드바이저: 사이트 등록 → HTML 태그 방식의 content 값을 `NAVER_SITE_VERIFICATION`에 넣고 재배포 → 확인 → 요청 → 사이트맵 제출(`sitemap.xml`), RSS 제출(`rss.xml`)
+- IndexNow(네이버·빙 즉시 색인)는 자동 실행마다 새 페이지를 알아서 보냅니다. 키 파일은 사이트 루트에 자동 생성됩니다.
+
 ## 베트맨 수집이 막힐 때
 
 베트맨은 공식 API가 없고, 해외 IP를 차단할 수 있습니다. 막히면 사이트가 멈추는 대신 아래 방법으로 이어갑니다.

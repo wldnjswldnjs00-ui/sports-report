@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>{{ cfg.SITE_NAME }} · 프로토 승부식 분석 리포트</title>
+  <link>{{ cfg.SITE_URL }}/</link>
+  <description>{{ cfg.SITE_DESC }}</description>
+  <language>ko</language>
+  <lastBuildDate>{{ built }}</lastBuildDate>
+  <atom:link href="{{ cfg.SITE_URL }}/rss.xml" rel="self" type="application/rss+xml"/>
+{% for it in items %}  <item>
+    <title>{{ it.title }}</title>
+    <link>{{ cfg.SITE_URL }}{{ it.url }}</link>
+    <guid isPermaLink="true">{{ cfg.SITE_URL }}{{ it.url }}</guid>
+    <description>{{ it.desc }}</description>
+    <pubDate>{{ it.pub }}</pubDate>
+  </item>
+{% endfor %}</channel>
+</rss>
