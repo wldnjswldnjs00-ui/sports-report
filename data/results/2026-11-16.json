@@ -97,6 +97,42 @@
    "raw": "72.5:67",
    "code": "0",
    "market": "HANDICAP"
+  },
+  "betman:G101:260136:4342": {
+   "home_score": 1.0,
+   "away_score": 0.0,
+   "status": "FT",
+   "src": "odds_api"
+  },
+  "betman:G101:260136:4343": {
+   "home_score": 1.0,
+   "away_score": 0.0,
+   "status": "FT",
+   "src": "odds_api"
+  },
+  "betman:G101:260136:4344": {
+   "home_score": 1.0,
+   "away_score": 0.0,
+   "status": "FT",
+   "src": "odds_api"
+  },
+  "betman:G101:260136:4346": {
+   "home_score": 2.0,
+   "away_score": 2.0,
+   "status": "FT",
+   "src": "odds_api"
+  },
+  "betman:G101:260136:4347": {
+   "home_score": 2.0,
+   "away_score": 2.0,
+   "status": "FT",
+   "src": "odds_api"
+  },
+  "betman:G101:260136:4348": {
+   "home_score": 2.0,
+   "away_score": 2.0,
+   "status": "FT",
+   "src": "odds_api"
   }
  }
 }
