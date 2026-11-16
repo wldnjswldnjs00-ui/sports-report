@@ -133,6 +133,7 @@
 {% endif %}
 
 <section class="wrap block" id="matches" data-reveal>
+  {% set groups = r.markets|match_groups %}
   <header class="block-head">
     <h2>경기 분석</h2>
     <div class="filters" data-days>
@@ -143,51 +144,61 @@
     <div class="filters" data-filters>
       <button type="button" class="chip" aria-pressed="true" data-f="all">전체</button>
       {% for sp in ['soccer', 'basketball', 'baseball', 'volleyball'] %}
-      {% set cnt = r.markets|selectattr('sport', 'equalto', sp)|list|length %}
+      {% set cnt = groups|selectattr('sport', 'equalto', sp)|list|length %}
       <button type="button" class="chip" aria-pressed="false" data-f="{{ sp }}">{{ SPORT_LABEL[sp] }} <small>{{ cnt }}</small></button>
       {% endfor %}
     </div>
   </header>
   <p class="none" data-empty hidden>이 날짜에는 해당 종목의 배당 공개 경기가 없습니다.</p>
   <ol class="matches">
-  {% for m in r.markets %}
-    {% set a = m.analysis %}
-    <li class="match" data-sport="{{ m.sport }}" data-day="{{ m.kickoff[:10] }}" {% if m.id in r.caution %}data-caution{% endif %}>
+  {% for g in groups %}
+    {% set mm = g.main %}{% set a = mm.analysis %}
+    {% set graded = [] %}{% for m in g.markets %}{% set o = r.outcomes.get(m.id) %}{% if o and o != 'VOID' and m.analysis %}{% set _ = graded.append(o == m.analysis.pick) %}{% endif %}{% endfor %}
+    <li class="match" data-sport="{{ g.sport }}" data-day="{{ g.kickoff[:10] }}" {% if g.markets|selectattr('id', 'in', r.caution)|list %}data-caution{% endif %}>
       <button type="button" class="match-row" aria-expanded="false" data-expand>
-        <span class="m-no">{% if m.round %}<small>{{ round_label(m.round) }}</small>{% endif %}{{ m.game_no or '' }}{% if m.game_no %}번{% endif %}</span>
-        <span class="m-time">{{ m.kickoff|kdt }}</span>
-        <span class="m-league">{{ m.league }} <small>{{ MARKET_LABEL[m.market] }}{% if m.line is not none %} {{ '%+g'|format(m.line) }}{% endif %}</small></span>
-        <span class="m-teams">{{ m.home }} <i>vs</i> {{ m.away }}</span>
+        <span class="m-no">{% if g.round %}<small>{{ round_label(g.round) }}</small>{% endif %}{{ g.game_no or '' }}{% if g.game_no %}번{% endif %}</span>
+        <span class="m-time">{{ g.kickoff|kdt }}</span>
+        <span class="m-league">{{ g.league }} <small>{% if g.markets|length > 1 %}마켓 {{ g.markets|length }}개{% else %}{{ mk_short(g.main) }}{% endif %}</small></span>
+        <span class="m-teams">{{ g.home }} <i>vs</i> {{ g.away }}</span>
+        {% set others = g.markets|rejectattr('id', 'equalto', mm.id)|selectattr('analysis')|list %}
+        {% if others %}<span class="m-also">{% for m in others %}<span>{{ outcome(m, m.analysis.pick) }} <b>{{ m.analysis.pick_prob|pct }}</b></span>{% endfor %}</span>{% endif %}
         {% if a %}
-        <span class="m-pick"><span class="bub on">{{ outcome(m, a.pick) }}</span><b>{{ a.pick_prob|pct }}</b></span>
+        <span class="m-pick"><span class="bub on">{{ outcome(mm, a.pick) }}</span><b>{{ a.pick_prob|pct }}</b></span>
         <span class="m-conf" style="--c:{{ a.confidence }}"><span></span>{{ a.confidence }}</span>
         {% else %}<span class="m-pick muted">데이터 부족</span><span></span>{% endif %}
-        <span class="m-res">{% set o = r.outcomes.get(m.id) %}{% set fk = flow_key(m) %}{% if o and a %}{{ result_tag('void' if o == 'VOID' else ('hit' if o == a.pick else 'miss')) }}{% elif fk %}<span class="tag flow" title="배당이 내려간 쪽: 구매가 몰린 쪽">{{ outcome(m, fk) }}↘</span>{% elif m.id in r.caution %}<span class="tag warn">주의</span>{% endif %}</span>
+        <span class="m-res">{% set fk = flow_key(mm) %}{% if graded %}{% set hits = graded|select|list|length %}<span class="tag {{ 'hit' if hits == graded|length else ('miss' if hits == 0 else 'part') }}">적중 {{ hits }}/{{ graded|length }}</span>{% elif fk %}<span class="tag flow" title="배당이 내려간 쪽: 구매가 몰린 쪽">{{ outcome(mm, fk) }}↘</span>{% elif g.markets|selectattr('id', 'in', r.caution)|list %}<span class="tag warn">주의</span>{% endif %}</span>
       </button>
-      {% if a %}
       <div class="match-more" hidden>
-        {{ prob_bar(m) }}
-        <div class="odds-pick" role="group" aria-label="결과 선택해서 내 조합에 담기">
-          {% for k, o in m.odds.items() %}
-          <button type="button" class="opick{% if k == a.pick %} is-model{% endif %}" data-leg="{{ m.id }}|{{ k }}">
-            <span>{{ outcome(m, k) }}</span><b>{{ o|odds }}</b>{% set ro = (a.x_odds or {}).get(k) %}{% if ro %}<small class="ref" title="해외 배당{{ ' (베트맨 기준점으로 환산)' if a.x_kind == '환산' }}">해외 {{ ro|odds }}</small>{% endif %}
-            {% set open = (m.odds_open or {}).get(k) %}{% if open and open != o %}<small class="{{ 'up' if o > open else 'down' }}">{{ open|odds }}→</small>{% endif %}
-          </button>
-          {% endfor %}
+        {% for m in g.markets %}{% set ma = m.analysis %}
+        <div class="mk">
+          <div class="mk-head"><b>{{ mk_short(m) }}</b>{% if m.game_no %}<small>{{ m.game_no }}번</small>{% endif %}
+            {% if ma %}<span class="mk-pick">{{ outcome(m, ma.pick) }} {{ ma.pick_prob|pct }} · 신뢰도 {{ ma.confidence }}</span>{% endif %}
+            {% set o = r.outcomes.get(m.id) %}{% if o and ma %}{{ result_tag('void' if o == 'VOID' else ('hit' if o == ma.pick else 'miss')) }}{% endif %}
+          </div>
+          {% if ma %}{{ prob_bar(m) }}{% endif %}
+          <div class="odds-pick" role="group" aria-label="{{ mk_short(m) }} 결과 선택해서 내 조합에 담기">
+            {% for k, od in m.odds.items() %}
+            <button type="button" class="opick{% if ma and k == ma.pick %} is-model{% endif %}" data-leg="{{ m.id }}|{{ k }}">
+              <span>{{ outcome(m, k) }}</span><b>{{ od|odds }}</b>{% set ro = (ma.x_odds or {}).get(k) if ma else none %}{% if ro %}<small class="ref" title="해외 배당{{ ' (베트맨 기준점으로 환산)' if ma.x_kind == '환산' }}">해외 {{ ro|odds }}</small>{% endif %}
+              {% set open = (m.odds_open or {}).get(k) %}{% if open and open != od %}<small class="{{ 'up' if od > open else 'down' }}">{{ open|odds }}→</small>{% endif %}
+            </button>
+            {% endfor %}
+          </div>
         </div>
-        {{ oreo_block(m) }}
-        {% if m.form and (m.form.home or m.form.away) %}<p class="m-form"><span>{{ m.home }}</span>{{ form_seq(m.form.home) }}<span>{{ m.away }}</span>{{ form_seq(m.form.away) }}</p>{% endif %}
-        {% if m.injuries %}{% set outs_n = (m.injuries.home|selectattr('out')|list|length) + (m.injuries.away|selectattr('out')|list|length) %}{% if outs_n %}<p class="m-inj">결장·결장 유력 {{ outs_n }}명 — 경기 페이지에서 확인</p>{% endif %}{% endif %}
-        {% for g in matches if g.home == m.home and g.away == m.away and g.kickoff[:10] == m.kickoff[:10] %}{% if loop.first %}<p class="m-link"><a href="{{ g.url }}">{{ m.home }} vs {{ m.away }} 경기 분석 전체 보기 →</a></p>{% endif %}{% endfor %}
+        {% endfor %}
+        {% if a %}
+        {{ oreo_block(mm) }}
+        {% if mm.form and (mm.form.home or mm.form.away) %}<p class="m-form"><span>{{ g.home }}</span>{{ form_seq(mm.form.home) }}<span>{{ g.away }}</span>{{ form_seq(mm.form.away) }}</p>{% endif %}
+        {% if mm.injuries %}{% set outs_n = (mm.injuries.home|selectattr('out')|list|length) + (mm.injuries.away|selectattr('out')|list|length) %}{% if outs_n %}<p class="m-inj">결장·결장 유력 {{ outs_n }}명 — 경기 페이지에서 확인</p>{% endif %}{% endif %}
+        {% for x in matches if x.home == g.home and x.away == g.away and x.kickoff[:10] == g.kickoff[:10] %}{% if loop.first %}<p class="m-link"><a href="{{ x.url }}">{{ g.home }} vs {{ g.away }} 경기 분석 전체 보기 →</a></p>{% endif %}{% endfor %}
         <dl class="m-nums">
-          <div><dt>신뢰도</dt><dd>{{ a.confidence }}</dd></div>
           <div><dt>이변 위험</dt><dd>{{ a.upset_risk }}</dd></div>
           {% if a.hist and a.pick in a.hist and a.hist[a.pick].bucket in XSRC %}{% set h = a.hist[a.pick] %}<div><dt>해외 기록 적중률</dt><dd>{{ h.hit|pct(1) }} <small class="muted">({{ h.bucket }}, {{ '{:,}'.format(h.n) }}경기)</small></dd></div>{% endif %}
           <div><dt>근거</dt><dd>{{ a.sources|join(', ') }}</dd></div>
           {% if a.flags %}<div><dt>표시</dt><dd>{{ a.flags|join(' · ') }}</dd></div>{% endif %}
         </dl>
+        {% endif %}
       </div>
-      {% endif %}
     </li>
   {% endfor %}
   </ol>

@@ -104,9 +104,9 @@ def _env() -> Environment:
         autoescape=select_autoescape(["html", "xml"]),
         trim_blocks=True, lstrip_blocks=True,
     )
-    env.filters.update(pct=_pct, signed=_signed, odds=_odds, won=_won, kdate=_kdate, ktime=_ktime, kdt=_kdt, slug=slug)
+    env.filters.update(match_groups=_match_groups, pct=_pct, signed=_signed, odds=_odds, won=_won, kdate=_kdate, ktime=_ktime, kdt=_kdt, slug=slug)
     env.globals.update(
-        cfg=config, STRATEGIES=STRATEGIES, MARKET_LABEL=MARKET_LABEL, SPORT_LABEL=SPORT_LABEL, XSRC=("유럽 축구", "NBA", "MLB"),
+        cfg=config, STRATEGIES=STRATEGIES, MARKET_LABEL=MARKET_LABEL, SPORT_LABEL=SPORT_LABEL, XSRC=("유럽 축구", "NBA", "MLB"), mk_short=_mk_short,
         outcome=_outcome, flow_key=_flow_key, round_label=_round_label, rounds_of=_rounds, now=config.now_kst(), asset_v=config.now_kst().strftime("%Y%m%d%H%M"),
         nav=[("/", "오늘"), ("/odds/", "배당 분석"), ("/tool/", "금액 계산기"), ("/performance/", "성과"),
              ("/reports/", "지난 리포트"), ("/method/", "분석 방법"), ("/guide/", "가이드")],
@@ -170,6 +170,37 @@ def _leagues(reports: list[dict]) -> dict[str, dict]:
         lg["teams"] = sorted(lg["teams"].items(), key=lambda kv: -kv[1])
         lg["recent"].sort(key=lambda m: m["kickoff"], reverse=True)
     return dict(sorted(out.items(), key=lambda kv: -kv[1]["n"]))
+
+
+def _mk_short(m: dict) -> str:
+    """마켓 짧은 이름: 승무패 / 승패 / 핸디캡 -1 / 언더오버 2.5"""
+    if m["market"] == "HANDICAP":
+        return f"핸디캡 {m.get('line') or 0:+g}"
+    if m["market"] == "OU":
+        return f"언더오버 {m.get('line') or 0:g}"
+    return MARKET_LABEL.get(m["market"], m["market"])
+
+
+_MK_ORDER = {"1X2": 0, "WL": 1, "HANDICAP": 2, "OU": 3}
+
+
+def _match_groups(markets: list[dict]) -> list[dict]:
+    """같은 경기(시각·홈·원정)의 승무패·핸디캡·언더오버를 한 묶음으로. 경기 목록 순서는 그대로."""
+    groups: dict[tuple, dict] = {}
+    for m in markets:
+        key = (m["kickoff"][:16], m["home"], m["away"])
+        g = groups.get(key)
+        if g is None:
+            g = groups[key] = {"key": "|".join(key), "sport": m["sport"], "kickoff": m["kickoff"], "home": m["home"], "away": m["away"],
+                               "league": m["league"], "round": m.get("round"), "markets": []}
+        g["markets"].append(m)
+    out = []
+    for g in groups.values():
+        g["markets"].sort(key=lambda m: (_MK_ORDER.get(m["market"], 9), m.get("line") or 0))
+        g["main"] = next((m for m in g["markets"] if m.get("analysis")), g["markets"][0])
+        g["game_no"] = g["main"].get("game_no")
+        out.append(g)
+    return out
 
 
 def _slip_payload(r: dict | None) -> dict:

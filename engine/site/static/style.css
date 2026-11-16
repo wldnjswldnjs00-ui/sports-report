@@ -612,3 +612,22 @@ html:not(.is-mobile):not(.is-pc) .mo-only { display: none; }
   .xo-tag { display: block; width: fit-content; margin: 3px 0 0; }
   .xo-bars li { grid-template-columns: 46px minmax(0, 1fr) 58px; padding: 12px; }
 }
+
+/* 경기 1개 = 목록 1줄. 펼치면 승무패·핸디캡·언더오버를 한 카드 안에 */
+.m-also { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 4px; font-size: 12px; color: var(--ink-3); font-weight: 500; }
+.m-also b { font: 600 12px var(--en); color: var(--ink-2); letter-spacing: -0.02em; }
+.m-teams { min-width: 0; }
+.mk { padding: 14px 0; border-bottom: 1px dashed var(--line); }
+.mk:first-child { padding-top: 10px; }
+.mk-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+.mk-head b { font: 400 18px var(--ko); }
+.mk-head small { color: var(--ink-3); font: 600 11px var(--en); }
+.mk-pick { margin-left: auto; font-size: 12.5px; color: var(--ink-2); font-weight: 600; }
+.tag.part { background: var(--sun); color: #3d2e00; }
+@media (max-width: 720px) { .mk-pick { margin-left: 0; width: 100%; } }
+.m-also { grid-column: 4; grid-row: 2; margin-top: -8px; }
+@media (max-width: 720px) {
+  /* 위쪽 PC용 7열 선언이 모바일 배치를 덮어쓰던 문제를 바로잡는다 */
+  .match-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "meta res" "teams pick" "also also"; }
+  .m-also { grid-area: also; grid-column: auto; grid-row: auto; margin-top: 0; }
+}
