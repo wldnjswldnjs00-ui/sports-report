@@ -122,7 +122,7 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
     if F.get("h2h"):
         hh = F["h2h"]
         ev.append(f"최근 맞대결 {hh['n']}경기는 {m['home']} 기준 {hh['w']}승 {hh['l']}패")
-    inj = m.get("injuries") or {}
+    inj = {}  # 부상자 기능은 쓰지 않는다
     outs = {s: [x["name"] for x in inj.get(s, []) if x["out"]] for s in ("home", "away")}
     if outs["home"] or outs["away"]:
         parts = []
@@ -177,7 +177,7 @@ def review(m: dict[str, Any], outcome: str) -> dict[str, str] | None:
             causes.append(f"발행 당시 이변 위험이 {a['upset_risk']}로 이미 높았다")
         if pp < 0.55:
             causes.append(f"추정 확률이 {_pct(pp)}에 그친 박빙 경기였다")
-        inj = m.get("injuries") or {}
+        inj = {}  # 부상자 기능은 쓰지 않는다
         side = "home" if pick == "H" else "away" if pick == "A" else None
         if side and sum(1 for x in inj.get(side, []) if x["out"]) >= 2:
             causes.append("고른 팀에 결장 선수가 2명 이상 있었다")

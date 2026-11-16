@@ -186,7 +186,7 @@
         {% if a %}
         {{ oreo_block(mm) }}
         {% if mm.form and (mm.form.home or mm.form.away) %}<p class="m-form"><span>{{ g.home }}</span>{{ form_seq(mm.form.home) }}<span>{{ g.away }}</span>{{ form_seq(mm.form.away) }}</p>{% endif %}
-        {% if mm.injuries %}{% set outs_n = (mm.injuries.home|selectattr('out')|list|length) + (mm.injuries.away|selectattr('out')|list|length) %}{% if outs_n %}<p class="m-inj">결장·결장 유력 {{ outs_n }}명 — 경기 페이지에서 확인</p>{% endif %}{% endif %}
+        {% set H = (mm.form or {}).get('h2h') %}{% if H %}<p class="m-h2h">상대 전적({{ g.home }} 기준){% if H.season %} · 올 시즌 <b>{{ H.season.w }}승{% if H.season.d %} {{ H.season.d }}무{% endif %} {{ H.season.l }}패</b>{% else %} · 올 시즌 맞대결 없음{% endif %} · 최근 {{ H.n }}경기 {{ H.w }}승{% if H.d %} {{ H.d }}무{% endif %} {{ H.l }}패{% if H.last %} <span class="muted">(최근 {{ H.last[0].date }} {{ H.last[0].score }})</span>{% endif %}</p>{% endif %}
         {% for x in matches if x.home == g.home and x.away == g.away and x.kickoff[:10] == g.kickoff[:10] %}{% if loop.first %}<p class="m-link"><a href="{{ x.url }}">{{ g.home }} vs {{ g.away }} 경기 분석 전체 보기 →</a></p>{% endif %}{% endfor %}
         <dl class="m-nums">
           <div><dt>이변 위험</dt><dd>{{ a.upset_risk }}</dd></div>

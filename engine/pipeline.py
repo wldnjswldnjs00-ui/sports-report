@@ -102,25 +102,17 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
         a["narrative"] = describe(a)
         analyzed.append(a)
     analyzed.sort(key=lambda m: (m["kickoff"], m.get("game_no") or 0))
-    # 최근 10경기·상대 전적·휴식일, NBA 부상자
+    # 최근 10경기·상대 전적(올 시즌 포함)·휴식일
     if not config.DEMO:
         try:
             from .analysis import form as F
-            from .sources import betman_history, injuries
+            from .sources import betman_history
             reps = all_reports()
             rbd = {r["date"]: read_json(results_path(r["date"]), {}) or {} for r in reps}
             nf = F.attach(analyzed, F.build(betman_history.load_all(), reps, rbd))
-            ni = injuries.attach(analyzed)
             status["form"] = f"{nf}개 마켓"
-            status["injuries"] = injuries.LAST_STATUS
-            for m in analyzed:
-                inj = m.get("injuries") or {}
-                a = m.get("analysis")
-                if a and any(sum(1 for x in inj.get(s, []) if x["out"]) >= 2 for s in ("home", "away")):
-                    if "주전 결장" not in a["flags"]:
-                        a["flags"].append("주전 결장")
         except Exception:  # noqa: BLE001
-            log.exception("흐름·부상자 처리 실패(분석은 계속)")
+            log.exception("흐름 처리 실패(분석은 계속)")
     # 근거 데이터가 다 붙은 뒤 분석문(오레오)을 쓴다. 시작된 경기의 글은 고정.
     for m in analyzed:
         if m.get("analysis") and not (datetime.fromisoformat(m["kickoff"]) <= now and m.get("oreo")):

@@ -45,22 +45,36 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
         if p_elo:
             sources.append((p_elo, 0.10 if p_hist else 0.15)); used.append("Elo")
     else:
-        # 해외 배당이 없는 경기: 베트맨 배당은 쓰지 않고 레이팅·기록으로만 본다(신뢰도 상한)
+        # 해외 배당을 받을 수 없는 경기: 베트맨 배당(발행처 몫을 걷어낸 확률)을 기준으로,
+        # 국가대표 레이팅·A매치 기록이나 팀 레이팅이 있으면 보조로 섞는다. 모든 마켓을 분석한다(신뢰도 상한 55).
         from ..sources import intl_history as IH
         st = IH.stat(m["home"], m["away"]) if m["sport"] == "soccer" else None
         p_i = IH.market_probs(st, m["market"], m.get("line"), set(odds)) if st else None
+        p_r = None  # 레이팅 보조
         if p_i:
             intl = {"rh": st["rh"], "ra": st["ra"], "n": st["n"]}
             xstat = {"src": "A매치", "n": st["n"], "p": {k: round(v, 4) for k, v in p_i.items()},
                      "basis": f"국가대표 레이팅 {st['rh']} 대 {st['ra']}와 비슷한"}
             hist_info = hist_for(xstat, odds)
-            p_hist = None
-            # 상한 50: '적중 확률 높은 경기'(신뢰도 55 이상)에는 들어가지 않고 조합 후보로만 쓰인다
-            sources, used, cap = [(p_i, 1.0)], ["국가대표 레이팅·A매치 기록(해외 배당 없음)"], 50
-        elif p_elo and m["market"] in ("1X2", "WL"):
-            xstat, hist_info, p_hist = None, None, None
-            sources, used, cap = [(p_elo, 1.0)], ["팀 레이팅(해외 배당 없음)"], 40
+            p_r, r_lab = p_i, "국가대표 레이팅·A매치 기록"
         else:
+            xstat, hist_info = None, None
+            if p_elo and m["market"] in ("1X2", "WL"):
+                p_r, r_lab = p_elo, "팀 레이팅"
+            elif m["market"] == "HANDICAP" and m["sport"] != "soccer" and (p_wl := elo.probs(m["sport"], m["home"], m["away"], "WL")):
+                # 승리 확률 → 예상 점수(세트) 차 → 기준점에서의 확률(정규분포, 종목별 표준편차)
+                from .derive import normal_market
+                ph = p_wl["H"] / (p_wl["H"] + p_wl["A"])
+                p_r, r_lab = normal_market(m["sport"], {"h2h": {"H": ph, "A": 1 - ph}}, "HANDICAP", m.get("line"), set(odds)), "팀 레이팅"
+        p_hist = None
+        sources, used, cap = [], [], 55
+        if p_bet:
+            sources.append((p_bet, 0.7 if p_r else 1.0)); used.append("베트맨 배당(해외 배당 없음)")
+        if p_r:
+            sources.append((p_r, 0.3 if p_bet else 1.0)); used.append(r_lab)
+            if not p_bet:
+                cap = 40
+        if not sources:
             return {**m, "analysis": None, "no_x": True}
         ref = {}
     p = combine(sources)
