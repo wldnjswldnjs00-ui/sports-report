@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import prob_bar, ev_class, result_tag %}
+{% from "_macros.html" import prob_bar, ev_class, result_tag, form_block, injury_block %}
 {% block title %}{{ page_title }} | {{ cfg.SITE_NAME }}{% endblock %}
 {% block desc %}{{ page_desc }}{% endblock %}
 {% block ogtype %}article{% endblock %}
@@ -31,6 +31,16 @@
     </div>
   </section>
   {% endif %}
+
+  {% set fm = g.markets|selectattr('form')|first %}
+  {% if fm %}
+  <section class="block" data-reveal>
+    <div class="block-head"><h2>최근 흐름</h2><p>베트맨 지난 회차 실제 점수 기준입니다.</p></div>
+    {{ form_block(fm) }}
+  </section>
+  {% endif %}
+  {% set im = g.markets|selectattr('injuries')|first %}
+  {% if im %}<section class="block" data-reveal>{{ injury_block(im) }}</section>{% endif %}
 
   <section class="block" data-reveal>
     <div class="block-head"><h2>마켓별 배당과 확률</h2><p>배당 흐름은 첫 발매 배당에서 지금까지의 변화입니다. 배당이 내려간 쪽으로 구매가 몰립니다. 과거 적중률은 베트맨 지난 회차에서 같은 배당 구간이 실제로 맞은 비율입니다.</p></div>

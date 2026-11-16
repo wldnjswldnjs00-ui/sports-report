@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import ad, combo_card, prob_bar, ev_class, result_tag %}
+{% from "_macros.html" import ad, combo_card, prob_bar, ev_class, result_tag, form_seq %}
 {% block title %}{% if r %}{% if is_home %}오늘의 프로토 승부식 분석 · {{ r.date|kdate }} | {{ cfg.SITE_NAME }}{% else %}{{ r.date|kdate }} 프로토 승부식 분석{% if leagues_top %} · {{ leagues_top|join(' · ') }}{% endif %} | {{ cfg.SITE_NAME }}{% endif %}{% else %}프로토 승부식 분석 | {{ cfg.SITE_NAME }}{% endif %}{% endblock %}
 {% block desc %}{% if r %}{{ r.date|kdate(False) }} 베트맨 프로토 승부식 {{ r.stats.matches }}경기 분석{% if leagues_top %}({{ leagues_top|join(', ') }}){% endif %}. 승패·핸디캡·언더오버 확률, 기대값, 안정형·공격형 조합 추천. {{ r.headline }}{% else %}{{ cfg.SITE_DESC }}{% endif %}{% endblock %}
 {% block ogtype %}{% if r and not is_home %}article{% else %}website{% endif %}{% endblock %}
@@ -147,6 +147,8 @@
           {% endfor %}
         </div>
         <p class="m-text">{{ m.narrative }}</p>
+        {% if m.form and (m.form.home or m.form.away) %}<p class="m-form"><span>{{ m.home }}</span>{{ form_seq(m.form.home) }}<span>{{ m.away }}</span>{{ form_seq(m.form.away) }}</p>{% endif %}
+        {% if m.injuries %}{% set outs_n = (m.injuries.home|selectattr('out')|list|length) + (m.injuries.away|selectattr('out')|list|length) %}{% if outs_n %}<p class="m-inj">결장·결장 유력 {{ outs_n }}명 — 경기 페이지에서 확인</p>{% endif %}{% endif %}
         {% for g in matches if g.home == m.home and g.away == m.away and g.kickoff[:10] == m.kickoff[:10] %}{% if loop.first %}<p class="m-link"><a href="{{ g.url }}">{{ m.home }} vs {{ m.away }} 경기 분석 전체 보기 →</a></p>{% endif %}{% endfor %}
         <dl class="m-nums">
           <div><dt>신뢰도</dt><dd>{{ a.confidence }}</dd></div>

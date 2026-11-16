@@ -46,7 +46,8 @@ def build(rows: list[list]) -> dict[str, Any]:
         a["ret"] += o if hit else 0.0
         a["inv"] += 1 / o
 
-    for sport, _league, mk, _line, w, d, l, code, _ko, under_first in rows:
+    for row in rows:
+        sport, _league, mk, _line, w, d, l, code, _ko, under_first = row[:10]
         if mk == "OU":
             sides = [("U" if under_first else "O", w, 0), ("O" if under_first else "U", l, 2)]
         else:

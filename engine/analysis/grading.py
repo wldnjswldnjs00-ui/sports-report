@@ -213,10 +213,16 @@ def fit_alpha(reports: list[dict[str, Any]]) -> dict[str, Any]:
     return {"alpha": best[1], "n": len(rows)}
 
 
-def rebuild_elo(reports: list[dict[str, Any]], results_by_date: dict[str, dict]) -> Elo:
-    """모든 결과로 Elo 를 처음부터 다시 계산한다(멱등)."""
+def rebuild_elo(reports: list[dict[str, Any]], results_by_date: dict[str, dict], history: list[list] | None = None) -> Elo:
+    """모든 결과로 Elo 를 처음부터 다시 계산한다(멱등). 베트맨 과거 회차 실제 점수를 먼저 반영."""
+    from datetime import datetime as _dt
     elo = Elo({})
     games = {}
+    for row in history or []:
+        if len(row) < 14 or row[2] not in ("1X2", "WL") or row[12] is None or not isinstance(row[8], (int, float)):
+            continue
+        ko = _dt.fromtimestamp(row[8] / 1000, config.KST).isoformat(timespec="minutes")
+        games.setdefault((row[0], ko[:10], row[10], row[11]), (ko, float(row[12]), float(row[13])))
     for rep in reports:
         rmap = (results_by_date.get(rep["date"]) or {}).get("markets", {})
         for m in rep.get("markets", []):

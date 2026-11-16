@@ -101,6 +101,26 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
         a["narrative"] = describe(a)
         analyzed.append(a)
     analyzed.sort(key=lambda m: (m["kickoff"], m.get("game_no") or 0))
+    # 최근 10경기·상대 전적·휴식일, NBA 부상자
+    if not config.DEMO:
+        try:
+            from .analysis import form as F
+            from .sources import betman_history, injuries
+            reps = all_reports()
+            rbd = {r["date"]: read_json(results_path(r["date"]), {}) or {} for r in reps}
+            nf = F.attach(analyzed, F.build(betman_history.load_all(), reps, rbd))
+            ni = injuries.attach(analyzed)
+            status["form"] = f"{nf}개 마켓"
+            if ni:
+                status["injuries"] = f"NBA {ni}개 마켓"
+            for m in analyzed:
+                inj = m.get("injuries") or {}
+                a = m.get("analysis")
+                if a and any(sum(1 for x in inj.get(s, []) if x["out"]) >= 2 for s in ("home", "away")):
+                    if "주전 결장" not in a["flags"]:
+                        a["flags"].append("주전 결장")
+        except Exception:  # noqa: BLE001
+            log.exception("흐름·부상자 처리 실패(분석은 계속)")
     # 오늘(당일 06시~익일 06시) 경기만 조합·채점 대상. 그 뒤 경기는 미리보기로만 보여준다
     # (다음 날 리포트에서 본 경기로 다시 다뤄지므로 성과가 두 번 집계되지 않는다).
     for m in analyzed:
@@ -232,7 +252,8 @@ def grade(today: str, lookback: int = 7, fetch_scores: bool = True) -> dict:
         write_json(report_path(rep["date"]), rep)
     perf = G.aggregate(reports, today)
     cal = G.fit_alpha(reports)
-    elo = G.rebuild_elo(reports, results_by_date)
+    from .sources import betman_history
+    elo = G.rebuild_elo(reports, results_by_date, betman_history.load_all())
     G.save_state(perf, cal, elo)
     log.info("채점 완료: 픽 %s", perf["picks"]["all"])
     return perf

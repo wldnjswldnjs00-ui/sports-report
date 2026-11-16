@@ -15,7 +15,7 @@ from .. import config
 from . import betman
 
 log = logging.getLogger("engine.history")
-DIR = config.DATA / "history" / "proto"
+DIR = config.DATA / "history" / "proto2"  # v2: 팀명·실제 점수 포함
 OLDEST = 250001  # 2025년 1회차까지
 
 
@@ -24,7 +24,9 @@ def _path(ts: int) -> Path:
 
 
 def compact_rows(doc: dict) -> list[list]:
-    """[종목, 리그, 마켓, 기준점, 왼칸배당, 무배당, 오른칸배당, 결과칸(0/1/2), 킥오프ms, 왼칸이언더인지]"""
+    """[종목, 리그, 마켓, 기준점, 왼칸배당, 무배당, 오른칸배당, 결과칸(0/1/2), 킥오프ms, 왼칸이언더인지, 홈, 원정, 홈점수, 원정점수]
+
+    점수는 승패·승무패 행에서만 실제 점수다(핸디캡은 핸디 적용, 언더오버는 합계라 None)."""
     out = []
     for r in betman._rows(doc):
         mk = betman._market(r)
@@ -38,8 +40,13 @@ def compact_rows(doc: dict) -> list[list]:
             mk = "WL"
         line = r.get("winHandi") if isinstance(r.get("winHandi"), (int, float)) else 0
         under_first = 1 if mk == "OU" and not str(r.get("winTxt") or "언더").startswith("오버") else 0
+        hs = as_ = None
+        if mk in ("1X2", "WL"):
+            sc = betman._SCORE.search(str(r.get("mchScore") or ""))
+            if sc:
+                hs, as_ = float(sc.group(1)), float(sc.group(2))
         out.append([betman._sport(r), str(r.get("leagueName") or ""), mk, line, w, d if d > 1 else 0, l, int(code),
-                    r.get("gameDate"), under_first])
+                    r.get("gameDate"), under_first, str(r.get("homeName") or "").strip(), str(r.get("awayName") or "").strip(), hs, as_])
     return out
 
 

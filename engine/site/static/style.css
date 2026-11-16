@@ -427,3 +427,25 @@ dd { margin: 3px 0 0; font: 600 21px/1.2 var(--en); letter-spacing: -0.03em; }
   .seg { --fill: 1 !important; }
   .meter i { width: var(--w) !important; }
 }
+
+/* 최근 흐름 · 부상자 */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; box-shadow: var(--shadow); min-width: 0; }
+.fc-team { margin: 0 0 10px; font: 400 20px var(--ko); }
+.fc-team small { font: 600 11px var(--sans); color: var(--ink-3); margin-left: 4px; }
+.fseq { display: inline-flex; gap: 3px; flex-wrap: wrap; }
+.fseq i { font: 700 11px/1 var(--sans); font-style: normal; width: 22px; height: 22px; display: grid; place-items: center; border-radius: 6px; }
+.fseq .rW { background: var(--cool-soft); color: var(--pos); }
+.fseq .rL { background: var(--hot-soft); color: var(--neg); }
+.fseq .rD { background: var(--card-2); color: var(--ink-3); }
+.fc-nums { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 12px 0 8px; }
+.fc-nums div { background: var(--card-2); border-radius: var(--r-sm); padding: 8px 10px; min-width: 0; }
+.fc-nums dd { font-size: 15px; }
+.h2h { margin: 14px 0 0; font-size: 14px; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; }
+.h2h span { font: 500 12px var(--en); color: var(--ink-3); background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 3px 10px; }
+.inj-h { font: 400 22px var(--ko); margin: 0 0 12px; }
+.inj-h small { font: 500 12px var(--sans); color: var(--ink-3); margin-left: 6px; }
+.inj-row { margin: 6px 0; font-size: 14px; }
+.m-form { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 8px 0; font-size: 13px; font-weight: 700; }
+.m-inj { margin: 4px 0; font-size: 13px; color: var(--neg); font-weight: 700; }
+@media (max-width: 720px) { .form-grid { grid-template-columns: 1fr; } .fc-nums { grid-template-columns: repeat(2, 1fr); } }

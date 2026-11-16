@@ -53,3 +53,50 @@
   {% endfor %}
 </div>
 {% endmacro %}
+
+{% macro form_seq(f) %}{% if f %}<span class="fseq" aria-label="최근 {{ f.n }}경기 {{ f.w }}승 {{ f.d }}무 {{ f.l }}패">{% for c in f.seq %}<i class="r{{ c }}">{{ {'W': '승', 'D': '무', 'L': '패'}[c] }}</i>{% endfor %}</span>{% endif %}{% endmacro %}
+
+{% macro form_block(m) %}
+{% set F = m.form %}
+{% if F %}
+<div class="form-grid">
+  {% for side, name in [('home', m.home), ('away', m.away)] %}{% set f = F[side] %}
+  <div class="form-card">
+    <p class="fc-team">{{ name }} <small>{{ '홈' if side == 'home' else '원정' }}</small></p>
+    {% if f %}
+    {{ form_seq(f) }}
+    <dl class="fc-nums">
+      <div><dt>최근 {{ f.n }}경기</dt><dd>{{ f.w }}승{% if f.d %} {{ f.d }}무{% endif %} {{ f.l }}패</dd></div>
+      <div><dt>평균 득실차</dt><dd>{{ '%+.1f'|format(f.margin) }}</dd></div>
+      <div><dt>{{ '홈' if side == 'home' else '원정' }} 성적</dt><dd>{% set hr = f.home if side == 'home' else f.away %}{{ hr[0] }}승 {{ hr[1] - hr[0] }}패</dd></div>
+      {% if f.rest < 30 %}<div><dt>휴식</dt><dd>{{ f.rest|round(0)|int }}일</dd></div>{% endif %}
+    </dl>
+    {% if f.streak %}<span class="tag flow">{{ f.streak }}</span>{% endif %}
+    {% else %}<p class="muted">기록 수집 중</p>{% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% if F.h2h %}
+<p class="h2h">상대 전적(최근 {{ F.h2h.n }}경기, {{ m.home }} 기준) <b>{{ F.h2h.w }}승{% if F.h2h.d %} {{ F.h2h.d }}무{% endif %} {{ F.h2h.l }}패</b>
+  {% for g in F.h2h.last %}<span>{{ g.date }} {{ g.score }}{{ '' if g.home else ' (원정)' }}</span>{% endfor %}</p>
+{% endif %}
+{% endif %}
+{% endmacro %}
+
+{% macro injury_block(m) %}
+{% set I = m.injuries %}
+{% if I and (I.home or I.away) %}
+<div class="inj">
+  <p class="inj-h">부상자 현황 <small>ESPN 공개 정보 · 경기 직전 변동 가능</small></p>
+  <div class="form-grid">
+  {% for side, name in [('home', m.home), ('away', m.away)] %}
+    <div class="form-card">
+      <p class="fc-team">{{ name }}</p>
+      {% for p in I[side] %}<p class="inj-row"><span class="tag {{ 'miss' if p.out else 'warn' }}">{{ p.status }}</span> {{ p.name }} <small class="muted">{{ p.pos }}</small></p>
+      {% else %}<p class="muted">보고된 부상자 없음</p>{% endfor %}
+    </div>
+  {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endmacro %}
