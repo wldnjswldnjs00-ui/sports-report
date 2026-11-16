@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% from "_macros.html" import ev_class %}
 {% block title %}예측 성과와 확률 보정 · {{ cfg.SITE_NAME }}{% endblock %}
-{% block desc %}모델이 매긴 확률과 실제 결과를 비교한 성과 기록. 보정 곡선, 전략별 수익률.{% endblock %}
+{% block desc %}모델이 매긴 확률과 실제 결과를 비교한 성과 기록. 보정 곡선, 전략별 적중률.{% endblock %}
 {% block main %}
 <section class="wrap page-head">
   <p class="kicker">성과</p><h1>숫자로 보는 성적표</h1>
@@ -46,20 +46,16 @@
 </section>
 
 <section class="wrap block" data-reveal>
-  <h2 class="sub">전략별 조합 수익률</h2>
+  <h2 class="sub">전략별 조합 적중률</h2>
   <table class="tbl">
-    <thead><tr><th>전략</th><th class="n">채점 조합</th><th class="n">예상 적중률</th><th class="n">실제 적중률</th><th class="n">수익률(전체)</th><th class="n">수익률(30일)</th></tr></thead>
+    <thead><tr><th>전략</th><th class="n">채점 조합</th><th class="n">예상 적중률</th><th class="n">실제 적중률</th></tr></thead>
     <tbody>
     {% for key, s in STRATEGIES.items() %}{% set st = (perf.strategies or {}).get(key) or {} %}{% set a = st.get('all') or {} %}{% set b = st.get('30d') or {} %}
-      <tr><td>{{ s.label }}</td><td class="n">{{ a.n }}</td><td class="n">{{ a.expected|pct(1) }}</td><td class="n">{{ a.win_rate|pct(1) }}</td>
-      <td class="n {{ ev_class(a.roi) }}">{{ a.roi|signed }}</td><td class="n {{ ev_class(b.roi) }}">{{ b.roi|signed }}</td></tr>
+      <tr><td>{{ s.label }}</td><td class="n">{{ a.n }}</td><td class="n">{{ a.expected|pct(1) }}</td><td class="n">{{ a.win_rate|pct(1) }}</td></tr>
     {% endfor %}
-    {% if perf.value.n %}
-      <tr><td>가치 선택(단일)</td><td class="n">{{ perf.value.n }}</td><td class="n">–</td><td class="n">{{ perf.value.hit_rate|pct(1) }}</td><td class="n {{ ev_class(perf.value.roi) }}">{{ perf.value.roi|signed }}</td><td class="n">–</td></tr>
-    {% endif %}
     </tbody>
   </table>
-  <p class="fine">수익률은 모든 조합에 같은 금액을 걸었다고 가정한 값입니다. 마이너스라면 그대로 따라 샀을 때 손실이었다는 뜻입니다.</p>
+  <p class="fine">예상 적중률은 조합을 낼 때 계산한 확률의 평균, 실제 적중률은 채점 결과입니다.</p>
 </section>
 
 {% if perf.daily %}

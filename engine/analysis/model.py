@@ -33,27 +33,20 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
     p_bet = remove_margin_power(odds) if odds else {}
     p_elo = elo.probs(m["sport"], m["home"], m["away"], m["market"]) if m["market"] in ("1X2", "WL") else None
 
-    sources = []
-    used = []
-    if ref:
-        # 해외 배당이 기준. 해외 과거 기록(같은 해외 배당 구도의 실제 결과)이 그 확률을 보정한다.
-        # 베트맨 배당은 구매 배당으로만 쓰고 확률 계산에는 넣지 않는다.
-        sources.append((ref, 0.65 if p_hist else 0.85)); used.append("해외 배당(기준점 환산)" if m.get("ref_kind") == "환산" else "해외 배당")
-        if p_hist:
-            sources.append((p_hist, 0.25)); used.append(f"해외 과거 기록({xstat['src']})")
-        if p_elo:
-            sources.append((p_elo, 0.10 if p_hist else 0.15)); used.append("Elo")
-    else:
-        # 해외 시장에 없는 경기: 시장 정보가 베트맨 배당뿐이라 그것과 레이팅으로만 본다(과거 기록은 쓰지 않음)
-        if p_bet:
-            sources.append((p_bet, W_BETMAN)); used.append("베트맨 배당(해외 배당 없음)")
-        if p_elo:
-            sources.append((p_elo, W_ELO)); used.append("Elo")
+    # 분석은 해외 배당 기준으로만 한다. 베트맨 배당·베트맨 지난 기록·베트맨 배당 변동은 확률에 넣지 않는다
+    # (베트맨 배당은 구매 배당 표시용). 해외 배당이 없는 경기는 분석하지 않는다.
+    if not ref:
+        return {**m, "analysis": None, "no_x": True}
+    sources = [(ref, 0.65 if p_hist else 0.85)]
+    used = ["해외 배당(기준점 환산)" if m.get("ref_kind") == "환산" else "해외 배당"]
+    if p_hist:
+        sources.append((p_hist, 0.25)); used.append(f"해외 과거 기록({xstat['src']})")
+    if p_elo:
+        sources.append((p_elo, 0.10 if p_hist else 0.15)); used.append("Elo")
     p = combine(sources)
     if not p:
-        return {**m, "analysis": None}
+        return {**m, "analysis": None, "no_x": True}
     p = shrink(p, alpha)
-    p = _apply_lessons(p, m)
     order = ("H", "D", "A", "O", "U")  # 화면 표시 순서 고정(승·무·패, 오버·언더)
     p = {k: p[k] for k in order if k in p}
 
@@ -70,7 +63,7 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
         value_ev = evs[value_key]
 
     # 신뢰도: 소스 일치도 + 소스 개수 + 픽 확률
-    div = max([_divergence(p_bet, ref or {}), _divergence(p_bet, p_elo or {}), _divergence(ref or {}, p_elo or {})])
+    div = max([_divergence(ref, p_hist or {}), _divergence(ref, p_elo or {}), _divergence(p_hist or {}, p_elo or {})])
     agree = max(0.0, 1 - div / 0.25)
     n_src = len(sources)
     confidence = round(100 * (0.45 * agree + 0.25 * (n_src / 3) + 0.30 * min(1.0, (pick_prob - 1 / len(p)) / 0.45)))
@@ -80,14 +73,12 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
     data_score = round(100 * min(1.0, 0.35 * n_src + (0.15 if p_elo else 0)))
 
     flags = []
-    if ref and _divergence(p_bet, ref) >= 0.08:
-        flags.append("배당 괴리")
+    if p_hist and _divergence(ref, p_hist) >= 0.06:
+        flags.append("해외 기록과 차이")
     if pick_prob < 0.5 and len(p) == 3:
         flags.append("혼전")
     if upset >= 45:
         flags.append("이변 주의")
-    if odds and overround(odds) > 1.35:
-        flags.append("고마진")
 
     return {
         **m,

@@ -62,7 +62,7 @@ def legs_from(markets: list[dict[str, Any]], use_value: bool = False, all_outcom
             if key is None or key not in m["odds"] or key not in a["p"]:
                 continue
             leg = _leg(m, a, key)
-            leg["dog"] = m["market"] != "OU" and key != "D" and m["odds"][key] > min(m["odds"].values())  # 그 경기에서 배당이 더 높은 쪽
+            leg["dog"] = _is_dog(m, a, key)  # 그 경기에서 해외 배당이 더 높은 쪽
             legs.append(leg)
     return legs
 
@@ -77,6 +77,9 @@ def _leg(m: dict[str, Any], a: dict[str, Any], key: str) -> dict[str, Any]:
             "line": m.get("line"), "game_no": m.get("game_no"), "round": m.get("round"), "kickoff": m["kickoff"],
             "outcome": key, "p": p, "odds": o, "x_odds": (a.get("x_odds") or {}).get(key), "x_kind": a.get("x_kind"),
             "ev": p * o - 1, "confidence": a["confidence"],
+            # 후보 정렬은 해외 배당 기준: 해외 기준 추정 확률 × 해외 배당 − 1 (베트맨 배당이 후한지는 보지 않는다)
+            "xev": p * ((a.get("x_odds") or {}).get(key) or (1 / p if p else 1)) - 1,
+            "xo": (a.get("x_odds") or {}).get(key) or o,
             "upset_risk": a["upset_risk"],
         })
 
@@ -110,6 +113,7 @@ def build_combo(legs: list[dict[str, Any]]) -> dict[str, Any]:
         "joint_p": round(jp, 4),
         "total_odds": to,
         "ev": round(ev, 4),
+        "xev": round(jp * math.prod(l.get("xo") or l["odds"] for l in legs) - 1, 4),
         "payout": payout,
         "stake": STAKE,
         "confidence": round(sum(l["confidence"] for l in legs) / len(legs)),
@@ -135,13 +139,13 @@ def strategy_combos(legs: list[dict[str, Any]], name: str, used_all: dict[str, i
         pool.sort(key=lambda l: -l["p"])
     elif name == "upset":
         pool = [l for l in pool if l.get("dog")]
-        pool.sort(key=lambda l: -(l["ev"] + 0.2 * l["p"]))
+        pool.sort(key=lambda l: -(l["xev"] + 0.2 * l["p"]))
     elif name in ("aggressive", "lotto"):
-        # 큰 배당을 노리므로 1.45배 미만 정배는 빼고, 기대값이 덜 나쁜(배당이 공정한) 선택부터
-        pool = [l for l in pool if l["odds"] >= 1.45]
-        pool.sort(key=lambda l: -(l["ev"] + 0.15 * l["p"]))
+        # 큰 배당을 노리므로 해외 배당 1.45배 미만 정배는 빼고, 해외 기준 값이 좋은 선택부터
+        pool = [l for l in pool if (l.get("xo") or l["odds"]) >= 1.45]
+        pool.sort(key=lambda l: -(l["xev"] + 0.15 * l["p"]))
     else:
-        pool.sort(key=lambda l: -(l["ev"] + 0.3 * l["p"]))
+        pool.sort(key=lambda l: -(l["xev"] + 0.3 * l["p"]))
     # 한 경기의 여러 마켓이 후보를 독식하지 않게 경기당 최대 2개까지만 남긴다
     per: dict[str, int] = {}
     diverse = []
@@ -152,7 +156,7 @@ def strategy_combos(legs: list[dict[str, Any]], name: str, used_all: dict[str, i
     if name in ("aggressive", "lotto"):
         # 점수 좋은 선택 절반 + 배당 큰 선택 절반을 섞어야 높은 배당 구간 조합이 나온다
         half = cfg["pool"] // 2
-        by_odds = sorted(diverse, key=lambda l: -l["odds"])
+        by_odds = sorted(diverse, key=lambda l: -(l.get("xo") or l["odds"]))
         pool, used = [], set()
         for l in diverse[:half] + by_odds:
             if l["match"] in used:
@@ -176,15 +180,15 @@ def strategy_combos(legs: list[dict[str, Any]], name: str, used_all: dict[str, i
                 continue
             cands.append(c)
     if name == "safe":
-        cands.sort(key=lambda c: (-c["joint_p"], -c["ev"]))
+        cands.sort(key=lambda c: (-c["joint_p"], -c["xev"]))
     elif name == "balanced":
-        cands.sort(key=lambda c: -(c["ev"] + 0.5 * c["joint_p"]))
+        cands.sort(key=lambda c: -(c["xev"] + 0.5 * c["joint_p"]))
     elif name == "upset":
-        cands.sort(key=lambda c: -(c["ev"] + c["joint_p"]))
+        cands.sort(key=lambda c: -(c["xev"] + c["joint_p"]))
     elif name == "lotto":
-        cands.sort(key=lambda c: -(c["ev"] + 2 * c["joint_p"]))
+        cands.sort(key=lambda c: -(c["xev"] + 2 * c["joint_p"]))
     else:
-        cands.sort(key=lambda c: -c["ev"])
+        cands.sort(key=lambda c: -c["xev"])
 
     chosen: list[dict[str, Any]] = []
     max_overlap = 0.8 if name == "lotto" else 0.67
@@ -249,47 +253,47 @@ def value_legs(markets: list[dict[str, Any]], min_ev: float = 0.0) -> list[dict[
     return legs[:10]
 
 
-def _flow_drop(m: dict[str, Any], key: str) -> float:
-    fl = m.get("flow") or {}
-    f0, f1 = (fl.get("from") or {}).get(key), (fl.get("to") or {}).get(key)
-    return (f0 - f1) / f0 if f0 and f1 else 0.0
+def _is_dog(m: dict[str, Any], a: dict[str, Any], key: str) -> bool:
+    """역배 = 그 경기에서 해외 배당이 더 높은 쪽(무승부·언더오버 제외). 해외 배당이 없으면 역배로 보지 않는다."""
+    xo = {k: v for k, v in (a.get("x_odds") or {}).items() if k != "D" and v}
+    return m["market"] != "OU" and key != "D" and key in xo and len(xo) >= 2 and xo[key] > min(xo.values())
 
 
 def upset_legs(markets: list[dict[str, Any]], limit: int = 6) -> list[dict[str, Any]]:
-    """역배 후보: 배당 2.2배 이상이면서 근거가 겹치는 선택.
+    """역배 후보: 해외 배당이 더 높은 쪽인데 해외 기준 근거가 겹치는 선택. 베트맨 배당·배당 변동은 쓰지 않는다.
 
-    점수 = (모델 확률 − 베트맨 내재확률)  +  배당 하락폭(구매 쏠림)  +  해외 기록 적중률로 본 수익률.
-    정배만 사서 잃는 것을 막기 위한 목록이다. 근거가 하나도 없으면 싣지 않는다.
+    근거: ① 해외 배당이 비슷했던 과거 경기에서 실제로 해외 배당 확률보다 자주 이겼다
+          ② 팀 레이팅이 해외 시장보다 이 팀을 높게 본다
+          ③ 해외 기준 추정 확률이 40% 이상인 박빙
     """
     out = []
     for m in markets:
         a = m.get("analysis")
         if not a or m["market"] not in ("1X2", "WL", "HANDICAP"):
             continue
-        for k, o in (m.get("odds") or {}).items():
-            fav = min(m["odds"].values())
-            # 역배 = 그 경기에서 배당이 더 높은 쪽(1.48 대 1.80 이면 1.80). 무승부는 따로 다루지 않는다.
-            if k == "D" or o <= fav or o > 9 or k not in a["p"]:
+        for k in (m.get("odds") or {}):
+            if not _is_dog(m, a, k) or k not in a["p"]:
+                continue
+            xo = a["x_odds"][k]
+            if xo > 9:
                 continue
             p = a["p"][k]
-            edge = p - (a.get("p_betman") or {}).get(k, p)
-            drop = _flow_drop(m, k)
+            ref = (a.get("p_ref") or {}).get(k, p)
             hist = x_hist(a).get(k) or {}
-            hroi = hist.get("roi", -0.2)
-            reasons = []
-            if edge >= 0.015:
-                reasons.append(f"모델 확률이 베트맨 내재확률보다 {edge * 100:.1f}%p 높음")
-            if drop >= 0.02:
-                reasons.append(f"배당 {drop * 100:.0f}% 하락(구매 쏠림)")
-            if hist and hroi > -0.05 and hist.get("n", 0) >= 100:
-                reasons.append(f"해외 배당이 비슷했던 {hist['bucket']} 경기 적중률 {hist['hit'] * 100:.0f}%(이 배당이면 수익률 {hroi * 100:+.1f}%)")
-            ref = (a.get("p_ref") or {}).get(k)
-            if ref and ref * o > 0.97:
-                reasons.append("해외 시장 기준 배당이 후함")
-            if not reasons or p < 0.2:
+            elo = (a.get("p_elo") or {}).get(k)
+            reasons, score = [], p * 0.5
+            if hist.get("n", 0) >= 100 and hist["hit"] >= ref + 0.01:
+                reasons.append(f"해외 배당이 비슷했던 {hist['bucket']} {hist['n']:,}경기에서 실제 {hist['hit'] * 100:.0f}% 적중(해외 배당 확률 {ref * 100:.0f}%)")
+                score += (hist["hit"] - ref) * 3
+            if elo is not None and elo >= ref + 0.03:
+                reasons.append(f"팀 레이팅은 {elo * 100:.0f}%로 해외 시장보다 높게 봄")
+                score += elo - ref
+            if p >= 0.4:
+                reasons.append(f"해외 기준 추정 확률 {p * 100:.0f}%의 박빙")
+            if not reasons or p < 0.25:
                 continue
             leg = _leg(m, a, k)
-            leg["score"] = round(edge * 3 + drop * 2 + max(hroi, -0.3) + p * 0.3, 4)
+            leg["score"] = round(score, 4)
             leg["reasons"] = reasons
             out.append(leg)
     out.sort(key=lambda l: -l["score"])
@@ -310,15 +314,16 @@ def market_legs(markets: list[dict[str, Any]], market: str, limit: int = 6) -> l
         if not a or m["market"] != market:
             continue
         k = a["pick"]
-        if k not in (m.get("odds") or {}) or m["odds"][k] < 1.2:
-            continue  # 1.2배 미만은 고를 의미가 없어 제외
+        xo = (a.get("x_odds") or {}).get(k)
+        if k not in (m.get("odds") or {}) or not xo or xo < 1.2:
+            continue  # 해외 배당 1.2배 미만은 고를 의미가 없어 제외
         leg = _leg(m, a, k)
         hist = x_hist(a).get(k) or {}
-        drop = _flow_drop(m, k)
+        ref = (a.get("p_ref") or {}).get(k, leg["p"])
         leg["hist_hit"] = hist.get("hit")
         leg["hist_n"] = hist.get("n")
-        leg["drop"] = round(drop, 4)
-        leg["score"] = round(leg["p"] - 1 / leg["odds"] * 0.9 + drop * 1.5 + (hist.get("roi", -0.15) if hist else -0.15) * 0.5, 4)
+        # 해외 기준 추정 확률 + 해외 기록이 해외 배당 확률보다 더 자주 맞았던 만큼
+        leg["score"] = round(leg["p"] + ((hist["hit"] - ref) * 0.5 if hist else 0), 4)
         out.append(leg)
     out.sort(key=lambda l: -l["score"])
     seen, uniq = set(), []

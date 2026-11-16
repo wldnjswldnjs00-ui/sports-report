@@ -55,16 +55,6 @@ def _josa(word: str, pair: tuple[str, str]) -> str:
     return word + pair[1]
 
 
-def _flow_note(m: dict, key: str) -> str | None:
-    fl = m.get("flow") or {}
-    f0, f1 = (fl.get("from") or {}).get(key), (fl.get("to") or {}).get(key)
-    if not f0 or not f1 or f0 == f1:
-        return None
-    if f1 < f0:
-        return f"베트맨 배당이 {f0:.2f}에서 {f1:.2f}로 내려왔다. 구매가 이쪽으로 몰린다는 신호다"
-    return f"베트맨 배당이 {f0:.2f}에서 {f1:.2f}로 올랐다. 구매는 반대편으로 쏠리고 있다"
-
-
 def oreo(m: dict[str, Any]) -> dict[str, str] | None:
     a = m.get("analysis")
     if not a:
@@ -86,30 +76,24 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
 
     # R: 가장 강한 근거부터 최대 2개
     reasons: list[str] = []
-    ref, bet = a.get("p_ref") or {}, a.get("p_betman") or {}
+    ref = a.get("p_ref") or {}
+    xo_pick = (a.get("x_odds") or {}).get(pick)
     if pick in ref and m.get("ref_kind") != "환산":
-        gap = (ref[pick] - bet.get(pick, ref[pick])) * 100
-        if abs(gap) >= 3:
-            reasons.append(f"해외 시장은 이 결과를 {_pct(ref[pick])}로 본다. 베트맨 내재확률({_pct(bet[pick])})보다 {'높다' if gap > 0 else '낮다'}")
-        else:
-            reasons.append(f"해외 시장 확률({_pct(ref[pick])})과 베트맨 배당이 같은 방향을 가리킨다")
+        reasons.append(f"해외 시장은 이 결과를 {_pct(ref[pick])}로 본다" + (f"(해외 배당 {xo_pick:.2f}배)" if xo_pick else ""))
     x = m.get("x") or {}
     if m.get("ref_kind") == "환산" and pick in ref:
         if m["market"] == "OU" and x.get("total"):
             if abs(x["total"][0] - (m.get("line") or 0)) < 0.01:
                 reasons.append(f"해외 시장도 같은 기준점 {x['total'][0]:g}에서 이 결과를 {_pct(ref[pick])}로 본다")
             else:
-                reasons.append(f"해외 시장의 합계 기준점은 {x['total'][0]:g}이다. 베트맨 기준점 {m.get('line'):g}로 환산하면 이 결과가 {_pct(ref[pick])}")
+                reasons.append(f"해외 시장의 합계 기준점은 {x['total'][0]:g}이다. 이 경기 기준점 {m.get('line'):g}로 환산하면 이 결과가 {_pct(ref[pick])}")
         elif m["market"] == "HANDICAP" and x.get("spread"):
             if abs(x["spread"][0] - (m.get("line") or 0)) < 0.01:
                 reasons.append(f"해외 시장도 같은 핸디캡 {x['spread'][0]:+g}에서 이 결과를 {_pct(ref[pick])}로 본다")
             else:
-                reasons.append(f"해외 시장의 핸디캡 기준점은 홈 {x['spread'][0]:+g}이다. 베트맨 기준점 {m.get('line'):+g}로 환산하면 이 결과가 {_pct(ref[pick])}")
+                reasons.append(f"해외 시장의 핸디캡 기준점은 홈 {x['spread'][0]:+g}이다. 이 경기 기준점 {m.get('line'):+g}로 환산하면 이 결과가 {_pct(ref[pick])}")
         elif m["market"] == "HANDICAP":
-            reasons.append(f"해외 승무패 배당을 베트맨 핸디캡 {m.get('line'):+g}로 환산하면 이 결과가 {_pct(ref[pick])}")
-    fn = _flow_note(m, pick)
-    if fn:
-        reasons.append(fn)
+            reasons.append(f"해외 승무패 배당을 이 경기 핸디캡 {m.get('line'):+g}로 환산하면 이 결과가 {_pct(ref[pick])}")
     F = m.get("form") or {}
     side_form = F.get("home") if pick == "H" else F.get("away") if pick == "A" else None
     opp_form = F.get("away") if pick == "H" else F.get("home") if pick == "A" else None
@@ -121,7 +105,7 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
         if abs(d) >= 40:
             reasons.append(f"팀 레이팅은 {m['home']} {a['elo']['home']}, {m['away']} {a['elo']['away']}로 {abs(d)}점 차이다")
     if not reasons:
-        reasons.append("베트맨 배당에서 발행처 몫을 걷어낸 확률이 이쪽으로 기운다")
+        reasons.append("해외 배당에서 발행처 몫을 걷어낸 확률이 이쪽으로 기운다")
     r_txt = ". ".join(reasons[:2]) + "."
 
     # E: 숫자 증거
@@ -150,20 +134,15 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
     # O: 쓰임새
     risk = a["upset_risk"]
     xo = (a.get("x_odds") or {}).get(pick)
-    if odds and xo:
-        price = f"해외 배당 {xo:.2f}배, 베트맨 {odds:.2f}배"
-    elif odds:
-        price = f"베트맨 배당 {odds:.2f}배"
-    else:
-        price = ""
-    if odds and odds < 1.2:
+    price = f"해외 배당 {xo:.2f}배" if xo else ""
+    if xo and xo < 1.2:
         o2 = f"{price}로 낮다. 단독보다는 조합의 축으로 쓴다."
     elif strong and risk < 30:
-        o2 = f"{price}. 안정형·밸런스형 조합의 기준 경기로 적합하다." if odds else "안정형 조합의 기준 경기로 적합하다."
+        o2 = f"{price}. 안정형·밸런스형 조합의 기준 경기로 적합하다." if price else "안정형 조합의 기준 경기로 적합하다."
     elif risk >= 45:
         o2 = f"이변 위험 {risk}로 높다. 넣는다면 폴더 수를 줄이고 금액을 낮춘다."
     else:
-        o2 = f"{price}. 확률과 배당의 균형이 맞아 밸런스형에 어울린다." if odds else "밸런스형에 어울린다."
+        o2 = f"{price}. 확률이 한쪽으로 크게 기울지 않아 밸런스형에 어울린다." if price else "밸런스형에 어울린다."
     return {"o1": o1, "r": r_txt, "e": e_txt, "o2": o2}
 
 
@@ -190,11 +169,7 @@ def review(m: dict[str, Any], outcome: str) -> dict[str, str] | None:
     else:
         o1 = f"빗나갔다. 선택은 {name}, 결과는 {got}."
     causes: list[str] = []
-    fl = m.get("flow") or {}
-    f0, f1 = (fl.get("from") or {}).get(outcome), (fl.get("to") or {}).get(outcome)
     if not hit:
-        if f0 and f1 and f1 < f0:
-            causes.append(f"경기 전 {got} 배당이 {f0:.2f}에서 {f1:.2f}로 내려가고 있었다. 구매 쏠림이 보낸 신호를 충분히 반영하지 못했다")
         if a["upset_risk"] >= 40:
             causes.append(f"발행 당시 이변 위험이 {a['upset_risk']}로 이미 높았다")
         if pp < 0.55:
@@ -206,8 +181,6 @@ def review(m: dict[str, Any], outcome: str) -> dict[str, str] | None:
         if not causes:
             causes.append(f"추정 확률 {_pct(pp)}는 {_pct(1 - pp)}의 빗나갈 몫을 포함한다. 이번이 그 경우였다")
     else:
-        if f0 and f1 and f1 < f0:
-            causes.append("배당 흐름도 같은 방향이었다")
         causes.append(f"추정 확률 {_pct(pp)}대로 나온 결과다")
     r_txt = ". ".join(causes[:2]) + "."
     from .xbook import x_hist
@@ -215,8 +188,6 @@ def review(m: dict[str, Any], outcome: str) -> dict[str, str] | None:
     e_txt = f"해외 배당이 비슷했던 {h['bucket']} 경기에서는 {_pct(h['hit'])} 적중했다. {'이번은 나머지 ' + _pct(1 - h['hit']) + '에 해당한다' if not hit else '기록과 같은 결과다'}." if h else ""
     if hit:
         o2 = "같은 조건의 경기에서 이 판단 기준을 유지한다."
-    elif f0 and f1 and f1 < f0:
-        o2 = "다음부터 배당이 반대쪽으로 움직이는 경기는 신뢰도를 한 단계 낮춘다."
     elif a["upset_risk"] >= 40 or pp < 0.55:
         o2 = "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
     else:

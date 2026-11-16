@@ -152,7 +152,7 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
     ou_picks = C.market_legs(upcoming, "OU")
 
     legs = C.legs_from(proto)
-    cands = sorted((l for l in legs if l["confidence"] >= 55 and l["odds"] >= 1.2 and datetime.fromisoformat(l["kickoff"]) > now),
+    cands = sorted((l for l in legs if l["confidence"] >= 55 and (l.get("x_odds") or l["odds"]) >= 1.2 and datetime.fromisoformat(l["kickoff"]) > now),
                    key=lambda l: -(l["p"] * (1 + l["confidence"] / 200)))
     top_picks, seen_match = [], set()
     for l in cands:
@@ -164,7 +164,8 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
             break
     top = top_picks[0] if top_picks else (prev.get("top_pick") if prev.get("date") == day else None)
     caution = sorted(
-        [m for m in proto if m["analysis"]["pick_odds"] and m["analysis"]["pick_odds"] < 1.9 and m["analysis"]["upset_risk"] >= 33],
+        # 해외 배당 기준 정배(1.9배 미만)인데 이변 위험이 높은 경기
+        [m for m in proto if (m["analysis"].get("x_odds") or {}).get(m["analysis"]["pick"], 9) < 1.9 and m["analysis"]["upset_risk"] >= 33],
         key=lambda m: -m["analysis"]["upset_risk"],
     )[:5]
     moves = []
