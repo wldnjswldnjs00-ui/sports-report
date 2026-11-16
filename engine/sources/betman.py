@@ -21,87 +21,100 @@ from ..util import http, write_json
 log = logging.getLogger("engine.betman")
 
 BASE = "https://www.betman.co.kr"
-LIST_URL = BASE + "/buyPsblGame/inqCacheBuyAbleGameInfoList.do"
+LIST_URLS = (BASE + "/buyPsblGame/inqBuyAbleGameInfoList.do", BASE + "/buyPsblGame/inqCacheBuyAbleGameInfoList.do")
 GAME_URL = BASE + "/buyPsblGame/gameInfoInq.do"
+LIST_REFERER = BASE + "/main/mainPage/gamebuy/buyableNClosedIFR.do?isIFR=Y"
+GM_ID = "G101"  # 프로토 승부식
 
-# 게임 종류: 프로토 승부식, 축구토토 승무패
-GAME_IDS = {"G101": "proto", "G011": "toto"}
-
-SPORT_MAP = {
-    "SC": "soccer", "축구": "soccer", "BK": "basketball", "농구": "basketball",
-    "BS": "baseball", "야구": "baseball", "VL": "volleyball", "배구": "volleyball",
-    "HK": "hockey", "하키": "hockey", "FB": "football", "미식축구": "football",
-}
-
-F = {  # 필드 이름 후보
-    "home": ("homeName", "hTeamNm", "homeTeamName", "HOME_NM"),
-    "away": ("awayName", "aTeamNm", "awayTeamName", "AWAY_NM"),
-    "league": ("leagueName", "lgNm", "leagueNm", "LEAGUE_NM"),
-    "sport": ("itemCode", "sportsCd", "itemNm", "SPORTS_CD"),
-    "win": ("winAllot", "wAllot", "winRt", "WIN_ALLOT"),
-    "draw": ("drawAllot", "dAllot", "drawRt", "DRAW_ALLOT"),
-    "lose": ("loseAllot", "lAllot", "loseRt", "LOSE_ALLOT"),
-    "kickoff": ("gameDate", "mchDtm", "matchDate", "GAME_DT"),
-    "no": ("matchSeq", "gmSeq", "mchSeq", "MATCH_SEQ"),
-    "type": ("mchType", "gameType", "betType", "MCH_TYPE"),
-    "line": ("handi", "handicap", "hdcp", "uoLine", "HANDI"),
-}
-
-
-def _get(row: dict, key: str):
-    for k in F[key]:
-        if k in row and row[k] not in (None, ""):
-            return row[k]
-    return None
+SPORT_BY_ITEM = {"SC": "soccer", "BK": "basketball", "BS": "baseball", "VL": "volleyball",
+                 "HK": "hockey", "FB": "football"}
+SPORT_BY_WORD = {"축구": "soccer", "농구": "basketball", "야구": "baseball", "배구": "volleyball",
+                 "하키": "hockey", "미식축구": "football"}
 
 
 def _rows(payload: Any) -> list[dict]:
-    """{'keys':[...], 'datas':[[...]]} 형태와 dict 리스트 형태를 모두 처리."""
-    if isinstance(payload, list):
-        return [r for r in payload if isinstance(r, dict)]
-    if not isinstance(payload, dict):
+    """compSchedules 는 {'keys': [...], 'datas': [[...], ...]} 컬럼형."""
+    cs = (payload or {}).get("compSchedules") or {}
+    keys, datas = cs.get("keys"), cs.get("datas")
+    if not keys or not isinstance(datas, list):
         return []
-    if "keys" in payload and "datas" in payload:
-        keys = payload["keys"]
-        return [dict(zip(keys, r)) for r in payload["datas"] if isinstance(r, list)]
-    for v in payload.values():
-        rows = _rows(v)
-        if rows and any(_get(r, "home") for r in rows):
-            return rows
-    return []
+    return [dict(zip(keys, r)) for r in datas if isinstance(r, list)]
 
 
-def _kickoff(v) -> str:
-    if isinstance(v, (int, float)):  # epoch ms
-        return datetime.fromtimestamp(v / 1000, config.KST).isoformat(timespec="minutes")
-    s = str(v).strip()
-    for fmt in ("%Y%m%d%H%M", "%Y-%m-%d %H:%M", "%Y.%m.%d %H:%M", "%Y-%m-%dT%H:%M"):
-        try:
-            return datetime.strptime(s[:len(datetime.now().strftime(fmt))], fmt).replace(tzinfo=config.KST).isoformat(timespec="minutes")
-        except ValueError:
-            continue
-    raise ValueError(f"킥오프 파싱 실패: {v}")
-
-
-def _market_type(t, line) -> str:
-    t = str(t or "").upper()
-    if "U" in t and "O" in t or "언더" in t:
+def _market(row: dict) -> str | None:
+    """betNm/betTypNm 문자열로 마켓 판별. 전반·특수 마켓은 제외(정산 기준이 다름)."""
+    name = f"{row.get('betNm') or ''} {row.get('betTypNm') or ''}"
+    if "전반" in name or "후반" in name or "SUM" in name or "1점" in name or "쿼터" in name or "세트" in name:
+        return None
+    if "언더오버" in name:
         return "OU"
-    if "H" in t or "핸디" in t or (line not in (None, "", 0, "0")):
+    if "핸디" in name:
         return "HANDICAP"
-    return "1X2"
+    if "승무패" in name:
+        return "1X2"
+    if "승패" in name:
+        return "WL"
+    return None
 
 
-_debug: dict[str, Any] = {}
-
-
-def _snap(name: str, r) -> None:
-    """응답 형식 진단용 스냅샷(앞부분만). 수집 실패 시 data/state/betman_debug.json 에 남는다."""
+def _num(v) -> float:
     try:
-        _debug[name] = {"status": r.status_code, "type": r.headers.get("content-type"), "url": r.url,
-                        "body": r.text[:6000]}
-    except Exception:  # noqa: BLE001
-        pass
+        return float(v or 0)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def _sport(row: dict) -> str:
+    sp = SPORT_BY_ITEM.get(str(row.get("itemCode") or "").upper())
+    if sp:
+        return sp
+    name = str(row.get("betNm") or "")
+    for w, sp in SPORT_BY_WORD.items():
+        if name.startswith(w):
+            return sp
+    return "etc"
+
+
+def parse_round(payload: dict, gm_ts: str) -> list[dict[str, Any]]:
+    out = []
+    for r in _rows(payload):
+        home, away = r.get("homeName"), r.get("awayName")
+        mk = _market(r)
+        ko = r.get("gameDate")
+        if not home or not away or not mk or not isinstance(ko, (int, float)):
+            continue
+        if str(r.get("gameReject") or "0") != "0" or str(r.get("buyReject") or "0") != "0":
+            continue  # 발매 취소·구매 제한 경기
+        w, d, l = _num(r.get("winAllot")), _num(r.get("drawAllot")), _num(r.get("loseAllot"))
+        if mk == "OU":
+            # 베트맨 언더오버는 승 칸=언더, 패 칸=오버 (winTxt/loseTxt 로 확인)
+            if str(r.get("winTxt") or "언더").startswith("오버"):
+                odds = {"O": w, "U": l}
+            else:
+                odds = {"U": w, "O": l}
+        else:
+            odds = {"H": w, "A": l}
+            if d > 1:
+                odds["D"] = d
+            elif mk == "1X2":
+                mk = "WL"
+        if not all(v > 1 for v in odds.values()):
+            continue  # 발매 전(배당 0.0) 또는 발매 중지
+        line = r.get("winHandi")
+        line = float(line) if isinstance(line, (int, float)) and line != 0 else None
+        if mk in ("HANDICAP", "OU") and line is None:
+            continue
+        no = r.get("matchSeq")
+        out.append({
+            "id": f"betman:{GM_ID}:{gm_ts}:{no}",
+            "source": "betman", "pool": "proto", "round": str(gm_ts),
+            "game_no": int(no) if str(no).isdigit() else None,
+            "sport": _sport(r), "league": str(r.get("leagueName") or "기타").strip(),
+            "kickoff": datetime.fromtimestamp(ko / 1000, config.KST).isoformat(timespec="minutes"),
+            "home": str(home).strip(), "away": str(away).strip(), "market": mk,
+            "line": line, "odds": odds,
+        })
+    return out
 
 
 def fetch(day: str) -> list[dict[str, Any]]:
@@ -119,63 +132,61 @@ def fetch(day: str) -> list[dict[str, Any]]:
     return out
 
 
+_debug: dict[str, Any] = {}
+
+
+def _snap(name: str, r) -> None:
+    try:
+        _debug[name] = {"status": r.status_code, "type": r.headers.get("content-type"), "url": r.url, "body": r.text[:6000]}
+    except Exception:  # noqa: BLE001
+        pass
+
+
+def _json(r) -> dict:
+    if "json" not in (r.headers.get("content-type") or "").lower() or r.text.lstrip().startswith("<"):
+        raise RuntimeError(f"JSON 대신 다른 응답 ({r.status_code} {r.headers.get('content-type')})")
+    return r.json()
+
+
 def _fetch(day: str) -> list[dict[str, Any]]:
-    headers = {"Content-Type": "application/json; charset=UTF-8", "Referer": BASE + "/", "X-Requested-With": "XMLHttpRequest"}
-    r = http("POST", LIST_URL, json={"_sbmInfo": {"debugMode": "false"}}, headers=headers)
-    _snap("list", r)
-    lst = r.json()
-    games = []
-    for g in _rows(lst) or (lst.get("data") if isinstance(lst, dict) else []) or []:
-        gid = g.get("gmId") or g.get("GM_ID")
-        ts = g.get("gmTs") or g.get("GM_TS")
-        if gid in GAME_IDS and ts:
-            games.append((gid, ts))
-    if not games:
-        raise RuntimeError("발매 중인 게임 목록을 찾지 못함(응답 형식 변경 가능성)")
+    ajax = {"Content-Type": "application/json; charset=UTF-8", "X-Requested-With": "XMLHttpRequest",
+            "Accept": "application/json, text/javascript, */*; q=0.01", "Origin": BASE}
+    http("GET", BASE + "/")  # 세션 쿠키(JSESSIONID)
+    time.sleep(1.5)
+    listing, last_err = None, None
+    for url in LIST_URLS:
+        try:
+            r = http("POST", url, json={"_sbmInfo": {"debugMode": "false"}}, headers={**ajax, "Referer": LIST_REFERER})
+            _snap("list", r)
+            listing = _json(r)
+            if listing.get("protoGames") is not None:
+                break
+        except Exception as e:  # noqa: BLE001
+            last_err = e
+        time.sleep(1.5)
+    if not listing or listing.get("protoGames") is None:
+        raise RuntimeError(f"발매 목록 조회 실패: {last_err}")
+    now_ms = config.now_kst().timestamp() * 1000
+    rounds = [g for g in listing["protoGames"] if g.get("gmId") == GM_ID and _num(g.get("saleEndDate")) > now_ms]
+    if not rounds:
+        rounds = [g for g in listing["protoGames"] if g.get("gmId") == GM_ID]
+    if not rounds:
+        raise RuntimeError("발매 중인 프로토 승부식 회차 없음")
 
     out: list[dict[str, Any]] = []
-    for gid, ts in games:
-        time.sleep(1.5)  # 서버 부담 최소화
-        body = {"gmId": gid, "gmTs": ts, "gameYear": "", "_sbmInfo": {"debugMode": "false"}}
-        rr = http("POST", GAME_URL, json=body, headers=headers)
-        _snap(f"game_{gid}", rr)
-        payload = rr.json()
-        rows = _rows(payload.get("compSchedules", payload) if isinstance(payload, dict) else payload)
-        pool = GAME_IDS[gid]
-        for r in rows:
-            home, away = _get(r, "home"), _get(r, "away")
-            if not home or not away:
-                continue
-            try:
-                ko = _kickoff(_get(r, "kickoff"))
-            except ValueError:
-                continue
-            line = _get(r, "line")
-            mt = "1X2" if pool == "toto" else _market_type(_get(r, "type"), line)
-            sport_raw = str(_get(r, "sport") or "")
-            sport = SPORT_MAP.get(sport_raw, SPORT_MAP.get(sport_raw[:2], "etc"))
-            odds = {}
-            if pool == "proto":
-                w, d, l = _get(r, "win"), _get(r, "draw"), _get(r, "lose")
-                if mt == "OU":
-                    odds = {"U": w, "O": l}
-                else:
-                    odds = {"H": w, "A": l}
-                    if d not in (None, "", 0, "0", 0.0):
-                        odds["D"] = d
-                    elif mt == "1X2":
-                        mt = "WL"
-            no = _get(r, "no")
-            out.append({
-                "id": f"betman:{gid}:{ts}:{no}:{mt}",
-                "source": "betman", "pool": pool, "round": str(ts), "game_no": int(no) if str(no).isdigit() else None,
-                "sport": sport, "league": _get(r, "league") or "기타", "kickoff": ko,
-                "home": str(home), "away": str(away), "market": mt,
-                "line": float(line) if line not in (None, "") else None, "odds": odds,
-            })
+    for g in rounds[:4]:
+        ts = str(g["gmTs"])
+        year = str(g.get("gmOsidTsYear") or ("20" + ts[:2]))
+        slip = f"{BASE}/main/mainPage/gamebuy/gameSlip.do?gmId={GM_ID}&year={year}&gmTs={ts}"
+        time.sleep(1.5)
+        http("GET", slip)
+        time.sleep(1.5)
+        r = http("POST", GAME_URL, json={"gmId": GM_ID, "gmTs": int(ts), "gameYear": year, "_sbmInfo": {"debugMode": "false"}},
+                 headers={**ajax, "Referer": slip})
+        _snap(f"game_{ts}", r)
+        out.extend(parse_round(_json(r), ts))
     if not out:
-        raise RuntimeError("경기 데이터를 매핑하지 못함(응답 형식 변경 가능성)")
-    # 리포트 날짜 기준: 오늘 06:00 ~ 내일 06:00 KST 킥오프 경기(심야 해외 경기 포함)
+        raise RuntimeError("발매 회차는 있으나 배당이 공개된 경기가 없음(발매 시작 전일 수 있음)")
     return [m for m in out if _in_window(m["kickoff"], day)]
 
 

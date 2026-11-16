@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ["data/manual/**", "data/results/manual/**", "data/aliases.json"]
+    paths: ["data/manual/**", "data/results/manual/**", "data/aliases.json", "engine/sources/**", "engine/analysis/**"]
 
 concurrency:
   group: pipeline

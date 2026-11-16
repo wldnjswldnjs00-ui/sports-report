@@ -111,6 +111,35 @@ class Grading(unittest.TestCase):
         self.assertEqual(c["return"], int(10000 * 2.25 // 10 * 10))
 
 
+class BetmanParse(unittest.TestCase):
+    def test_parse_columnar(self):
+        from engine.sources.betman import parse_round
+        ko = 1795000000000
+        base = dict(itemCode="SC", leagueName="EPL", homeName="맨체스C", awayName="리버풀", gameDate=ko,
+                    gameReject="0", buyReject="0", winHandi=0, winTxt="승", loseTxt="패")
+        rows = [
+            dict(base, matchSeq=1, betNm="축구 승무패", winAllot=1.85, drawAllot=3.4, loseAllot=3.6),
+            dict(base, matchSeq=2, betNm="축구 전반 승무패", winAllot=2.5, drawAllot=2.0, loseAllot=4.0),
+            dict(base, matchSeq=3, betNm="축구 언더오버", winHandi=2.5, winTxt="언더", loseTxt="오버", winAllot=1.7, drawAllot=0, loseAllot=1.9),
+            dict(base, matchSeq=4, itemCode="BK", leagueName="KBL", betNm="농구 핸디캡", winHandi=-3.5, winAllot=1.75, drawAllot=0, loseAllot=1.8),
+            dict(base, matchSeq=5, itemCode="VL", leagueName="KOVO남", betNm="배구 승패", winAllot=0, drawAllot=0, loseAllot=0),
+            dict(base, matchSeq=6, itemCode="BS", betNm="야구 승패", winAllot=1.5, drawAllot=0, loseAllot=2.3, gameReject="1"),
+        ]
+        payload = {"compSchedules": {"keys": list(rows[0].keys()) + ["betNm", "matchSeq", "winAllot", "drawAllot", "loseAllot"],
+                                     "datas": []}}
+        keys = sorted({k for r in rows for k in r})
+        payload["compSchedules"] = {"keys": keys, "datas": [[r.get(k) for k in keys] for r in rows]}
+        out = {m["game_no"]: m for m in parse_round(payload, "260133")}
+        self.assertEqual(set(out), {1, 3, 4})  # 전반·미발매·취소 제외
+        self.assertEqual(out[1]["market"], "1X2")
+        self.assertEqual(out[3]["odds"], {"U": 1.7, "O": 1.9})
+        self.assertEqual(out[4]["sport"], "basketball")
+        self.assertEqual(out[4]["line"], -3.5)
+        from engine.schema import validate
+        for m in out.values():
+            validate(dict(m))
+
+
 class Pipeline(unittest.TestCase):
     def test_demo_end_to_end_and_lock(self):
         from engine import config, pipeline

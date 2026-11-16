@@ -80,7 +80,8 @@ def validate(m: dict[str, Any]) -> dict[str, Any]:
             raise InvalidMarket(f"비정상 배당 {key}={f} ({m['id']})")
         odds[key] = round(f, 2)
     if m["pool"] == "proto":
-        if len(odds) != len(OUTCOMES[market]):
+        required = {"H", "A"} if market == "HANDICAP" else set(OUTCOMES[market])  # 핸디캡은 2지·3지 모두 있음
+        if not required <= set(odds):
             raise InvalidMarket(f"배당 일부 누락 ({m['id']}): {odds}")
         overround = sum(1 / o for o in odds.values())
         # 베트맨 환급률은 대략 60~95% 범위. 범위를 벗어나면 파싱 오류일 가능성.
