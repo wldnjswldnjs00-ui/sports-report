@@ -27,7 +27,7 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -51,13 +51,16 @@ jobs:
           if [ "${{ github.event.schedule }}" = "0 13 * * *" ]; then
             python -m engine collect --date "$(TZ=Asia/Seoul date -d tomorrow +%F)"
           fi
-      - name: Threads 게시(키가 있을 때만, 밤 22:00·아침 07:00 각 한 번)
-        if: github.event.schedule == '0 13 * * *' || github.event.schedule == '0 22 * * *' || github.event_name == 'workflow_dispatch'
+      - name: 쓰레드 카드 준비(밤 22:00·아침 07:00, 토큰이 있을 때만)
+        id: tprep
+        if: github.event.schedule == '0 13 * * *' || github.event.schedule == '0 22 * * *'
         continue-on-error: true
         env:
-          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
           THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
-        run: python -m engine threads
+        run: |
+          if [ -z "$THREADS_TOKEN" ]; then echo "토큰 없음"; exit 0; fi
+          pip install -q playwright && python -m playwright install --with-deps chromium >/dev/null
+          python -m engine threads --prepare
       - name: 사이트 빌드 검증
         id: build
         if: always()
@@ -78,6 +81,21 @@ jobs:
             sleep $((i * 5))
           done
           exit 1
+      - name: 쓰레드 게시(배포된 카드 이미지로 캐러셀)
+        if: steps.commit.outputs.pushed == '1' && (github.event.schedule == '0 13 * * *' || github.event.schedule == '0 22 * * *')
+        continue-on-error: true
+        env:
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+          THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
+        run: |
+          python -m engine threads --post
+          git add data/state/threads.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "data: 쓰레드 게시 기록"
+          for i in 1 2 3 4; do
+            if git pull --rebase -X theirs origin "${GITHUB_REF_NAME}" && git push; then exit 0; fi
+            sleep $((i * 5))
+          done
       - name: 검색엔진에 새 페이지 알림(IndexNow)
         if: steps.commit.outputs.pushed == '1'
         continue-on-error: true

@@ -383,6 +383,12 @@ def build() -> None:
     _write(config.DIST / "404.html", env.get_template("404.html").render(**ctx, path="/404"))
     write_json(config.DIST / "data" / "today.json", _slip_payload(latest))
     write_json(config.DIST / "data" / "xbook.json", _xbook_payload(latest))
+    # 쓰레드 카드 이미지(쓰레드가 공개 주소로 가져간다)
+    tdir = config.DATA / "threads"
+    if tdir.exists():
+        (config.DIST / "threads").mkdir(parents=True, exist_ok=True)
+        for f in tdir.glob("*.jpg"):
+            shutil.copy2(f, config.DIST / "threads" / f.name)
     _write(config.DIST / "sitemap.xml", env.get_template("sitemap.xml").render(urls=urls))
     _write(config.DIST / "robots.txt", f"User-agent: *\nAllow: /\nDisallow: /data/\n\nSitemap: {config.SITE_URL}/sitemap.xml\n")
     _write(config.DIST / "rss.xml", env.get_template("rss.xml").render(

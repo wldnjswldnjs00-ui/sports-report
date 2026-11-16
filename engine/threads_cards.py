@@ -1,0 +1,208 @@
+"""쓰레드용 카드 이미지(1080×1350). 조합 폴더 위주, 폴더마다 1경기는 가려서 사이트로 오게 한다.
+
+카드: ① 적중 확률 높은 경기 ② 역배 후보 ③ 공격형 조합 ④ 로또폴더 ⑤ 사이트 주소
+배당은 사이트 화면과 같이 베트맨(구매) 배당. HTML 로 그려 Playwright(Chromium)로 PNG 저장.
+"""
+from __future__ import annotations
+
+import html
+from datetime import date
+from pathlib import Path
+
+from . import config
+
+FONTS = Path(__file__).resolve().parent / "assets" / "fonts"
+WEEK = "월화수목금토일"
+W, H = 1080, 1350
+
+
+def _e(s) -> str:
+    return html.escape(str(s))
+
+
+def _bub(l: dict) -> str:
+    mk, k, line = l.get("market"), l.get("outcome"), l.get("line")
+    if mk == "OU":
+        return f"{'오버' if k == 'O' else '언더'} {line:g}" if line is not None else ("오버" if k == "O" else "언더")
+    if mk == "HANDICAP":
+        return f"핸디승 {line:+g}" if k == "H" else "핸디무" if k == "D" else "핸디패"
+    return {"H": "승", "D": "무", "A": "패"}.get(k, k)
+
+
+def _when(l: dict) -> str:
+    ko = l.get("kickoff", "")
+    return f"{int(ko[5:7])}/{int(ko[8:10])} {ko[11:16]}" if len(ko) >= 16 else ""
+
+
+def _key(l: dict) -> str:
+    return f"{l.get('kickoff', '')[:16]}|{l.get('home')}|{l.get('away')}"
+
+
+def _day(d: str) -> str:
+    x = date.fromisoformat(d)
+    return f"{x.month}월 {x.day}일 ({WEEK[x.weekday()]})"
+
+
+CSS = f"""
+@font-face{{font-family:DH;src:url('{(FONTS / 'DoHyeon.ttf').as_uri()}')}}
+@font-face{{font-family:UB;src:url('{(FONTS / 'Unbounded.ttf').as_uri()}')}}
+@font-face{{font-family:PT;font-weight:500;src:url('{(FONTS / 'Pretendard-Medium.otf').as_uri()}')}}
+@font-face{{font-family:PT;font-weight:700;src:url('{(FONTS / 'Pretendard-Bold.otf').as_uri()}')}}
+*{{box-sizing:border-box}}html,body{{margin:0}}
+.card{{width:{W}px;height:{H}px;padding:70px 64px;display:flex;flex-direction:column;font-family:PT;color:#121414;
+  background:radial-gradient(circle at 20% 0%,#ffffff 0,#edf2ef 55%);position:relative;overflow:hidden}}
+.top{{display:flex;align-items:center;gap:16px;font:500 30px PT;color:#5c6662}}
+.mark{{width:46px;height:46px;border-radius:50%;background:conic-gradient(from 90deg,#ff3d7f,#ffd23d,#18c4b0,#6c7bff,#ff3d7f);box-shadow:inset 0 0 0 6px rgba(255,255,255,.4)}}
+.brand{{font:400 36px DH;color:#121414}}.brand b{{font:800 20px UB;color:#ff3d7f;margin-left:4px}}
+.date{{margin-left:auto}}
+h1{{font:400 84px/1.1 DH;margin:44px 0 10px}}
+.sub{{font:500 30px PT;color:#5c6662;margin:0 0 34px}}
+.list{{display:flex;flex-direction:column;gap:18px}}
+.row{{background:#fff;border:2px solid #d9e2de;border-radius:28px;padding:26px 30px;display:grid;grid-template-columns:1fr auto;gap:6px 20px;align-items:center}}
+.meta{{font:500 24px PT;color:#7b8581}}
+.match{{font:700 36px/1.25 PT;word-break:keep-all}}
+.match i{{font:700 22px UB;color:#9aa3a0;font-style:normal;padding:0 8px}}
+.right{{grid-row:1/3;grid-column:2;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:10px}}
+.bub{{display:inline-block;background:#121414;color:#fff;font:700 28px PT;padding:10px 20px;border-radius:999px;white-space:nowrap}}
+.odds{{font:800 34px UB;letter-spacing:-1px}}
+.pct{{font:700 26px PT;color:#0b9a7e}}
+.lock{{background:repeating-linear-gradient(135deg,#f6f9f7 0 18px,#edf2ef 18px 36px);border-style:dashed}}
+.lock .match{{color:#9aa3a0}}
+.lock .bub{{background:#ff3d7f}}
+.ticket{{background:#fff;border:2px solid #d9e2de;border-radius:36px;padding:34px 34px 30px;display:flex;flex-direction:column;gap:14px}}
+.thead{{display:flex;align-items:baseline;justify-content:space-between;border-bottom:3px dashed #d9e2de;padding-bottom:20px;margin-bottom:6px}}
+.total{{font:800 76px UB;letter-spacing:-3px}}
+.size{{font:700 30px PT;color:#5c6662}}
+.leg{{display:grid;grid-template-columns:1fr auto auto;gap:18px;align-items:center;padding:12px 0;border-bottom:1px solid #edf2ef}}
+.leg:last-child{{border-bottom:0}}
+.leg .match{{font-size:32px}}
+.leg .odds{{font-size:30px;min-width:96px;text-align:right}}
+.leg.lock{{background:none;border-radius:16px;padding:12px 16px;margin:0 -16px;background:repeating-linear-gradient(135deg,#fff 0 16px,#fbeef3 16px 32px)}}
+.foot{{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font:500 28px PT;color:#5c6662}}
+.foot b{{color:#ff3d7f;font-weight:700}}
+.cta{{align-items:center;justify-content:center;text-align:center;background:radial-gradient(circle at 50% 40%,#202426 0,#121414 65%);color:#fff}}
+.cta .big{{width:300px;height:300px;border-radius:50%;background:conic-gradient(from 90deg,#ff3d7f,#ffd23d,#18c4b0,#6c7bff,#ff3d7f);box-shadow:inset 0 0 0 36px rgba(255,255,255,.4),0 0 120px rgba(108,123,255,.35)}}
+.cta h2{{font:400 64px/1.25 DH;margin:70px 0 30px}}
+.url{{display:inline-flex;align-items:center;gap:18px;background:#fff;color:#121414;border-radius:999px;padding:26px 46px;font:400 64px DH}}
+.url b{{font:800 34px UB;color:#ff3d7f}}
+.url .lockic{{font-size:40px}}
+.cta p{{font:500 30px PT;color:#bfc1c4;margin:36px 0 0}}
+.note{{font:500 24px PT;color:#7b8581;margin-top:18px}}
+.many{{gap:6px;padding-top:26px}}.many .leg{{padding:6px 0}}.many .leg .match{{font-size:29px}}.many .meta{{font-size:21px}}.many .total{{font-size:64px}}.many .leg.lock{{margin:0;padding:8px 14px}}
+"""
+
+
+def _top(d: str) -> str:
+    return f'<div class="top"><span class="mark"></span><span class="brand">스포츠분석<b>.kr</b></span><span class="date">{_e(_day(d))}</span></div>'
+
+
+def _row(l: dict, right: str) -> str:
+    return (f'<div class="row"><div class="meta">{_e(l.get("league", ""))} · {_e(_when(l))}</div>'
+            f'<div class="right">{right}</div><div class="match">{_e(l["home"])}<i>vs</i>{_e(l["away"])}</div></div>')
+
+
+def card_picks(d: str, picks: list[dict]) -> str:
+    rows = "".join(_row(l, f'<span class="bub">{_e(_bub(l))}</span><span class="pct">{l["p"] * 100:.0f}% · {l["odds"]:.2f}배</span>') for l in picks)
+    return f'<div class="card">{_top(d)}<h1>적중 확률 높은 경기</h1><p class="sub">해외 배당 기준 분석 · 배당은 베트맨</p><div class="list">{rows}</div>{_foot()}</div>'
+
+
+def card_upsets(d: str, ups: list[dict]) -> str:
+    rows = "".join(_row(l, f'<span class="bub">{_e(_bub(l))}</span><span class="odds">{l["odds"]:.2f}</span>') for l in ups)
+    return f'<div class="card">{_top(d)}<h1>역배 후보</h1><p class="sub">해외 시장은 열세로 보지만 기록·레이팅이 받쳐주는 팀</p><div class="list">{rows}</div>{_foot()}</div>'
+
+
+def card_combo(d: str, title: str, c: dict) -> str:
+    legs = sorted(c["legs"], key=lambda l: l.get("kickoff", ""))
+    hide = max(legs, key=lambda l: l.get("p", 0))  # 가장 확실한 한 경기는 사이트에서만
+    rows = []
+    for l in legs:
+        if l is hide:
+            rows.append('<div class="leg lock"><div><div class="meta">🔒 1경기 숨김</div><div class="match">사이트에서 공개</div></div>'
+                        '<span class="bub">?</span><span class="odds">?.??</span></div>')
+        else:
+            rows.append(f'<div class="leg"><div><div class="meta">{_e(l.get("league", ""))} · {_e(_when(l))}</div>'
+                        f'<div class="match">{_e(l["home"])}<i>vs</i>{_e(l["away"])}</div></div>'
+                        f'<span class="bub">{_e(_bub(l))}</span><span class="odds">{l["odds"]:.2f}</span></div>')
+    return (f'<div class="card">{_top(d)}<h1>{_e(title)}</h1><p class="sub">예상 적중률 {c["joint_p"] * 100:.1f}% · 1만 원 적중 시 {c["payout"]:,}원</p>'
+            f'<div class="ticket{" many" if len(legs) >= 6 else ""}"><div class="thead"><span class="total">×{c["total_odds"]:.2f}</span><span class="size">{c["size"]}폴더</span></div>{"".join(rows)}</div>'
+            f'<p class="note">숨긴 1경기와 나머지 조합은 사이트에서 확인하세요.</p>{_foot()}</div>')
+
+
+def card_cta(d: str) -> str:
+    return ('<div class="card cta"><div class="big"></div><h2>숨긴 경기와<br>전체 조합은 여기서</h2>'
+            '<div class="url"><span class="lockic">🔗</span>스포츠분석<b>.kr</b></div>'
+            '<p>매일 밤 10시 · 아침 7시 업데이트<br>만 19세 이상 · 체육진흥투표권은 베트맨 공식 채널에서만</p></div>')
+
+
+def _foot() -> str:
+    return '<div class="foot"><span>전체 분석 <b>스포츠분석.kr</b></span><span>만 19세 이상</span></div>'
+
+
+def _best(cs: list[dict]) -> dict | None:
+    live = [c for c in cs or [] if c.get("result") not in ("lose", "win")]
+    return max(live, key=lambda c: c.get("joint_p", 0)) if live else None
+
+
+def build(rep: dict, slot: str = "night", exclude: set[str] | None = None) -> tuple[list[str], list[str]]:
+    """(카드 HTML 목록, 쓴 경기 키). 아침에는 밤에 쓴 경기·조합을 피한다."""
+    used = set(exclude or ())
+    d = rep["date"]
+    out: list[str] = []
+    shown: list[str] = []
+
+    def take(pool, n):
+        res = []
+        for l in pool:
+            k = _key(l)
+            if k in used:
+                continue
+            used.add(k)
+            shown.append(k)
+            res.append(l)
+            if len(res) >= n:
+                break
+        return res
+
+    tops = list(rep.get("top_picks") or [])
+    if slot == "morning":
+        tops = sorted(tops + list(rep.get("handi_picks") or []) + list(rep.get("ou_picks") or []), key=lambda l: -l["p"])
+    picks = take(tops, 4)
+    if picks:
+        out.append(card_picks(d, picks))
+    ups = take(list(rep.get("upsets") or []), 4)
+    if ups:
+        out.append(card_upsets(d, ups))
+    for key, title in (("aggressive", "공격형 조합"), ("lotto", "로또폴더")):
+        cs = list((rep.get("combos") or {}).get(key) or [])
+        # 아침에는 밤에 올린 조합과 경기가 덜 겹치는 조합을 고른다
+        cs.sort(key=lambda c: (sum(_key(l) in (exclude or ()) for l in c["legs"]), -c.get("joint_p", 0)))
+        c = cs[0] if cs and slot == "morning" else _best(cs)
+        if c:
+            out.append(card_combo(d, title, c))
+            shown += [_key(l) for l in c["legs"]]
+    out.append(card_cta(d))
+    return out, shown
+
+
+def render(cards: list[str], out_dir: Path, prefix: str) -> list[Path]:
+    from playwright.sync_api import sync_playwright
+    out_dir.mkdir(parents=True, exist_ok=True)
+    paths = []
+    with sync_playwright() as p:
+        import os
+        exe = os.getenv("CHROMIUM_PATH") or None  # 미리 깔린 크롬을 쓸 때만(GitHub Actions 는 playwright install 기본 경로)
+        b = p.chromium.launch(executable_path=exe, args=["--no-sandbox"] if exe else None)
+        pg = b.new_page(viewport={"width": W, "height": H})
+        for i, c in enumerate(cards, 1):
+            # 빈 페이지(about:blank)에서는 로컬 글꼴 파일이 막히므로 파일로 저장해서 연다
+            tmp = out_dir / f"_{prefix}-{i}.html"
+            tmp.write_text(f"<!doctype html><html><head><meta charset='utf-8'><style>{CSS}</style></head><body>{c}</body></html>", encoding="utf-8")
+            pg.goto(tmp.as_uri())
+            pg.evaluate("document.fonts.ready")
+            pg.wait_for_timeout(300)
+            path = out_dir / f"{prefix}-{i}.jpg"
+            pg.screenshot(path=str(path), type="jpeg", quality=88, clip={"x": 0, "y": 0, "width": W, "height": H})
+            paths.append(path)
+            tmp.unlink(missing_ok=True)
+        b.close()
+    return paths

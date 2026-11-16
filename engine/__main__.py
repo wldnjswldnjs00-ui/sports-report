@@ -23,7 +23,9 @@ def main(argv=None) -> int:
     ap.add_argument("--refresh", action="store_true", help="해외 배당 캐시 무시")
     ap.add_argument("--days", type=int, default=21)
     ap.add_argument("--no-scores", action="store_true", help="외부 결과 API 호출 생략(크레딧 절약)")
-    ap.add_argument("--dry", action="store_true", help="threads: 올리지 않고 글 초안만 출력")
+    ap.add_argument("--dry", action="store_true", help="threads: 올리지 않고 카드·글 초안만 만들기")
+    ap.add_argument("--prepare", action="store_true", help="threads: 카드 이미지 만들기(게시 대기)")
+    ap.add_argument("--post", action="store_true", help="threads: 배포된 카드로 게시")
     a = ap.parse_args(argv)
 
     from . import pipeline
@@ -50,8 +52,15 @@ def main(argv=None) -> int:
             return 2
         pipeline.demo(a.days)
     elif a.cmd == "threads":
-        from .threads import post_daily
-        post_daily(dry=a.dry)
+        from . import threads as TH
+        if a.dry:
+            TH.draft()
+        elif a.prepare:
+            TH.prepare()
+        elif a.post:
+            TH.post()
+        else:
+            TH.post_daily()
     elif a.cmd == "indexnow":
         from .indexnow import ping
         ping()

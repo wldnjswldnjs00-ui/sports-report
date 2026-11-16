@@ -5,3 +5,4 @@ dist/
 .venv/
 *.tmp
 .DS_Store
+.draft/
