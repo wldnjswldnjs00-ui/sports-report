@@ -1,0 +1,11 @@
+// Cloudflare Workers 정적 자산 배포 설정.
+// 서버 코드는 없고 dist/ 의 HTML 파일만 내보낸다(정적 자산 요청은 CPU 를 쓰지 않음).
+{
+  "name": "sports-report",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  }
+}
