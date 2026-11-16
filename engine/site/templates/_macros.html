@@ -52,26 +52,13 @@
 
 {% macro oreo_block(m) %}
 {% set o = m.oreo %}
-{% if o %}
-<dl class="oreo">
-  <div><dt>의견</dt><dd>{{ o.o1 }}</dd></div>
-  <div><dt>이유</dt><dd>{{ o.r }}</dd></div>
-  <div><dt>근거</dt><dd>{{ o.e }}</dd></div>
-  <div><dt>결론</dt><dd>{{ o.o2 }}</dd></div>
-</dl>
+{% if o %}<p class="m-text">{{ o.o1 }} {{ o.r }} {{ o.e }} {{ o.o2 }}</p>
 {% elif m.narrative %}<p class="m-text">{{ m.narrative }}</p>{% endif %}
 {% endmacro %}
 
 {% macro review_block(m) %}
 {% set v = m.review %}
-{% if v %}
-<dl class="oreo review {{ 'ok' if v.hit else 'no' }}">
-  <div><dt>복기</dt><dd>{{ v.o1 }}</dd></div>
-  <div><dt>원인</dt><dd>{{ v.r }}</dd></div>
-  {% if v.e %}<div><dt>기록</dt><dd>{{ v.e }}</dd></div>{% endif %}
-  <div><dt>배운 점</dt><dd>{{ v.o2 }}</dd></div>
-</dl>
-{% endif %}
+{% if v %}<p class="m-text review">{{ v.o1 }} {{ v.r }} {% if v.e %}{{ v.e }} {% endif %}{{ v.o2 }}</p>{% endif %}
 {% endmacro %}
 
 {% macro pick_table(rows, title_extra) %}

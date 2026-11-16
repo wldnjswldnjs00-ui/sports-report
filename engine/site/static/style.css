@@ -518,3 +518,5 @@ dialog.reveal .btn { width: 100%; }
 .is-mobile .qr, .is-mobile .pc-only, .is-pc .mo-only { display: none; }
 html:not(.is-mobile):not(.is-pc) .mo-only { display: none; }
 @media (max-width: 960px) { .two { grid-template-columns: 1fr; } .tool-result { position: static; } }
+
+.m-text.review { background: var(--card-2); border-radius: var(--r-sm); padding: 12px 14px; }
