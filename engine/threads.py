@@ -129,17 +129,48 @@ def post() -> bool:
     if not _wait_live(urls):
         log.warning("Threads: 카드 이미지가 사이트에 아직 없음(배포 지연) — 게시하지 않음")
         return False
+    def _err(e) -> str:
+        """쓰레드가 돌려준 오류 내용(토큰은 빼고)."""
+        r = getattr(e, "response", None)
+        body = (r.text if r is not None else str(e))[:400]
+        return body.replace(token, "***")
+
+    def _ready(cid: str, wait: int = 120) -> bool:
+        """컨테이너가 FINISHED 될 때까지 기다린다(이미지 처리)."""
+        end = time.time() + wait
+        while time.time() < end:
+            try:
+                st_ = http("GET", f"{API}/{cid}", params={"fields": "status,error_message", "access_token": token}, retries=1).json()
+                if st_.get("status") == "FINISHED":
+                    return True
+                if st_.get("status") in ("ERROR", "EXPIRED"):
+                    log.warning("Threads 컨테이너 오류: %s", st_.get("error_message"))
+                    return False
+            except Exception:  # noqa: BLE001
+                pass
+            time.sleep(5)
+        return False
+
+    step = "이미지 등록"
     try:
         kids = []
         for u in urls[:20]:
             r = http("POST", f"{API}/{uid}/threads", params={"media_type": "IMAGE", "image_url": u, "is_carousel_item": "true", "access_token": token}, retries=2)
             kids.append(r.json()["id"])
+        step = "이미지 처리 대기"
+        for k in kids:
+            if not _ready(k):
+                log.warning("Threads: 이미지 처리가 끝나지 않음(%s)", k)
+                return False
+        step = "묶음 만들기"
         r = http("POST", f"{API}/{uid}/threads", params={"media_type": "CAROUSEL", "children": ",".join(kids), "text": pend["text"], "access_token": token}, retries=2)
         cid = r.json()["id"]
-        time.sleep(30)  # 이미지 처리 시간
+        step = "묶음 처리 대기"
+        _ready(cid, 180)
+        step = "게시"
         http("POST", f"{API}/{uid}/threads_publish", params={"creation_id": cid, "access_token": token}, retries=3)
     except Exception as e:  # noqa: BLE001
-        log.warning("Threads 게시 실패: %s", type(e).__name__)
+        log.warning("Threads 게시 실패(%s): %s", step, _err(e))
         return False
     used = {d: v for d, v in (st.get("used") or {}).items() if d >= pend["day"]}
     if pend["slot"] == "night":
