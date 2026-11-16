@@ -17,7 +17,15 @@ from datetime import datetime
 from typing import Any
 
 from .. import config
-from ..util import http, write_json
+from ..util import http as _http, write_json
+
+
+def http(method, url, **kw):
+    """베트맨 전용: 응답이 느릴 때가 있어 연결 15초·읽기 45초, 4회 재시도(5·10·20초 간격)."""
+    kw.setdefault("timeout", (15, 45))
+    kw.setdefault("retries", 4)
+    kw.setdefault("backoff", 5.0)
+    return _http(method, url, **kw)
 
 log = logging.getLogger("engine.betman")
 
