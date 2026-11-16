@@ -1,92 +1,102 @@
 {
  "markets": {
   "betman:G101:260136:4314": {
-   "home_score": 119.0,
-   "away_score": 147.0,
    "status": "FT",
+   "outcome": "A",
    "src": "betman",
    "raw": "119:147",
-   "code": "2"
+   "code": "2",
+   "market": "WL",
+   "home_score": 119.0,
+   "away_score": 147.0
   },
   "betman:G101:260136:4315": {
-   "home_score": 5.0,
-   "away_score": 147.0,
    "status": "FT",
+   "outcome": "A",
    "src": "betman",
    "raw": "127.5:147",
-   "code": "2"
+   "code": "2",
+   "market": "HANDICAP"
   },
   "betman:G101:260136:4316": {
-   "home_score": 266.0,
-   "away_score": 0.0,
    "status": "FT",
+   "outcome": "O",
    "src": "betman",
    "raw": "266:0",
-   "code": "2"
+   "code": "2",
+   "market": "OU"
   },
   "betman:G101:260136:4318": {
-   "home_score": 106.0,
-   "away_score": 113.0,
    "status": "FT",
+   "outcome": "A",
    "src": "betman",
    "raw": "106:113",
-   "code": "2"
+   "code": "2",
+   "market": "WL",
+   "home_score": 106.0,
+   "away_score": 113.0
   },
   "betman:G101:260136:4319": {
-   "home_score": 5.0,
-   "away_score": 113.0,
    "status": "FT",
+   "outcome": "H",
    "src": "betman",
    "raw": "114.5:113",
-   "code": "0"
+   "code": "0",
+   "market": "HANDICAP"
   },
   "betman:G101:260136:4320": {
-   "home_score": 219.0,
-   "away_score": 0.0,
    "status": "FT",
+   "outcome": "U",
    "src": "betman",
    "raw": "219:0",
-   "code": "0"
+   "code": "0",
+   "market": "OU"
   },
   "betman:G101:260136:4322": {
-   "home_score": 103.0,
-   "away_score": 125.0,
    "status": "FT",
+   "outcome": "A",
    "src": "betman",
    "raw": "103:125",
-   "code": "2"
+   "code": "2",
+   "market": "WL",
+   "home_score": 103.0,
+   "away_score": 125.0
   },
   "betman:G101:260136:4326": {
-   "home_score": 92.0,
-   "away_score": 76.0,
    "status": "FT",
+   "outcome": "H",
    "src": "betman",
    "raw": "92:76",
-   "code": "0"
+   "code": "0",
+   "market": "WL",
+   "home_score": 92.0,
+   "away_score": 76.0
   },
   "betman:G101:260136:4328": {
-   "home_score": 5.0,
-   "away_score": 76.0,
    "status": "FT",
+   "outcome": "H",
    "src": "betman",
    "raw": "85.5:76",
-   "code": "0"
+   "code": "0",
+   "market": "HANDICAP"
   },
   "betman:G101:260136:4331": {
-   "home_score": 68.0,
-   "away_score": 67.0,
    "status": "FT",
+   "outcome": "H",
    "src": "betman",
    "raw": "68:67",
-   "code": "0"
+   "code": "0",
+   "market": "WL",
+   "home_score": 68.0,
+   "away_score": 67.0
   },
   "betman:G101:260136:4333": {
-   "home_score": 5.0,
-   "away_score": 67.0,
    "status": "FT",
+   "outcome": "H",
    "src": "betman",
    "raw": "72.5:67",
-   "code": "0"
+   "code": "0",
+   "market": "HANDICAP"
   }
  }
 }
