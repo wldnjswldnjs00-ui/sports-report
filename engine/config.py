@@ -37,7 +37,7 @@ COUPANG_TEMPLATE = os.getenv("COUPANG_TEMPLATE", "carousel").strip() or "carouse
 COUPANG_NOTICE = os.getenv("COUPANG_NOTICE", "") == "1" or bool(COUPANG_BANNER_ID and COUPANG_TRACKING)
 SUPPORT_URL = os.getenv("SUPPORT_URL", "").strip()
 # 후원: 카카오페이 송금 링크(https://qr.kakaopay.com/...), 토스 익명 송금 링크(https://toss.me/...)
-SUPPORT_KAKAOPAY = os.getenv("SUPPORT_KAKAOPAY", "").strip()
+SUPPORT_KAKAOPAY = os.getenv("SUPPORT_KAKAOPAY", "https://qr.kakaopay.com/Fc3KExJ1t").strip()
 SUPPORT_TOSS = os.getenv("SUPPORT_TOSS", "").strip()
 SLOGAN = "데이터와 수학으로, 분석을 똑똑하게"
 
