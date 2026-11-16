@@ -1,76 +1,41 @@
 {% extends "base.html" %}
-{% block title %}배당 분석 · 배당 대 배당 구도별 실제 결과 | {{ cfg.SITE_NAME }}{% endblock %}
-{% block desc %}홈 배당과 원정 배당이 이렇게 붙었을 때 실제 결과는 어땠는지. 해외 배당 기준 유럽 축구 기록과 베트맨 프로토 기록.{% endblock %}
+{% block title %}배당 분석 · 해외 배당이 이렇게 붙으면 실제로는 | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}해외 배당을 넣으면 해외 배당이 그렇게 붙었던 과거 경기들이 실제로 어떻게 끝났는지 보여줍니다. 유럽 축구·NBA·MLB 기록, 승무패·핸디캡·언더오버 전 기준점.{% endblock %}
 {% block main %}
 <section class="wrap page-head">
   <p class="kicker">ODDS</p><h1>배당 분석</h1>
-  <p class="lede">A팀 배당과 B팀 배당이 이렇게 붙었을 때 실제로 누가 이겼는지를 정리했습니다.{% if book and book.xrows %} 해외 배당 {{ '{:,}'.format(book.xrows) }}경기{% endif %}{% if book and book.rows %}, 베트맨 {{ '{:,}'.format(book.rows) }}건.{% endif %}</p>
+  <p class="lede">해외 배당을 넣으면, 해외 배당이 그렇게 붙었던 과거 경기들이 실제로 어떻게 끝났는지 바로 보여줍니다.</p>
 </section>
-{% if not book or not (book.xpairs or book.pairs) %}
-<section class="wrap block"><p class="none">과거 기록을 모으는 중입니다. 다음 업데이트부터 표가 채워집니다.</p></section>
-{% else %}
-{% if x_rows %}
-<section class="wrap block" id="overseas">
-  <header class="block-head"><h2>축구 승무패 · 해외 배당 기준</h2><p>유럽 16개 리그 최근 6시즌, 해외 평균 마감 배당입니다. 30경기 이상인 구도만 표시합니다.</p></header>
-  <div class="filters pickers">
-    <label>홈 배당 <select class="input" data-filter="xh" aria-label="홈 배당 구간"><option value="">전체</option>{% for v in x_rows|map(attribute='h_l')|unique %}<option>{{ v }}</option>{% endfor %}</select></label>
-    <label>원정 배당 <select class="input" data-filter="xa" aria-label="원정 배당 구간"><option value="">전체</option>{% for r in x_rows|sort(attribute='a')|map(attribute='a_l')|unique %}<option>{{ r }}</option>{% endfor %}</select></label>
+<section class="wrap block xo" data-xo>
+  <noscript><p class="none">이 계산기는 자바스크립트가 필요합니다.</p></noscript>
+  <div class="xo-panel">
+    <label class="xo-load" data-xo-load hidden>
+      <span>오늘 경기에서 불러오기</span>
+      <select class="input" data-xo-match aria-label="오늘 경기"><option value="">직접 입력</option></select>
+    </label>
+    <div class="xo-row" role="group" aria-label="종목">
+      <button type="button" class="chip" data-xo-sport="soccer" aria-pressed="true">축구</button>
+      <button type="button" class="chip" data-xo-sport="basketball" aria-pressed="false">농구</button>
+      <button type="button" class="chip" data-xo-sport="baseball" aria-pressed="false">야구</button>
+    </div>
+    <div class="xo-row" role="group" aria-label="마켓">
+      <button type="button" class="chip" data-xo-mk="main" aria-pressed="true"><span data-xo-main>승무패</span></button>
+      <button type="button" class="chip" data-xo-mk="hcp" aria-pressed="false">핸디캡</button>
+      <button type="button" class="chip" data-xo-mk="ou" aria-pressed="false">언더오버</button>
+    </div>
+    <div class="xo-inputs" data-xo-inputs></div>
+    <p class="fine xo-hint">해외 배당을 넣으세요. 경기 화면의 '해외 배당' 칸 값입니다. 베트맨 배당은 발행처 몫이 커서 넣으면 결과가 달라집니다.</p>
   </div>
-  <div class="tblw tall"><table class="tbl odds-tbl" data-filter-table="xh,xa">
-    <thead><tr><th>홈 배당</th><th>원정 배당</th><th class="n">경기 수</th><th class="n">홈승</th><th class="n">무</th><th class="n">원정승</th></tr></thead>
-    <tbody>
-    {% for x in x_rows %}
-      <tr data-xh="{{ x.h_l }}" data-xa="{{ x.a_l }}"><td>{{ x.h_l }}</td><td>{{ x.a_l }}</td><td class="n">{{ '{:,}'.format(x.n) }}</td>
-      <td class="n{% if x.H >= x.D and x.H >= x.A %} good{% endif %}">{{ x.H|pct(1) }}</td><td class="n{% if x.D > x.H and x.D >= x.A %} good{% endif %}">{{ x.D|pct(1) }}</td><td class="n{% if x.A > x.H and x.A > x.D %} good{% endif %}">{{ x.A|pct(1) }}</td></tr>
-    {% endfor %}
-    </tbody>
-  </table></div>
+  <div class="xo-out" data-xo-out aria-live="polite"><p class="muted">불러오는 중…</p></div>
 </section>
-{% endif %}
-{% if xou_rows %}
-<section class="wrap block" data-reveal>
-  <header class="block-head"><h2>축구 언더오버 2.5 · 해외 배당 기준</h2><p>오버 배당과 언더 배당이 이렇게 붙었을 때 3골 이상 나온 비율입니다.</p></header>
-  <div class="tblw tall"><table class="tbl odds-tbl">
-    <thead><tr><th>오버 배당</th><th>언더 배당</th><th class="n">경기 수</th><th class="n">오버</th><th class="n">언더</th></tr></thead>
-    <tbody>
-    {% for x in xou_rows %}
-      <tr><td>{{ x.o_l }}</td><td>{{ x.u_l }}</td><td class="n">{{ '{:,}'.format(x.n) }}</td>
-      <td class="n{% if x.over >= 0.5 %} good{% endif %}">{{ x.over|pct(1) }}</td><td class="n{% if x.over < 0.5 %} good{% endif %}">{{ (1 - x.over)|pct(1) }}</td></tr>
-    {% endfor %}
-    </tbody>
-  </table></div>
+<section class="wrap block">
+  <details class="rule">
+    <summary>어떻게 계산하나요</summary>
+    <p class="fine">넣은 배당에서 발행처 몫을 걷어낸 확률(공정확률)을 구하고, 해외 마감 배당의 공정확률이 같은 구간에 있던 과거 경기를 모읍니다. 그 경기들의 실제 점수 차와 총점 분포로 승무패, 각 핸디캡 기준점, 각 언더오버 기준점의 결과를 셉니다. 표본이 {{ 250 }}경기보다 적으면 이웃 구간까지 넓혀서 셉니다.</p>
+    <p class="fine">기록: 유럽 축구 16개 리그 최근 6시즌(football-data.co.uk), NBA·MLB 2011~2021 시즌(sportsbookreviewsonline 기록). MLB 기록은 배당 기록 시점이 섞인 경기가 있어 NBA보다 오차가 큽니다. 베트맨 지난 회차 기록은 분석에 쓰지 않습니다.</p>
+  </details>
 </section>
-{% endif %}
-{% if pair_rows %}
-<section class="wrap block" data-reveal id="pairs">
-  <header class="block-head"><h2>농구·배구·야구 · 베트맨 배당 기준</h2><p>해외 과거 기록이 없는 종목과 핸디캡·언더오버는 베트맨 지난 회차 기록으로 봅니다. 25건 이상인 구도만 표시합니다.</p></header>
-  <div class="filters pickers">
-    <label>마켓 <select class="input" data-filter="pm" aria-label="마켓"><option value="">전체</option>{% for v in pair_rows|map(attribute='mk')|unique %}<option value="{{ v }}">{{ MARKET_LABEL[v] }}</option>{% endfor %}</select></label>
-  </div>
-  <div class="tblw tall"><table class="tbl odds-tbl" data-filter-table="pm">
-    <thead><tr><th>마켓</th><th>낮은 배당</th><th>높은 배당</th><th class="n">건수</th><th class="n">낮은 쪽 적중</th><th class="n">높은 쪽 적중</th></tr></thead>
-    <tbody>
-    {% for x in pair_rows %}
-      <tr data-pm="{{ x.mk }}"><td>{{ MARKET_LABEL[x.mk] }}</td><td>{{ x.lo_l }}</td><td>{{ x.hi_l }}</td><td class="n">{{ x.n }}</td>
-      <td class="n{% if x.hi_rate < 0.5 %} good{% endif %}">{{ (1 - x.hi_rate)|pct(1) }}</td><td class="n{% if x.hi_rate >= 0.5 %} good{% endif %}">{{ x.hi_rate|pct(1) }}</td></tr>
-    {% endfor %}
-    </tbody>
-  </table></div>
-</section>
-{% endif %}
-<section class="wrap block" data-reveal id="moves">
-  <header class="block-head"><h2>배당이 움직였을 때</h2><p>베트맨 첫 발매 배당에서 마감 배당까지의 변동 폭별 결과입니다.</p></header>
-  {% set ML = [('d3', '10% 이상 하락'), ('d2', '5~10% 하락'), ('d1', '5% 미만 하락'), ('flat', '변동 없음'), ('u1', '5% 미만 상승'), ('u2', '5% 이상 상승')] %}
-  {% if book.moves %}
-  <div class="tblw"><table class="tbl">
-    <thead><tr><th>변동 폭</th><th class="n">건수</th><th class="n">실제 적중률</th><th class="n">배당이 뜻하는 확률</th></tr></thead>
-    <tbody>
-    {% for k, l in ML %}{% set st = book.moves.get(k) %}{% if st and st.n >= 10 %}
-      <tr><td>{{ l }}</td><td class="n">{{ '{:,}'.format(st.n) }}</td><td class="n">{{ st.hit|pct(1) }}</td><td class="n muted">{{ st.be|pct(1) }}</td></tr>
-    {% endif %}{% endfor %}
-    </tbody>
-  </table></div>
-  {% else %}<p class="none">변동 기록을 모으는 중입니다.</p>{% endif %}
-</section>
-{% endif %}
+{% endblock %}
+{% block scripts %}
+<script src="/static/xodds.js?v={{ asset_v }}" defer></script>
 {% endblock %}

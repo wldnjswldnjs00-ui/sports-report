@@ -40,6 +40,7 @@
     <div><dt>예상 적중률</dt><dd>{{ c.joint_p|pct(1) }}</dd></div>
     <div><dt>1만 원 적중 시</dt><dd>{{ c.payout|won }}</dd></div>
   </dl>
+  {% if c.joint_p and c.total_odds %}<p class="combo-stake" data-stake data-p="{{ c.joint_p }}" data-odds="{{ c.total_odds }}"></p>{% endif %}
   <button type="button" class="combo-add" data-add-combo='{{ c.legs|map(attribute="market_id")|list|tojson }}' data-add-outcomes='{{ c.legs|map(attribute="outcome")|list|tojson }}'>내 조합에 담기</button>
 </article>
 {% endmacro %}
@@ -62,7 +63,7 @@
   {% for l in rows %}
     <tr><td><span class="muted">{{ l.league }} · {{ l.kickoff|kdt }}</span><br>{{ l.home }} vs {{ l.away }}</td>
     <td><span class="bub on">{{ outcome(l, l.outcome) }}</span></td><td class="n">{{ l.odds|odds }}</td><td class="n">{{ l.p|pct }}</td>
-    <td class="why">{% if l.reasons %}{{ l.reasons|join(' · ') }}{% else %}{% if l.hist_hit is not none and l.hist_n %}같은 배당 과거 적중률 {{ l.hist_hit|pct }} ({{ l.hist_n }}건){% endif %}{% if l.drop and l.drop >= 0.02 %} · 배당 {{ (l.drop * 100)|round(0)|int }}% 하락{% endif %}{% endif %}</td></tr>
+    <td class="why">{% if l.reasons %}{{ l.reasons|join(' · ') }}{% else %}{% if l.hist_hit is not none and l.hist_n %}해외 기록 적중률 {{ l.hist_hit|pct }} ({{ '{:,}'.format(l.hist_n) }}경기){% endif %}{% if l.drop and l.drop >= 0.02 %} · 배당 {{ (l.drop * 100)|round(0)|int }}% 하락{% endif %}{% endif %}</td></tr>
   {% endfor %}
   </tbody>
 </table>

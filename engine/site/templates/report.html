@@ -68,8 +68,9 @@
 {% endif %}
 
 <section class="wrap block" id="combos" data-reveal>
-  <header class="block-head">
+  <header class="block-head split">
     <h2>전략별 조합</h2>
+    <label class="seed-in">내 시드 <input class="input" type="text" inputmode="numeric" autocomplete="off" data-seed aria-label="내 시드(원)" placeholder="300,000"> 원</label>
   </header>
   <div class="tabs" role="tablist" data-tabs>
     {% for key, s in STRATEGIES.items() %}
@@ -112,7 +113,7 @@
   {% for key, rows in [('handi', r.handi_picks), ('ou', r.ou_picks)] %}{% if rows %}
   <div class="tab-panel" role="tabpanel" id="panel-pk-{{ key }}" aria-labelledby="tab-pk-{{ key }}" {% if key == 'ou' and r.handi_picks %}hidden{% endif %}>
     <div class="tblw"><table class="tbl line-tbl">
-      <thead><tr><th>시간</th><th>경기</th><th>기준</th><th>선택과 배당</th><th>추정 확률</th><th class="n">같은 배당 과거 적중률</th></tr></thead>
+      <thead><tr><th>시간</th><th>경기</th><th>기준</th><th>선택과 배당</th><th>추정 확률</th><th class="n">해외 기록 적중률</th></tr></thead>
       <tbody>
       {% for l in rows %}{% set m = mk.get(l.market_id) %}
         <tr>
@@ -121,7 +122,7 @@
           <td class="n">{% if l.line is not none %}{{ ('%+g'|format(l.line)) if key == 'handi' else l.line }}{% endif %}</td>
           <td><span class="c-opt">{% for k in ['H', 'D', 'A', 'O', 'U'] if m and k in m.odds %}<span class="{{ 'pk' if k == l.outcome }}">{{ outcome(l, k)|replace(' ' ~ ('%+g'|format(l.line or 0)), '') }}<b>{{ m.odds[k]|odds }}</b></span>{% endfor %}</span></td>
           <td><span class="mini"><i style="width:{{ (l.p * 100)|round(0)|int }}%"></i></span><span class="n">{{ l.p|pct }}</span></td>
-          <td class="n">{% if l.hist_hit is not none and l.hist_n %}{{ l.hist_hit|pct }} <span class="muted">({{ l.hist_n }}건)</span>{% else %}<span class="muted">–</span>{% endif %}</td>
+          <td class="n">{% if l.hist_hit is not none and l.hist_n %}{{ l.hist_hit|pct }} <span class="muted">({{ '{:,}'.format(l.hist_n) }}경기)</span>{% else %}<span class="muted">–</span>{% endif %}</td>
         </tr>
       {% endfor %}
       </tbody>
@@ -181,7 +182,7 @@
         <dl class="m-nums">
           <div><dt>신뢰도</dt><dd>{{ a.confidence }}</dd></div>
           <div><dt>이변 위험</dt><dd>{{ a.upset_risk }}</dd></div>
-          {% if a.hist and a.pick in a.hist %}{% set h = a.hist[a.pick] %}<div><dt>같은 배당 과거 적중률</dt><dd>{{ h.hit|pct(1) }} <small class="muted">({{ h.bucket }}, {{ h.n }}건)</small></dd></div>{% endif %}
+          {% if a.hist and a.pick in a.hist and a.hist[a.pick].bucket in XSRC %}{% set h = a.hist[a.pick] %}<div><dt>해외 기록 적중률</dt><dd>{{ h.hit|pct(1) }} <small class="muted">({{ h.bucket }}, {{ '{:,}'.format(h.n) }}경기)</small></dd></div>{% endif %}
           <div><dt>근거</dt><dd>{{ a.sources|join(', ') }}</dd></div>
           {% if a.flags %}<div><dt>표시</dt><dd>{{ a.flags|join(' · ') }}</dd></div>{% endif %}
         </dl>
@@ -206,7 +207,7 @@
 
 {% if r.odds_moves %}
 <section class="wrap block" data-reveal id="moves">
-  <header class="block-head"><h2>배당 변동</h2><p>첫 발매 배당에서 달라진 선택 전부입니다. 배당이 내려간 쪽으로 구매가 몰렸습니다. <a href="/odds/#moves">변동 폭별 과거 적중률 →</a></p></header>
+  <header class="block-head"><h2>배당 변동</h2><p>첫 발매 배당에서 달라진 선택 전부입니다. 배당이 내려간 쪽으로 구매가 몰렸습니다.</p></header>
   <div class="tblw"><table class="tbl">
     <thead><tr><th>경기</th><th>선택</th><th class="n">처음</th><th class="n">지금</th><th class="n">변동</th></tr></thead>
     <tbody>

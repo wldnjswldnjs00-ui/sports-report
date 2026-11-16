@@ -169,19 +169,39 @@ class BetmanResults(unittest.TestCase):
         self.assertEqual(settle(m, g(2)), "H")
 
 
-class OddsBook(unittest.TestCase):
-    def test_build_lookup(self):
-        from engine.analysis import oddsbook as OB
-        rows = []
-        for i in range(100):  # 1.25배 정배 100번 중 85번 적중, 승패 농구
-            rows.append(["basketball", "NBA", "WL", 0, 1.25, 0, 3.4, 0 if i < 85 else 2, 0, 0])
-        book = OB.build(rows)
-        s = OB.lookup(book, "basketball", "WL", "H", 1.27)
-        self.assertEqual(s["n"], 100)
-        self.assertAlmostEqual(s["hit"], 0.85)
-        self.assertAlmostEqual(s["roi"], 0.85 * 1.25 - 1, places=3)
-        p, info = OB.hist_probs(book, {"sport": "basketball", "market": "WL", "odds": {"H": 1.25, "A": 3.4}})
-        self.assertGreater(p["H"], 0.75)
+class XBook(unittest.TestCase):
+    """해외 기록 구도표: 베트맨 기록 없이 해외 배당 + 실제 점수만으로 센다."""
+
+    def setUp(self):
+        from engine.analysis import xbook as X
+        self.X = X
+        soccer = []
+        for i in range(400):  # 홈 60%·무 24%·원정 16% 구도. 홈 2-0 승 240, 1-1 96, 0-1 64
+            hg, ag, res = (2, 0, 0) if i < 240 else (1, 1, 1) if i < 336 else (0, 1, 2)
+            soccer.append([1.6, 4.0, 6.0, res, 1.9, 1.9, hg + ag, hg, ag])
+        nba = [[0.7, 110 if i % 10 < 7 else 100, 100 if i % 10 < 7 else 108, 212.5] for i in range(300)]  # 70% 팀이 70% 승리, 10점 차
+        self.book = X.build(soccer, {"nba": nba, "mlb": []})
+
+    def test_soccer_all_markets(self):
+        X, b = self.X, self.book
+        x = {"h2h": {"H": 0.6, "D": 0.24, "A": 0.16}, "total": [2.5, 0.5]}
+        r = X.market_stat(b, {"sport": "soccer", "market": "1X2", "odds": {"H": 1.5, "D": 3.9, "A": 5.8}, "x": x, "line": None})
+        self.assertAlmostEqual(r["p"]["H"], 0.6, places=3)
+        h = X.market_stat(b, {"sport": "soccer", "market": "HANDICAP", "odds": {"H": 2.0, "D": 3.5, "A": 2.8}, "x": x, "line": -2.0})
+        self.assertAlmostEqual(h["p"]["D"], 0.6, places=3)   # 2-0 승은 핸디 -2 에서 무
+        o = X.market_stat(b, {"sport": "soccer", "market": "OU", "odds": {"O": 1.5, "U": 2.5}, "x": x, "line": 1.5})
+        self.assertAlmostEqual(o["p"]["O"], 336 / 400, places=3)  # 2골 경기 336개만 1.5 오버
+        self.assertIsNone(X.market_stat(b, {"sport": "soccer", "market": "1X2", "odds": {"H": 1.5, "D": 3.9, "A": 5.8}, "x": {}, "line": None}))
+
+    def test_us_and_old_values(self):
+        X, b = self.X, self.book
+        x = {"h2h": {"H": 0.7, "A": 0.3}, "total": [212.5, 0.5]}
+        w = X.market_stat(b, {"sport": "basketball", "market": "WL", "odds": {"H": 1.3, "A": 3.4}, "x": x, "line": None})
+        self.assertAlmostEqual(w["p"]["H"], 0.7, places=3)
+        hc = X.market_stat(b, {"sport": "basketball", "market": "HANDICAP", "odds": {"H": 1.8, "A": 1.8}, "x": x, "line": -12.5})
+        self.assertEqual(hc["p"]["H"], 0)                    # 10점 차 승리는 -12.5 를 못 넘는다
+        self.assertFalse(X.is_x({"bucket": "1.3배대", "hit": 0.8}))  # 예전 베트맨 구간 값은 해외 기록으로 쓰지 않는다
+        self.assertTrue(X.is_x({"bucket": "NBA", "hit": 0.7}))
 
 
 class Derive(unittest.TestCase):

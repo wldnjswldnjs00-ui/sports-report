@@ -40,7 +40,7 @@ def _f(row: dict, *keys: str) -> float:
 
 
 def parse_csv(text: str) -> list[list]:
-    """[홈배당, 무배당, 원정배당, 결과(0홈/1무/2원정), 오버2.5배당, 언더2.5배당, 총득점]"""
+    """[홈배당, 무배당, 원정배당, 결과(0홈/1무/2원정), 오버2.5배당, 언더2.5배당, 총득점, 홈득점, 원정득점]"""
     out = []
     for row in csv.DictReader(io.StringIO(text)):
         res = {"H": 0, "D": 1, "A": 2}.get((row.get("FTR") or "").strip())
@@ -53,13 +53,29 @@ def parse_csv(text: str) -> list[list]:
             goals = int(float(row.get("FTHG") or 0)) + int(float(row.get("FTAG") or 0))
         except ValueError:
             goals = -1
+        try:
+            hg, ag = int(float(row.get("FTHG"))), int(float(row.get("FTAG")))
+        except (TypeError, ValueError):
+            hg = ag = -1
         out.append([h, d, a, res, _f(row, "AvgC>2.5", "PC>2.5", "Avg>2.5", "P>2.5", "B365>2.5"),
-                    _f(row, "AvgC<2.5", "PC<2.5", "Avg<2.5", "P<2.5", "B365<2.5"), goals])
+                    _f(row, "AvgC<2.5", "PC<2.5", "Avg<2.5", "P<2.5", "B365<2.5"), goals, hg, ag])
     return out
 
 
 def _path(season: str, lg: str) -> Path:
     return DIR / f"{season}_{lg}.json"
+
+
+def _old_format(p: Path) -> bool:
+    """홈·원정 득점이 없는 예전 형식(7칸) 파일이면 다시 받는다(핸디캡 분석에 득점 차가 필요)."""
+    try:
+        head = p.read_text(encoding="utf-8")[:400]
+        if head.strip() == "[]":
+            return False
+        rows = json.loads(p.read_text(encoding="utf-8"))
+        return bool(rows) and len(rows[0]) < 9
+    except (OSError, json.JSONDecodeError):
+        return True
 
 
 def backfill(max_files: int = 20) -> int:
@@ -81,7 +97,7 @@ def backfill(max_files: int = 20) -> int:
     for si, season in enumerate(seasons):
         for lg in LEAGUES:
             p = _path(season, lg)
-            if p.exists() and (si > 0 or fresh(p.name)):
+            if p.exists() and (si > 0 or fresh(p.name)) and not _old_format(p):
                 continue
             if done >= max_files:
                 write_json(stamp_path, stamps)

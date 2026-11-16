@@ -44,14 +44,13 @@
   {% if im %}<section class="block" data-reveal>{{ injury_block(im) }}</section>{% endif %}
 
   <section class="block" data-reveal>
-    {% for m in g.markets %}{% set pr = m.analysis.pair if m.analysis else none %}{% if pr %}
+    {% for m in g.markets %}{% set pr = m.analysis.pair if m.analysis else none %}{% if pr and pr.p and pr.basis %}
     <p class="pairline">{{ MARKET_LABEL[m.market] }}{% if m.line is not none %} {{ m.line }}{% endif %} ·
-      {% if pr.kind == '2way' %}<b>{{ pr.lo|odds }}배 대 {{ pr.hi|odds }}배</b>와 같은 구도 {{ pr.n }}건: {{ outcome(m, pr.lo_key) }}({{ pr.lo|odds }}) {{ pr.lo_rate|pct }} · {{ outcome(m, pr.hi_key) }}({{ pr.hi|odds }}) <b>{{ pr.hi_rate|pct }}</b>
-      {% else %}{{ '해외 배당 ' if pr.src == '해외' }}<b>홈 {{ pr.ho|odds }}배 대 원정 {{ pr.ao|odds }}배</b>와 같은 구도 {{ '{:,}'.format(pr.n) }}경기: 홈승 {{ pr.H|pct }} · 무 {{ pr.D|pct }} · 원정승 {{ pr.A|pct }}{% endif %}</p>
+      {{ pr.basis }} {{ pr.src }} <b>{{ '{:,}'.format(pr.n) }}경기</b>: {% for k, v in pr.p.items() %}{{ outcome(m, k) }} <b>{{ v|pct }}</b>{% if not loop.last %} · {% endif %}{% endfor %}</p>
     {% endif %}{% endfor %}
-    <div class="block-head"><h2>마켓별 배당과 확률</h2><p>확률은 해외 배당을 기준으로 계산합니다. 구매는 베트맨 배당으로 이루어지므로 두 배당을 함께 보여줍니다. 배당 흐름은 첫 발매 배당에서 지금까지의 변화입니다. 배당이 내려간 쪽으로 구매가 몰립니다. 과거 적중률은 베트맨 지난 회차에서 같은 배당 구간이 실제로 맞은 비율입니다.</p></div>
+    <div class="block-head"><h2>마켓별 배당과 확률</h2><p>확률은 해외 배당을 기준으로 계산합니다. 구매는 베트맨 배당으로 이루어지므로 두 배당을 함께 보여줍니다. 배당 흐름은 첫 발매 배당에서 지금까지의 변화입니다. 배당이 내려간 쪽으로 구매가 몰립니다. 해외 기록 적중률은 해외 배당이 이 경기와 비슷했던 과거 경기(유럽 축구·NBA·MLB)가 실제로 그렇게 끝난 비율입니다.</p></div>
     <table class="tbl">
-      <thead><tr><th>마켓</th><th>선택</th><th class="n">해외 배당</th><th class="n">베트맨 배당</th><th class="n">배당 흐름</th><th class="n">추정 확률</th><th class="n">같은 배당 과거 적중률</th><th>결과</th></tr></thead>
+      <thead><tr><th>마켓</th><th>선택</th><th class="n">해외 배당</th><th class="n">베트맨 배당</th><th class="n">배당 흐름</th><th class="n">추정 확률</th><th class="n">해외 기록 적중률</th><th>결과</th></tr></thead>
       <tbody>
       {% for m in g.markets %}{% set a = m.analysis %}{% set o = outs.get(m.id) %}
         {% for k, od in m.odds.items() %}
@@ -62,7 +61,7 @@
           <td class="n">{{ od|odds }}</td>
           <td class="n">{% set f0 = (m.flow.from if m.flow else {}).get(k) %}{% if f0 and f0 != od %}<span class="{{ 'down' if od < f0 else 'up' }}">{{ f0|odds }}→{{ od|odds }}</span>{% else %}<span class="muted">–</span>{% endif %}</td>
           <td class="n">{% if a %}{{ a.p.get(k)|pct(1) }}{% endif %}</td>
-          <td class="n hist-cell">{% set h = (a.hist or {}).get(k) if a else none %}{% if h %}{{ h.hit|pct(1) }}<small>{{ h.bucket }}배 구간 · {{ h.n }}건</small>{% else %}<span class="muted">수집 중</span>{% endif %}</td>
+          <td class="n hist-cell">{% set h = (a.hist or {}).get(k) if a else none %}{% if h and h.bucket in XSRC %}{{ h.hit|pct(1) }}<small>{{ h.bucket }} · {{ '{:,}'.format(h.n) }}경기</small>{% else %}<span class="muted">–</span>{% endif %}</td>
           <td>{% if o and loop.first %}{{ result_tag('void' if o == 'VOID' else ('hit' if a and o == a.pick else 'miss')) }}{% endif %}</td>
         </tr>
         {% endfor %}

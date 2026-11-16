@@ -84,8 +84,8 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
 
     elo = Elo.load()
     alpha = calibration_alpha()
-    from .analysis import oddsbook
-    book = oddsbook.load()
+    from .analysis import xbook
+    book = xbook.load()
     now = config.now_kst()
     analyzed = []
     for m in markets:
@@ -291,9 +291,11 @@ def grade(today: str, lookback: int = 7, fetch_scores: bool = True) -> dict:
 
 
 def history(max_rounds: int = 8) -> None:
-    """과거 회차 백필 + 배당 구간표 재계산. 실패해도 다른 단계에 영향 없음."""
-    from .analysis import oddsbook
-    from .sources import betman_history
+    """과거 기록 백필 + 해외 배당 구도표 재계산. 실패해도 다른 단계에 영향 없음.
+
+    베트맨 지난 회차는 채점·Elo용으로만 모은다. 배당 분석은 해외 기록(xbook)만 쓴다."""
+    from .analysis import xbook
+    from .sources import betman_history, us_history
     try:
         betman_history.backfill(max_rounds)
     except Exception:  # noqa: BLE001
@@ -303,11 +305,15 @@ def history(max_rounds: int = 8) -> None:
         overseas_history.backfill()
     except Exception:  # noqa: BLE001
         log.exception("해외 기록 수집 실패")
-    rows = betman_history.load_all()
+    try:
+        us_history.backfill()
+    except Exception:  # noqa: BLE001
+        log.exception("NBA·MLB 기록 수집 실패")
     xrows = overseas_history.load_all()
-    if rows or xrows:
-        oddsbook.save(oddsbook.build(rows, xrows))
-        log.info("배당 구도표 갱신: 베트맨 %d건, 해외 %d경기", len(rows), len(xrows))
+    us = {lg: us_history.load(lg) for lg in us_history.LEAGUES}
+    if xrows or any(us.values()):
+        xbook.save(xbook.build(xrows, us))
+        log.info("해외 배당 구도표 갱신: 축구 %d, NBA %d, MLB %d경기", len(xrows), len(us["nba"]), len(us["mlb"]))
 
 
 def demo(days: int = 21) -> None:

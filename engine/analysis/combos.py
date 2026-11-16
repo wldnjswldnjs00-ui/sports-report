@@ -12,6 +12,8 @@ import itertools
 import math
 from typing import Any
 
+from .xbook import x_hist
+
 STAKE = 10_000  # 예시 금액(원)
 
 STRATEGIES = {
@@ -256,7 +258,7 @@ def _flow_drop(m: dict[str, Any], key: str) -> float:
 def upset_legs(markets: list[dict[str, Any]], limit: int = 6) -> list[dict[str, Any]]:
     """역배 후보: 배당 2.2배 이상이면서 근거가 겹치는 선택.
 
-    점수 = (모델 확률 − 베트맨 내재확률)  +  배당 하락폭(구매 쏠림)  +  같은 배당 구간 과거 수익률.
+    점수 = (모델 확률 − 베트맨 내재확률)  +  배당 하락폭(구매 쏠림)  +  해외 기록 적중률로 본 수익률.
     정배만 사서 잃는 것을 막기 위한 목록이다. 근거가 하나도 없으면 싣지 않는다.
     """
     out = []
@@ -272,7 +274,7 @@ def upset_legs(markets: list[dict[str, Any]], limit: int = 6) -> list[dict[str, 
             p = a["p"][k]
             edge = p - (a.get("p_betman") or {}).get(k, p)
             drop = _flow_drop(m, k)
-            hist = (a.get("hist") or {}).get(k) or {}
+            hist = x_hist(a).get(k) or {}
             hroi = hist.get("roi", -0.2)
             reasons = []
             if edge >= 0.015:
@@ -280,15 +282,10 @@ def upset_legs(markets: list[dict[str, Any]], limit: int = 6) -> list[dict[str, 
             if drop >= 0.02:
                 reasons.append(f"배당 {drop * 100:.0f}% 하락(구매 쏠림)")
             if hist and hroi > -0.05 and hist.get("n", 0) >= 100:
-                reasons.append(f"같은 배당 구간 과거 수익률 {hroi * 100:+.1f}%")
+                reasons.append(f"해외 배당이 비슷했던 {hist['bucket']} 경기 적중률 {hist['hit'] * 100:.0f}%(이 배당이면 수익률 {hroi * 100:+.1f}%)")
             ref = (a.get("p_ref") or {}).get(k)
             if ref and ref * o > 0.97:
                 reasons.append("해외 시장 기준 배당이 후함")
-            pr = a.get("pair")
-            if pr and pr["kind"] == "2way" and pr["hi_key"] == k and pr["hi_rate"] * o > 0.93:
-                reasons.append(f"과거 같은 배당 구도({pr['lo']:.2f} 대 {pr['hi']:.2f})에서 {pr['hi_rate'] * 100:.0f}% 승리")
-            if pr and pr["kind"] == "1X2" and pr.get(k, 0) * o > 0.93:
-                reasons.append(f"과거 같은 배당 구도에서 {pr[k] * 100:.0f}% 승리")
             if not reasons or p < 0.2:
                 continue
             leg = _leg(m, a, k)
@@ -316,7 +313,7 @@ def market_legs(markets: list[dict[str, Any]], market: str, limit: int = 6) -> l
         if k not in (m.get("odds") or {}) or m["odds"][k] < 1.2:
             continue  # 1.2배 미만은 고를 의미가 없어 제외
         leg = _leg(m, a, k)
-        hist = (a.get("hist") or {}).get(k) or {}
+        hist = x_hist(a).get(k) or {}
         drop = _flow_drop(m, k)
         leg["hist_hit"] = hist.get("hit")
         leg["hist_n"] = hist.get("n")

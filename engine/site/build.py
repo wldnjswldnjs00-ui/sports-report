@@ -106,7 +106,7 @@ def _env() -> Environment:
     )
     env.filters.update(pct=_pct, signed=_signed, odds=_odds, won=_won, kdate=_kdate, ktime=_ktime, kdt=_kdt, slug=slug)
     env.globals.update(
-        cfg=config, STRATEGIES=STRATEGIES, MARKET_LABEL=MARKET_LABEL, SPORT_LABEL=SPORT_LABEL,
+        cfg=config, STRATEGIES=STRATEGIES, MARKET_LABEL=MARKET_LABEL, SPORT_LABEL=SPORT_LABEL, XSRC=("유럽 축구", "NBA", "MLB"),
         outcome=_outcome, flow_key=_flow_key, round_label=_round_label, rounds_of=_rounds, now=config.now_kst(), asset_v=config.now_kst().strftime("%Y%m%d%H%M"),
         nav=[("/", "오늘"), ("/odds/", "배당 분석"), ("/tool/", "금액 계산기"), ("/performance/", "성과"),
              ("/reports/", "지난 리포트"), ("/method/", "분석 방법"), ("/guide/", "가이드")],
@@ -189,6 +189,28 @@ def _slip_payload(r: dict | None) -> dict:
     return {"date": r["date"], "legs": legs}
 
 
+def _xbook_payload(r: dict | None) -> dict:
+    """배당 분석 계산기용: 해외 기록 구도표 + 오늘 경기의 해외 배당(불러오기용)."""
+    from ..analysis import xbook
+    out = xbook.page_payload(xbook.load())
+    games: dict[str, dict] = {}
+    now = config.now_kst().isoformat()
+    for m in (r or {}).get("markets", []):
+        x = m.get("x") or {}
+        if m.get("sport") not in ("soccer", "basketball", "baseball") or not x.get("h2h") or m["kickoff"] <= now:
+            continue
+        g = games.setdefault(f"{m['kickoff']}|{m['home']}|{m['away']}", {
+            "sport": m["sport"], "label": f"{m['home']} vs {m['away']}", "league": m["league"], "ko": m["kickoff"],
+            "h2h": x.get("h2h_odds") or {k: round(1 / v, 2) for k, v in x["h2h"].items() if v > 0},
+            "total": x.get("total"), "hcp": [], "ou": []})
+        if m.get("line") is not None and m["market"] in ("HANDICAP", "OU"):
+            lst = g["hcp" if m["market"] == "HANDICAP" else "ou"]
+            if m["line"] not in lst:
+                lst.append(m["line"])
+    out["today"] = sorted(games.values(), key=lambda g: g["ko"])
+    return out
+
+
 def _jsonld(*objs) -> list[str]:
     """JSON-LD 문자열. </script> 조기 종료를 막기 위해 '</' 를 이스케이프."""
     return [json.dumps(o, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/") for o in objs if o]
@@ -261,8 +283,6 @@ def build() -> None:
         if r and r.get("date"):
             reports.append(r)
     perf = load_perf()
-    from ..analysis import oddsbook as OB
-    book = OB.load()
     today = date.fromisoformat(config.today_kst())
     latest = next((r for r in reports if r["date"] <= today.isoformat()), reports[0] if reports else None)
     is_demo = any(r.get("demo") for r in reports[:1])
@@ -278,25 +298,7 @@ def build() -> None:
 
     summaries = [_report_summary(r) for r in reports]
     leagues = _leagues(reports[:60])
-    pair_rows, x_rows, xou_rows = [], [], []
-    for k, v in ((book or {}).get("pairs") or {}).items():
-        mk_, lo_, hi_ = k.split("|")
-        if mk_ != "1X2" and v["n"] >= 25:
-            pair_rows.append({"mk": mk_, "lo": int(lo_), "hi": int(hi_), "lo_l": OB.band_label(int(lo_)), "hi_l": OB.band_label(int(hi_)),
-                              "n": v["n"], "hi_rate": v["hi"] / v["n"]})
-    pair_rows.sort(key=lambda x: (x["mk"], x["lo"], x["hi"]))
-    for k, v in ((book or {}).get("xpairs") or {}).items():
-        kind, a_, b_ = k.split("|")
-        if v["n"] < 30:
-            continue
-        if kind == "X":
-            x_rows.append({"h": int(a_), "a": int(b_), "h_l": OB.band_label(int(a_)), "a_l": OB.band_label(int(b_)), "n": v["n"],
-                           "H": v["h"] / v["n"], "D": v["d"] / v["n"], "A": v["a"] / v["n"]})
-        else:
-            xou_rows.append({"o": int(a_), "u": int(b_), "o_l": OB.band_label(int(a_)), "u_l": OB.band_label(int(b_)), "n": v["n"], "over": v["over"] / v["n"]})
-    x_rows.sort(key=lambda x: (x["h"], x["a"]))
-    xou_rows.sort(key=lambda x: (x["o"], x["u"]))
-    ctx = dict(pair_rows=pair_rows, x_rows=x_rows, xou_rows=xou_rows, book=book, best_buckets=OB.best_buckets(book) if book else [], ob_label=OB.label, perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues)
+    ctx = dict(perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues)
     urls: list[tuple[str, str]] = []
 
     def page(tpl: str, out: str, **kw):
@@ -353,6 +355,7 @@ def build() -> None:
 
     _write(config.DIST / "404.html", env.get_template("404.html").render(**ctx, path="/404"))
     write_json(config.DIST / "data" / "today.json", _slip_payload(latest))
+    write_json(config.DIST / "data" / "xbook.json", _xbook_payload(latest))
     _write(config.DIST / "sitemap.xml", env.get_template("sitemap.xml").render(urls=urls))
     _write(config.DIST / "robots.txt", f"User-agent: *\nAllow: /\nDisallow: /data/\n\nSitemap: {config.SITE_URL}/sitemap.xml\n")
     _write(config.DIST / "rss.xml", env.get_template("rss.xml").render(

@@ -77,34 +77,4 @@
 </section>
 {% endif %}
 {% endif %}
-{% if book and book.table %}
-<section class="wrap block" data-reveal id="oddsbook">
-  <h2 class="sub">배당 구간별 실제 적중률 (베트맨 지난 회차)</h2>
-  <p class="fine">베트맨에서 그 배당으로 발매된 선택이 실제로 몇 % 맞았는지입니다. 본전 적중률보다 실제 적중률이 높으면 그 구간에 꾸준히 걸었을 때 이익이었다는 뜻입니다. 기록 {{ '{:,}'.format(book.rows) }}건, {{ book.updated|kdt }} 갱신.</p>
-  <table class="tbl">
-    <thead><tr><th>배당 구간</th><th class="n">표본</th><th class="n">실제 적중률</th><th class="n">본전 적중률</th><th class="n">과거 수익률</th></tr></thead>
-    <tbody>
-    {% for i in range(book.edges|length - 1) %}{% set st = book.table.get('all|all|X|' ~ i) %}
-      {% if st and st.n >= 30 %}
-      <tr><td>{{ ob_label(i) }}</td><td class="n">{{ '{:,}'.format(st.n) }}</td><td class="n">{{ st.hit|pct(1) }}</td><td class="n">{{ st.be|pct(1) }}</td>
-      <td class="n {{ 'pos' if st.roi > 0 else ('mid' if st.roi > -0.1 else 'neg') }}">{{ st.roi|signed }}</td></tr>
-      {% endif %}
-    {% endfor %}
-    </tbody>
-  </table>
-  {% if best_buckets %}
-  <h2 class="sub">과거 수익률이 가장 좋았던 구간</h2>
-  <table class="tbl">
-    <thead><tr><th>종목</th><th>마켓</th><th>구분</th><th>배당 구간</th><th class="n">표본</th><th class="n">적중률</th><th class="n">수익률</th></tr></thead>
-    <tbody>
-    {% for b in best_buckets %}
-      <tr><td>{{ SPORT_LABEL.get(b.sport, '전체') }}</td><td>{{ MARKET_LABEL.get(b.market, '전체') }}</td><td>{{ {'X': '승·패', 'D': '무', 'O': '오버', 'U': '언더'}.get(b.role, b.role) }}</td>
-      <td>{{ b.bucket }}</td><td class="n">{{ '{:,}'.format(b.n) }}</td><td class="n">{{ b.hit|pct(1) }}</td>
-      <td class="n {{ 'pos' if b.roi > 0 else ('mid' if b.roi > -0.1 else 'neg') }}">{{ b.roi|signed }}</td></tr>
-    {% endfor %}
-    </tbody>
-  </table>
-  {% endif %}
-</section>
-{% endif %}
 {% endblock %}

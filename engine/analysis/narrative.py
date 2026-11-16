@@ -2,7 +2,7 @@
 
 O 의견  : 무엇을 고르는가
 R 이유  : 왜 그런가 (시장·흐름·레이팅 중 가장 강한 근거)
-E 사례  : 숫자로 된 증거 (과거 같은 배당 적중률, 최근 10경기, 상대 전적, 부상자)
+E 사례  : 숫자로 된 증거 (해외 배당이 비슷했던 과거 경기의 실제 결과, 최근 10경기, 상대 전적, 부상자)
 O 의견  : 그래서 어떻게 쓰는가 (조합에서의 역할)
 
 문장은 데이터가 있을 때만 만든다. 없는 근거를 지어내지 않는다.
@@ -126,17 +126,11 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
 
     # E: 숫자 증거
     ev: list[str] = []
-    pr = a.get("pair")
-    if pr and pr["kind"] == "2way":
-        ln, hn = _call(m, pr["lo_key"]), _call(m, pr["hi_key"])
-        ev.append(f"{ln} {pr['lo']:.2f}배, {hn} {pr['hi']:.2f}배와 같은 배당 구도는 과거 {pr['n']:,}건이고 "
-                  f"{pr['lo']:.2f}배 쪽({ln})이 {_pct(pr['lo_rate'])}, {pr['hi']:.2f}배 쪽({hn})이 {_pct(pr['hi_rate'])} 맞았다")
-    elif pr and pr["kind"] == "1X2":
-        src = "해외 배당 " if pr.get("src") == "해외" else ""
-        ev.append(f"{src}홈 {pr['ho']:.2f}배 대 원정 {pr['ao']:.2f}배와 같은 구도 {pr['n']:,}경기는 홈승 {_pct(pr['H'])}, 무 {_pct(pr['D'])}, 원정승 {_pct(pr['A'])}였다")
-    h = (a.get("hist") or {}).get(pick)
-    if h and not pr:
-        ev.append(f"베트맨에서 {h['bucket']} 배당은 과거 {h['n']:,}건 중 {_pct(h['hit'])}가 맞았다")
+    from .xbook import x_pair
+    pr = x_pair(a)
+    if pr:
+        parts = ", ".join(f"{_call(m, k)} {_pct(v)}" for k, v in pr["p"].items())
+        ev.append(f"{pr['basis']} {pr['src']} 경기 {pr['n']:,}개는 실제로 {parts}로 끝났다")
     if F.get("h2h"):
         hh = F["h2h"]
         ev.append(f"최근 맞대결 {hh['n']}경기는 {m['home']} 기준 {hh['w']}승 {hh['l']}패")
@@ -216,8 +210,9 @@ def review(m: dict[str, Any], outcome: str) -> dict[str, str] | None:
             causes.append("배당 흐름도 같은 방향이었다")
         causes.append(f"추정 확률 {_pct(pp)}대로 나온 결과다")
     r_txt = ". ".join(causes[:2]) + "."
-    h = (a.get("hist") or {}).get(pick)
-    e_txt = f"같은 배당 구간은 과거 {_pct(h['hit'])} 적중했다. {'이번은 나머지 ' + _pct(1 - h['hit']) + '에 해당한다' if not hit else '기록과 같은 결과다'}." if h else ""
+    from .xbook import x_hist
+    h = x_hist(a).get(pick)
+    e_txt = f"해외 배당이 비슷했던 {h['bucket']} 경기에서는 {_pct(h['hit'])} 적중했다. {'이번은 나머지 ' + _pct(1 - h['hit']) + '에 해당한다' if not hit else '기록과 같은 결과다'}." if h else ""
     if hit:
         o2 = "같은 조건의 경기에서 이 판단 기준을 유지한다."
     elif f0 and f1 and f1 < f0:

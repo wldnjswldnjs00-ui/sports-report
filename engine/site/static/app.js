@@ -86,7 +86,10 @@
       rail.scrollTo({ left: ((i + 1) % n) * w, behavior: "smooth" });
     }
     var inside = false, touching = false, wheelT;
-    function sync() { hold = inside || touching; }
+    function sync() {
+      var was = hold; hold = inside || touching;
+      if (was && !hold) { clearInterval(timer); timer = setInterval(next, 10000); } // 손을 뗀 뒤 10초를 처음부터 다시 센다
+    }
     rail.addEventListener("mouseenter", function () { inside = true; sync(); });
     rail.addEventListener("mouseleave", function () { inside = false; sync(); });
     rail.addEventListener("focusin", function () { inside = true; sync(); });
@@ -95,7 +98,8 @@
     ["touchend", "touchcancel"].forEach(function (ev) {
       rail.addEventListener(ev, function () { clearTimeout(wheelT); wheelT = setTimeout(function () { touching = false; sync(); }, 1500); }, { passive: true });
     });
-    setInterval(next, 10000);
+    rail.addEventListener("pointerdown", function () { touching = true; sync(); });
+    timer = setInterval(next, 10000);
   });
 
   /* 표 필터(배당 분석) */
@@ -387,7 +391,7 @@
     var s = stakeFor(c.p, c.odds, B), pay = Math.floor(s.stake * c.odds / 10) * 10;
     $("[data-t-stake]").textContent = won(s.stake);
     $("[data-t-pay]").textContent = won(pay);
-    var fp = (s.f * 100).toFixed(s.f < 0.01 ? 2 : 1).replace(/\.0$/, "") + "%";
+    var fp = (s.f * 100).toFixed(s.f < 0.01 ? 2 : 1).replace(/\.?0+$/, "") + "%";
     adv.textContent = "총 시드 " + won(B) + "의 " + fp + (s.capped ? "는 1회 한도를 넘어 " : "인 ") + won(s.stake) + "만 거는 것을 권장합니다. 맞을 확률은 " + pct(c.p) +
       "이고, 맞으면 " + won(pay) + "을 받습니다." + (legs.length === 1 ? " 한 경기 구매는 베트맨에서 '한경기구매' 표시가 있는 경기만 가능합니다." : "");
   }
@@ -426,6 +430,36 @@
     $$("[data-quick] .chip").forEach(function (c) { c.addEventListener("click", function () { bankEl.value = c.dataset.v; fmtBudget(); render(); }); });
     $("[data-tool-search]").addEventListener("input", function (e) { renderToolList(e.target.value); });
   }
+
+  /* 조합 카드 권장 금액: "시드 30만 원의 1.5% = 4,500원" (계산기와 같은 시드·같은 기준) */
+  var seedEl = $("[data-seed]");
+  function seedVal() {
+    var v = seedEl ? parseInt(String(seedEl.value).replace(/[^0-9]/g, ""), 10) : 0;
+    if (!v) v = parseInt(store.get("budget"), 10) || 300000;
+    return Math.min(MAX_SEED, v);
+  }
+  function paintStakes() {
+    var B = seedVal();
+    $$("[data-stake]").forEach(function (el) {
+      var p = parseFloat(el.dataset.p), o = parseFloat(el.dataset.odds);
+      if (!(p > 0) || !(o > 1)) { el.hidden = true; return; }
+      var s = stakeFor(p, o, B), fp = (s.f * 100).toFixed(s.f < 0.01 ? 2 : 1).replace(/\.?0+$/, "") + "%";
+      el.innerHTML = "<span></span><b></b>";
+      el.querySelector("span").textContent = "시드 " + won(B) + "의 " + fp + (s.capped ? " (1회 한도)" : "");
+      el.querySelector("b").textContent = won(s.stake) + " 권장";
+    });
+  }
+  if (seedEl) {
+    var sv = parseInt(store.get("budget"), 10);
+    if (sv) seedEl.value = sv.toLocaleString("ko-KR");
+    seedEl.addEventListener("input", function () {
+      var v = Math.min(MAX_SEED, parseInt(String(seedEl.value).replace(/[^0-9]/g, ""), 10) || 0);
+      seedEl.value = v ? v.toLocaleString("ko-KR") : "";
+      if (v) store.set("budget", v);
+      paintStakes();
+    });
+  }
+  paintStakes();
 
   loadData().then(function () { if (tool) renderToolList(""); render(); });
 })();

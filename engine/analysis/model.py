@@ -14,7 +14,7 @@ CAL_PATH = config.STATE / "calibration.json"
 W_REF = 0.60
 W_BETMAN = 0.25
 W_ELO = 0.15
-W_HIST = 0.20  # 베트맨 과거 배당 구간 적중률
+# 베트맨 과거 기록은 분석에 쓰지 않는다. 과거 기록은 해외 배당 기준(xbook)만 쓴다.
 
 
 def _divergence(a: dict[str, float], b: dict[str, float]) -> float:
@@ -26,30 +26,29 @@ def _divergence(a: dict[str, float], b: dict[str, float]) -> float:
 
 def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, alpha: float, book: dict | None = None) -> dict[str, Any]:
     odds = m.get("odds") or {}
-    from .oddsbook import hist_probs, pair_stat
-    p_hist, hist_info = hist_probs(book or {}, m) if odds else (None, {})
+    from .xbook import hist_for, market_stat
+    xstat = market_stat(book or {}, m) if odds else None
+    p_hist = dict(xstat["p"]) if xstat and set(xstat["p"]) == set(odds) else None
+    hist_info = hist_for(xstat, odds)
     p_bet = remove_margin_power(odds) if odds else {}
     p_elo = elo.probs(m["sport"], m["home"], m["away"], m["market"]) if m["market"] in ("1X2", "WL") else None
 
     sources = []
     used = []
     if ref:
-        # 해외 배당이 있으면 그것을 기준으로 삼는다(가장 크고 정확한 시장). 나머지는 보조.
-        sources.append((ref, 0.80)); used.append("해외 배당(기준점 환산)" if m.get("ref_kind") == "환산" else "해외 배당")
-        if p_elo:
-            sources.append((p_elo, 0.08)); used.append("Elo")
+        # 해외 배당이 기준. 해외 과거 기록(같은 해외 배당 구도의 실제 결과)이 그 확률을 보정한다.
+        # 베트맨 배당은 구매 배당으로만 쓰고 확률 계산에는 넣지 않는다.
+        sources.append((ref, 0.65 if p_hist else 0.85)); used.append("해외 배당(기준점 환산)" if m.get("ref_kind") == "환산" else "해외 배당")
         if p_hist:
-            sources.append((p_hist, 0.07)); used.append("과거 배당 적중률")
-        if p_bet:
-            sources.append((p_bet, 0.05)); used.append("베트맨 배당")
+            sources.append((p_hist, 0.25)); used.append(f"해외 과거 기록({xstat['src']})")
+        if p_elo:
+            sources.append((p_elo, 0.10 if p_hist else 0.15)); used.append("Elo")
     else:
-        # 해외 배당이 없는 경기(국내 리그, 핸디캡·언더오버 등)는 베트맨 배당·과거 기록·레이팅으로 본다
+        # 해외 시장에 없는 경기: 시장 정보가 베트맨 배당뿐이라 그것과 레이팅으로만 본다(과거 기록은 쓰지 않음)
         if p_bet:
-            sources.append((p_bet, W_BETMAN)); used.append("베트맨 배당")
+            sources.append((p_bet, W_BETMAN)); used.append("베트맨 배당(해외 배당 없음)")
         if p_elo:
             sources.append((p_elo, W_ELO)); used.append("Elo")
-        if p_hist:
-            sources.append((p_hist, W_HIST)); used.append("과거 배당 적중률")
     p = combine(sources)
     if not p:
         return {**m, "analysis": None}
@@ -110,7 +109,7 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
             "flags": flags,
             "payout_rate": round(1 / overround(odds), 4) if odds else None,
             "hist": hist_info or None,
-            "pair": pair_stat(book or {}, m) if odds else None,
+            "pair": xstat,
             "ref_odds": m.get("ref_odds"),
             # 해외 배당: 승패·승무패는 해외 시장의 실제 배당, 핸디캡·언더오버는 해외 확률을 베트맨 기준점으로 환산한 배당
             "x_odds": ({k: (m["ref_odds"][k] if m.get("ref_kind") == "직접" and (m.get("ref_odds") or {}).get(k) else round(1 / v, 2))
