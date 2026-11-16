@@ -23,13 +23,37 @@ CACHE = config.STATE / "odds_cache"
 SHARP = ("pinnacle", "betfair_ex_eu", "matchbook")
 
 
-def _credits_ok(reserve: int = 60) -> bool:
+MONTHLY = 500         # 무료 요금제 한 달 사용량
+DAILY_NEED = 12       # 하루 기본 수집에 필요한 양(종목 4개 × 3)
+COST = 3              # 종목 하나 조회(승패·핸디·합계 × 1지역)
+
+
+def _remaining() -> float | None:
     st = read_json(config.STATE / "odds_api_quota.json", {}) or {}
-    rem = st.get("remaining")
     try:
-        return rem is None or float(rem) >= reserve
+        return float(st["remaining"]) if st.get("remaining") is not None else None
     except (TypeError, ValueError):
+        return None
+
+
+def _days_left() -> int:
+    import calendar
+    now = config.now_kst()
+    return calendar.monthrange(now.year, now.month)[1] - now.day + 1
+
+
+def _credits_ok(reserve: int | None = None, refresh: bool = False) -> bool:
+    """무료 한도 안에서만 쓴다.
+    - 기본 수집: 남은 양이 한 번 조회할 만큼 있으면 허용
+    - 새로고침(이미 받은 배당 다시 받기): 월말까지 매일 기본 수집에 쓸 몫을 남겨 둘 수 있을 때만"""
+    rem = _remaining()
+    if rem is None:
         return True
+    if reserve is not None and not refresh:
+        return rem >= reserve
+    if refresh:
+        return rem - COST >= _days_left() * DAILY_NEED
+    return rem >= COST
 
 
 def prune_cache(keep_days: int = 3) -> None:
@@ -69,8 +93,8 @@ def active_sports() -> set[str] | None:
 def _fetch_sport(sport_key: str, day: str, refresh: bool) -> list[dict]:
     path = CACHE / f"{day}_{sport_key}_m3.json"
     cached = read_json(path)
-    if cached is not None and (not refresh or not _credits_ok(250)):
-        return cached  # 갱신은 크레딧 여유가 있을 때만
+    if cached is not None and (not refresh or not _credits_ok(refresh=True)):
+        return cached  # 새로고침은 월말까지 쓸 몫이 남을 때만
     if not _credits_ok():
         log.warning("Odds API 크레딧 부족, 캐시 사용")
         return cached or []

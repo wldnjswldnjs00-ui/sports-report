@@ -282,3 +282,23 @@ class ComboRound(unittest.TestCase):
         self.assertTrue(_valid([a, b]))
         self.assertFalse(_valid([a, c]))          # 회차가 다르면 한 장으로 살 수 없다
         self.assertFalse(_valid([a, dict(a)]))    # 같은 경기 중복
+
+
+class FreeTier(unittest.TestCase):
+    def test_odds_budget(self):
+        from unittest import mock
+        from engine.sources import odds_api as O
+        with mock.patch.object(O, "_days_left", lambda: 10):
+            with mock.patch.object(O, "_remaining", lambda: 200.0):
+                self.assertTrue(O._credits_ok(refresh=True))    # 200-3 >= 10*12
+            with mock.patch.object(O, "_remaining", lambda: 100.0):
+                self.assertFalse(O._credits_ok(refresh=True))   # 월말까지 기본 수집 몫을 남긴다
+                self.assertTrue(O._credits_ok())                # 기본 수집은 허용
+            with mock.patch.object(O, "_remaining", lambda: 2.0):
+                self.assertFalse(O._credits_ok())
+
+    def test_betman_round_guess(self):
+        from unittest import mock
+        from engine.sources import betman as B
+        with mock.patch.object(B, "read_json", lambda *a, **k: {"rounds": ["260136"]}):
+            self.assertEqual([g["gmTs"] for g in B._guess_rounds()], [260136, 260137, 260138])

@@ -7,11 +7,9 @@ on:
     - cron: "0 22 * * *"   # 07:00 KST  아침 재수집 + 쓰레드 아침 게시
     - cron: "30 0 * * *"   # 09:30 KST  발매 경기 재수집
     - cron: "0 4 * * *"    # 13:00 KST  재수집
-    - cron: "0 7 * * *"    # 16:00 KST  재수집
     - cron: "0 9 * * *"    # 18:00 KST  배당 갱신(해외 배당 새로고침)
     - cron: "0 11 * * *"   # 20:00 KST  재수집
     - cron: "0 13 * * *"   # 22:00 KST  다음 구매일 분석 미리 생성 + 쓰레드 밤 게시
-    - cron: "30 13 * * *"  # 22:30 KST  심야 경기 직전 재수집
   workflow_dispatch:
   push:
     branches: [main]
@@ -24,6 +22,7 @@ concurrency:
 
 permissions:
   contents: write
+  issues: write   # 자동 점검 경고를 이슈로 남긴다(이메일 알림)
 
 jobs:
   run:
@@ -62,7 +61,7 @@ jobs:
           THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
         run: |
           if [ -z "$THREADS_TOKEN" ]; then echo "토큰 없음"; exit 0; fi
-          pip install -q playwright && python -m playwright install --with-deps chromium >/dev/null
+          pip install -q playwright==1.47.0 && python -m playwright install --with-deps chromium >/dev/null
           python -m engine threads --prepare
       - name: 사이트 빌드 검증
         id: build
@@ -99,6 +98,12 @@ jobs:
             if git pull --rebase -X theirs origin "${GITHUB_REF_NAME}" && git push; then exit 0; fi
             sleep $((i * 5))
           done
+      - name: 자동 점검(문제가 이어지면 GitHub 이슈로 알림 → 이메일)
+        if: always()
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python -m engine health
       - name: 검색엔진에 새 페이지 알림(IndexNow)
         if: steps.commit.outputs.pushed == '1'
         continue-on-error: true

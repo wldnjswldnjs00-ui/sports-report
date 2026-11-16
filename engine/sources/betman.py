@@ -17,7 +17,7 @@ from datetime import datetime
 from typing import Any
 
 from .. import config
-from ..util import http as _http, write_json
+from ..util import read_json, http as _http, write_json
 
 
 def http(method, url, **kw):
@@ -34,6 +34,17 @@ LIST_URLS = (BASE + "/buyPsblGame/inqBuyAbleGameInfoList.do", BASE + "/buyPsblGa
 GAME_URL = BASE + "/buyPsblGame/gameInfoInq.do"
 LIST_REFERER = BASE + "/main/mainPage/gamebuy/buyableNClosedIFR.do?isIFR=Y"
 GM_ID = "G101"  # 프로토 승부식
+ROUNDS_STATE = config.STATE / "betman_rounds.json"
+
+
+def _guess_rounds() -> list[dict]:
+    """마지막으로 본 발매 회차들과 그 다음 두 회차(회차 번호는 260136 → 260137 처럼 1씩 증가)."""
+    st = read_json(ROUNDS_STATE, {}) or {}
+    seen = [int(x) for x in st.get("rounds") or [] if str(x).isdigit()]
+    if not seen:
+        return []
+    cand = sorted(set(seen) | {max(seen) + 1, max(seen) + 2})
+    return [{"gmId": GM_ID, "gmTs": t} for t in cand[-6:]]
 
 SPORT_BY_ITEM = {"SC": "soccer", "BK": "basketball", "BS": "baseball", "VL": "volleyball",
                  "HK": "hockey", "FB": "football"}
@@ -312,12 +323,19 @@ def _fetch(day: str) -> list[dict[str, Any]]:
         except Exception as e:  # noqa: BLE001
             last_err = e
         time.sleep(1.5)
-    if not listing or listing.get("protoGames") is None:
-        raise RuntimeError(f"발매 목록 조회 실패: {last_err}")
     now_ms = config.now_kst().timestamp() * 1000
-    rounds = [g for g in listing["protoGames"] if g.get("gmId") == GM_ID and _num(g.get("saleEndDate")) > now_ms]
-    if not rounds:
-        rounds = [g for g in listing["protoGames"] if g.get("gmId") == GM_ID]
+    if not listing or listing.get("protoGames") is None:
+        # 대체 경로: 발매 목록 주소가 바뀌거나 막혀도, 지난번에 본 회차 번호부터 다음 회차까지 직접 조회한다
+        rounds = _guess_rounds()
+        if not rounds:
+            raise RuntimeError(f"발매 목록 조회 실패: {last_err}")
+        log.warning("베트맨 발매 목록 실패 → 지난 회차 번호로 직접 조회: %s", [g["gmTs"] for g in rounds])
+    else:
+        rounds = [g for g in listing["protoGames"] if g.get("gmId") == GM_ID and _num(g.get("saleEndDate")) > now_ms]
+        if not rounds:
+            rounds = [g for g in listing["protoGames"] if g.get("gmId") == GM_ID]
+        if rounds:
+            write_json(ROUNDS_STATE, {"rounds": sorted({str(g["gmTs"]) for g in rounds}), "at": config.now_kst().isoformat(timespec="seconds")})
     if not rounds:
         raise RuntimeError("발매 중인 프로토 승부식 회차 없음")
 
