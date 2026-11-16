@@ -1,0 +1,30 @@
+{
+ "date": "2026-11-16",
+ "generated_at": "2026-11-16T21:54:03+09:00",
+ "updated_at": "2026-11-16T21:54:03+09:00",
+ "model_version": "aurora-1.0.0",
+ "calibration_alpha": 0.03,
+ "demo": false,
+ "sources": {
+  "betman": "실패: RuntimeError",
+  "odds_api": "키 없음"
+ },
+ "markets": [],
+ "combos": {
+  "safe": [],
+  "balanced": [],
+  "aggressive": []
+ },
+ "value_picks": [],
+ "top_pick": null,
+ "caution": [],
+ "odds_moves": [],
+ "stats": {
+  "markets": 0,
+  "matches": 0,
+  "legs": 0,
+  "combos": 0
+ },
+ "outcomes": {},
+ "headline": "발매 정보를 아직 받아오지 못했다. 다음 수집 때 다시 시도한다."
+}

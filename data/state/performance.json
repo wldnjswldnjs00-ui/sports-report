@@ -1,0 +1,70 @@
+{
+ "updated": "2026-11-16T21:54:00+09:00",
+ "picks": {
+  "all": {
+   "n": 0,
+   "hit_rate": null,
+   "expected": null,
+   "brier": null,
+   "logloss": null
+  },
+  "30d": {
+   "n": 0,
+   "hit_rate": null,
+   "expected": null,
+   "brier": null,
+   "logloss": null
+  }
+ },
+ "calibration": [],
+ "strategies": {
+  "safe": {
+   "all": {
+    "n": 0,
+    "win_rate": null,
+    "expected": null,
+    "roi": null
+   },
+   "30d": {
+    "n": 0,
+    "win_rate": null,
+    "expected": null,
+    "roi": null
+   }
+  },
+  "balanced": {
+   "all": {
+    "n": 0,
+    "win_rate": null,
+    "expected": null,
+    "roi": null
+   },
+   "30d": {
+    "n": 0,
+    "win_rate": null,
+    "expected": null,
+    "roi": null
+   }
+  },
+  "aggressive": {
+   "all": {
+    "n": 0,
+    "win_rate": null,
+    "expected": null,
+    "roi": null
+   },
+   "30d": {
+    "n": 0,
+    "win_rate": null,
+    "expected": null,
+    "roi": null
+   }
+  }
+ },
+ "value": {
+  "n": 0,
+  "hit_rate": null,
+  "roi": null
+ },
+ "daily": []
+}
