@@ -97,7 +97,7 @@ button { font: inherit; color: inherit; }
 .stage-fallback span { width: 18%; aspect-ratio: 1; border-radius: 50%; background: var(--holo); opacity: .55; animation: bob 3s ease-in-out infinite; }
 .stage-fallback span:nth-child(2) { width: 24%; animation-delay: -1s; } .stage-fallback span:nth-child(3) { animation-delay: -2s; }
 .stage-hint { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); top: 14px; margin: 0; font: 500 11px var(--en); color: var(--ink-3); background: color-mix(in srgb, var(--card) 70%, transparent); padding: 6px 10px; border-radius: 20px; }
-.hero-copy { position: relative; margin-top: clamp(-170px, -12vw, -60px); pointer-events: none; }
+.hero-copy { position: relative; margin-top: clamp(-110px, -7vw, -30px); padding-top: 8px; pointer-events: none; }
 .hero-copy > * { pointer-events: auto; }
 .kicker { font: 600 11.5px/1 var(--en); color: var(--hot); letter-spacing: .12em; margin: 0 0 12px; }
 .kicker a { text-decoration: none; }
@@ -650,7 +650,7 @@ html:not(.is-mobile):not(.is-pc) .mo-only { display: none; }
 
 /* 상단 메뉴의 후원: 분홍 포인트 */
 .nav a.nav-support { color: var(--hot); }
-.nav a.nav-support::before { content: "♥ "; }
+
 .nav a.nav-support:hover { background: var(--hot-soft); color: var(--hot); }
 .nav a.nav-support[aria-current] { background: var(--hot); color: #fff; }
 
@@ -696,3 +696,25 @@ html:not(.is-mobile):not(.is-pc) .mo-only { display: none; }
 .started-box .match { opacity: .78; }
 .next-day-btn { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; text-decoration: none; color: var(--on-ink); background: var(--on); border-radius: var(--r); padding: 16px 20px; }
 .next-day-btn span { font-weight: 700; }
+
+/* 히어로 간격 다듬기 */
+.slogan { margin: 0 0 18px; }
+.kicker { margin: 0 0 16px; }
+.hero-en { margin-bottom: 26px; }
+.hero-title { margin-bottom: 26px; }
+
+/* 다음 구매일 */
+.next-day { scroll-margin-top: 80px; }
+.next-day .nd-lead { margin: 0 0 16px; font-size: 15.5px; color: var(--ink-2); max-width: 68ch; }
+.nd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap: 12px; margin-bottom: 16px; }
+.nd-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; box-shadow: var(--shadow); }
+.nd-match { margin: 4px 0 8px; font: 400 20px/1.2 var(--ko); }
+.nd-match i { font: 600 .55em var(--en); color: var(--ink-3); font-style: normal; padding: 0 .3em; }
+.nd-pick { margin: 0; display: flex; align-items: center; gap: 8px; }
+.nd-pick b { font: 600 15px var(--en); }
+.nd-pick small { color: var(--ink-3); font-size: 12.5px; }
+.next-day:not([data-ready]) { background: var(--card); border: 1px dashed var(--line); border-radius: var(--r-lg); padding: 22px; margin-top: 30px; max-width: calc(100% - 32px); }
+
+/* 정배인데 불안한 경기 */
+.c-risk small { display: block; font: 600 10px var(--sans); color: var(--ink-3); letter-spacing: 0; }
+.c-match small { display: block; font-size: 12px; color: var(--ink-3); font-weight: 500; }

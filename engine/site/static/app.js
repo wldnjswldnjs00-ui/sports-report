@@ -188,26 +188,41 @@
   });
   applyFilters();
 
-  /* 시작한 경기는 목록 아래 '시작·종료된 경기' 묶음으로(보는 사람의 현재 시각 기준, 1분마다) */
-  var mlist = $("#matches ol.matches");
-  if (mlist) {
-    var box = doc.createElement("details"), sum = doc.createElement("summary"), done = doc.createElement("ol");
-    box.className = "started-box"; done.className = "matches"; box.appendChild(sum); box.appendChild(done); box.hidden = true;
-    mlist.parentNode.insertBefore(box, mlist.nextSibling);
+  /* 시작한 경기는 시작 시각이 되면 목록·카드·표에서 뺀다(1분마다 확인, 서버 실행 없음).
+     오늘 리포트 첫 화면에서만 적용하고, 지난 리포트·경기 페이지는 기록으로 그대로 둔다. */
+  if (doc.body.classList.contains("page-report") && $("[data-next]")) {
     var sweep = function () {
       var now = Date.now();
-      $$("li.match", mlist).forEach(function (li) {
-        var t = Date.parse(li.dataset.ko || "");
-        if (t && t <= now) done.appendChild(li);
+      $$("[data-ko]").forEach(function (el) {
+        var t = Date.parse(el.dataset.ko || "");
+        if (t && t <= now) el.remove();
       });
-      var n = done.children.length;
-      box.hidden = !n;
-      sum.textContent = "시작·종료된 경기 (" + n + ")";
-      var em = $("[data-empty]");
-      if (em && !$$("li.match", mlist).some(function (li) { return !li.hidden; })) {
-        em.hidden = false;
-        em.textContent = "남은 경기가 없습니다. 시작·종료된 경기는 아래에서 결과를 볼 수 있습니다.";
+      // 비게 된 묶음 정리
+      var rail = $("[data-rail]");
+      if (rail && !rail.children.length) { var w = rail.closest("section"); if (w) w.remove(); }
+      $$(".tab-panel").forEach(function (pn) {
+        var grid = $(".combo-grid", pn);
+        if (grid && !grid.children.length) {
+          grid.remove();
+          if (!$(".none", pn)) { var pz = doc.createElement("p"); pz.className = "none"; pz.textContent = "이 전략의 오늘 조합은 모두 시작했습니다. 다음 구매일 조합은 오후 7시에 올라옵니다."; pn.appendChild(pz); }
+        }
+        var tab = doc.getElementById(pn.getAttribute("aria-labelledby") || "");
+        var sm = tab && $("small", tab);
+        if (sm) sm.textContent = $$(".combo", pn).length;
+      });
+      $$("table tbody").forEach(function (tb) { if (!tb.children.length) { var sec = tb.closest("section"); if (sec && !sec.closest("#matches")) sec.remove(); } });
+      $$(".caution-list").forEach(function (ul) { if (!ul.children.length) { var sec = ul.closest("section"); if (sec) sec.remove(); } });
+      var ml = $("#matches"), td = ml && ml.dataset.today;
+      var left = $$("#matches li.match").filter(function (li) { return !td || li.dataset.day === td; }).length;
+      var rem = $("[data-remain]");
+      if (rem) rem.textContent = left;
+      var nx = $("[data-next]"), hero = $(".hero");
+      if (nx && hero && (left === 0 || nx.hasAttribute("data-ready")) && hero.nextElementSibling !== nx) {
+        hero.parentNode.insertBefore(nx, hero.nextElementSibling);
       }
+      var em = $("[data-empty]");
+      if (em && left === 0) { em.hidden = false; em.textContent = "오늘 남은 경기가 없습니다. 위에서 다음 구매일 분석을 확인하세요."; }
+      if (typeof applyFilters === "function") applyFilters();
     };
     sweep();
     setInterval(sweep, 60000);

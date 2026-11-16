@@ -18,14 +18,13 @@
   <div class="wrap hero-copy">
     <p class="slogan">데이터와 수학으로, 분석을 <em>똑똑하게</em></p>
     <p class="kicker">{% if is_home %}TODAY{% else %}REPORT{% endif %} · {{ r.date|kdate }}{% set rs = rounds_of(r) %}{% if rs %} · 프로토 승부식 {{ rs|join(' · ') }}{% endif %}</p>
-    <h1 class="hero-title"><span class="hero-en">{% if is_home %}TODAY'S PICK{% else %}PROTO REPORT{% endif %}</span>{{ r.headline }}</h1>
+    <h1 class="hero-title"><span class="hero-en">{% if is_home %}TODAY'S PICK{% else %}PROTO REPORT{% endif %}</span><span class="sr">{{ r.date|kdate }} 프로토 승부식 분석</span></h1>
     <ul class="stat-row" aria-label="분석 규모">
       <li><b data-count="{{ r.stats.matches }}">{{ r.stats.matches }}</b><span>오늘 경기</span></li>
-      <li><b data-count="{{ r.stats.get('upcoming', 0) }}">{{ r.stats.get('upcoming', 0) }}</b><span>미리보기</span></li>
-      <li><b data-count="{{ r.stats.markets }}">{{ r.stats.markets }}</b><span>마켓</span></li>
-      <li><b data-count="{{ r.stats.combos }}">{{ r.stats.combos }}</b><span>조합</span></li>
+      {% if is_home %}<li><b data-remain>{{ r.stats.matches }}</b><span>남은 경기</span></li>{% endif %}
+      <li><b data-count="{{ r.stats.combos }}">{{ r.stats.combos }}</b><span>추천 조합</span></li>
     </ul>
-    <p class="stamp">{{ r.updated_at|kdt }} KST 업데이트{% if r.sources %} · {% for k, v in r.sources.items() %}<span class="src" title="{{ v }}">{{ {'betman':'베트맨','manual':'수동입력','odds_api':'해외배당','sample':'샘플'}.get(k, k) }}</span>{% endfor %}{% endif %}</p>
+    <p class="stamp">{{ r.updated_at|kdt }} KST 업데이트</p>
   </div>
 </section>
 
@@ -46,7 +45,7 @@
   <header class="block-head"><h2>적중 확률이 높아 보이는 경기</h2></header>
   <div class="tp-rail" data-rail tabindex="0" aria-label="적중 확률이 높아 보이는 경기">
   {% for t in tps %}{% set tm = mk.get(t.market_id) %}{% if tm %}
-    <article class="top-pick">
+    <article class="top-pick" data-ko="{{ t.kickoff }}">
       <div class="tp-body">
         <p class="tp-league">{{ SPORT_LABEL[t.sport] }} · {{ t.league }} · {{ t.kickoff|kdt }}</p>
         <h3 class="tp-match">{{ t.home }} <i>vs</i> {{ t.away }}</h3>
@@ -114,7 +113,7 @@
       <thead><tr><th>시간</th><th>경기</th><th>기준</th><th>선택과 배당</th><th>추정 확률</th><th class="n">해외 기록 적중률</th></tr></thead>
       <tbody>
       {% for l in rows %}{% set m = mk.get(l.market_id) %}
-        <tr>
+        <tr data-ko="{{ l.kickoff }}">
           <td class="muted">{{ l.kickoff|kdt }}</td>
           <td><b>{{ l.home }} vs {{ l.away }}</b><br><span class="muted">{{ l.league }}</span></td>
           <td class="n">{% if l.line is not none %}{{ ('%+g'|format(l.line)) if key == 'handi' else l.line }}{% endif %}</td>
@@ -130,10 +129,34 @@
 </section>
 {% endif %}
 
-{% if is_home and next_day %}
-<section class="wrap block next-day"><a class="next-day-btn" href="/reports/{{ next_day }}/"><b>내일({{ next_day|kdate }}) 구매일 분석이 나왔습니다</b><span>미리 보기 →</span></a></section>
+{% if is_home %}
+<section class="wrap block next-day" id="next-day" data-next {% if nxt %}data-ready{% endif %}>
+  {% if nxt %}
+  {% set nr = rounds_of(nxt) %}
+  <header class="block-head"><h2>다음 구매일 · {{ nxt.date|kdate }}</h2><p>{% if nr %}프로토 승부식 {{ nr|join(' · ') }} · {% endif %}{{ nxt.stats.matches }}경기 분석 완료</p></header>
+  {% set ngroups = nxt.markets|match_groups %}
+  {% set sports = ngroups|map(attribute='sport')|list %}
+  <p class="nd-lead">{{ nxt.date|kdate(False) }} 발매 경기는 {% for sp in ['soccer', 'basketball', 'baseball', 'volleyball'] if sp in sports %}{{ SPORT_LABEL[sp] }} {{ sports|select('equalto', sp)|list|length }}경기{{ ', ' if not loop.last }}{% endfor %}입니다.{% if ngroups %} 첫 경기는 {{ ngroups[0].kickoff|kdt }}에 시작합니다.{% endif %}</p>
+  {% set ntps = (nxt.top_picks or [])[:4] %}
+  {% if ntps %}
+  <div class="nd-grid">
+    {% for t in ntps %}
+    <div class="nd-card">
+      <p class="tp-league">{{ SPORT_LABEL[t.sport] }} · {{ t.league }} · {{ t.kickoff|kdt }}</p>
+      <p class="nd-match">{{ t.home }} <i>vs</i> {{ t.away }}</p>
+      <p class="nd-pick"><span class="bub on">{{ outcome(t, t.outcome) }}</span> <b>{{ t.p|pct }}</b> <small>{{ t.odds|odds }}배</small></p>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  <a class="btn" href="/reports/{{ nxt.date }}/">{{ nxt.date|kdate }} 전체 분석 보기</a>
+  {% else %}
+  <header class="block-head"><h2>다음 구매일 · {{ next_guess.date|kdate }}</h2>{% if next_guess.rounds %}<p>프로토 승부식 {{ next_guess.rounds|join(' · ') }}</p>{% endif %}</header>
+  <p class="nd-lead">{{ next_guess.date|kdate(False) }} 경기 분석은 <b>오후 7시</b>에 올라옵니다. 적중 확률이 높아 보이는 경기, 전략별 조합, 역배 후보와 핸디캡·언더오버 분석이 함께 공개됩니다.</p>
+  {% endif %}
+</section>
 {% endif %}
-<section class="wrap block" id="matches" data-reveal>
+<section class="wrap block" id="matches" data-reveal data-today="{{ r.date }}">
   {% set groups = r.markets|match_groups %}
   <header class="block-head">
     <h2>경기 분석</h2>
@@ -204,13 +227,15 @@
   </ol>
 </section>
 
-{% if r.caution %}
+{% set cz = [] %}{% for id in r.caution %}{% set m = mk.get(id) %}{% if m and m.analysis and m.market != 'OU' and m.analysis.pick_prob >= 0.55 %}{% set _ = cz.append(m) %}{% endif %}{% endfor %}
+{% if cz %}
 <section class="wrap block caution" data-reveal>
-  <header class="block-head"><h2>정배인데 불안한 경기</h2></header>
+  <header class="block-head"><h2>정배인데 불안한 경기</h2><p>정배로 보지만 뒤집힐 가능성이 작지 않은 경기입니다.</p></header>
   <ul class="caution-list">
-  {% for id in r.caution %}{% set m = mk[id] %}
-    <li><span class="c-risk" style="--r:{{ m.analysis.upset_risk }}">{{ m.analysis.upset_risk }}</span>
-      <span class="c-match">{{ m.home }} vs {{ m.away }}</span><span class="c-pick">{{ outcome(m, m.analysis.pick) }} {{ m.analysis.pick_odds|odds }}</span></li>
+  {% for m in cz %}{% set up = 1 - m.analysis.pick_prob %}
+    <li data-ko="{{ m.kickoff }}"><span class="c-risk" style="--r:{{ (up * 100)|round(0)|int }}"><small>이변</small>{{ up|pct }}</span>
+      <span class="c-match">{{ m.home }} vs {{ m.away }}<small>{{ m.league }} · {{ m.kickoff|kdt }}{% if m.game_no %} · {{ m.game_no }}번{% endif %}</small></span>
+      <span class="c-pick">{{ outcome(m, m.analysis.pick) }} {{ m.odds.get(m.analysis.pick)|odds }}</span></li>
   {% endfor %}
   </ul>
 </section>

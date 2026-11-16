@@ -157,7 +157,8 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
     top = top_picks[0] if top_picks else (prev.get("top_pick") if prev.get("date") == day else None)
     caution = sorted(
         # 해외 배당 기준 정배(1.9배 미만)인데 이변 위험이 높은 경기
-        [m for m in proto if (m["analysis"].get("x_odds") or {}).get(m["analysis"]["pick"], 9) < 1.9 and m["analysis"]["upset_risk"] >= 33],
+        [m for m in proto if m["market"] != "OU" and m["analysis"]["pick_prob"] >= 0.55
+         and (m["analysis"].get("x_odds") or m.get("odds") or {}).get(m["analysis"]["pick"], 9) < 1.9 and m["analysis"]["upset_risk"] >= 33],
         key=lambda m: -m["analysis"]["upset_risk"],
     )[:5]
     moves = []

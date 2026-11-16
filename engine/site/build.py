@@ -352,7 +352,13 @@ def build() -> None:
                        items, _crumbs([("홈", "/"), ("지난 리포트", "/reports/"), (_kdate(r["date"]), f"/reports/{r['date']}/")]))
 
     next_rep = next((r for r in reports if r["date"] > today.isoformat()), None)
-    page("report.html", "/", r=latest, is_home=True, next_day=(next_rep or {}).get("date"), lastmod=(latest or {}).get("date"),
+    # 다음 구매일: 19시 전에는 날짜와(알 수 있으면) 회차만, 19시 뒤에는 분석 요약
+    guess_rounds = []
+    if latest:
+        today_rounds = {m.get("round") for m in latest.get("markets", []) if not m.get("preview")}
+        guess_rounds = sorted({_round_label(m.get("round")) for m in latest.get("markets", []) if m.get("preview") and m.get("round") not in today_rounds} - {""})
+    next_guess = {"date": tomorrow, "rounds": guess_rounds}
+    page("report.html", "/", r=latest, is_home=True, next_day=(next_rep or {}).get("date"), nxt=next_rep, next_guess=next_guess, lastmod=(latest or {}).get("date"),
          matches=_matches(latest) if latest else [], leagues_top=_leagues_of(latest) if latest else [],
          jsonld=_jsonld(site_ld) + report_ld(latest, "/"))
     rss_items = []
