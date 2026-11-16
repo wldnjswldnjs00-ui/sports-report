@@ -58,36 +58,35 @@ def _day(d: str) -> str:
 
 
 CSS = f"""
-@font-face{{font-family:DH;src:url('{(FONTS / 'DoHyeon.ttf').as_uri()}')}}
-@font-face{{font-family:UB;src:url('{(FONTS / 'Unbounded.ttf').as_uri()}')}}
+@font-face{{font-family:JO;src:url('{(FONTS / 'Jost.ttf').as_uri()}')}}
 @font-face{{font-family:PT;font-weight:500;src:url('{(FONTS / 'Pretendard-Medium.otf').as_uri()}')}}
 @font-face{{font-family:PT;font-weight:700;src:url('{(FONTS / 'Pretendard-Bold.otf').as_uri()}')}}
 *{{box-sizing:border-box}}html,body{{margin:0}}
-.card{{width:{W}px;height:{H}px;padding:70px 64px;display:flex;flex-direction:column;font-family:PT;color:#121414;
+.card{{width:{W}px;height:{H}px;padding:70px 64px;display:flex;flex-direction:column;font-family:JO,PT;color:#121414;
   background:radial-gradient(circle at 20% 0%,#ffffff 0,#edf2ef 55%);position:relative;overflow:hidden}}
-.top{{display:flex;align-items:center;gap:16px;font:500 30px PT;color:#5c6662}}
+.top{{display:flex;align-items:center;gap:16px;font:500 30px JO,PT;color:#5c6662}}
 .mark{{width:46px;height:46px;border-radius:50%;background:conic-gradient(from 90deg,#ff3d7f,#ffd23d,#18c4b0,#6c7bff,#ff3d7f);box-shadow:inset 0 0 0 6px rgba(255,255,255,.4)}}
-.brand{{font:400 36px DH;color:#121414}}.brand b{{font:800 20px UB;color:#ff3d7f;margin-left:4px}}
+.brand{{font:700 36px JO,PT;color:#121414}}.brand b{{font:700 20px JO;color:#ff3d7f;margin-left:4px}}
 .date{{margin-left:auto}}
 .body{{flex:1;display:flex;flex-direction:column;justify-content:center}}
 .body h1,.body .sub,.body .note{{text-align:center}}
-h1{{font:400 84px/1.1 DH;margin:0 0 10px}}
+h1{{font:700 84px/1.1 JO,PT;margin:0 0 10px}}
 .sub{{font:500 30px PT;color:#5c6662;margin:0 0 34px}}
 .list{{display:flex;flex-direction:column;gap:18px}}
 .row{{background:#fff;border:2px solid #d9e2de;border-radius:28px;padding:26px 30px;display:grid;grid-template-columns:1fr auto;gap:6px 20px;align-items:center}}
 .meta{{font:500 24px PT;color:#7b8581}}
 .match{{font:700 36px/1.25 PT;word-break:keep-all}}
-.match i{{font:700 22px UB;color:#9aa3a0;font-style:normal;padding:0 8px}}
+.match i{{font:600 22px JO;color:#9aa3a0;font-style:normal;padding:0 8px}}
 .right{{grid-row:1/3;grid-column:2;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:10px}}
 .bub{{display:inline-block;background:#121414;color:#fff;font:700 28px PT;padding:10px 20px;border-radius:999px;white-space:nowrap}}
-.odds{{font:800 34px UB;letter-spacing:-1px}}
+.odds{{font:700 34px JO;letter-spacing:-1px}}
 .pct{{font:700 26px PT;color:#0b9a7e}}
 .lock{{background:repeating-linear-gradient(135deg,#f6f9f7 0 18px,#edf2ef 18px 36px);border-style:dashed}}
 .lock .match{{color:#9aa3a0}}
 .lock .bub{{background:#ff3d7f}}
 .ticket{{background:#fff;border:2px solid #d9e2de;border-radius:36px;padding:34px 34px 30px;display:flex;flex-direction:column;gap:14px}}
 .thead{{display:flex;align-items:baseline;justify-content:space-between;border-bottom:3px dashed #d9e2de;padding-bottom:20px;margin-bottom:6px}}
-.total{{font:800 76px UB;letter-spacing:-3px}}
+.total{{font:700 76px JO;letter-spacing:-3px}}
 .size{{font:700 30px PT;color:#5c6662}}
 .leg{{display:grid;grid-template-columns:1fr auto auto;gap:18px;align-items:center;padding:12px 0;border-bottom:1px solid #edf2ef}}
 .leg:last-child{{border-bottom:0}}
@@ -98,25 +97,26 @@ h1{{font:400 84px/1.1 DH;margin:0 0 10px}}
 .foot b{{color:#ff3d7f;font-weight:700}}
 .cta{{align-items:center;justify-content:center;text-align:center;background:radial-gradient(circle at 50% 40%,#202426 0,#121414 65%);color:#fff}}
 .cta .big{{width:300px;height:300px;border-radius:50%;background:conic-gradient(from 90deg,#ff3d7f,#ffd23d,#18c4b0,#6c7bff,#ff3d7f);box-shadow:inset 0 0 0 36px rgba(255,255,255,.4),0 0 120px rgba(108,123,255,.35)}}
-.cta h2{{font:400 72px/1.25 DH;margin:0 0 50px}}
-.url{{display:inline-flex;align-items:center;gap:18px;background:#fff;color:#121414;border-radius:999px;padding:26px 46px;font:400 64px DH}}
-.url b{{font:800 34px UB;color:#ff3d7f}}
+.cta h2{{font:700 72px/1.25 JO,PT;margin:0 0 50px}}
+.url{{display:inline-flex;align-items:center;gap:18px;background:#fff;color:#121414;border-radius:999px;padding:26px 46px;font:700 64px JO,PT}}
+.url b{{font:700 34px JO;color:#ff3d7f}}
 .url .lockic{{font-size:40px}}
 .cta p{{font:500 30px PT;color:#bfc1c4;margin:36px 0 0}}
-.slogan{{font:400 40px DH!important;color:#fff!important;margin:0 0 40px!important;letter-spacing:1px;background:linear-gradient(90deg,#18c4b0,#6c7bff 55%,#ff3d7f);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}
+.slogan{{font:600 40px JO,PT!important;color:#fff!important;margin:0 0 40px!important}}
+.free{{font:600 34px JO,PT!important;color:#fff!important;margin:34px 0 0!important}}.free b{{color:#ffd23d}}
 .care{{position:absolute;left:64px;right:64px;bottom:64px;font:500 24px/1.6 PT;color:#9a9ea3;border-top:1px solid #2a2c30;padding-top:28px}}
 .care b{{color:#fff;font-weight:700;font-size:28px}}
 .note{{font:500 24px PT;color:#7b8581;margin-top:18px}}
-.cover{{background:radial-gradient(circle at 80% 10%,rgba(255,61,127,.28) 0,transparent 45%),radial-gradient(circle at 10% 90%,rgba(24,196,176,.28) 0,transparent 45%),radial-gradient(circle at 50% 50%,#202426 0,#121414 70%);color:#fff}}
+.cover{{background:radial-gradient(circle at 50% 40%,#202426 0,#121414 65%);color:#fff}}
 .cv-top{{display:flex;align-items:center;gap:16px}}.cover .brand{{color:#fff}}
 .cv-mid{{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}}
-.cv-date{{font:800 92px UB;letter-spacing:-4px;margin:0;line-height:1}}
-.cv-date span{{font:400 64px DH;letter-spacing:0;color:#ffd23d;margin-left:12px;vertical-align:8px}}
-.cv-round{{font:700 38px PT;color:#121414;background:#fff;border-radius:999px;padding:12px 34px;margin:34px 0 0}}
-.cv-title{{font:400 150px/1.05 DH;margin:56px 0 0;background:linear-gradient(90deg,#18c4b0,#6c7bff 50%,#ff3d7f);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}
-.cv-slogan{{font:500 40px PT;color:#e6e7e8;margin:40px 0 0}}
+.cv-date{{font:700 96px JO,PT;letter-spacing:-2px;margin:0;line-height:1}}
+.cv-date span{{font:600 56px JO,PT;letter-spacing:0;color:#bfc1c4;margin-left:14px;vertical-align:8px}}
+.cv-round{{font:600 36px JO,PT;color:#121414;background:#fff;border-radius:999px;padding:12px 34px;margin:36px 0 0}}
+.cv-title{{font:800 132px/1.08 JO,PT;letter-spacing:-3px;margin:60px 0 0;color:#fff}}
+.cv-slogan{{font:500 40px JO,PT;color:#bfc1c4;margin:40px 0 0}}
 .cv-chips{{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}}
-.cv-chips span{{font:700 26px PT;color:#bfc1c4;border:2px solid #34373b;border-radius:999px;padding:10px 22px}}
+.cv-chips span{{font:600 26px JO,PT;color:#bfc1c4;border:2px solid #34373b;border-radius:999px;padding:10px 22px}}
 .many{{gap:6px;padding-top:26px}}.many .leg{{padding:6px 0}}.many .leg .match{{font-size:29px}}.many .meta{{font-size:21px}}.many .total{{font-size:64px}}.many .leg.lock{{margin:0;padding:8px 14px}}
 """
 
@@ -195,6 +195,7 @@ def card_cover(d: str, rep: dict, slot: str) -> str:
 def card_cta(d: str) -> str:
     return ('<div class="card cta"><p class="slogan">데이터와 수학으로, 분석을 똑똑하게</p><h2>숨긴 경기와<br>전체 조합은 여기서</h2>'
             '<div class="url"><span class="lockic">🔗</span>스포츠분석<b>.kr</b></div>'
+            '<p class="free">모든 분석과 조합은 <b>무료</b> · 회원가입 없이 바로</p>'
             '<p>매일 밤 10시 · 아침 7시 업데이트</p>'
             '<div class="care"><b>잃어도 괜찮은 소액으로, 재미로만 즐기세요.</b><br>분석은 참고용이며 적중을 보장하지 않습니다. 만 19세 이상 · 베트맨 공식 채널에서만<br>도박 문제 상담 1336 (24시간 무료)</div></div>')
 
