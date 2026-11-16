@@ -11,6 +11,7 @@
 from __future__ import annotations
 
 import logging
+import re
 import time
 from datetime import datetime
 from typing import Any
@@ -146,6 +147,50 @@ def _json(r) -> dict:
     if "json" not in (r.headers.get("content-type") or "").lower() or r.text.lstrip().startswith("<"):
         raise RuntimeError(f"JSON 대신 다른 응답 ({r.status_code} {r.headers.get('content-type')})")
     return r.json()
+
+
+_SCORE = re.compile(r"(\d+)\s*[:\-]\s*(\d+)")
+
+
+def parse_results(payload: dict, gm_ts: str) -> dict[str, dict]:
+    """마감 회차 응답에서 경기 결과 추출. mchScore 는 '홈:원정' 점수."""
+    out: dict[str, dict] = {}
+    for r in _rows(payload):
+        no = r.get("matchSeq")
+        mid = f"betman:{GM_ID}:{gm_ts}:{no}"
+        if str(r.get("gameReject") or "0") != "0":
+            out[mid] = {"status": "CANCELLED", "src": "betman"}
+            continue
+        m = _SCORE.search(str(r.get("mchScore") or ""))
+        if m:
+            out[mid] = {"home_score": float(m.group(1)), "away_score": float(m.group(2)), "status": "FT",
+                        "src": "betman", "raw": r.get("mchScore"), "code": r.get("gameResult")}
+    return out
+
+
+def fetch_results(rounds: set[str]) -> dict[str, dict]:
+    """회차 번호 목록을 다시 조회해 결과를 모은다. 실패한 회차는 건너뛴다."""
+    ajax = {"Content-Type": "application/json; charset=UTF-8", "X-Requested-With": "XMLHttpRequest",
+            "Accept": "application/json, text/javascript, */*; q=0.01", "Origin": BASE}
+    res: dict[str, dict] = {}
+    try:
+        http("GET", BASE + "/")
+    except Exception as e:  # noqa: BLE001
+        log.warning("베트맨 접속 실패(결과): %s", e)
+        return res
+    for ts in sorted(rounds)[:6]:
+        if not ts.isdigit():
+            continue
+        year = "20" + ts[:2]
+        slip = f"{BASE}/main/mainPage/gamebuy/gameSlip.do?gmId={GM_ID}&year={year}&gmTs={ts}"
+        try:
+            time.sleep(1.5)
+            r = http("POST", GAME_URL, json={"gmId": GM_ID, "gmTs": int(ts), "gameYear": year, "_sbmInfo": {"debugMode": "false"}},
+                     headers={**ajax, "Referer": slip})
+            res.update(parse_results(_json(r), ts))
+        except Exception as e:  # noqa: BLE001
+            log.warning("베트맨 결과 %s 실패: %s", ts, e)
+    return res
 
 
 def _schema_note(doc: dict) -> None:

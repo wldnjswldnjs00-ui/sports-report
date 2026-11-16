@@ -187,7 +187,14 @@ def _collect_results(rep: dict, fetch_scores: bool = True) -> dict:
 
     pending = [m for m in pending if m["id"] not in rmap]
     now = config.now_kst()
-    finished = [m for m in pending if datetime.fromisoformat(m["kickoff"]) + timedelta(hours=3) < now]
+    finished = [m for m in pending if datetime.fromisoformat(m["kickoff"]) + timedelta(hours=2, minutes=30) < now]
+    # 1순위: 베트맨 공식 결과(전 종목, 키 불필요)
+    rounds = {str(m.get("round")) for m in finished if m.get("source") == "betman" and m.get("round")}
+    if rounds and not config.DEMO:
+        for mid, r in betman.fetch_results(rounds).items():
+            if mid not in rmap and any(m["id"] == mid for m in finished):
+                rmap[mid] = r
+        finished = [m for m in finished if m["id"] not in rmap]
     keys = {odds_api_key_for(m["league"]) for m in finished} - {None}
     if keys and fetch_scores and not config.DEMO:
         events = odds_api.scores(keys)

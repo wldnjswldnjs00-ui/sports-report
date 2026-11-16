@@ -140,6 +140,18 @@ class BetmanParse(unittest.TestCase):
             validate(dict(m))
 
 
+class BetmanResults(unittest.TestCase):
+    def test_scores_and_cancel(self):
+        from engine.sources.betman import parse_results
+        keys = ["matchSeq", "mchScore", "gameReject", "gameResult"]
+        payload = {"compSchedules": {"keys": keys, "datas": [[1, "2:1", "0", "1"], [2, None, "0", None], [3, None, "1", None], [4, "88 - 90", "0", "3"]]}}
+        r = parse_results(payload, "260133")
+        self.assertEqual(r["betman:G101:260133:1"]["home_score"], 2)
+        self.assertNotIn("betman:G101:260133:2", r)
+        self.assertEqual(r["betman:G101:260133:3"]["status"], "CANCELLED")
+        self.assertEqual(r["betman:G101:260133:4"]["away_score"], 90)
+
+
 class Pipeline(unittest.TestCase):
     def test_demo_end_to_end_and_lock(self):
         from engine import config, pipeline
