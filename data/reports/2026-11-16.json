@@ -6,8 +6,8 @@
  "calibration_alpha": 0.03,
  "demo": false,
  "sources": {
-  "betman": "76개 수집",
-  "odds_api": "18개 매칭, 오류 2"
+  "betman": "실패: ConnectTimeout",
+  "odds_api": "0개 매칭"
  },
  "markets": [
   {
@@ -4242,7 +4242,8 @@
       "odds": 1.09,
       "ev": -0.048865999999999854,
       "confidence": 62,
-      "upset_risk": 10
+      "upset_risk": 10,
+      "result": null
      },
      {
       "market_id": "betman:G101:260136:4322",
@@ -4261,7 +4262,8 @@
       "odds": 1.13,
       "ev": -0.05871000000000015,
       "confidence": 62,
-      "upset_risk": 14
+      "upset_risk": 14,
+      "result": "hit"
      }
     ],
     "size": 2,
@@ -4274,7 +4276,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260136:4322:A+betman:G101:260136:4410:H",
     "strategy": "safe",
-    "rank": 1
+    "rank": 1,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -4295,7 +4299,8 @@
       "odds": 1.09,
       "ev": -0.048865999999999854,
       "confidence": 62,
-      "upset_risk": 10
+      "upset_risk": 10,
+      "result": null
      },
      {
       "market_id": "betman:G101:260136:4361",
@@ -4314,7 +4319,8 @@
       "odds": 1.13,
       "ev": -0.05871000000000015,
       "confidence": 62,
-      "upset_risk": 14
+      "upset_risk": 14,
+      "result": null
      }
     ],
     "size": 2,
@@ -4327,7 +4333,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260136:4361:A+betman:G101:260136:4410:H",
     "strategy": "safe",
-    "rank": 2
+    "rank": 2,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -4348,7 +4356,8 @@
       "odds": 1.09,
       "ev": -0.048865999999999854,
       "confidence": 62,
-      "upset_risk": 10
+      "upset_risk": 10,
+      "result": null
      },
      {
       "market_id": "betman:G101:260136:4314",
@@ -4367,7 +4376,8 @@
       "odds": 1.15,
       "ev": -0.06194500000000014,
       "confidence": 62,
-      "upset_risk": 16
+      "upset_risk": 16,
+      "result": "hit"
      }
     ],
     "size": 2,
@@ -4380,7 +4390,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260136:4314:A+betman:G101:260136:4410:H",
     "strategy": "safe",
-    "rank": 3
+    "rank": 3,
+    "result": "pending",
+    "return": null
    }
   ],
   "balanced": [
@@ -4788,7 +4800,8 @@
       "odds": 1.28,
       "ev": -0.07891199999999998,
       "confidence": 62,
-      "upset_risk": 26
+      "upset_risk": 26,
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4411",
@@ -4807,7 +4820,8 @@
       "odds": 1.44,
       "ev": -0.07696000000000003,
       "confidence": 62,
-      "upset_risk": 33
+      "upset_risk": 33,
+      "result": null
      },
      {
       "market_id": "betman:G101:260136:4359",
@@ -4826,7 +4840,8 @@
       "odds": 1.44,
       "ev": -0.07782400000000012,
       "confidence": 62,
-      "upset_risk": 33
+      "upset_risk": 33,
+      "result": null
      }
     ],
     "size": 3,
@@ -4839,7 +4854,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260136:4326:H+betman:G101:260136:4359:H+betman:G101:260136:4411:H",
     "strategy": "balanced",
-    "rank": 2
+    "rank": 2,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -4860,7 +4877,8 @@
       "odds": 1.32,
       "ev": -0.069268,
       "confidence": 62,
-      "upset_risk": 26
+      "upset_risk": 26,
+      "result": null
      },
      {
       "market_id": "betman:G101:260136:4331",
@@ -4879,7 +4897,8 @@
       "odds": 1.33,
       "ev": -0.08482699999999987,
       "confidence": 62,
-      "upset_risk": 30
+      "upset_risk": 30,
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260136:4359",
@@ -4898,7 +4917,8 @@
       "odds": 1.44,
       "ev": -0.07782400000000012,
       "confidence": 62,
-      "upset_risk": 33
+      "upset_risk": 33,
+      "result": null
      }
     ],
     "size": 3,
@@ -4911,7 +4931,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260136:4331:A+betman:G101:260136:4359:H+betman:G101:260136:4382:A",
     "strategy": "balanced",
-    "rank": 3
+    "rank": 3,
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -4932,7 +4954,8 @@
       "odds": 1.32,
       "ev": -0.069268,
       "confidence": 62,
-      "upset_risk": 26
+      "upset_risk": 26,
+      "result": null
      },
      {
       "market_id": "betman:G101:260136:4411",
@@ -4951,7 +4974,8 @@
       "odds": 1.44,
       "ev": -0.07696000000000003,
       "confidence": 62,
-      "upset_risk": 33
+      "upset_risk": 33,
+      "result": null
      },
      {
       "market_id": "betman:G101:260136:4359",
@@ -4970,7 +4994,8 @@
       "odds": 1.44,
       "ev": -0.07782400000000012,
       "confidence": 62,
-      "upset_risk": 33
+      "upset_risk": 33,
+      "result": null
      }
     ],
     "size": 3,
@@ -4983,7 +5008,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260136:4359:H+betman:G101:260136:4382:A+betman:G101:260136:4411:H",
     "strategy": "balanced",
-    "rank": 4
+    "rank": 4,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -5004,7 +5031,8 @@
       "odds": 1.33,
       "ev": -0.08482699999999987,
       "confidence": 62,
-      "upset_risk": 30
+      "upset_risk": 30,
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260136:4411",
@@ -5023,7 +5051,8 @@
       "odds": 1.44,
       "ev": -0.07696000000000003,
       "confidence": 62,
-      "upset_risk": 33
+      "upset_risk": 33,
+      "result": null
      },
      {
       "market_id": "betman:G101:260136:4359",
@@ -5042,7 +5071,8 @@
       "odds": 1.44,
       "ev": -0.07782400000000012,
       "confidence": 62,
-      "upset_risk": 33
+      "upset_risk": 33,
+      "result": null
      }
     ],
     "size": 3,
@@ -5055,7 +5085,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260136:4331:A+betman:G101:260136:4359:H+betman:G101:260136:4411:H",
     "strategy": "balanced",
-    "rank": 5
+    "rank": 5,
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -5076,7 +5108,8 @@
       "odds": 1.28,
       "ev": -0.07891199999999998,
       "confidence": 62,
-      "upset_risk": 26
+      "upset_risk": 26,
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4411",
@@ -5095,7 +5128,8 @@
       "odds": 1.44,
       "ev": -0.07696000000000003,
       "confidence": 62,
-      "upset_risk": 33
+      "upset_risk": 33,
+      "result": null
      },
      {
       "market_id": "betman:G101:260136:4370",
@@ -5114,7 +5148,8 @@
       "odds": 1.41,
       "ev": -0.09449800000000008,
       "confidence": 62,
-      "upset_risk": 35
+      "upset_risk": 35,
+      "result": null
      }
     ],
     "size": 3,
@@ -5127,7 +5162,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260136:4326:H+betman:G101:260136:4370:U+betman:G101:260136:4411:H",
     "strategy": "balanced",
-    "rank": 6
+    "rank": 6,
+    "result": "pending",
+    "return": null
    }
   ],
   "aggressive": []
@@ -5212,5 +5249,6 @@
   "betman:G101:260136:4331": "H",
   "betman:G101:260136:4333": "A"
  },
- "headline": "25경기를 봤다. 기대값이 플러스인 선택은 없다. 소액이거나 쉬는 날."
+ "headline": "25경기를 봤다. 기대값이 플러스인 선택은 없다. 소액이거나 쉬는 날.",
+ "last_attempt": "2026-11-16T22:49:16+09:00"
 }
