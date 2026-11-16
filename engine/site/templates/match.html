@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import prob_bar, ev_class, result_tag, form_block, injury_block, oreo_block, review_block %}
+{% from "_macros.html" import prob_bar, ev_class, result_tag, form_block, oreo_block, review_block %}
 {% block title %}{{ page_title }} | {{ cfg.SITE_NAME }}{% endblock %}
 {% block desc %}{{ page_desc }}{% endblock %}
 {% block ogtype %}article{% endblock %}
@@ -39,8 +39,6 @@
     {{ form_block(fm) }}
   </section>
   {% endif %}
-  {% set im = g.markets|selectattr('injuries')|first %}
-  {% if im %}<section class="block" data-reveal>{{ injury_block(im) }}</section>{% endif %}
 
   <section class="block" data-reveal>
     {% for m in g.markets %}{% set pr = m.analysis.pair if m.analysis else none %}{% if pr and pr.p and pr.basis %}

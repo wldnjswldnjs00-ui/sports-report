@@ -63,15 +63,39 @@ class FormIndex:
             "streak": _streak(seq),
         }
 
-    def h2h(self, sport: str, home: str, away: str, ko_ms: int, n: int = 5) -> dict[str, Any] | None:
+    def h2h(self, sport: str, home: str, away: str, ko_ms: int, n: int = 5, league: str = "") -> dict[str, Any] | None:
         a = norm_team(away)
-        past = [x for x in self._before(sport, home, ko_ms) if x[1] == a][-n:]
+        allp = [x for x in self._before(sport, home, ko_ms) if x[1] == a]
+        past = allp[-n:]
         if not past:
             return None
+        start = season_start(sport, league, ko_ms)
+        ss = [x for x in allp if x[0] >= start]
+        season = {"n": len(ss), "w": sum(1 for x in ss if x[2] > x[3]), "d": sum(1 for x in ss if x[2] == x[3]),
+                  "l": sum(1 for x in ss if x[2] < x[3])} if ss else None
         return {"n": len(past), "w": sum(1 for x in past if x[2] > x[3]), "d": sum(1 for x in past if x[2] == x[3]),
-                "l": sum(1 for x in past if x[2] < x[3]),
+                "l": sum(1 for x in past if x[2] < x[3]), "season": season,
                 "last": [{"date": datetime.fromtimestamp(x[0] / 1000, config.KST).strftime("%y.%m.%d"), "score": f"{int(x[2])}:{int(x[3])}",
                           "home": x[4]} for x in reversed(past)]}
+
+
+# 연중(봄~가을) 진행 리그: 시즌이 1월에 시작
+_CAL_YEAR = ("K리그", "J리그", "MLS", "K League", "중국", "CSL", "브라질", "아르헨", "스웨덴", "노르웨이", "핀란드")
+
+
+def season_start(sport: str, league: str, ko_ms: int) -> int:
+    """경기 시점의 시즌 시작(ms). 농구·배구 10월, 야구 3월, 유럽 축구 7월, 연중 축구 리그 1월."""
+    t = datetime.fromtimestamp(ko_ms / 1000, config.KST)
+    if sport in ("basketball", "volleyball", "hockey"):
+        m = 10
+    elif sport == "baseball":
+        m = 3
+    elif sport == "soccer" and not any(k in (league or "") for k in _CAL_YEAR):
+        m = 7
+    else:
+        m = 1
+    y = t.year if t.month >= m else t.year - 1
+    return int(datetime(y, m, 1, tzinfo=config.KST).timestamp() * 1000)
 
 
 def _streak(seq: list[str]) -> str:
@@ -114,7 +138,7 @@ def attach(markets: list[dict], idx: FormIndex) -> int:
             ko = int(datetime.fromisoformat(m["kickoff"]).timestamp() * 1000)
             h = idx.team(m["sport"], m["home"], ko)
             a = idx.team(m["sport"], m["away"], ko)
-            cache[key] = {"home": h, "away": a, "h2h": idx.h2h(m["sport"], m["home"], m["away"], ko)} if (h or a) else None
+            cache[key] = {"home": h, "away": a, "h2h": idx.h2h(m["sport"], m["home"], m["away"], ko, league=m.get("league", ""))} if (h or a) else None
         if cache[key]:
             m["form"] = cache[key]
             n += 1
