@@ -21644,7 +21644,8 @@
       "odds": 1.88,
       "ev": -0.07880000000000009,
       "confidence": 72,
-      "upset_risk": 50
+      "upset_risk": 50,
+      "result": null
      },
      {
       "market_id": "betman:G101:260136:4354",
@@ -21663,7 +21664,8 @@
       "odds": 1.88,
       "ev": -0.08293600000000001,
       "confidence": 78,
-      "upset_risk": 50
+      "upset_risk": 50,
+      "result": null
      },
      {
       "market_id": "betman:G101:260136:4360",
@@ -21682,7 +21684,8 @@
       "odds": 2.26,
       "ev": -0.07724200000000014,
       "confidence": 67,
-      "upset_risk": 59
+      "upset_risk": 59,
+      "result": null
      }
     ],
     "size": 3,
@@ -21695,7 +21698,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260136:4354:H+betman:G101:260136:4360:H+betman:G101:260136:4365:H",
     "strategy": "aggressive",
-    "rank": 1
+    "rank": 1,
+    "result": "pending",
+    "return": null
    }
   ],
   "lotto": [
