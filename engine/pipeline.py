@@ -184,6 +184,7 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
         "top_pick": top,
         "caution": [m["id"] for m in caution],
         "odds_moves": moves,
+        "pending": sorted([x for x in betman.PENDING if x["kickoff"] > now.isoformat()], key=lambda x: x["kickoff"])[:60] if not config.DEMO else [],
         "stats": {
             "markets": len(analyzed),
             "matches": len({(m["home"], m["away"], m["kickoff"][:10]) for m in primary}),

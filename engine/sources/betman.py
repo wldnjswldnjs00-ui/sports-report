@@ -53,6 +53,8 @@ def _rows(payload: Any) -> list[dict]:
 def _market(row: dict) -> str | None:
     """betNm/betTypNm 문자열로 마켓 판별. 전반·특수 마켓은 제외(정산 기준이 다름)."""
     name = f"{row.get('betNm') or ''} {row.get('betTypNm') or ''}"
+    if "세트핸디캡" in name:
+        return "HANDICAP"  # 배구 세트 핸디캡
     if "전반" in name or "후반" in name or "SUM" in name or "1점" in name or "쿼터" in name or "세트" in name:
         return None
     if "언더오버" in name:
@@ -87,7 +89,8 @@ def _sport(row: dict) -> str:
 def _flows(payload: dict) -> dict[int, dict]:
     """tooltipList(베트맨 공개 배당 변동 이력) → 경기번호별 {왼칸/무/오른칸: [처음, 지금], 변동횟수}."""
     out: dict[int, dict] = {}
-    rows = sorted(payload.get("tooltipList") or [], key=lambda t: str(t.get("CHG_DTM") or ""))
+    # 변동 이력의 배당은 100배 정수(136 = 1.36배)
+    rows = sorted(payload.get("tooltipList") or [], key=lambda t: str(t.get("LST_CHG_DTM") or t.get("CHG_DTM") or ""))
     for t in rows:
         try:
             no = int(t.get("GM_SEQ"))
@@ -95,14 +98,35 @@ def _flows(payload: dict) -> dict[int, dict]:
             continue
         f = out.setdefault(no, {"n": 0, "first": {}, "last": {}, "at": None})
         for side, b, a in (("W", "BCHG_W_ODDS", "ACHG_W_ODDS"), ("D", "BCHG_D_ODDS", "ACHG_D_ODDS"), ("L", "BCHG_L_ODDS", "ACHG_L_ODDS")):
-            bv, av = _num(t.get(b)), _num(t.get(a))
+            bv, av = _num(t.get(b)) / 100, _num(t.get(a)) / 100
             if bv > 1 and side not in f["first"]:
                 f["first"][side] = bv
             if av > 1:
                 f["last"][side] = av
         f["n"] += 1
-        f["at"] = str(t.get("CHG_DTM") or "")[:12]
+        f["at"] = str(t.get("LST_CHG_DTM") or t.get("CHG_DTM") or "")[:12]
     return out
+
+
+def parse_pending(payload: dict) -> list[dict[str, Any]]:
+    """발매는 잡혔지만 배당이 아직 공개되지 않은 경기(일정만)."""
+    seen, out = set(), []
+    for r in _rows(payload):
+        home, away, ko = r.get("homeName"), r.get("awayName"), r.get("gameDate")
+        if not home or not away or not isinstance(ko, (int, float)) or _num(r.get("winAllot")) > 1 or not _market(r):
+            continue
+        if str(r.get("gameReject") or "0") != "0":
+            continue
+        key = (home, away, ko)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append({"sport": _sport(r), "league": str(r.get("leagueName") or "").strip(), "home": str(home).strip(), "away": str(away).strip(),
+                    "kickoff": datetime.fromtimestamp(ko / 1000, config.KST).isoformat(timespec="minutes")})
+    return out
+
+
+PENDING: list[dict[str, Any]] = []
 
 
 def parse_round(payload: dict, gm_ts: str) -> list[dict[str, Any]]:
@@ -298,6 +322,7 @@ def _fetch(day: str) -> list[dict[str, Any]]:
         raise RuntimeError("발매 중인 프로토 승부식 회차 없음")
 
     out: list[dict[str, Any]] = []
+    PENDING.clear()
     for g in sorted(rounds, key=lambda g: str(g['gmTs']))[:6]:
         ts = str(g["gmTs"])
         year = str(g.get("gmOsidTsYear") or ("20" + ts[:2]))
@@ -311,6 +336,7 @@ def _fetch(day: str) -> list[dict[str, Any]]:
         doc = _json(r)
         _schema_note(doc)
         out.extend(parse_round(doc, ts))
+        PENDING.extend(parse_pending(doc))
     if not out:
         raise RuntimeError("발매 회차는 있으나 배당이 공개된 경기가 없음(발매 시작 전일 수 있음)")
     return [m for m in out if in_horizon(m["kickoff"], day)]
