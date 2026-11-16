@@ -118,7 +118,7 @@ def _overlap(a: dict, b: dict) -> float:
     return len(sa & sb) / min(len(sa), len(sb))
 
 
-def strategy_combos(legs: list[dict[str, Any]], name: str) -> list[dict[str, Any]]:
+def strategy_combos(legs: list[dict[str, Any]], name: str, used_all: dict[str, int] | None = None) -> list[dict[str, Any]]:
     cfg = STRATEGIES[name]
     pool = [l for l in legs if l["p"] >= cfg["min_leg_p"] and l["confidence"] >= cfg["min_conf"]]
     if name == "safe":
@@ -174,23 +174,42 @@ def strategy_combos(legs: list[dict[str, Any]], name: str) -> list[dict[str, Any
     chosen: list[dict[str, Any]] = []
     max_overlap = 0.8 if name == "lotto" else 0.67
 
-    def take(pool_c, n):
+    used: dict[str, int] = {}
+    used_all = used_all if used_all is not None else {}
+    n_matches = len({l["match"] for l in legs})
+    # 경기가 적은 날은 조합 수를 줄인다(억지로 채우면 같은 경기만 반복된다)
+    top_n = cfg["top"] if name == "lotto" else min(cfg["top"], max(2, n_matches // 3))
+    bonus = 3 if name == "lotto" else 0   # 로또폴더는 폴더 수가 많아 합계 한도를 넉넉히
+
+    def take(pool_c, n, cap=1, cap_all=3):
+        """cap: 한 전략 안에서 같은 경기가 들어갈 수 있는 횟수, cap_all: 전 전략 합계."""
         for c in pool_c:
-            if len(chosen) >= cfg["top"] or n <= 0:
+            if len(chosen) >= top_n or n <= 0:
                 break
-            if c in chosen or any(_overlap(c, x) > max_overlap or abs(c["total_odds"] / x["total_odds"] - 1) < 0.04 for x in chosen):
+            ms = [l["match"] for l in c["legs"]]
+            if c in chosen or any(used.get(k, 0) >= cap or used_all.get(k, 0) >= cap_all + bonus for k in ms):
+                continue
+            if any(_overlap(c, x) > max_overlap or abs(c["total_odds"] / x["total_odds"] - 1) < 0.04 for x in chosen):
                 continue
             chosen.append(c)
+            for k in ms:
+                used[k] = used.get(k, 0) + 1
+                used_all[k] = used_all.get(k, 0) + 1
             n -= 1
 
     # 배당이 한 구간에 몰리지 않게: 구간별로 가장 좋은 조합을 먼저 뽑고, 모자라면 전체에서 채운다
     tiers = {"lotto": [(40, 80, 1), (80, 200, 1), (200, 5000, 1)],
              "aggressive": [(7, 12, 2), (12, 25, 2), (25, 80, 2)],
              "balanced": [(2.5, 3.5, 2), (3.5, 5, 2), (5, 8, 2)]}.get(name)
-    if tiers:
-        for lo_t, hi_t, n_t in tiers:
-            take([c for c in cands if lo_t <= c["total_odds"] < hi_t], n_t)
-    take(cands, cfg["top"])
+    # 같은 경기가 여러 조합에 반복되지 않게: 먼저 '경기당 1번'으로 뽑고, 모자랄 때만 2번·3번까지 허용
+    for cap, cap_all in ((1, 3), (2, 4), (3, 6)):
+        if tiers:
+            for lo_t, hi_t, n_t in tiers:
+                have = sum(1 for c in chosen if lo_t <= c["total_odds"] < hi_t)
+                take([c for c in cands if lo_t <= c["total_odds"] < hi_t], n_t - have, cap, cap_all)
+        take(cands, top_n, cap, cap_all)
+        if len(chosen) >= top_n:
+            break
     chosen.sort(key=lambda c: c["total_odds"])
     for i, c in enumerate(chosen, 1):
         c["strategy"] = name
@@ -201,7 +220,8 @@ def strategy_combos(legs: list[dict[str, Any]], name: str) -> list[dict[str, Any
 def all_combos(markets: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
     picks = legs_from(markets)
     every = legs_from(markets, all_outcomes=True)  # 공격형·로또는 확률이 충분한 역배도 후보
-    return {name: strategy_combos(every if name in ("aggressive", "lotto") else picks, name) for name in STRATEGIES}
+    used_all: dict[str, int] = {}
+    return {name: strategy_combos(every if name in ("aggressive", "lotto") else picks, name, used_all) for name in STRATEGIES}
 
 
 def value_legs(markets: list[dict[str, Any]], min_ev: float = 0.0) -> list[dict[str, Any]]:
