@@ -177,7 +177,7 @@
           <div class="odds-pick" role="group" aria-label="{{ mk_short(m) }} 결과 선택해서 내 조합에 담기">
             {% for k, od in m.odds.items() %}
             <button type="button" class="opick{% if ma and k == ma.pick %} is-model{% endif %}" data-leg="{{ m.id }}|{{ k }}">
-              <span>{{ outcome(m, k) }}</span><b>{{ od|odds }}</b>{% set ro = (ma.x_odds or {}).get(k) if ma else none %}{% if ro %}<small class="ref" title="해외 배당{{ ' (베트맨 기준점으로 환산)' if ma.x_kind == '환산' }}">해외 {{ ro|odds }}</small>{% endif %}
+              <span>{{ outcome(m, k) }}</span><b>{{ od|odds }}</b>
             </button>
             {% endfor %}
           </div>
@@ -207,7 +207,7 @@
   <ul class="caution-list">
   {% for id in r.caution %}{% set m = mk[id] %}
     <li><span class="c-risk" style="--r:{{ m.analysis.upset_risk }}">{{ m.analysis.upset_risk }}</span>
-      <span class="c-match">{{ m.home }} vs {{ m.away }}</span><span class="c-pick">{{ outcome(m, m.analysis.pick) }} 해외 {{ ((m.analysis.x_odds or {}).get(m.analysis.pick) or m.analysis.pick_odds)|odds }}</span></li>
+      <span class="c-match">{{ m.home }} vs {{ m.away }}</span><span class="c-pick">{{ outcome(m, m.analysis.pick) }} {{ m.analysis.pick_odds|odds }}</span></li>
   {% endfor %}
   </ul>
 </section>

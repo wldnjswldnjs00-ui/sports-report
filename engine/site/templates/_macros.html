@@ -65,11 +65,11 @@
 
 {% macro pick_table(rows, title_extra) %}
 <table class="tbl">
-  <thead><tr><th>경기</th><th>선택</th><th class="n">해외 배당</th><th class="n">추정 확률</th><th>{{ title_extra }}</th></tr></thead>
+  <thead><tr><th>경기</th><th>선택</th><th class="n">배당</th><th class="n">추정 확률</th><th>{{ title_extra }}</th></tr></thead>
   <tbody>
   {% for l in rows %}
     <tr><td><span class="muted">{{ l.league }} · {{ l.kickoff|kdt }}</span><br>{{ l.home }} vs {{ l.away }}</td>
-    <td><span class="bub on">{{ outcome(l, l.outcome) }}</span></td><td class="n">{{ (l.x_odds or l.odds)|odds }}{% if l.x_odds %}<br><small class="muted">베트맨 {{ l.odds|odds }}</small>{% endif %}</td><td class="n">{{ l.p|pct }}</td>
+    <td><span class="bub on">{{ outcome(l, l.outcome) }}</span></td><td class="n">{{ l.odds|odds }}</td><td class="n">{{ l.p|pct }}</td>
     <td class="why">{% if l.reasons %}{{ l.reasons|join(' · ') }}{% else %}{% if l.hist_hit is not none and l.hist_n %}해외 기록 적중률 {{ l.hist_hit|pct }} ({{ '{:,}'.format(l.hist_n) }}경기){% endif %}{% endif %}</td></tr>
   {% endfor %}
   </tbody>
