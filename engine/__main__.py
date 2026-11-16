@@ -23,6 +23,7 @@ def main(argv=None) -> int:
     ap.add_argument("--refresh", action="store_true", help="해외 배당 캐시 무시")
     ap.add_argument("--days", type=int, default=21)
     ap.add_argument("--no-scores", action="store_true", help="외부 결과 API 호출 생략(크레딧 절약)")
+    ap.add_argument("--dry", action="store_true", help="threads: 올리지 않고 글 초안만 출력")
     a = ap.parse_args(argv)
 
     from . import pipeline
@@ -50,7 +51,7 @@ def main(argv=None) -> int:
         pipeline.demo(a.days)
     elif a.cmd == "threads":
         from .threads import post_daily
-        post_daily()
+        post_daily(dry=a.dry)
     elif a.cmd == "indexnow":
         from .indexnow import ping
         ping()
