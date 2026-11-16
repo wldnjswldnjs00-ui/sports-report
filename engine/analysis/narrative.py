@@ -77,9 +77,8 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
     # R: 가장 강한 근거부터 최대 2개
     reasons: list[str] = []
     ref = a.get("p_ref") or {}
-    xo_pick = (a.get("x_odds") or {}).get(pick)
     if pick in ref and m.get("ref_kind") != "환산":
-        reasons.append(f"해외 시장은 이 결과를 {_pct(ref[pick])}로 본다" + (f"(해외 배당 {xo_pick:.2f}배)" if xo_pick else ""))
+        reasons.append(f"해외 시장은 이 결과를 {_pct(ref[pick])}로 본다")
     x = m.get("x") or {}
     if m.get("ref_kind") == "환산" and pick in ref:
         if m["market"] == "OU" and x.get("total"):
@@ -139,15 +138,14 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
     # O: 쓰임새
     risk = a["upset_risk"]
     xo = (a.get("x_odds") or {}).get(pick)
-    price = f"해외 배당 {xo:.2f}배" if xo else ""
     if xo and xo < 1.2:
-        o2 = f"{price}로 낮다. 단독보다는 조합의 축으로 쓴다."
+        o2 = "배당이 낮다. 단독보다는 조합의 축으로 쓴다."
     elif strong and risk < 30:
-        o2 = f"{price}. 안정형·밸런스형 조합의 기준 경기로 적합하다." if price else "안정형 조합의 기준 경기로 적합하다."
+        o2 = "안정형·밸런스형 조합의 기준 경기로 적합하다."
     elif risk >= 45:
         o2 = f"이변 위험 {risk}로 높다. 넣는다면 폴더 수를 줄이고 금액을 낮춘다."
     else:
-        o2 = f"{price}. 확률이 한쪽으로 크게 기울지 않아 밸런스형에 어울린다." if price else "밸런스형에 어울린다."
+        o2 = "확률이 한쪽으로 크게 기울지 않아 밸런스형에 어울린다."
     return {"o1": o1, "r": r_txt, "e": e_txt, "o2": o2}
 
 

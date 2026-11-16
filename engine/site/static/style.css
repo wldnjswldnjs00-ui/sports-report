@@ -633,3 +633,19 @@ html:not(.is-mobile):not(.is-pc) .mo-only { display: none; }
 }
 .ad-cp { overflow: hidden; }
 .ad-cp iframe { max-width: 100%; border: 0; display: block; }
+
+/* 금액 계산기 경기 고르기: 경기별 아코디언 */
+.tool-list li.tl-game { padding: 0; }
+.tool-list .tl-head { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto 14px; grid-template-areas: "meta n caret" "name n caret"; gap: 2px 10px; align-items: center;
+  background: none; border: 0; padding: 12px 2px; text-align: left; cursor: pointer; color: var(--ink); margin: 0; font: inherit; }
+.tl-meta { grid-area: meta; font-size: 11.5px; color: var(--ink-3); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tl-name { grid-area: name; font-size: 14.5px; font-weight: 700; word-break: keep-all; }
+.tl-n { grid-area: n; font-size: 11.5px; color: var(--ink-3); font-weight: 600; white-space: nowrap; }
+.tl-head.has-pick .tl-n { color: var(--hot); }
+.tl-caret { grid-area: caret; width: 8px; height: 8px; border-right: 2px solid var(--ink-3); border-bottom: 2px solid var(--ink-3); transform: rotate(45deg); transition: transform .2s; justify-self: center; }
+.tl-head[aria-expanded="true"] .tl-caret { transform: rotate(-135deg); }
+.tl-body { padding: 0 2px 12px; }
+.tl-mk + .tl-mk { margin-top: 10px; }
+.tl-mkl { margin: 0 0 6px; font-size: 12px; color: var(--ink-2); font-weight: 700; }
+/* 권장 금액 기준표: 모바일에서도 폭을 꽉 채운다 */
+.rule .tbl { display: table; width: 100%; white-space: normal; }
