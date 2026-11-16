@@ -312,8 +312,8 @@ def market_legs(markets: list[dict[str, Any]], market: str, limit: int = 6) -> l
         if not a or m["market"] != market:
             continue
         k = a["pick"]
-        if k not in (m.get("odds") or {}):
-            continue
+        if k not in (m.get("odds") or {}) or m["odds"][k] < 1.2:
+            continue  # 1.2배 미만은 고를 의미가 없어 제외
         leg = _leg(m, a, k)
         hist = (a.get("hist") or {}).get(k) or {}
         drop = _flow_drop(m, k)
