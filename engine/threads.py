@@ -45,13 +45,16 @@ def day_for(slot: str) -> str:
 
 
 def caption(rep: dict, slot: str) -> str:
-    d = date.fromisoformat(rep["date"])
-    day = f"{d.month}월 {d.day}일({WEEK[d.weekday()]})"
-    site = config.SITE_URL.replace("https://xn--sr3bw9dq7a9xy85g.kr", "https://스포츠분석.kr")
-    head = f"🌙 {day} 프로토 승부식 · 내일 08시 발매" if slot == "night" else f"☀️ {day} 프로토 승부식 · 08시 발매 시작"
-    return (f"{head}\n적중 확률 높은 경기 · 역배 후보 · 공격형 조합 · 로또폴더\n"
-            f"카드마다 일부 경기는 숨겨 뒀습니다. 숨긴 경기와 전체 조합 👉 {site}\n"
-            f"만 19세 이상 · 체육진흥투표권은 베트맨 공식 채널에서만")
+    """글 본문은 태그만. 그날 나온 리그를 태그로 붙인다."""
+    tags = ["#프로토", "#승부식", "#프로토분석", "#스포츠토토", "#베트맨", "#스포츠분석"]
+    leagues = []
+    for m in rep.get("markets") or []:
+        lg = str(m.get("league") or "").replace(" ", "")
+        if lg and lg not in leagues:
+            leagues.append(lg)
+    tags += ["#" + lg for lg in leagues[:5]]
+    tags += ["#만19세이상"]
+    return " ".join(dict.fromkeys(tags))
 
 
 def _prune() -> None:
@@ -65,7 +68,7 @@ def _prune() -> None:
 
 def prepare(slot: str | None = None, force: bool = False) -> bool:
     """카드 이미지를 만들고 게시 대기 정보를 저장한다(토큰이 없으면 만들지 않는다)."""
-    slot = slot or slot_now()
+    slot = slot or os.getenv("THREADS_SLOT", "").strip() or slot_now()
     if not slot or not (os.getenv("THREADS_TOKEN", "").strip() or force):
         return False
     day = day_for(slot)

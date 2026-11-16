@@ -188,8 +188,7 @@ def card_cover(d: str, rep: dict, slot: str) -> str:
             f'<div class="cv-mid"><p class="cv-date">{x.month}월 {x.day}일 <span>{WEEK[x.weekday()]}요일</span></p>'
             f'<p class="cv-round">{("베트맨 " + _e(rd)) if rd else "베트맨 프로토 승부식"}</p>'
             '<h1 class="cv-title">프로토<br>스포츠 분석</h1>'
-            '<p class="cv-slogan">데이터와 수학으로, 분석을 똑똑하게</p></div>'
-            f'<div class="cv-chips"><span>{when}</span><span>{n}경기 분석</span><span>적중 확률 · 역배 · 공격형 · 로또</span></div></div>')
+            '<p class="cv-slogan">데이터와 수학으로, 분석을 똑똑하게</p></div></div>')
 
 
 def card_cta(d: str) -> str:

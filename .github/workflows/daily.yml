@@ -56,10 +56,11 @@ jobs:
           fi
       - name: 쓰레드 카드 준비(밤 22:00·아침 07:00, 토큰이 있을 때만)
         id: tprep
-        if: github.event.schedule == '0 13 * * *' || github.event.schedule == '0 22 * * *'
+        if: github.event.schedule == '0 13 * * *' || github.event.schedule == '0 22 * * *' || contains(github.event.head_commit.message, '[threads-now]')
         continue-on-error: true
         env:
           THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
+          THREADS_SLOT: ${{ contains(github.event.head_commit.message, '[threads-now]') && 'night' || '' }}
         run: |
           if [ -z "$THREADS_TOKEN" ]; then echo "토큰 없음"; exit 0; fi
           pip install -q playwright==1.47.0 && python -m playwright install --with-deps chromium >/dev/null
@@ -91,7 +92,7 @@ jobs:
           done
           exit 1
       - name: 쓰레드 게시(배포된 카드 이미지로 캐러셀)
-        if: steps.commit.outputs.pushed == '1' && (github.event.schedule == '0 13 * * *' || github.event.schedule == '0 22 * * *')
+        if: steps.commit.outputs.pushed == '1' && (github.event.schedule == '0 13 * * *' || github.event.schedule == '0 22 * * *' || contains(github.event.head_commit.message, '[threads-now]'))
         continue-on-error: true
         env:
           THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
