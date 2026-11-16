@@ -1,30 +1,4706 @@
 {
  "date": "2026-11-16",
  "generated_at": "2026-11-16T21:54:03+09:00",
- "updated_at": "2026-11-16T21:54:03+09:00",
+ "updated_at": "2026-11-16T22:34:24+09:00",
  "model_version": "aurora-1.0.0",
  "calibration_alpha": 0.03,
  "demo": false,
  "sources": {
-  "betman": "실패: RuntimeError",
+  "betman": "76개 수집",
   "odds_api": "키 없음"
  },
- "markets": [],
+ "markets": [
+  {
+   "id": "betman:G101:260136:4314",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4314,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-16T09:00+09:00",
+   "home": "워싱턴 위저즈",
+   "away": "휴스턴 로케츠",
+   "market": "WL",
+   "line": null,
+   "odds": {
+    "H": 3.57,
+    "A": 1.15
+   },
+   "analysis": {
+    "p": {
+     "H": 0.1843,
+     "A": 0.8157
+    },
+    "p_betman": {
+     "H": 0.1745,
+     "A": 0.8255
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.8157,
+    "pick_odds": 1.15,
+    "ev": -0.0619,
+    "value_key": "A",
+    "value_ev": -0.0619,
+    "confidence": 62,
+    "upset_risk": 16,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8698,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 3.57,
+    "A": 1.15
+   },
+   "narrative": "시장도 모델도 휴스턴 로케츠 손을 들어준다. 모델 추정 휴스턴 로케츠 확률은 82%, 베트맨 배당 1.15배다. 기대값은 -6.2%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다."
+  },
+  {
+   "id": "betman:G101:260136:4315",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4315,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-16T09:00+09:00",
+   "home": "워싱턴 위저즈",
+   "away": "휴스턴 로케츠",
+   "market": "HANDICAP",
+   "line": 8.5,
+   "odds": {
+    "H": 1.69,
+    "A": 1.79
+   },
+   "analysis": {
+    "p": {
+     "H": 0.5175,
+     "A": 0.4825
+    },
+    "p_betman": {
+     "H": 0.518,
+     "A": 0.482
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.5175,
+    "pick_odds": 1.69,
+    "ev": -0.1255,
+    "value_key": "H",
+    "value_ev": -0.1255,
+    "confidence": 54,
+    "upset_risk": 48,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8693,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.69,
+    "A": 1.79
+   },
+   "narrative": "양쪽 확률이 촘촘하게 붙어 있다. 추정 52%에 배당 1.69배가 걸려 있다. 기대값은 -12.6%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다. 정배가 무너질 여지가 작지 않다."
+  },
+  {
+   "id": "betman:G101:260136:4316",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4316,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-16T09:00+09:00",
+   "home": "워싱턴 위저즈",
+   "away": "휴스턴 로케츠",
+   "market": "OU",
+   "line": 224.5,
+   "odds": {
+    "O": 1.73,
+    "U": 1.75
+   },
+   "analysis": {
+    "p": {
+     "O": 0.5035,
+     "U": 0.4965
+    },
+    "p_betman": {
+     "O": 0.5036,
+     "U": 0.4964
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "O",
+    "pick_prob": 0.5035,
+    "pick_odds": 1.73,
+    "ev": -0.129,
+    "value_key": "O",
+    "value_ev": -0.129,
+    "confidence": 54,
+    "upset_risk": 50,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.87,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 1.73,
+    "U": 1.75
+   },
+   "narrative": "어느 쪽으로도 쉽게 기울지 않는 경기다. 추정 50%에 배당 1.73배가 걸려 있다. 배당 대비 기대값 -12.9%. 조합의 안정 축으로만 쓸 만하다. 정배가 무너질 여지가 작지 않다."
+  },
+  {
+   "id": "betman:G101:260136:4318",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4318,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-16T10:00+09:00",
+   "home": "밀워키 벅스",
+   "away": "애틀랜타 호크스",
+   "market": "WL",
+   "line": null,
+   "odds": {
+    "H": 3.39,
+    "A": 1.17
+   },
+   "analysis": {
+    "p": {
+     "H": 0.2008,
+     "A": 0.7992
+    },
+    "p_betman": {
+     "H": 0.1915,
+     "A": 0.8085
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.7992,
+    "pick_odds": 1.17,
+    "ev": -0.0649,
+    "value_key": "A",
+    "value_ev": -0.0649,
+    "confidence": 62,
+    "upset_risk": 18,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8698,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 3.39,
+    "A": 1.17
+   },
+   "narrative": "애틀랜타 호크스가 우세가 뚜렷하다. 애틀랜타 호크스 쪽 추정 확률 80%. 배당은 1.17배. 다만 기대값은 -6.5%로, 배당이 확률을 충분히 보상하지 못한다. 라인업 발표 후 재확인 권장."
+  },
+  {
+   "id": "betman:G101:260136:4319",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4319,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-16T10:00+09:00",
+   "home": "밀워키 벅스",
+   "away": "애틀랜타 호크스",
+   "market": "HANDICAP",
+   "line": 8.5,
+   "odds": {
+    "H": 1.71,
+    "A": 1.77
+   },
+   "analysis": {
+    "p": {
+     "H": 0.5105,
+     "A": 0.4895
+    },
+    "p_betman": {
+     "H": 0.5108,
+     "A": 0.4892
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.5105,
+    "pick_odds": 1.71,
+    "ev": -0.1271,
+    "value_key": "H",
+    "value_ev": -0.1271,
+    "confidence": 54,
+    "upset_risk": 49,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8697,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.71,
+    "A": 1.77
+   },
+   "narrative": "전력 차가 크지 않아 결과 예측이 까다롭다. 모델 추정 밀워키 벅스 확률은 51%, 베트맨 배당 1.71배다. 다만 기대값은 -12.7%로, 배당이 확률을 충분히 보상하지 못한다. 이변 가능성을 열어둬야 한다."
+  },
+  {
+   "id": "betman:G101:260136:4320",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4320,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-16T10:00+09:00",
+   "home": "밀워키 벅스",
+   "away": "애틀랜타 호크스",
+   "market": "OU",
+   "line": 234.5,
+   "odds": {
+    "O": 1.77,
+    "U": 1.71
+   },
+   "analysis": {
+    "p": {
+     "O": 0.4895,
+     "U": 0.5105
+    },
+    "p_betman": {
+     "O": 0.4892,
+     "U": 0.5108
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "U",
+    "pick_prob": 0.5105,
+    "pick_odds": 1.71,
+    "ev": -0.1271,
+    "value_key": "U",
+    "value_ev": -0.1271,
+    "confidence": 54,
+    "upset_risk": 49,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8697,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 1.77,
+    "U": 1.71
+   },
+   "narrative": "양쪽 확률이 촘촘하게 붙어 있다. 추정 51%에 배당 1.71배가 걸려 있다. 기대값은 -12.7%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다. 이변 가능성을 열어둬야 한다."
+  },
+  {
+   "id": "betman:G101:260136:4322",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4322,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-16T11:00+09:00",
+   "home": "새크라멘토 킹스",
+   "away": "오클라호마시티 썬더",
+   "market": "WL",
+   "line": null,
+   "odds": {
+    "H": 3.78,
+    "A": 1.13
+   },
+   "analysis": {
+    "p": {
+     "H": 0.167,
+     "A": 0.833
+    },
+    "p_betman": {
+     "H": 0.1567,
+     "A": 0.8433
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.833,
+    "pick_odds": 1.13,
+    "ev": -0.0587,
+    "value_key": "A",
+    "value_ev": -0.0587,
+    "confidence": 62,
+    "upset_risk": 14,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8699,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 3.78,
+    "A": 1.13
+   },
+   "narrative": "시장도 모델도 오클라호마시티 썬더 손을 들어준다. 모델 추정 오클라호마시티 썬더 확률은 83%, 베트맨 배당 1.13배다. 배당 대비 기대값 -5.9%. 조합의 안정 축으로만 쓸 만하다. 라인업 발표 후 재확인 권장."
+  },
+  {
+   "id": "betman:G101:260136:4326",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4326,
+   "sport": "basketball",
+   "league": "KBL",
+   "kickoff": "2026-11-16T19:00+09:00",
+   "home": "서울SK 나이츠",
+   "away": "울산현대모비스 피버스",
+   "market": "WL",
+   "line": null,
+   "odds": {
+    "H": 1.28,
+    "A": 2.72
+   },
+   "analysis": {
+    "p": {
+     "H": 0.7196,
+     "A": 0.2804
+    },
+    "p_betman": {
+     "H": 0.7264,
+     "A": 0.2736
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.7196,
+    "pick_odds": 1.28,
+    "ev": -0.079,
+    "value_key": "H",
+    "value_ev": -0.079,
+    "confidence": 62,
+    "upset_risk": 26,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8704,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.28,
+    "A": 2.72
+   },
+   "narrative": "시장도 모델도 서울SK 나이츠 손을 들어준다. 추정 72%에 배당 1.28배가 걸려 있다. 다만 기대값은 -7.9%로, 배당이 확률을 충분히 보상하지 못한다. 라인업 발표 후 재확인 권장."
+  },
+  {
+   "id": "betman:G101:260136:4328",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4328,
+   "sport": "basketball",
+   "league": "KBL",
+   "kickoff": "2026-11-16T19:00+09:00",
+   "home": "서울SK 나이츠",
+   "away": "울산현대모비스 피버스",
+   "market": "HANDICAP",
+   "line": -6.5,
+   "odds": {
+    "H": 1.83,
+    "A": 1.66
+   },
+   "analysis": {
+    "p": {
+     "H": 0.4705,
+     "A": 0.5295
+    },
+    "p_betman": {
+     "H": 0.4695,
+     "A": 0.5305
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.5295,
+    "pick_odds": 1.66,
+    "ev": -0.121,
+    "value_key": "A",
+    "value_ev": -0.121,
+    "confidence": 55,
+    "upset_risk": 47,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8704,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.83,
+    "A": 1.66
+   },
+   "narrative": "전력 차가 크지 않아 결과 예측이 까다롭다. 울산현대모비스 피버스 쪽 추정 확률 53%. 배당은 1.66배. 배당 대비 기대값 -12.1%. 조합의 안정 축으로만 쓸 만하다. 이변 가능성을 열어둬야 한다. 선발 명단이 나오면 판단을 다시 볼 것."
+  },
+  {
+   "id": "betman:G101:260136:4331",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4331,
+   "sport": "basketball",
+   "league": "WKBL",
+   "kickoff": "2026-11-16T19:00+09:00",
+   "home": "하나은행",
+   "away": "우리은행 우리WON",
+   "market": "WL",
+   "line": null,
+   "odds": {
+    "H": 2.52,
+    "A": 1.33
+   },
+   "analysis": {
+    "p": {
+     "H": 0.3119,
+     "A": 0.6881
+    },
+    "p_betman": {
+     "H": 0.306,
+     "A": 0.694
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.6881,
+    "pick_odds": 1.33,
+    "ev": -0.0848,
+    "value_key": "A",
+    "value_ev": -0.0848,
+    "confidence": 62,
+    "upset_risk": 30,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8705,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 2.52,
+    "A": 1.33
+   },
+   "narrative": "숫자만 놓고 보면 우리은행 우리WON 쪽으로 기운 경기다. 모델 추정 우리은행 우리WON 확률은 69%, 베트맨 배당 1.33배다. 다만 기대값은 -8.5%로, 배당이 확률을 충분히 보상하지 못한다."
+  },
+  {
+   "id": "betman:G101:260136:4333",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4333,
+   "sport": "basketball",
+   "league": "WKBL",
+   "kickoff": "2026-11-16T19:00+09:00",
+   "home": "하나은행",
+   "away": "우리은행 우리WON",
+   "market": "HANDICAP",
+   "line": 4.5,
+   "odds": {
+    "H": 1.77,
+    "A": 1.71
+   },
+   "analysis": {
+    "p": {
+     "H": 0.4895,
+     "A": 0.5105
+    },
+    "p_betman": {
+     "H": 0.4892,
+     "A": 0.5108
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.5105,
+    "pick_odds": 1.71,
+    "ev": -0.1271,
+    "value_key": "A",
+    "value_ev": -0.1271,
+    "confidence": 54,
+    "upset_risk": 49,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8697,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.77,
+    "A": 1.71
+   },
+   "narrative": "접전 예상. 4쿼터 클러치 싸움이 될 가능성이 높다. 모델 추정 우리은행 우리WON 확률은 51%, 베트맨 배당 1.71배다. 다만 기대값은 -12.7%로, 배당이 확률을 충분히 보상하지 못한다. 정배가 무너질 여지가 작지 않다. 선발 명단이 나오면 판단을 다시 볼 것."
+  },
+  {
+   "id": "betman:G101:260136:4342",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4342,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T00:00+09:00",
+   "home": "페로제도",
+   "away": "몰도바",
+   "market": "1X2",
+   "line": null,
+   "odds": {
+    "H": 1.83,
+    "D": 2.95,
+    "A": 3.8
+   },
+   "analysis": {
+    "p": {
+     "D": 0.2887,
+     "H": 0.4932,
+     "A": 0.2181
+    },
+    "p_betman": {
+     "H": 0.4982,
+     "D": 0.2873,
+     "A": 0.2145
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.4932,
+    "pick_odds": 1.83,
+    "ev": -0.0974,
+    "value_key": "H",
+    "value_ev": -0.0974,
+    "confidence": 62,
+    "upset_risk": 50,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "혼전",
+     "이변 주의"
+    ],
+    "payout_rate": 0.8706,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.83,
+    "D": 2.95,
+    "A": 3.8
+   },
+   "narrative": "페로제도가 반 발 앞선다는 평가다. 추정 49%에 배당 1.83배가 걸려 있다. 배당 대비 기대값 -9.7%. 조합의 안정 축으로만 쓸 만하다. 무승부 변수가 크다."
+  },
+  {
+   "id": "betman:G101:260136:4343",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4343,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T00:00+09:00",
+   "home": "페로제도",
+   "away": "몰도바",
+   "market": "HANDICAP",
+   "line": -1.0,
+   "odds": {
+    "H": 3.65,
+    "D": 3.0,
+    "A": 1.84
+   },
+   "analysis": {
+    "p": {
+     "D": 0.2828,
+     "H": 0.2275,
+     "A": 0.4897
+    },
+    "p_betman": {
+     "H": 0.2242,
+     "D": 0.2812,
+     "A": 0.4945
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.4897,
+    "pick_odds": 1.84,
+    "ev": -0.0989,
+    "value_key": "A",
+    "value_ev": -0.0989,
+    "confidence": 62,
+    "upset_risk": 50,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "혼전",
+     "이변 주의"
+    ],
+    "payout_rate": 0.869,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 3.65,
+    "D": 3.0,
+    "A": 1.84
+   },
+   "narrative": "근소하게 몰도바 우위. 몰도바 쪽 추정 확률 49%. 배당은 1.84배. 배당 대비 기대값 -9.9%. 조합의 안정 축으로만 쓸 만하다. 무승부 변수가 크다."
+  },
+  {
+   "id": "betman:G101:260136:4344",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4344,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T00:00+09:00",
+   "home": "페로제도",
+   "away": "몰도바",
+   "market": "OU",
+   "line": 2.5,
+   "odds": {
+    "O": 2.02,
+    "U": 1.53
+   },
+   "analysis": {
+    "p": {
+     "O": 0.4163,
+     "U": 0.5837
+    },
+    "p_betman": {
+     "O": 0.4137,
+     "U": 0.5863
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "U",
+    "pick_prob": 0.5837,
+    "pick_odds": 1.53,
+    "ev": -0.1069,
+    "value_key": "U",
+    "value_ev": -0.1069,
+    "confidence": 59,
+    "upset_risk": 41,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8706,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 2.02,
+    "U": 1.53
+   },
+   "narrative": "언더가 반 발 앞선다는 평가다. 언더 쪽 추정 확률 58%. 배당은 1.53배. 기대값은 -10.7%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다."
+  },
+  {
+   "id": "betman:G101:260136:4346",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4346,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T00:00+09:00",
+   "home": "카자흐스탄",
+   "away": "슬로바키아",
+   "market": "1X2",
+   "line": null,
+   "odds": {
+    "H": 3.5,
+    "D": 3.15,
+    "A": 1.83
+   },
+   "analysis": {
+    "p": {
+     "D": 0.2682,
+     "H": 0.2387,
+     "A": 0.4931
+    },
+    "p_betman": {
+     "H": 0.2357,
+     "D": 0.2662,
+     "A": 0.4981
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.4931,
+    "pick_odds": 1.83,
+    "ev": -0.0976,
+    "value_key": "A",
+    "value_ev": -0.0976,
+    "confidence": 62,
+    "upset_risk": 50,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "혼전",
+     "이변 주의"
+    ],
+    "payout_rate": 0.8699,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 3.5,
+    "D": 3.15,
+    "A": 1.83
+   },
+   "narrative": "슬로바키아 쪽으로 약간 기운다. 슬로바키아 쪽 추정 확률 49%. 배당은 1.83배. 배당 대비 기대값 -9.8%. 조합의 안정 축으로만 쓸 만하다. 무승부 변수가 크다. 라인업 발표 후 재확인 권장."
+  },
+  {
+   "id": "betman:G101:260136:4347",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4347,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T00:00+09:00",
+   "home": "카자흐스탄",
+   "away": "슬로바키아",
+   "market": "HANDICAP",
+   "line": 1.0,
+   "odds": {
+    "H": 1.84,
+    "D": 3.3,
+    "A": 3.3
+   },
+   "analysis": {
+    "p": {
+     "D": 0.2549,
+     "H": 0.4902,
+     "A": 0.2549
+    },
+    "p_betman": {
+     "H": 0.4951,
+     "D": 0.2525,
+     "A": 0.2525
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.4902,
+    "pick_odds": 1.84,
+    "ev": -0.098,
+    "value_key": "H",
+    "value_ev": -0.098,
+    "confidence": 62,
+    "upset_risk": 50,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "혼전",
+     "이변 주의"
+    ],
+    "payout_rate": 0.8699,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.84,
+    "D": 3.3,
+    "A": 3.3
+   },
+   "narrative": "카자흐스탄 쪽으로 약간 기운다. 추정 49%에 배당 1.84배가 걸려 있다. 기대값은 -9.8%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다. 무승부 변수가 크다."
+  },
+  {
+   "id": "betman:G101:260136:4348",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4348,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T00:00+09:00",
+   "home": "카자흐스탄",
+   "away": "슬로바키아",
+   "market": "OU",
+   "line": 2.5,
+   "odds": {
+    "O": 1.79,
+    "U": 1.69
+   },
+   "analysis": {
+    "p": {
+     "O": 0.4825,
+     "U": 0.5175
+    },
+    "p_betman": {
+     "O": 0.482,
+     "U": 0.518
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "U",
+    "pick_prob": 0.5175,
+    "pick_odds": 1.69,
+    "ev": -0.1255,
+    "value_key": "U",
+    "value_ev": -0.1255,
+    "confidence": 54,
+    "upset_risk": 48,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8693,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 1.79,
+    "U": 1.69
+   },
+   "narrative": "전력 차가 크지 않아 결과 예측이 까다롭다. 추정 52%에 배당 1.69배가 걸려 있다. 배당 대비 기대값 -12.6%. 조합의 안정 축으로만 쓸 만하다. 이변 가능성을 열어둬야 한다. 라인업 발표 후 재확인 권장."
+  },
+  {
+   "id": "betman:G101:260136:4350",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4350,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T02:00+09:00",
+   "home": "아이슬란드",
+   "away": "룩셈부르크",
+   "market": "1X2",
+   "line": null,
+   "odds": {
+    "H": 1.13,
+    "D": 5.9,
+    "A": 10.5
+   },
+   "analysis": {
+    "p": {
+     "D": 0.1067,
+     "H": 0.8376,
+     "A": 0.0557
+    },
+    "p_betman": {
+     "H": 0.8532,
+     "D": 0.0997,
+     "A": 0.0471
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.8376,
+    "pick_odds": 1.13,
+    "ev": -0.0535,
+    "value_key": "H",
+    "value_ev": -0.0535,
+    "confidence": 62,
+    "upset_risk": 13,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8698,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.13,
+    "D": 5.9,
+    "A": 10.5
+   },
+   "narrative": "아이슬란드가 우세가 뚜렷하다. 아이슬란드 쪽 추정 확률 84%. 배당은 1.13배. 배당 대비 기대값 -5.3%. 조합의 안정 축으로만 쓸 만하다. 선발 명단이 나오면 판단을 다시 볼 것."
+  },
+  {
+   "id": "betman:G101:260136:4351",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4351,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T02:00+09:00",
+   "home": "아이슬란드",
+   "away": "룩셈부르크",
+   "market": "HANDICAP",
+   "line": -1.0,
+   "odds": {
+    "H": 1.58,
+    "D": 3.85,
+    "A": 3.9
+   },
+   "analysis": {
+    "p": {
+     "D": 0.2118,
+     "H": 0.5794,
+     "A": 0.2088
+    },
+    "p_betman": {
+     "H": 0.587,
+     "D": 0.208,
+     "A": 0.2049
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.5794,
+    "pick_odds": 1.58,
+    "ev": -0.0846,
+    "value_key": "H",
+    "value_ev": -0.0846,
+    "confidence": 62,
+    "upset_risk": 40,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8703,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.58,
+    "D": 3.85,
+    "A": 3.9
+   },
+   "narrative": "아이슬란드가 한 수 위로 평가된다. 모델 추정 아이슬란드 확률은 58%, 베트맨 배당 1.58배다. 다만 기대값은 -8.5%로, 배당이 확률을 충분히 보상하지 못한다."
+  },
+  {
+   "id": "betman:G101:260136:4352",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4352,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T02:00+09:00",
+   "home": "아이슬란드",
+   "away": "룩셈부르크",
+   "market": "OU",
+   "line": 2.5,
+   "odds": {
+    "O": 1.49,
+    "U": 2.09
+   },
+   "analysis": {
+    "p": {
+     "O": 0.6019,
+     "U": 0.3981
+    },
+    "p_betman": {
+     "O": 0.605,
+     "U": 0.395
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "O",
+    "pick_prob": 0.6019,
+    "pick_odds": 1.49,
+    "ev": -0.1032,
+    "value_key": "O",
+    "value_ev": -0.1032,
+    "confidence": 60,
+    "upset_risk": 39,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8699,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 1.49,
+    "U": 2.09
+   },
+   "narrative": "오버 쪽으로 약간 기운다. 모델 추정 오버 확률은 60%, 베트맨 배당 1.49배다. 기대값은 -10.3%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다. 라인업 발표 후 재확인 권장."
+  },
+  {
+   "id": "betman:G101:260136:4354",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4354,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T02:00+09:00",
+   "home": "에스토니아",
+   "away": "불가리아",
+   "market": "1X2",
+   "line": null,
+   "odds": {
+    "H": 1.88,
+    "D": 2.95,
+    "A": 3.6
+   },
+   "analysis": {
+    "p": {
+     "D": 0.2891,
+     "H": 0.4789,
+     "A": 0.2319
+    },
+    "p_betman": {
+     "H": 0.4834,
+     "D": 0.2878,
+     "A": 0.2288
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.4789,
+    "pick_odds": 1.88,
+    "ev": -0.0996,
+    "value_key": "H",
+    "value_ev": -0.0996,
+    "confidence": 62,
+    "upset_risk": 51,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "혼전",
+     "이변 주의"
+    ],
+    "payout_rate": 0.8706,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.88,
+    "D": 2.95,
+    "A": 3.6
+   },
+   "narrative": "에스토니아가 반 발 앞선다는 평가다. 모델 추정 에스토니아 확률은 48%, 베트맨 배당 1.88배다. 다만 기대값은 -10.0%로, 배당이 확률을 충분히 보상하지 못한다. 세 갈래 결과가 모두 열려 있다."
+  },
+  {
+   "id": "betman:G101:260136:4355",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4355,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T02:00+09:00",
+   "home": "에스토니아",
+   "away": "불가리아",
+   "market": "HANDICAP",
+   "line": -1.0,
+   "odds": {
+    "H": 3.8,
+    "D": 3.25,
+    "A": 1.73
+   },
+   "analysis": {
+    "p": {
+     "D": 0.2582,
+     "H": 0.2172,
+     "A": 0.5246
+    },
+    "p_betman": {
+     "H": 0.2136,
+     "D": 0.2559,
+     "A": 0.5305
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.5246,
+    "pick_odds": 1.73,
+    "ev": -0.0924,
+    "value_key": "A",
+    "value_ev": -0.0924,
+    "confidence": 62,
+    "upset_risk": 46,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8704,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 3.8,
+    "D": 3.25,
+    "A": 1.73
+   },
+   "narrative": "불가리아가 반 발 앞선다는 평가다. 추정 52%에 배당 1.73배가 걸려 있다. 다만 기대값은 -9.2%로, 배당이 확률을 충분히 보상하지 못한다. 이변 가능성을 열어둬야 한다. 라인업 발표 후 재확인 권장."
+  },
+  {
+   "id": "betman:G101:260136:4356",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4356,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T02:00+09:00",
+   "home": "에스토니아",
+   "away": "불가리아",
+   "market": "OU",
+   "line": 2.5,
+   "odds": {
+    "O": 2.09,
+    "U": 1.49
+   },
+   "analysis": {
+    "p": {
+     "O": 0.3981,
+     "U": 0.6019
+    },
+    "p_betman": {
+     "O": 0.395,
+     "U": 0.605
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "U",
+    "pick_prob": 0.6019,
+    "pick_odds": 1.49,
+    "ev": -0.1032,
+    "value_key": "U",
+    "value_ev": -0.1032,
+    "confidence": 60,
+    "upset_risk": 39,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8699,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 2.09,
+    "U": 1.49
+   },
+   "narrative": "언더가 반 발 앞선다는 평가다. 추정 60%에 배당 1.49배가 걸려 있다. 배당 대비 기대값 -10.3%. 조합의 안정 축으로만 쓸 만하다. 선발 명단이 나오면 판단을 다시 볼 것."
+  },
+  {
+   "id": "betman:G101:260136:4358",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4358,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T02:00+09:00",
+   "home": "리투아니아",
+   "away": "리히텐슈타인",
+   "market": "1X2",
+   "line": null,
+   "odds": {
+    "H": 1.06,
+    "D": 6.1,
+    "A": 24.0
+   },
+   "analysis": {
+    "p": {
+     "D": 0.0795,
+     "H": 0.901,
+     "A": 0.0194
+    },
+    "p_betman": {
+     "H": 0.9186,
+     "D": 0.0717,
+     "A": 0.0097
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.901,
+    "pick_odds": 1.06,
+    "ev": -0.0449,
+    "value_key": "H",
+    "value_ev": -0.0449,
+    "confidence": 62,
+    "upset_risk": 7,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8703,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.06,
+    "D": 6.1,
+    "A": 24.0
+   },
+   "narrative": "리투아니아가 한 수 위로 평가된다. 리투아니아 쪽 추정 확률 90%. 배당은 1.06배. 기대값은 -4.5%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다."
+  },
+  {
+   "id": "betman:G101:260136:4359",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4359,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T02:00+09:00",
+   "home": "리투아니아",
+   "away": "리히텐슈타인",
+   "market": "HANDICAP",
+   "line": -1.0,
+   "odds": {
+    "H": 1.44,
+    "D": 3.5,
+    "A": 5.9
+   },
+   "analysis": {
+    "p": {
+     "D": 0.2306,
+     "H": 0.6404,
+     "A": 0.129
+    },
+    "p_betman": {
+     "H": 0.6498,
+     "D": 0.2275,
+     "A": 0.1227
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.6404,
+    "pick_odds": 1.44,
+    "ev": -0.0779,
+    "value_key": "H",
+    "value_ev": -0.0779,
+    "confidence": 62,
+    "upset_risk": 33,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8698,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.44,
+    "D": 3.5,
+    "A": 5.9
+   },
+   "narrative": "리투아니아가 우세가 뚜렷하다. 추정 64%에 배당 1.44배가 걸려 있다. 배당 대비 기대값 -7.8%. 조합의 안정 축으로만 쓸 만하다."
+  },
+  {
+   "id": "betman:G101:260136:4360",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4360,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T02:00+09:00",
+   "home": "리투아니아",
+   "away": "리히텐슈타인",
+   "market": "HANDICAP",
+   "line": -2.0,
+   "odds": {
+    "H": 2.26,
+    "D": 3.1,
+    "A": 2.6
+   },
+   "analysis": {
+    "p": {
+     "D": 0.275,
+     "H": 0.3908,
+     "A": 0.3342
+    },
+    "p_betman": {
+     "H": 0.3925,
+     "D": 0.2732,
+     "A": 0.3343
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.3908,
+    "pick_odds": 2.26,
+    "ev": -0.1169,
+    "value_key": "H",
+    "value_ev": -0.1169,
+    "confidence": 57,
+    "upset_risk": 61,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "혼전",
+     "이변 주의"
+    ],
+    "payout_rate": 0.8698,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 2.26,
+    "D": 3.1,
+    "A": 2.6
+   },
+   "narrative": "양쪽 확률이 촘촘하게 붙어 있다. 모델 추정 리투아니아 확률은 39%, 베트맨 배당 2.26배다. 다만 기대값은 -11.7%로, 배당이 확률을 충분히 보상하지 못한다. 무승부 변수가 크다."
+  },
+  {
+   "id": "betman:G101:260136:4361",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4361,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T02:00+09:00",
+   "home": "리투아니아",
+   "away": "리히텐슈타인",
+   "market": "HANDICAP",
+   "line": -3.5,
+   "odds": {
+    "H": 3.78,
+    "A": 1.13
+   },
+   "analysis": {
+    "p": {
+     "H": 0.167,
+     "A": 0.833
+    },
+    "p_betman": {
+     "H": 0.1567,
+     "A": 0.8433
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.833,
+    "pick_odds": 1.13,
+    "ev": -0.0587,
+    "value_key": "A",
+    "value_ev": -0.0587,
+    "confidence": 62,
+    "upset_risk": 14,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8699,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 3.78,
+    "A": 1.13
+   },
+   "narrative": "시장도 모델도 리히텐슈타인 손을 들어준다. 모델 추정 리히텐슈타인 확률은 83%, 베트맨 배당 1.13배다. 다만 기대값은 -5.9%로, 배당이 확률을 충분히 보상하지 못한다."
+  },
+  {
+   "id": "betman:G101:260136:4362",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4362,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T02:00+09:00",
+   "home": "리투아니아",
+   "away": "리히텐슈타인",
+   "market": "OU",
+   "line": 2.5,
+   "odds": {
+    "O": 1.63,
+    "U": 1.87
+   },
+   "analysis": {
+    "p": {
+     "O": 0.5415,
+     "U": 0.4585
+    },
+    "p_betman": {
+     "O": 0.5428,
+     "U": 0.4572
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "O",
+    "pick_prob": 0.5415,
+    "pick_odds": 1.63,
+    "ev": -0.1173,
+    "value_key": "O",
+    "value_ev": -0.1173,
+    "confidence": 56,
+    "upset_risk": 46,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8709,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 1.63,
+    "U": 1.87
+   },
+   "narrative": "양쪽 확률이 촘촘하게 붙어 있다. 모델 추정 오버 확률은 54%, 베트맨 배당 1.63배다. 배당 대비 기대값 -11.7%. 조합의 안정 축으로만 쓸 만하다. 정배가 무너질 여지가 작지 않다. 선발 명단이 나오면 판단을 다시 볼 것."
+  },
+  {
+   "id": "betman:G101:260136:4364",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4364,
+   "sport": "soccer",
+   "league": "남자축구 국제친선경기",
+   "kickoff": "2026-11-17T03:00+09:00",
+   "home": "안도라",
+   "away": "아제르바이잔",
+   "market": "1X2",
+   "line": null,
+   "odds": {
+    "H": 4.3,
+    "D": 2.95,
+    "A": 1.73
+   },
+   "analysis": {
+    "p": {
+     "D": 0.287,
+     "H": 0.189,
+     "A": 0.524
+    },
+    "p_betman": {
+     "H": 0.1845,
+     "D": 0.2855,
+     "A": 0.5299
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.524,
+    "pick_odds": 1.73,
+    "ev": -0.0934,
+    "value_key": "A",
+    "value_ev": -0.0934,
+    "confidence": 62,
+    "upset_risk": 46,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8699,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 4.3,
+    "D": 2.95,
+    "A": 1.73
+   },
+   "narrative": "아제르바이잔이 반 발 앞선다는 평가다. 모델 추정 아제르바이잔 확률은 52%, 베트맨 배당 1.73배다. 기대값은 -9.3%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다. 이변 가능성을 열어둬야 한다."
+  },
+  {
+   "id": "betman:G101:260136:4365",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4365,
+   "sport": "soccer",
+   "league": "남자축구 국제친선경기",
+   "kickoff": "2026-11-17T03:00+09:00",
+   "home": "안도라",
+   "away": "아제르바이잔",
+   "market": "HANDICAP",
+   "line": 1.0,
+   "odds": {
+    "H": 1.88,
+    "D": 2.95,
+    "A": 3.6
+   },
+   "analysis": {
+    "p": {
+     "D": 0.2891,
+     "H": 0.4789,
+     "A": 0.2319
+    },
+    "p_betman": {
+     "H": 0.4834,
+     "D": 0.2878,
+     "A": 0.2288
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.4789,
+    "pick_odds": 1.88,
+    "ev": -0.0996,
+    "value_key": "H",
+    "value_ev": -0.0996,
+    "confidence": 62,
+    "upset_risk": 51,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "혼전",
+     "이변 주의"
+    ],
+    "payout_rate": 0.8706,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.88,
+    "D": 2.95,
+    "A": 3.6
+   },
+   "narrative": "안도라 쪽으로 약간 기운다. 안도라 쪽 추정 확률 48%. 배당은 1.88배. 기대값은 -10.0%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다. 세 갈래 결과가 모두 열려 있다. 선발 명단이 나오면 판단을 다시 볼 것."
+  },
+  {
+   "id": "betman:G101:260136:4366",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4366,
+   "sport": "soccer",
+   "league": "남자축구 국제친선경기",
+   "kickoff": "2026-11-17T03:00+09:00",
+   "home": "안도라",
+   "away": "아제르바이잔",
+   "market": "OU",
+   "line": 2.5,
+   "odds": {
+    "O": 2.25,
+    "U": 1.42
+   },
+   "analysis": {
+    "p": {
+     "O": 0.3626,
+     "U": 0.6374
+    },
+    "p_betman": {
+     "O": 0.3584,
+     "U": 0.6416
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "U",
+    "pick_prob": 0.6374,
+    "pick_odds": 1.42,
+    "ev": -0.0949,
+    "value_key": "U",
+    "value_ev": -0.0949,
+    "confidence": 62,
+    "upset_risk": 35,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8706,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 2.25,
+    "U": 1.42
+   },
+   "narrative": "숫자만 놓고 보면 언더 쪽으로 기운 경기다. 추정 64%에 배당 1.42배가 걸려 있다. 배당 대비 기대값 -9.5%. 조합의 안정 축으로만 쓸 만하다. 라인업 발표 후 재확인 권장."
+  },
+  {
+   "id": "betman:G101:260136:4368",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4368,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T04:45+09:00",
+   "home": "지브롤터",
+   "away": "몰타",
+   "market": "1X2",
+   "line": null,
+   "odds": {
+    "H": 6.4,
+    "D": 3.2,
+    "A": 1.47
+   },
+   "analysis": {
+    "p": {
+     "D": 0.2559,
+     "H": 0.1185,
+     "A": 0.6256
+    },
+    "p_betman": {
+     "H": 0.1119,
+     "D": 0.2535,
+     "A": 0.6347
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.6256,
+    "pick_odds": 1.47,
+    "ev": -0.0803,
+    "value_key": "A",
+    "value_ev": -0.0803,
+    "confidence": 62,
+    "upset_risk": 35,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8703,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 6.4,
+    "D": 3.2,
+    "A": 1.47
+   },
+   "narrative": "몰타가 한 수 위로 평가된다. 추정 63%에 배당 1.47배가 걸려 있다. 다만 기대값은 -8.0%로, 배당이 확률을 충분히 보상하지 못한다."
+  },
+  {
+   "id": "betman:G101:260136:4369",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4369,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T04:45+09:00",
+   "home": "지브롤터",
+   "away": "몰타",
+   "market": "HANDICAP",
+   "line": 1.0,
+   "odds": {
+    "H": 2.37,
+    "D": 2.85,
+    "A": 2.65
+   },
+   "analysis": {
+    "p": {
+     "D": 0.302,
+     "H": 0.3707,
+     "A": 0.3274
+    },
+    "p_betman": {
+     "H": 0.3719,
+     "D": 0.301,
+     "A": 0.3272
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.3707,
+    "pick_odds": 2.37,
+    "ev": -0.1215,
+    "value_key": "H",
+    "value_ev": -0.1215,
+    "confidence": 56,
+    "upset_risk": 63,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "혼전",
+     "이변 주의"
+    ],
+    "payout_rate": 0.8694,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 2.37,
+    "D": 2.85,
+    "A": 2.65
+   },
+   "narrative": "어느 쪽으로도 쉽게 기울지 않는 경기다. 지브롤터 쪽 추정 확률 37%. 배당은 2.37배. 배당 대비 기대값 -12.2%. 조합의 안정 축으로만 쓸 만하다. 무승부 변수가 크다."
+  },
+  {
+   "id": "betman:G101:260136:4370",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4370,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T04:45+09:00",
+   "home": "지브롤터",
+   "away": "몰타",
+   "market": "OU",
+   "line": 2.5,
+   "odds": {
+    "O": 2.27,
+    "U": 1.41
+   },
+   "analysis": {
+    "p": {
+     "O": 0.3578,
+     "U": 0.6422
+    },
+    "p_betman": {
+     "O": 0.3534,
+     "U": 0.6466
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "U",
+    "pick_prob": 0.6422,
+    "pick_odds": 1.41,
+    "ev": -0.0945,
+    "value_key": "U",
+    "value_ev": -0.0945,
+    "confidence": 62,
+    "upset_risk": 35,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8698,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 2.27,
+    "U": 1.41
+   },
+   "narrative": "언더가 우세가 뚜렷하다. 모델 추정 언더 확률은 64%, 베트맨 배당 1.41배다. 배당 대비 기대값 -9.4%. 조합의 안정 축으로만 쓸 만하다. 라인업 발표 후 재확인 권장."
+  },
+  {
+   "id": "betman:G101:260136:4372",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4372,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T04:45+09:00",
+   "home": "독일",
+   "away": "네덜란드",
+   "market": "1X2",
+   "line": null,
+   "odds": {
+    "H": 1.8,
+    "D": 3.6,
+    "A": 3.15
+   },
+   "analysis": {
+    "p": {
+     "D": 0.2307,
+     "H": 0.5017,
+     "A": 0.2675
+    },
+    "p_betman": {
+     "H": 0.507,
+     "D": 0.2275,
+     "A": 0.2655
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.5017,
+    "pick_odds": 1.8,
+    "ev": -0.0969,
+    "value_key": "H",
+    "value_ev": -0.0969,
+    "confidence": 62,
+    "upset_risk": 49,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.869,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.8,
+    "D": 3.6,
+    "A": 3.15
+   },
+   "narrative": "독일 쪽으로 약간 기운다. 모델 추정 독일 확률은 50%, 베트맨 배당 1.80배다. 다만 기대값은 -9.7%로, 배당이 확률을 충분히 보상하지 못한다. 정배가 무너질 여지가 작지 않다. 선발 명단이 나오면 판단을 다시 볼 것."
+  },
+  {
+   "id": "betman:G101:260136:4373",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4373,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T04:45+09:00",
+   "home": "독일",
+   "away": "네덜란드",
+   "market": "HANDICAP",
+   "line": -1.0,
+   "odds": {
+    "H": 3.0,
+    "D": 3.6,
+    "A": 1.86
+   },
+   "analysis": {
+    "p": {
+     "D": 0.2318,
+     "H": 0.2836,
+     "A": 0.4846
+    },
+    "p_betman": {
+     "H": 0.2821,
+     "D": 0.2287,
+     "A": 0.4893
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.4846,
+    "pick_odds": 1.86,
+    "ev": -0.0987,
+    "value_key": "A",
+    "value_ev": -0.0987,
+    "confidence": 62,
+    "upset_risk": 51,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "혼전",
+     "이변 주의"
+    ],
+    "payout_rate": 0.8705,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 3.0,
+    "D": 3.6,
+    "A": 1.86
+   },
+   "narrative": "네덜란드 쪽으로 약간 기운다. 추정 48%에 배당 1.86배가 걸려 있다. 다만 기대값은 -9.9%로, 배당이 확률을 충분히 보상하지 못한다. 무승부 변수가 크다. 라인업 발표 후 재확인 권장."
+  },
+  {
+   "id": "betman:G101:260136:4374",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4374,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T04:45+09:00",
+   "home": "독일",
+   "away": "네덜란드",
+   "market": "OU",
+   "line": 3.5,
+   "odds": {
+    "O": 1.79,
+    "U": 1.69
+   },
+   "analysis": {
+    "p": {
+     "O": 0.4825,
+     "U": 0.5175
+    },
+    "p_betman": {
+     "O": 0.482,
+     "U": 0.518
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "U",
+    "pick_prob": 0.5175,
+    "pick_odds": 1.69,
+    "ev": -0.1255,
+    "value_key": "U",
+    "value_ev": -0.1255,
+    "confidence": 54,
+    "upset_risk": 48,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8693,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 1.79,
+    "U": 1.69
+   },
+   "narrative": "어느 쪽으로도 쉽게 기울지 않는 경기다. 모델 추정 언더 확률은 52%, 베트맨 배당 1.69배다. 배당 대비 기대값 -12.6%. 조합의 안정 축으로만 쓸 만하다. 정배가 무너질 여지가 작지 않다. 선발 명단이 나오면 판단을 다시 볼 것."
+  },
+  {
+   "id": "betman:G101:260136:4376",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4376,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T04:45+09:00",
+   "home": "그리스",
+   "away": "세르비아",
+   "market": "1X2",
+   "line": null,
+   "odds": {
+    "H": 1.36,
+    "D": 3.95,
+    "A": 6.2
+   },
+   "analysis": {
+    "p": {
+     "D": 0.1982,
+     "H": 0.682,
+     "A": 0.1199
+    },
+    "p_betman": {
+     "H": 0.6928,
+     "D": 0.194,
+     "A": 0.1133
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.682,
+    "pick_odds": 1.36,
+    "ev": -0.0725,
+    "value_key": "H",
+    "value_ev": -0.0725,
+    "confidence": 62,
+    "upset_risk": 29,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8698,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.36,
+    "D": 3.95,
+    "A": 6.2
+   },
+   "narrative": "시장도 모델도 그리스 손을 들어준다. 추정 68%에 배당 1.36배가 걸려 있다. 배당 대비 기대값 -7.2%. 조합의 안정 축으로만 쓸 만하다."
+  },
+  {
+   "id": "betman:G101:260136:4377",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4377,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T04:45+09:00",
+   "home": "그리스",
+   "away": "세르비아",
+   "market": "HANDICAP",
+   "line": -1.0,
+   "odds": {
+    "H": 2.11,
+    "D": 3.2,
+    "A": 2.75
+   },
+   "analysis": {
+    "p": {
+     "D": 0.265,
+     "H": 0.4215,
+     "A": 0.3135
+    },
+    "p_betman": {
+     "H": 0.4242,
+     "D": 0.2629,
+     "A": 0.3129
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.4215,
+    "pick_odds": 2.11,
+    "ev": -0.1107,
+    "value_key": "H",
+    "value_ev": -0.1107,
+    "confidence": 59,
+    "upset_risk": 57,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "혼전",
+     "이변 주의"
+    ],
+    "payout_rate": 0.8695,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 2.11,
+    "D": 3.2,
+    "A": 2.75
+   },
+   "narrative": "양쪽 확률이 촘촘하게 붙어 있다. 모델 추정 그리스 확률은 42%, 베트맨 배당 2.11배다. 배당 대비 기대값 -11.1%. 조합의 안정 축으로만 쓸 만하다. 무승부 변수가 크다."
+  },
+  {
+   "id": "betman:G101:260136:4378",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4378,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T04:45+09:00",
+   "home": "그리스",
+   "away": "세르비아",
+   "market": "OU",
+   "line": 2.5,
+   "odds": {
+    "O": 1.5,
+    "U": 2.07
+   },
+   "analysis": {
+    "p": {
+     "O": 0.5971,
+     "U": 0.4029
+    },
+    "p_betman": {
+     "O": 0.6001,
+     "U": 0.3999
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "O",
+    "pick_prob": 0.5971,
+    "pick_odds": 1.5,
+    "ev": -0.1044,
+    "value_key": "O",
+    "value_ev": -0.1044,
+    "confidence": 60,
+    "upset_risk": 40,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8697,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 1.5,
+    "U": 2.07
+   },
+   "narrative": "오버 쪽으로 약간 기운다. 추정 60%에 배당 1.50배가 걸려 있다. 다만 기대값은 -10.4%로, 배당이 확률을 충분히 보상하지 못한다. 선발 명단이 나오면 판단을 다시 볼 것."
+  },
+  {
+   "id": "betman:G101:260136:4380",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4380,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T04:45+09:00",
+   "home": "스위스",
+   "away": "스코틀랜드",
+   "market": "1X2",
+   "line": null,
+   "odds": {
+    "H": 1.58,
+    "D": 3.5,
+    "A": 4.35
+   },
+   "analysis": {
+    "p": {
+     "D": 0.2355,
+     "H": 0.5794,
+     "A": 0.1851
+    },
+    "p_betman": {
+     "H": 0.587,
+     "D": 0.2325,
+     "A": 0.1805
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.5794,
+    "pick_odds": 1.58,
+    "ev": -0.0845,
+    "value_key": "H",
+    "value_ev": -0.0845,
+    "confidence": 62,
+    "upset_risk": 40,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8707,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.58,
+    "D": 3.5,
+    "A": 4.35
+   },
+   "narrative": "시장도 모델도 스위스 손을 들어준다. 추정 58%에 배당 1.58배가 걸려 있다. 배당 대비 기대값 -8.5%. 조합의 안정 축으로만 쓸 만하다."
+  },
+  {
+   "id": "betman:G101:260136:4381",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4381,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T04:45+09:00",
+   "home": "스위스",
+   "away": "스코틀랜드",
+   "market": "HANDICAP",
+   "line": -1.0,
+   "odds": {
+    "H": 2.85,
+    "D": 3.25,
+    "A": 2.04
+   },
+   "analysis": {
+    "p": {
+     "D": 0.2607,
+     "H": 0.3015,
+     "A": 0.4379
+    },
+    "p_betman": {
+     "H": 0.3005,
+     "D": 0.2584,
+     "A": 0.4411
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.4379,
+    "pick_odds": 2.04,
+    "ev": -0.1068,
+    "value_key": "A",
+    "value_ev": -0.1068,
+    "confidence": 60,
+    "upset_risk": 56,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "혼전",
+     "이변 주의"
+    ],
+    "payout_rate": 0.8705,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 2.85,
+    "D": 3.25,
+    "A": 2.04
+   },
+   "narrative": "전력 차가 크지 않아 결과 예측이 까다롭다. 추정 44%에 배당 2.04배가 걸려 있다. 배당 대비 기대값 -10.7%. 조합의 안정 축으로만 쓸 만하다. 무승부 변수가 크다. 라인업 발표 후 재확인 권장."
+  },
+  {
+   "id": "betman:G101:260136:4382",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4382,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T04:45+09:00",
+   "home": "스위스",
+   "away": "스코틀랜드",
+   "market": "HANDICAP",
+   "line": -2.0,
+   "odds": {
+    "H": 5.8,
+    "D": 4.55,
+    "A": 1.32
+   },
+   "analysis": {
+    "p": {
+     "D": 0.1674,
+     "H": 0.1276,
+     "A": 0.7051
+    },
+    "p_betman": {
+     "H": 0.1212,
+     "D": 0.1622,
+     "A": 0.7166
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.7051,
+    "pick_odds": 1.32,
+    "ev": -0.0693,
+    "value_key": "A",
+    "value_ev": -0.0693,
+    "confidence": 62,
+    "upset_risk": 26,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8697,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 5.8,
+    "D": 4.55,
+    "A": 1.32
+   },
+   "narrative": "스코틀랜드가 한 수 위로 평가된다. 모델 추정 스코틀랜드 확률은 71%, 베트맨 배당 1.32배다. 배당 대비 기대값 -6.9%. 조합의 안정 축으로만 쓸 만하다. 라인업 발표 후 재확인 권장."
+  },
+  {
+   "id": "betman:G101:260136:4384",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4384,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T04:45+09:00",
+   "home": "스위스",
+   "away": "스코틀랜드",
+   "market": "OU",
+   "line": 2.5,
+   "odds": {
+    "O": 1.7,
+    "U": 1.78
+   },
+   "analysis": {
+    "p": {
+     "O": 0.514,
+     "U": 0.486
+    },
+    "p_betman": {
+     "O": 0.5144,
+     "U": 0.4856
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "O",
+    "pick_prob": 0.514,
+    "pick_odds": 1.7,
+    "ev": -0.1263,
+    "value_key": "O",
+    "value_ev": -0.1263,
+    "confidence": 54,
+    "upset_risk": 49,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8695,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 1.7,
+    "U": 1.78
+   },
+   "narrative": "어느 쪽으로도 쉽게 기울지 않는 경기다. 추정 51%에 배당 1.70배가 걸려 있다. 배당 대비 기대값 -12.6%. 조합의 안정 축으로만 쓸 만하다. 이변 가능성을 열어둬야 한다."
+  },
+  {
+   "id": "betman:G101:260136:4386",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4386,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T04:45+09:00",
+   "home": "북마케도니아",
+   "away": "슬로베니아",
+   "market": "1X2",
+   "line": null,
+   "odds": {
+    "H": 5.8,
+    "D": 3.55,
+    "A": 1.44
+   },
+   "analysis": {
+    "p": {
+     "D": 0.2274,
+     "H": 0.1318,
+     "A": 0.6407
+    },
+    "p_betman": {
+     "H": 0.1256,
+     "D": 0.2242,
+     "A": 0.6503
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.6407,
+    "pick_odds": 1.44,
+    "ev": -0.0773,
+    "value_key": "A",
+    "value_ev": -0.0773,
+    "confidence": 62,
+    "upset_risk": 33,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8707,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 5.8,
+    "D": 3.55,
+    "A": 1.44
+   },
+   "narrative": "슬로베니아가 우세가 뚜렷하다. 추정 64%에 배당 1.44배가 걸려 있다. 배당 대비 기대값 -7.7%. 조합의 안정 축으로만 쓸 만하다. 라인업 발표 후 재확인 권장."
+  },
+  {
+   "id": "betman:G101:260136:4387",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4387,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T04:45+09:00",
+   "home": "북마케도니아",
+   "away": "슬로베니아",
+   "market": "HANDICAP",
+   "line": 1.0,
+   "odds": {
+    "H": 2.47,
+    "D": 2.9,
+    "A": 2.5
+   },
+   "analysis": {
+    "p": {
+     "D": 0.2964,
+     "H": 0.3542,
+     "A": 0.3495
+    },
+    "p_betman": {
+     "H": 0.3548,
+     "D": 0.2952,
+     "A": 0.35
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.3542,
+    "pick_odds": 2.47,
+    "ev": -0.1252,
+    "value_key": "H",
+    "value_ev": -0.1252,
+    "confidence": 55,
+    "upset_risk": 65,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "혼전",
+     "이변 주의"
+    ],
+    "payout_rate": 0.8698,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 2.47,
+    "D": 2.9,
+    "A": 2.5
+   },
+   "narrative": "전력 차가 크지 않아 결과 예측이 까다롭다. 북마케도니아 쪽 추정 확률 35%. 배당은 2.47배. 기대값은 -12.5%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다. 무승부 변수가 크다. 선발 명단이 나오면 판단을 다시 볼 것."
+  },
+  {
+   "id": "betman:G101:260136:4388",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4388,
+   "sport": "soccer",
+   "league": "UEFA 네이션스리그",
+   "kickoff": "2026-11-17T04:45+09:00",
+   "home": "북마케도니아",
+   "away": "슬로베니아",
+   "market": "OU",
+   "line": 2.5,
+   "odds": {
+    "O": 1.97,
+    "U": 1.56
+   },
+   "analysis": {
+    "p": {
+     "O": 0.4296,
+     "U": 0.5704
+    },
+    "p_betman": {
+     "O": 0.4274,
+     "U": 0.5726
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "U",
+    "pick_prob": 0.5704,
+    "pick_odds": 1.56,
+    "ev": -0.1101,
+    "value_key": "U",
+    "value_ev": -0.1101,
+    "confidence": 58,
+    "upset_risk": 43,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8706,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 1.97,
+    "U": 1.56
+   },
+   "narrative": "언더가 반 발 앞선다는 평가다. 추정 57%에 배당 1.56배가 걸려 있다. 다만 기대값은 -11.0%로, 배당이 확률을 충분히 보상하지 못한다."
+  },
+  {
+   "id": "betman:G101:260136:4390",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4390,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T09:00+09:00",
+   "home": "보스턴 셀틱스",
+   "away": "올랜도 매직",
+   "market": "WL",
+   "line": null,
+   "odds": {
+    "H": 1.14,
+    "A": 3.67
+   },
+   "analysis": {
+    "p": {
+     "H": 0.8243,
+     "A": 0.1757
+    },
+    "p_betman": {
+     "H": 0.8343,
+     "A": 0.1657
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.8243,
+    "pick_odds": 1.14,
+    "ev": -0.0603,
+    "value_key": "H",
+    "value_ev": -0.0603,
+    "confidence": 62,
+    "upset_risk": 15,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8698,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.14,
+    "A": 3.67
+   },
+   "narrative": "보스턴 셀틱스가 한 수 위로 평가된다. 모델 추정 보스턴 셀틱스 확률은 82%, 베트맨 배당 1.14배다. 기대값은 -6.0%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다. 선발 명단이 나오면 판단을 다시 볼 것."
+  },
+  {
+   "id": "betman:G101:260136:4391",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4391,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T09:00+09:00",
+   "home": "보스턴 셀틱스",
+   "away": "올랜도 매직",
+   "market": "HANDICAP",
+   "line": -8.5,
+   "odds": {
+    "H": 1.72,
+    "A": 1.76
+   },
+   "analysis": {
+    "p": {
+     "H": 0.507,
+     "A": 0.493
+    },
+    "p_betman": {
+     "H": 0.5072,
+     "A": 0.4928
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.507,
+    "pick_odds": 1.72,
+    "ev": -0.128,
+    "value_key": "H",
+    "value_ev": -0.128,
+    "confidence": 54,
+    "upset_risk": 49,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8699,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.72,
+    "A": 1.76
+   },
+   "narrative": "어느 쪽으로도 쉽게 기울지 않는 경기다. 보스턴 셀틱스 쪽 추정 확률 51%. 배당은 1.72배. 배당 대비 기대값 -12.8%. 조합의 안정 축으로만 쓸 만하다. 정배가 무너질 여지가 작지 않다."
+  },
+  {
+   "id": "betman:G101:260136:4392",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4392,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T09:00+09:00",
+   "home": "보스턴 셀틱스",
+   "away": "올랜도 매직",
+   "market": "OU",
+   "line": 212.5,
+   "odds": {
+    "O": 1.72,
+    "U": 1.76
+   },
+   "analysis": {
+    "p": {
+     "O": 0.507,
+     "U": 0.493
+    },
+    "p_betman": {
+     "O": 0.5072,
+     "U": 0.4928
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "O",
+    "pick_prob": 0.507,
+    "pick_odds": 1.72,
+    "ev": -0.128,
+    "value_key": "O",
+    "value_ev": -0.128,
+    "confidence": 54,
+    "upset_risk": 49,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8699,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 1.72,
+    "U": 1.76
+   },
+   "narrative": "어느 쪽으로도 쉽게 기울지 않는 경기다. 오버 쪽 추정 확률 51%. 배당은 1.72배. 다만 기대값은 -12.8%로, 배당이 확률을 충분히 보상하지 못한다. 정배가 무너질 여지가 작지 않다."
+  },
+  {
+   "id": "betman:G101:260136:4394",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4394,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T09:00+09:00",
+   "home": "클리블랜드 캐벌리어스",
+   "away": "시카고 불스",
+   "market": "WL",
+   "line": null,
+   "odds": {
+    "H": 1.13,
+    "A": 3.78
+   },
+   "analysis": {
+    "p": {
+     "H": 0.833,
+     "A": 0.167
+    },
+    "p_betman": {
+     "H": 0.8433,
+     "A": 0.1567
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.833,
+    "pick_odds": 1.13,
+    "ev": -0.0587,
+    "value_key": "H",
+    "value_ev": -0.0587,
+    "confidence": 62,
+    "upset_risk": 14,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8699,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.13,
+    "A": 3.78
+   },
+   "narrative": "시장도 모델도 클리블랜드 캐벌리어스 손을 들어준다. 모델 추정 클리블랜드 캐벌리어스 확률은 83%, 베트맨 배당 1.13배다. 배당 대비 기대값 -5.9%. 조합의 안정 축으로만 쓸 만하다."
+  },
+  {
+   "id": "betman:G101:260136:4395",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4395,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T09:00+09:00",
+   "home": "클리블랜드 캐벌리어스",
+   "away": "시카고 불스",
+   "market": "HANDICAP",
+   "line": -9.5,
+   "odds": {
+    "H": 1.73,
+    "A": 1.75
+   },
+   "analysis": {
+    "p": {
+     "H": 0.5035,
+     "A": 0.4965
+    },
+    "p_betman": {
+     "H": 0.5036,
+     "A": 0.4964
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.5035,
+    "pick_odds": 1.73,
+    "ev": -0.129,
+    "value_key": "H",
+    "value_ev": -0.129,
+    "confidence": 54,
+    "upset_risk": 50,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.87,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.73,
+    "A": 1.75
+   },
+   "narrative": "양쪽 확률이 촘촘하게 붙어 있다. 클리블랜드 캐벌리어스 쪽 추정 확률 50%. 배당은 1.73배. 배당 대비 기대값 -12.9%. 조합의 안정 축으로만 쓸 만하다. 정배가 무너질 여지가 작지 않다. 라인업 발표 후 재확인 권장."
+  },
+  {
+   "id": "betman:G101:260136:4396",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4396,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T09:00+09:00",
+   "home": "클리블랜드 캐벌리어스",
+   "away": "시카고 불스",
+   "market": "OU",
+   "line": 242.5,
+   "odds": {
+    "O": 1.73,
+    "U": 1.75
+   },
+   "analysis": {
+    "p": {
+     "O": 0.5035,
+     "U": 0.4965
+    },
+    "p_betman": {
+     "O": 0.5036,
+     "U": 0.4964
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "O",
+    "pick_prob": 0.5035,
+    "pick_odds": 1.73,
+    "ev": -0.129,
+    "value_key": "O",
+    "value_ev": -0.129,
+    "confidence": 54,
+    "upset_risk": 50,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.87,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 1.73,
+    "U": 1.75
+   },
+   "narrative": "전력 차가 크지 않아 결과 예측이 까다롭다. 모델 추정 오버 확률은 50%, 베트맨 배당 1.73배다. 기대값은 -12.9%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다. 정배가 무너질 여지가 작지 않다."
+  },
+  {
+   "id": "betman:G101:260136:4398",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4398,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T09:00+09:00",
+   "home": "워싱턴 위저즈",
+   "away": "멤피스 그리즐리스",
+   "market": "WL",
+   "line": null,
+   "odds": {
+    "H": 2.33,
+    "A": 1.39
+   },
+   "analysis": {
+    "p": {
+     "H": 0.3464,
+     "A": 0.6536
+    },
+    "p_betman": {
+     "H": 0.3417,
+     "A": 0.6583
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.6536,
+    "pick_odds": 1.39,
+    "ev": -0.0915,
+    "value_key": "A",
+    "value_ev": -0.0915,
+    "confidence": 62,
+    "upset_risk": 34,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8706,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 2.33,
+    "A": 1.39
+   },
+   "narrative": "멤피스 그리즐리스가 우세가 뚜렷하다. 멤피스 그리즐리스 쪽 추정 확률 65%. 배당은 1.39배. 다만 기대값은 -9.2%로, 배당이 확률을 충분히 보상하지 못한다. 선발 명단이 나오면 판단을 다시 볼 것."
+  },
+  {
+   "id": "betman:G101:260136:4399",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4399,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T09:00+09:00",
+   "home": "워싱턴 위저즈",
+   "away": "멤피스 그리즐리스",
+   "market": "HANDICAP",
+   "line": 4.5,
+   "odds": {
+    "H": 1.73,
+    "A": 1.75
+   },
+   "analysis": {
+    "p": {
+     "H": 0.5035,
+     "A": 0.4965
+    },
+    "p_betman": {
+     "H": 0.5036,
+     "A": 0.4964
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.5035,
+    "pick_odds": 1.73,
+    "ev": -0.129,
+    "value_key": "H",
+    "value_ev": -0.129,
+    "confidence": 54,
+    "upset_risk": 50,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.87,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.73,
+    "A": 1.75
+   },
+   "narrative": "어느 쪽으로도 쉽게 기울지 않는 경기다. 워싱턴 위저즈 쪽 추정 확률 50%. 배당은 1.73배. 배당 대비 기대값 -12.9%. 조합의 안정 축으로만 쓸 만하다. 정배가 무너질 여지가 작지 않다. 라인업 발표 후 재확인 권장."
+  },
+  {
+   "id": "betman:G101:260136:4400",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4400,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T09:00+09:00",
+   "home": "워싱턴 위저즈",
+   "away": "멤피스 그리즐리스",
+   "market": "OU",
+   "line": 230.5,
+   "odds": {
+    "O": 1.71,
+    "U": 1.77
+   },
+   "analysis": {
+    "p": {
+     "O": 0.5105,
+     "U": 0.4895
+    },
+    "p_betman": {
+     "O": 0.5108,
+     "U": 0.4892
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "O",
+    "pick_prob": 0.5105,
+    "pick_odds": 1.71,
+    "ev": -0.1271,
+    "value_key": "O",
+    "value_ev": -0.1271,
+    "confidence": 54,
+    "upset_risk": 49,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8697,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 1.71,
+    "U": 1.77
+   },
+   "narrative": "어느 쪽으로도 쉽게 기울지 않는 경기다. 추정 51%에 배당 1.71배가 걸려 있다. 배당 대비 기대값 -12.7%. 조합의 안정 축으로만 쓸 만하다. 이변 가능성을 열어둬야 한다. 선발 명단이 나오면 판단을 다시 볼 것."
+  },
+  {
+   "id": "betman:G101:260136:4402",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4402,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T09:30+09:00",
+   "home": "브루클린 네츠",
+   "away": "필라델피아 76s",
+   "market": "WL",
+   "line": null,
+   "odds": {
+    "H": 2.76,
+    "A": 1.27
+   },
+   "analysis": {
+    "p": {
+     "H": 0.2741,
+     "A": 0.7259
+    },
+    "p_betman": {
+     "H": 0.2671,
+     "A": 0.7329
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.7259,
+    "pick_odds": 1.27,
+    "ev": -0.0781,
+    "value_key": "A",
+    "value_ev": -0.0781,
+    "confidence": 62,
+    "upset_risk": 26,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8698,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 2.76,
+    "A": 1.27
+   },
+   "narrative": "필라델피아 76s가 한 수 위로 평가된다. 모델 추정 필라델피아 76s 확률은 73%, 베트맨 배당 1.27배다. 다만 기대값은 -7.8%로, 배당이 확률을 충분히 보상하지 못한다. 라인업 발표 후 재확인 권장."
+  },
+  {
+   "id": "betman:G101:260136:4403",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4403,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T09:30+09:00",
+   "home": "브루클린 네츠",
+   "away": "필라델피아 76s",
+   "market": "HANDICAP",
+   "line": 6.5,
+   "odds": {
+    "H": 1.69,
+    "A": 1.79
+   },
+   "analysis": {
+    "p": {
+     "H": 0.5175,
+     "A": 0.4825
+    },
+    "p_betman": {
+     "H": 0.518,
+     "A": 0.482
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.5175,
+    "pick_odds": 1.69,
+    "ev": -0.1255,
+    "value_key": "H",
+    "value_ev": -0.1255,
+    "confidence": 54,
+    "upset_risk": 48,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8693,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.69,
+    "A": 1.79
+   },
+   "narrative": "어느 쪽으로도 쉽게 기울지 않는 경기다. 브루클린 네츠 쪽 추정 확률 52%. 배당은 1.69배. 다만 기대값은 -12.6%로, 배당이 확률을 충분히 보상하지 못한다. 이변 가능성을 열어둬야 한다."
+  },
+  {
+   "id": "betman:G101:260136:4404",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4404,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T09:30+09:00",
+   "home": "브루클린 네츠",
+   "away": "필라델피아 76s",
+   "market": "OU",
+   "line": 226.5,
+   "odds": {
+    "O": 1.72,
+    "U": 1.76
+   },
+   "analysis": {
+    "p": {
+     "O": 0.507,
+     "U": 0.493
+    },
+    "p_betman": {
+     "O": 0.5072,
+     "U": 0.4928
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "O",
+    "pick_prob": 0.507,
+    "pick_odds": 1.72,
+    "ev": -0.128,
+    "value_key": "O",
+    "value_ev": -0.128,
+    "confidence": 54,
+    "upset_risk": 49,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8699,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 1.72,
+    "U": 1.76
+   },
+   "narrative": "접전 예상. 4쿼터 클러치 싸움이 될 가능성이 높다. 추정 51%에 배당 1.72배가 걸려 있다. 다만 기대값은 -12.8%로, 배당이 확률을 충분히 보상하지 못한다. 이변 가능성을 열어둬야 한다."
+  },
+  {
+   "id": "betman:G101:260136:4406",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4406,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T09:30+09:00",
+   "home": "마이애미 히트",
+   "away": "휴스턴 로케츠",
+   "market": "WL",
+   "line": null,
+   "odds": {
+    "H": 2.05,
+    "A": 1.51
+   },
+   "analysis": {
+    "p": {
+     "H": 0.4078,
+     "A": 0.5922
+    },
+    "p_betman": {
+     "H": 0.4049,
+     "A": 0.5951
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.5922,
+    "pick_odds": 1.51,
+    "ev": -0.1057,
+    "value_key": "A",
+    "value_ev": -0.1057,
+    "confidence": 59,
+    "upset_risk": 40,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8695,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 2.05,
+    "A": 1.51
+   },
+   "narrative": "휴스턴 로케츠 쪽으로 약간 기운다. 추정 59%에 배당 1.51배가 걸려 있다. 다만 기대값은 -10.6%로, 배당이 확률을 충분히 보상하지 못한다. 라인업 발표 후 재확인 권장."
+  },
+  {
+   "id": "betman:G101:260136:4407",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4407,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T09:30+09:00",
+   "home": "마이애미 히트",
+   "away": "휴스턴 로케츠",
+   "market": "HANDICAP",
+   "line": 3.5,
+   "odds": {
+    "H": 1.71,
+    "A": 1.77
+   },
+   "analysis": {
+    "p": {
+     "H": 0.5105,
+     "A": 0.4895
+    },
+    "p_betman": {
+     "H": 0.5108,
+     "A": 0.4892
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.5105,
+    "pick_odds": 1.71,
+    "ev": -0.1271,
+    "value_key": "H",
+    "value_ev": -0.1271,
+    "confidence": 54,
+    "upset_risk": 49,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8697,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.71,
+    "A": 1.77
+   },
+   "narrative": "접전 예상. 4쿼터 클러치 싸움이 될 가능성이 높다. 모델 추정 마이애미 히트 확률은 51%, 베트맨 배당 1.71배다. 기대값은 -12.7%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다. 이변 가능성을 열어둬야 한다."
+  },
+  {
+   "id": "betman:G101:260136:4408",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4408,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T09:30+09:00",
+   "home": "마이애미 히트",
+   "away": "휴스턴 로케츠",
+   "market": "OU",
+   "line": 230.5,
+   "odds": {
+    "O": 1.72,
+    "U": 1.76
+   },
+   "analysis": {
+    "p": {
+     "O": 0.507,
+     "U": 0.493
+    },
+    "p_betman": {
+     "O": 0.5072,
+     "U": 0.4928
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "O",
+    "pick_prob": 0.507,
+    "pick_odds": 1.72,
+    "ev": -0.128,
+    "value_key": "O",
+    "value_ev": -0.128,
+    "confidence": 54,
+    "upset_risk": 49,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8699,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 1.72,
+    "U": 1.76
+   },
+   "narrative": "양쪽 확률이 촘촘하게 붙어 있다. 추정 51%에 배당 1.72배가 걸려 있다. 기대값은 -12.8%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다. 정배가 무너질 여지가 작지 않다. 라인업 발표 후 재확인 권장."
+  },
+  {
+   "id": "betman:G101:260136:4410",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4410,
+   "sport": "soccer",
+   "league": "CONCACAF 네이션스리그",
+   "kickoff": "2026-11-17T10:00+09:00",
+   "home": "캐나다",
+   "away": "과테말라",
+   "market": "1X2",
+   "line": null,
+   "odds": {
+    "H": 1.09,
+    "D": 6.2,
+    "A": 14.0
+   },
+   "analysis": {
+    "p": {
+     "D": 0.0908,
+     "H": 0.8726,
+     "A": 0.0366
+    },
+    "p_betman": {
+     "H": 0.8892,
+     "D": 0.0833,
+     "A": 0.0275
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.8726,
+    "pick_odds": 1.09,
+    "ev": -0.0489,
+    "value_key": "H",
+    "value_ev": -0.0489,
+    "confidence": 62,
+    "upset_risk": 10,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8695,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.09,
+    "D": 6.2,
+    "A": 14.0
+   },
+   "narrative": "캐나다가 한 수 위로 평가된다. 추정 87%에 배당 1.09배가 걸려 있다. 배당 대비 기대값 -4.9%. 조합의 안정 축으로만 쓸 만하다. 선발 명단이 나오면 판단을 다시 볼 것."
+  },
+  {
+   "id": "betman:G101:260136:4411",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4411,
+   "sport": "soccer",
+   "league": "CONCACAF 네이션스리그",
+   "kickoff": "2026-11-17T10:00+09:00",
+   "home": "캐나다",
+   "away": "과테말라",
+   "market": "HANDICAP",
+   "line": -1.0,
+   "odds": {
+    "H": 1.44,
+    "D": 4.2,
+    "A": 4.6
+   },
+   "analysis": {
+    "p": {
+     "D": 0.1886,
+     "H": 0.641,
+     "A": 0.1704
+    },
+    "p_betman": {
+     "H": 0.6505,
+     "D": 0.1841,
+     "A": 0.1654
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.641,
+    "pick_odds": 1.44,
+    "ev": -0.077,
+    "value_key": "H",
+    "value_ev": -0.077,
+    "confidence": 62,
+    "upset_risk": 33,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8696,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.44,
+    "D": 4.2,
+    "A": 4.6
+   },
+   "narrative": "시장도 모델도 캐나다 손을 들어준다. 모델 추정 캐나다 확률은 64%, 베트맨 배당 1.44배다. 배당 대비 기대값 -7.7%. 조합의 안정 축으로만 쓸 만하다. 라인업 발표 후 재확인 권장."
+  },
+  {
+   "id": "betman:G101:260136:4412",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4412,
+   "sport": "soccer",
+   "league": "CONCACAF 네이션스리그",
+   "kickoff": "2026-11-17T10:00+09:00",
+   "home": "캐나다",
+   "away": "과테말라",
+   "market": "HANDICAP",
+   "line": -2.0,
+   "odds": {
+    "H": 2.16,
+    "D": 3.6,
+    "A": 2.45
+   },
+   "analysis": {
+    "p": {
+     "D": 0.2328,
+     "H": 0.4106,
+     "A": 0.3566
+    },
+    "p_betman": {
+     "H": 0.413,
+     "D": 0.2297,
+     "A": 0.3573
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.4106,
+    "pick_odds": 2.16,
+    "ev": -0.1132,
+    "value_key": "H",
+    "value_ev": -0.1132,
+    "confidence": 58,
+    "upset_risk": 58,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "혼전",
+     "이변 주의"
+    ],
+    "payout_rate": 0.8704,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 2.16,
+    "D": 3.6,
+    "A": 2.45
+   },
+   "narrative": "어느 쪽으로도 쉽게 기울지 않는 경기다. 모델 추정 캐나다 확률은 41%, 베트맨 배당 2.16배다. 다만 기대값은 -11.3%로, 배당이 확률을 충분히 보상하지 못한다. 세 갈래 결과가 모두 열려 있다."
+  },
+  {
+   "id": "betman:G101:260136:4413",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4413,
+   "sport": "soccer",
+   "league": "CONCACAF 네이션스리그",
+   "kickoff": "2026-11-17T10:00+09:00",
+   "home": "캐나다",
+   "away": "과테말라",
+   "market": "HANDICAP",
+   "line": -3.5,
+   "odds": {
+    "H": 3.57,
+    "A": 1.15
+   },
+   "analysis": {
+    "p": {
+     "H": 0.1843,
+     "A": 0.8157
+    },
+    "p_betman": {
+     "H": 0.1745,
+     "A": 0.8255
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.8157,
+    "pick_odds": 1.15,
+    "ev": -0.0619,
+    "value_key": "A",
+    "value_ev": -0.0619,
+    "confidence": 62,
+    "upset_risk": 16,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8698,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 3.57,
+    "A": 1.15
+   },
+   "narrative": "숫자만 놓고 보면 과테말라 쪽으로 기운 경기다. 추정 82%에 배당 1.15배가 걸려 있다. 기대값은 -6.2%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다."
+  },
+  {
+   "id": "betman:G101:260136:4414",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4414,
+   "sport": "soccer",
+   "league": "CONCACAF 네이션스리그",
+   "kickoff": "2026-11-17T10:00+09:00",
+   "home": "캐나다",
+   "away": "과테말라",
+   "market": "OU",
+   "line": 3.5,
+   "odds": {
+    "O": 1.97,
+    "U": 1.56
+   },
+   "analysis": {
+    "p": {
+     "O": 0.4296,
+     "U": 0.5704
+    },
+    "p_betman": {
+     "O": 0.4274,
+     "U": 0.5726
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "U",
+    "pick_prob": 0.5704,
+    "pick_odds": 1.56,
+    "ev": -0.1101,
+    "value_key": "U",
+    "value_ev": -0.1101,
+    "confidence": 58,
+    "upset_risk": 43,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8706,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 1.97,
+    "U": 1.56
+   },
+   "narrative": "언더가 반 발 앞선다는 평가다. 언더 쪽 추정 확률 57%. 배당은 1.56배. 기대값은 -11.0%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다."
+  },
+  {
+   "id": "betman:G101:260136:4416",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4416,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T10:00+09:00",
+   "home": "미네소타 팀버울브스",
+   "away": "포틀랜드 트레일블레이저스",
+   "market": "WL",
+   "line": null,
+   "odds": {
+    "H": 1.59,
+    "A": 1.92
+   },
+   "analysis": {
+    "p": {
+     "H": 0.5571,
+     "A": 0.4429
+    },
+    "p_betman": {
+     "H": 0.5589,
+     "A": 0.4411
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.5571,
+    "pick_odds": 1.59,
+    "ev": -0.1142,
+    "value_key": "H",
+    "value_ev": -0.1142,
+    "confidence": 57,
+    "upset_risk": 44,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8697,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.59,
+    "A": 1.92
+   },
+   "narrative": "근소하게 미네소타 팀버울브스 우위. 추정 56%에 배당 1.59배가 걸려 있다. 다만 기대값은 -11.4%로, 배당이 확률을 충분히 보상하지 못한다."
+  },
+  {
+   "id": "betman:G101:260136:4417",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4417,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T10:00+09:00",
+   "home": "미네소타 팀버울브스",
+   "away": "포틀랜드 트레일블레이저스",
+   "market": "HANDICAP",
+   "line": -2.5,
+   "odds": {
+    "H": 1.79,
+    "A": 1.69
+   },
+   "analysis": {
+    "p": {
+     "H": 0.4825,
+     "A": 0.5175
+    },
+    "p_betman": {
+     "H": 0.482,
+     "A": 0.518
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.5175,
+    "pick_odds": 1.69,
+    "ev": -0.1255,
+    "value_key": "A",
+    "value_ev": -0.1255,
+    "confidence": 54,
+    "upset_risk": 48,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8693,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.79,
+    "A": 1.69
+   },
+   "narrative": "접전 예상. 4쿼터 클러치 싸움이 될 가능성이 높다. 추정 52%에 배당 1.69배가 걸려 있다. 다만 기대값은 -12.6%로, 배당이 확률을 충분히 보상하지 못한다. 이변 가능성을 열어둬야 한다."
+  },
+  {
+   "id": "betman:G101:260136:4418",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4418,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T10:00+09:00",
+   "home": "미네소타 팀버울브스",
+   "away": "포틀랜드 트레일블레이저스",
+   "market": "OU",
+   "line": 229.5,
+   "odds": {
+    "O": 1.73,
+    "U": 1.75
+   },
+   "analysis": {
+    "p": {
+     "O": 0.5035,
+     "U": 0.4965
+    },
+    "p_betman": {
+     "O": 0.5036,
+     "U": 0.4964
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "O",
+    "pick_prob": 0.5035,
+    "pick_odds": 1.73,
+    "ev": -0.129,
+    "value_key": "O",
+    "value_ev": -0.129,
+    "confidence": 54,
+    "upset_risk": 50,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.87,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 1.73,
+    "U": 1.75
+   },
+   "narrative": "양쪽 확률이 촘촘하게 붙어 있다. 추정 50%에 배당 1.73배가 걸려 있다. 기대값은 -12.9%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다. 이변 가능성을 열어둬야 한다."
+  },
+  {
+   "id": "betman:G101:260136:4420",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4420,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T10:00+09:00",
+   "home": "뉴올리언스 펠리컨스",
+   "away": "골든스테이트 워리어스",
+   "market": "WL",
+   "line": null,
+   "odds": {
+    "H": 2.13,
+    "A": 1.47
+   },
+   "analysis": {
+    "p": {
+     "H": 0.3885,
+     "A": 0.6115
+    },
+    "p_betman": {
+     "H": 0.3851,
+     "A": 0.6149
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.6115,
+    "pick_odds": 1.47,
+    "ev": -0.1011,
+    "value_key": "A",
+    "value_ev": -0.1011,
+    "confidence": 61,
+    "upset_risk": 38,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8698,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 2.13,
+    "A": 1.47
+   },
+   "narrative": "근소하게 골든스테이트 워리어스 우위. 모델 추정 골든스테이트 워리어스 확률은 61%, 베트맨 배당 1.47배다. 기대값은 -10.1%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다. 선발 명단이 나오면 판단을 다시 볼 것."
+  },
+  {
+   "id": "betman:G101:260136:4421",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4421,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T10:00+09:00",
+   "home": "뉴올리언스 펠리컨스",
+   "away": "골든스테이트 워리어스",
+   "market": "HANDICAP",
+   "line": 3.5,
+   "odds": {
+    "H": 1.72,
+    "A": 1.76
+   },
+   "analysis": {
+    "p": {
+     "H": 0.507,
+     "A": 0.493
+    },
+    "p_betman": {
+     "H": 0.5072,
+     "A": 0.4928
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.507,
+    "pick_odds": 1.72,
+    "ev": -0.128,
+    "value_key": "H",
+    "value_ev": -0.128,
+    "confidence": 54,
+    "upset_risk": 49,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8699,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.72,
+    "A": 1.76
+   },
+   "narrative": "전력 차가 크지 않아 결과 예측이 까다롭다. 뉴올리언스 펠리컨스 쪽 추정 확률 51%. 배당은 1.72배. 배당 대비 기대값 -12.8%. 조합의 안정 축으로만 쓸 만하다. 정배가 무너질 여지가 작지 않다. 선발 명단이 나오면 판단을 다시 볼 것."
+  },
+  {
+   "id": "betman:G101:260136:4422",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4422,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T10:00+09:00",
+   "home": "뉴올리언스 펠리컨스",
+   "away": "골든스테이트 워리어스",
+   "market": "OU",
+   "line": 227.5,
+   "odds": {
+    "O": 1.72,
+    "U": 1.76
+   },
+   "analysis": {
+    "p": {
+     "O": 0.507,
+     "U": 0.493
+    },
+    "p_betman": {
+     "O": 0.5072,
+     "U": 0.4928
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "O",
+    "pick_prob": 0.507,
+    "pick_odds": 1.72,
+    "ev": -0.128,
+    "value_key": "O",
+    "value_ev": -0.128,
+    "confidence": 54,
+    "upset_risk": 49,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8699,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 1.72,
+    "U": 1.76
+   },
+   "narrative": "전력 차가 크지 않아 결과 예측이 까다롭다. 추정 51%에 배당 1.72배가 걸려 있다. 기대값은 -12.8%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다. 이변 가능성을 열어둬야 한다."
+  },
+  {
+   "id": "betman:G101:260136:4424",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4424,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T11:00+09:00",
+   "home": "덴버 너게츠",
+   "away": "피닉스 선즈",
+   "market": "WL",
+   "line": null,
+   "odds": {
+    "H": 1.08,
+    "A": 4.47
+   },
+   "analysis": {
+    "p": {
+     "H": 0.8802,
+     "A": 0.1198
+    },
+    "p_betman": {
+     "H": 0.8919,
+     "A": 0.1081
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "H",
+    "pick_prob": 0.8802,
+    "pick_odds": 1.08,
+    "ev": -0.0494,
+    "value_key": "H",
+    "value_ev": -0.0494,
+    "confidence": 62,
+    "upset_risk": 10,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [],
+    "payout_rate": 0.8698,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.08,
+    "A": 4.47
+   },
+   "narrative": "덴버 너게츠가 한 수 위로 평가된다. 추정 88%에 배당 1.08배가 걸려 있다. 기대값은 -4.9%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다."
+  },
+  {
+   "id": "betman:G101:260136:4425",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4425,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T11:00+09:00",
+   "home": "덴버 너게츠",
+   "away": "피닉스 선즈",
+   "market": "HANDICAP",
+   "line": -10.5,
+   "odds": {
+    "H": 1.77,
+    "A": 1.71
+   },
+   "analysis": {
+    "p": {
+     "H": 0.4895,
+     "A": 0.5105
+    },
+    "p_betman": {
+     "H": 0.4892,
+     "A": 0.5108
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "A",
+    "pick_prob": 0.5105,
+    "pick_odds": 1.71,
+    "ev": -0.1271,
+    "value_key": "A",
+    "value_ev": -0.1271,
+    "confidence": 54,
+    "upset_risk": 49,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8697,
+    "elo": null
+   },
+   "odds_open": {
+    "H": 1.77,
+    "A": 1.71
+   },
+   "narrative": "양쪽 확률이 촘촘하게 붙어 있다. 추정 51%에 배당 1.71배가 걸려 있다. 다만 기대값은 -12.7%로, 배당이 확률을 충분히 보상하지 못한다. 정배가 무너질 여지가 작지 않다."
+  },
+  {
+   "id": "betman:G101:260136:4426",
+   "source": "betman",
+   "pool": "proto",
+   "round": "260136",
+   "game_no": 4426,
+   "sport": "basketball",
+   "league": "NBA",
+   "kickoff": "2026-11-17T11:00+09:00",
+   "home": "덴버 너게츠",
+   "away": "피닉스 선즈",
+   "market": "OU",
+   "line": 228.5,
+   "odds": {
+    "O": 1.72,
+    "U": 1.76
+   },
+   "analysis": {
+    "p": {
+     "O": 0.507,
+     "U": 0.493
+    },
+    "p_betman": {
+     "O": 0.5072,
+     "U": 0.4928
+    },
+    "p_ref": null,
+    "p_elo": null,
+    "pick": "O",
+    "pick_prob": 0.507,
+    "pick_odds": 1.72,
+    "ev": -0.128,
+    "value_key": "O",
+    "value_ev": -0.128,
+    "confidence": 54,
+    "upset_risk": 49,
+    "data_score": 35,
+    "sources": [
+     "베트맨 배당"
+    ],
+    "flags": [
+     "이변 주의"
+    ],
+    "payout_rate": 0.8699,
+    "elo": null
+   },
+   "odds_open": {
+    "O": 1.72,
+    "U": 1.76
+   },
+   "narrative": "접전 예상. 4쿼터 클러치 싸움이 될 가능성이 높다. 모델 추정 오버 확률은 51%, 베트맨 배당 1.72배다. 기대값은 -12.8%. 맞힐 가능성은 높아도 장기적으로 남는 장사는 아니다. 정배가 무너질 여지가 작지 않다. 선발 명단이 나오면 판단을 다시 볼 것."
+  }
+ ],
  "combos": {
-  "safe": [],
-  "balanced": [],
+  "safe": [
+   {
+    "legs": [
+     {
+      "market_id": "betman:G101:260136:4358",
+      "match": "2026-11-17|리투아니아|리히텐슈타인",
+      "league": "UEFA 네이션스리그",
+      "sport": "soccer",
+      "date": "2026-11-17",
+      "home": "리투아니아",
+      "away": "리히텐슈타인",
+      "market": "1X2",
+      "line": null,
+      "game_no": 4358,
+      "kickoff": "2026-11-17T02:00+09:00",
+      "outcome": "H",
+      "p": 0.901,
+      "odds": 1.06,
+      "ev": -0.04493999999999998,
+      "confidence": 62,
+      "upset_risk": 7
+     },
+     {
+      "market_id": "betman:G101:260136:4390",
+      "match": "2026-11-17|보스턴 셀틱스|올랜도 매직",
+      "league": "NBA",
+      "sport": "basketball",
+      "date": "2026-11-17",
+      "home": "보스턴 셀틱스",
+      "away": "올랜도 매직",
+      "market": "WL",
+      "line": null,
+      "game_no": 4390,
+      "kickoff": "2026-11-17T09:00+09:00",
+      "outcome": "H",
+      "p": 0.8243,
+      "odds": 1.14,
+      "ev": -0.060298000000000074,
+      "confidence": 62,
+      "upset_risk": 15
+     }
+    ],
+    "size": 2,
+    "joint_p": 0.7427,
+    "total_odds": 1.2,
+    "ev": -0.1088,
+    "payout": 12000,
+    "stake": 10000,
+    "confidence": 62,
+    "kelly": 0.0,
+    "key": "betman:G101:260136:4358:H+betman:G101:260136:4390:H",
+    "strategy": "safe",
+    "rank": 1
+   },
+   {
+    "legs": [
+     {
+      "market_id": "betman:G101:260136:4424",
+      "match": "2026-11-17|덴버 너게츠|피닉스 선즈",
+      "league": "NBA",
+      "sport": "basketball",
+      "date": "2026-11-17",
+      "home": "덴버 너게츠",
+      "away": "피닉스 선즈",
+      "market": "WL",
+      "line": null,
+      "game_no": 4424,
+      "kickoff": "2026-11-17T11:00+09:00",
+      "outcome": "H",
+      "p": 0.8802,
+      "odds": 1.08,
+      "ev": -0.04938399999999998,
+      "confidence": 62,
+      "upset_risk": 10
+     },
+     {
+      "market_id": "betman:G101:260136:4350",
+      "match": "2026-11-17|아이슬란드|룩셈부르크",
+      "league": "UEFA 네이션스리그",
+      "sport": "soccer",
+      "date": "2026-11-17",
+      "home": "아이슬란드",
+      "away": "룩셈부르크",
+      "market": "1X2",
+      "line": null,
+      "game_no": 4350,
+      "kickoff": "2026-11-17T02:00+09:00",
+      "outcome": "H",
+      "p": 0.8376,
+      "odds": 1.13,
+      "ev": -0.053512000000000115,
+      "confidence": 62,
+      "upset_risk": 13
+     }
+    ],
+    "size": 2,
+    "joint_p": 0.7373,
+    "total_odds": 1.22,
+    "ev": -0.1005,
+    "payout": 12200,
+    "stake": 10000,
+    "confidence": 62,
+    "kelly": 0.0,
+    "key": "betman:G101:260136:4350:H+betman:G101:260136:4424:H",
+    "strategy": "safe",
+    "rank": 2
+   },
+   {
+    "legs": [
+     {
+      "market_id": "betman:G101:260136:4358",
+      "match": "2026-11-17|리투아니아|리히텐슈타인",
+      "league": "UEFA 네이션스리그",
+      "sport": "soccer",
+      "date": "2026-11-17",
+      "home": "리투아니아",
+      "away": "리히텐슈타인",
+      "market": "1X2",
+      "line": null,
+      "game_no": 4358,
+      "kickoff": "2026-11-17T02:00+09:00",
+      "outcome": "H",
+      "p": 0.901,
+      "odds": 1.06,
+      "ev": -0.04493999999999998,
+      "confidence": 62,
+      "upset_risk": 7
+     },
+     {
+      "market_id": "betman:G101:260136:4314",
+      "match": "2026-11-16|워싱턴 위저즈|휴스턴 로케츠",
+      "league": "NBA",
+      "sport": "basketball",
+      "date": "2026-11-16",
+      "home": "워싱턴 위저즈",
+      "away": "휴스턴 로케츠",
+      "market": "WL",
+      "line": null,
+      "game_no": 4314,
+      "kickoff": "2026-11-16T09:00+09:00",
+      "outcome": "A",
+      "p": 0.8157,
+      "odds": 1.15,
+      "ev": -0.06194500000000014,
+      "confidence": 62,
+      "upset_risk": 16
+     }
+    ],
+    "size": 2,
+    "joint_p": 0.7349,
+    "total_odds": 1.21,
+    "ev": -0.1107,
+    "payout": 12100,
+    "stake": 10000,
+    "confidence": 62,
+    "kelly": 0.0,
+    "key": "betman:G101:260136:4314:A+betman:G101:260136:4358:H",
+    "strategy": "safe",
+    "rank": 3
+   },
+   {
+    "legs": [
+     {
+      "market_id": "betman:G101:260136:4358",
+      "match": "2026-11-17|리투아니아|리히텐슈타인",
+      "league": "UEFA 네이션스리그",
+      "sport": "soccer",
+      "date": "2026-11-17",
+      "home": "리투아니아",
+      "away": "리히텐슈타인",
+      "market": "1X2",
+      "line": null,
+      "game_no": 4358,
+      "kickoff": "2026-11-17T02:00+09:00",
+      "outcome": "H",
+      "p": 0.901,
+      "odds": 1.06,
+      "ev": -0.04493999999999998,
+      "confidence": 62,
+      "upset_risk": 7
+     },
+     {
+      "market_id": "betman:G101:260136:4413",
+      "match": "2026-11-17|캐나다|과테말라",
+      "league": "CONCACAF 네이션스리그",
+      "sport": "soccer",
+      "date": "2026-11-17",
+      "home": "캐나다",
+      "away": "과테말라",
+      "market": "HANDICAP",
+      "line": -3.5,
+      "game_no": 4413,
+      "kickoff": "2026-11-17T10:00+09:00",
+      "outcome": "A",
+      "p": 0.8157,
+      "odds": 1.15,
+      "ev": -0.06194500000000014,
+      "confidence": 62,
+      "upset_risk": 16
+     }
+    ],
+    "size": 2,
+    "joint_p": 0.7349,
+    "total_odds": 1.21,
+    "ev": -0.1107,
+    "payout": 12100,
+    "stake": 10000,
+    "confidence": 62,
+    "kelly": 0.0,
+    "key": "betman:G101:260136:4358:H+betman:G101:260136:4413:A",
+    "strategy": "safe",
+    "rank": 4
+   }
+  ],
+  "balanced": [
+   {
+    "legs": [
+     {
+      "market_id": "betman:G101:260136:4326",
+      "match": "2026-11-16|서울SK 나이츠|울산현대모비스 피버스",
+      "league": "KBL",
+      "sport": "basketball",
+      "date": "2026-11-16",
+      "home": "서울SK 나이츠",
+      "away": "울산현대모비스 피버스",
+      "market": "WL",
+      "line": null,
+      "game_no": 4326,
+      "kickoff": "2026-11-16T19:00+09:00",
+      "outcome": "H",
+      "p": 0.7196,
+      "odds": 1.28,
+      "ev": -0.07891199999999998,
+      "confidence": 62,
+      "upset_risk": 26
+     },
+     {
+      "market_id": "betman:G101:260136:4376",
+      "match": "2026-11-17|그리스|세르비아",
+      "league": "UEFA 네이션스리그",
+      "sport": "soccer",
+      "date": "2026-11-17",
+      "home": "그리스",
+      "away": "세르비아",
+      "market": "1X2",
+      "line": null,
+      "game_no": 4376,
+      "kickoff": "2026-11-17T04:45+09:00",
+      "outcome": "H",
+      "p": 0.682,
+      "odds": 1.36,
+      "ev": -0.07247999999999988,
+      "confidence": 62,
+      "upset_risk": 29
+     },
+     {
+      "market_id": "betman:G101:260136:4411",
+      "match": "2026-11-17|캐나다|과테말라",
+      "league": "CONCACAF 네이션스리그",
+      "sport": "soccer",
+      "date": "2026-11-17",
+      "home": "캐나다",
+      "away": "과테말라",
+      "market": "HANDICAP",
+      "line": -1.0,
+      "game_no": 4411,
+      "kickoff": "2026-11-17T10:00+09:00",
+      "outcome": "H",
+      "p": 0.641,
+      "odds": 1.44,
+      "ev": -0.07696000000000003,
+      "confidence": 62,
+      "upset_risk": 33
+     }
+    ],
+    "size": 3,
+    "joint_p": 0.3146,
+    "total_odds": 2.5,
+    "ev": -0.2135,
+    "payout": 25000,
+    "stake": 10000,
+    "confidence": 62,
+    "kelly": 0.0,
+    "key": "betman:G101:260136:4326:H+betman:G101:260136:4376:H+betman:G101:260136:4411:H",
+    "strategy": "balanced",
+    "rank": 1
+   },
+   {
+    "legs": [
+     {
+      "market_id": "betman:G101:260136:4382",
+      "match": "2026-11-17|스위스|스코틀랜드",
+      "league": "UEFA 네이션스리그",
+      "sport": "soccer",
+      "date": "2026-11-17",
+      "home": "스위스",
+      "away": "스코틀랜드",
+      "market": "HANDICAP",
+      "line": -2.0,
+      "game_no": 4382,
+      "kickoff": "2026-11-17T04:45+09:00",
+      "outcome": "A",
+      "p": 0.7051,
+      "odds": 1.32,
+      "ev": -0.069268,
+      "confidence": 62,
+      "upset_risk": 26
+     },
+     {
+      "market_id": "betman:G101:260136:4331",
+      "match": "2026-11-16|하나은행|우리은행 우리WON",
+      "league": "WKBL",
+      "sport": "basketball",
+      "date": "2026-11-16",
+      "home": "하나은행",
+      "away": "우리은행 우리WON",
+      "market": "WL",
+      "line": null,
+      "game_no": 4331,
+      "kickoff": "2026-11-16T19:00+09:00",
+      "outcome": "A",
+      "p": 0.6881,
+      "odds": 1.33,
+      "ev": -0.08482699999999987,
+      "confidence": 62,
+      "upset_risk": 30
+     },
+     {
+      "market_id": "betman:G101:260136:4411",
+      "match": "2026-11-17|캐나다|과테말라",
+      "league": "CONCACAF 네이션스리그",
+      "sport": "soccer",
+      "date": "2026-11-17",
+      "home": "캐나다",
+      "away": "과테말라",
+      "market": "HANDICAP",
+      "line": -1.0,
+      "game_no": 4411,
+      "kickoff": "2026-11-17T10:00+09:00",
+      "outcome": "H",
+      "p": 0.641,
+      "odds": 1.44,
+      "ev": -0.07696000000000003,
+      "confidence": 62,
+      "upset_risk": 33
+     }
+    ],
+    "size": 3,
+    "joint_p": 0.311,
+    "total_odds": 2.52,
+    "ev": -0.2163,
+    "payout": 25200,
+    "stake": 10000,
+    "confidence": 62,
+    "kelly": 0.0,
+    "key": "betman:G101:260136:4331:A+betman:G101:260136:4382:A+betman:G101:260136:4411:H",
+    "strategy": "balanced",
+    "rank": 2
+   },
+   {
+    "legs": [
+     {
+      "market_id": "betman:G101:260136:4382",
+      "match": "2026-11-17|스위스|스코틀랜드",
+      "league": "UEFA 네이션스리그",
+      "sport": "soccer",
+      "date": "2026-11-17",
+      "home": "스위스",
+      "away": "스코틀랜드",
+      "market": "HANDICAP",
+      "line": -2.0,
+      "game_no": 4382,
+      "kickoff": "2026-11-17T04:45+09:00",
+      "outcome": "A",
+      "p": 0.7051,
+      "odds": 1.32,
+      "ev": -0.069268,
+      "confidence": 62,
+      "upset_risk": 26
+     },
+     {
+      "market_id": "betman:G101:260136:4376",
+      "match": "2026-11-17|그리스|세르비아",
+      "league": "UEFA 네이션스리그",
+      "sport": "soccer",
+      "date": "2026-11-17",
+      "home": "그리스",
+      "away": "세르비아",
+      "market": "1X2",
+      "line": null,
+      "game_no": 4376,
+      "kickoff": "2026-11-17T04:45+09:00",
+      "outcome": "H",
+      "p": 0.682,
+      "odds": 1.36,
+      "ev": -0.07247999999999988,
+      "confidence": 62,
+      "upset_risk": 29
+     },
+     {
+      "market_id": "betman:G101:260136:4411",
+      "match": "2026-11-17|캐나다|과테말라",
+      "league": "CONCACAF 네이션스리그",
+      "sport": "soccer",
+      "date": "2026-11-17",
+      "home": "캐나다",
+      "away": "과테말라",
+      "market": "HANDICAP",
+      "line": -1.0,
+      "game_no": 4411,
+      "kickoff": "2026-11-17T10:00+09:00",
+      "outcome": "H",
+      "p": 0.641,
+      "odds": 1.44,
+      "ev": -0.07696000000000003,
+      "confidence": 62,
+      "upset_risk": 33
+     }
+    ],
+    "size": 3,
+    "joint_p": 0.3036,
+    "total_odds": 2.58,
+    "ev": -0.2167,
+    "payout": 25800,
+    "stake": 10000,
+    "confidence": 62,
+    "kelly": 0.0,
+    "key": "betman:G101:260136:4376:H+betman:G101:260136:4382:A+betman:G101:260136:4411:H",
+    "strategy": "balanced",
+    "rank": 3
+   },
+   {
+    "legs": [
+     {
+      "market_id": "betman:G101:260136:4402",
+      "match": "2026-11-17|브루클린 네츠|필라델피아 76s",
+      "league": "NBA",
+      "sport": "basketball",
+      "date": "2026-11-17",
+      "home": "브루클린 네츠",
+      "away": "필라델피아 76s",
+      "market": "WL",
+      "line": null,
+      "game_no": 4402,
+      "kickoff": "2026-11-17T09:30+09:00",
+      "outcome": "A",
+      "p": 0.7259,
+      "odds": 1.27,
+      "ev": -0.07810700000000004,
+      "confidence": 62,
+      "upset_risk": 26
+     },
+     {
+      "market_id": "betman:G101:260136:4411",
+      "match": "2026-11-17|캐나다|과테말라",
+      "league": "CONCACAF 네이션스리그",
+      "sport": "soccer",
+      "date": "2026-11-17",
+      "home": "캐나다",
+      "away": "과테말라",
+      "market": "HANDICAP",
+      "line": -1.0,
+      "game_no": 4411,
+      "kickoff": "2026-11-17T10:00+09:00",
+      "outcome": "H",
+      "p": 0.641,
+      "odds": 1.44,
+      "ev": -0.07696000000000003,
+      "confidence": 62,
+      "upset_risk": 33
+     },
+     {
+      "market_id": "betman:G101:260136:4386",
+      "match": "2026-11-17|북마케도니아|슬로베니아",
+      "league": "UEFA 네이션스리그",
+      "sport": "soccer",
+      "date": "2026-11-17",
+      "home": "북마케도니아",
+      "away": "슬로베니아",
+      "market": "1X2",
+      "line": null,
+      "game_no": 4386,
+      "kickoff": "2026-11-17T04:45+09:00",
+      "outcome": "A",
+      "p": 0.6407,
+      "odds": 1.44,
+      "ev": -0.07739200000000002,
+      "confidence": 62,
+      "upset_risk": 33
+     }
+    ],
+    "size": 3,
+    "joint_p": 0.2981,
+    "total_odds": 2.63,
+    "ev": -0.2159,
+    "payout": 26300,
+    "stake": 10000,
+    "confidence": 62,
+    "kelly": 0.0,
+    "key": "betman:G101:260136:4386:A+betman:G101:260136:4402:A+betman:G101:260136:4411:H",
+    "strategy": "balanced",
+    "rank": 4
+   },
+   {
+    "legs": [
+     {
+      "market_id": "betman:G101:260136:4376",
+      "match": "2026-11-17|그리스|세르비아",
+      "league": "UEFA 네이션스리그",
+      "sport": "soccer",
+      "date": "2026-11-17",
+      "home": "그리스",
+      "away": "세르비아",
+      "market": "1X2",
+      "line": null,
+      "game_no": 4376,
+      "kickoff": "2026-11-17T04:45+09:00",
+      "outcome": "H",
+      "p": 0.682,
+      "odds": 1.36,
+      "ev": -0.07247999999999988,
+      "confidence": 62,
+      "upset_risk": 29
+     },
+     {
+      "market_id": "betman:G101:260136:4331",
+      "match": "2026-11-16|하나은행|우리은행 우리WON",
+      "league": "WKBL",
+      "sport": "basketball",
+      "date": "2026-11-16",
+      "home": "하나은행",
+      "away": "우리은행 우리WON",
+      "market": "WL",
+      "line": null,
+      "game_no": 4331,
+      "kickoff": "2026-11-16T19:00+09:00",
+      "outcome": "A",
+      "p": 0.6881,
+      "odds": 1.33,
+      "ev": -0.08482699999999987,
+      "confidence": 62,
+      "upset_risk": 30
+     },
+     {
+      "market_id": "betman:G101:260136:4411",
+      "match": "2026-11-17|캐나다|과테말라",
+      "league": "CONCACAF 네이션스리그",
+      "sport": "soccer",
+      "date": "2026-11-17",
+      "home": "캐나다",
+      "away": "과테말라",
+      "market": "HANDICAP",
+      "line": -1.0,
+      "game_no": 4411,
+      "kickoff": "2026-11-17T10:00+09:00",
+      "outcome": "H",
+      "p": 0.641,
+      "odds": 1.44,
+      "ev": -0.07696000000000003,
+      "confidence": 62,
+      "upset_risk": 33
+     }
+    ],
+    "size": 3,
+    "joint_p": 0.3008,
+    "total_odds": 2.6,
+    "ev": -0.2179,
+    "payout": 26000,
+    "stake": 10000,
+    "confidence": 62,
+    "kelly": 0.0,
+    "key": "betman:G101:260136:4331:A+betman:G101:260136:4376:H+betman:G101:260136:4411:H",
+    "strategy": "balanced",
+    "rank": 5
+   },
+   {
+    "legs": [
+     {
+      "market_id": "betman:G101:260136:4326",
+      "match": "2026-11-16|서울SK 나이츠|울산현대모비스 피버스",
+      "league": "KBL",
+      "sport": "basketball",
+      "date": "2026-11-16",
+      "home": "서울SK 나이츠",
+      "away": "울산현대모비스 피버스",
+      "market": "WL",
+      "line": null,
+      "game_no": 4326,
+      "kickoff": "2026-11-16T19:00+09:00",
+      "outcome": "H",
+      "p": 0.7196,
+      "odds": 1.28,
+      "ev": -0.07891199999999998,
+      "confidence": 62,
+      "upset_risk": 26
+     },
+     {
+      "market_id": "betman:G101:260136:4411",
+      "match": "2026-11-17|캐나다|과테말라",
+      "league": "CONCACAF 네이션스리그",
+      "sport": "soccer",
+      "date": "2026-11-17",
+      "home": "캐나다",
+      "away": "과테말라",
+      "market": "HANDICAP",
+      "line": -1.0,
+      "game_no": 4411,
+      "kickoff": "2026-11-17T10:00+09:00",
+      "outcome": "H",
+      "p": 0.641,
+      "odds": 1.44,
+      "ev": -0.07696000000000003,
+      "confidence": 62,
+      "upset_risk": 33
+     },
+     {
+      "market_id": "betman:G101:260136:4386",
+      "match": "2026-11-17|북마케도니아|슬로베니아",
+      "league": "UEFA 네이션스리그",
+      "sport": "soccer",
+      "date": "2026-11-17",
+      "home": "북마케도니아",
+      "away": "슬로베니아",
+      "market": "1X2",
+      "line": null,
+      "game_no": 4386,
+      "kickoff": "2026-11-17T04:45+09:00",
+      "outcome": "A",
+      "p": 0.6407,
+      "odds": 1.44,
+      "ev": -0.07739200000000002,
+      "confidence": 62,
+      "upset_risk": 33
+     }
+    ],
+    "size": 3,
+    "joint_p": 0.2955,
+    "total_odds": 2.65,
+    "ev": -0.2168,
+    "payout": 26500,
+    "stake": 10000,
+    "confidence": 62,
+    "kelly": 0.0,
+    "key": "betman:G101:260136:4326:H+betman:G101:260136:4386:A+betman:G101:260136:4411:H",
+    "strategy": "balanced",
+    "rank": 6
+   }
+  ],
   "aggressive": []
  },
  "value_picks": [],
- "top_pick": null,
- "caution": [],
+ "top_pick": {
+  "market_id": "betman:G101:260136:4402",
+  "match": "2026-11-17|브루클린 네츠|필라델피아 76s",
+  "league": "NBA",
+  "sport": "basketball",
+  "date": "2026-11-17",
+  "home": "브루클린 네츠",
+  "away": "필라델피아 76s",
+  "market": "WL",
+  "line": null,
+  "game_no": 4402,
+  "kickoff": "2026-11-17T09:30+09:00",
+  "outcome": "A",
+  "p": 0.7259,
+  "odds": 1.27,
+  "ev": -0.07810700000000004,
+  "confidence": 62,
+  "upset_risk": 26
+ },
+ "caution": [
+  "betman:G101:260136:4354",
+  "betman:G101:260136:4365",
+  "betman:G101:260136:4373",
+  "betman:G101:260136:4316",
+  "betman:G101:260136:4342"
+ ],
  "odds_moves": [],
  "stats": {
-  "markets": 0,
-  "matches": 0,
-  "legs": 0,
-  "combos": 0
+  "markets": 76,
+  "matches": 25,
+  "legs": 76,
+  "combos": 10
  },
  "outcomes": {},
- "headline": "발매 정보를 아직 받아오지 못했다. 다음 수집 때 다시 시도한다."
+ "headline": "25경기를 봤다. 기대값이 플러스인 선택은 없다. 소액이거나 쉬는 날."
 }
