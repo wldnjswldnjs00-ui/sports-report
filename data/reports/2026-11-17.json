@@ -1,7 +1,7 @@
 {
  "date": "2026-11-17",
  "generated_at": "2026-11-17T01:39:42+09:00",
- "updated_at": "2026-11-17T02:15:14+09:00",
+ "updated_at": "2026-11-17T02:18:58+09:00",
  "model_version": "aurora-1.0.0",
  "calibration_alpha": 0.03,
  "demo": false,
@@ -7305,9 +7305,9 @@
      "A": 0.545
     },
     "p_ref": {
-     "H": 0.2188,
      "D": 0.2451,
-     "A": 0.5361
+     "A": 0.5361,
+     "H": 0.2188
     },
     "p_elo": null,
     "pick": "A",
@@ -7760,8 +7760,8 @@
      "A": 0.2316
     },
     "p_ref": {
-     "H": 0.513,
      "D": 0.2499,
+     "H": 0.513,
      "A": 0.2371
     },
     "p_elo": null,
@@ -8204,9 +8204,9 @@
      "A": 0.2946
     },
     "p_ref": {
-     "H": 0.4363,
      "D": 0.2907,
-     "A": 0.273
+     "A": 0.273,
+     "H": 0.4363
     },
     "p_elo": null,
     "pick": "H",
@@ -8646,8 +8646,8 @@
      "A": 0.3662
     },
     "p_ref": {
-     "H": 0.403,
      "D": 0.2479,
+     "H": 0.403,
      "A": 0.3491
     },
     "p_elo": null,
@@ -9086,9 +9086,9 @@
      "A": 0.6933
     },
     "p_ref": {
-     "H": 0.131,
      "D": 0.1915,
-     "A": 0.6775
+     "A": 0.6775,
+     "H": 0.131
     },
     "p_elo": null,
     "pick": "A",
@@ -9798,8 +9798,8 @@
      "A": 0.2147
     },
     "p_ref": {
-     "H": 0.4928,
      "D": 0.2851,
+     "H": 0.4928,
      "A": 0.2221
     },
     "p_elo": null,
@@ -10240,8 +10240,8 @@
      "A": 0.3265
     },
     "p_ref": {
-     "H": 0.4101,
      "D": 0.2597,
+     "H": 0.4101,
      "A": 0.3302
     },
     "p_elo": null,
@@ -10680,9 +10680,9 @@
      "A": 0.2492
     },
     "p_ref": {
-     "H": 0.4517,
      "D": 0.2993,
-     "A": 0.249
+     "A": 0.249,
+     "H": 0.4517
     },
     "p_elo": null,
     "pick": "H",
@@ -15377,7 +15377,7 @@
       "ev": -0.11876799999999998,
       "confidence": 62,
       "upset_risk": 50,
-      "dog": true
+      "dog": false
      }
     ],
     "size": 2,
@@ -15889,7 +15889,7 @@
       "ev": -0.12686399999999998,
       "confidence": 62,
       "upset_risk": 50,
-      "dog": true
+      "dog": false
      },
      {
       "market_id": "betman:G101:260136:4396",
@@ -15909,7 +15909,7 @@
       "ev": -0.12832500000000002,
       "confidence": 62,
       "upset_risk": 50,
-      "dog": true
+      "dog": false
      }
     ],
     "size": 5,
@@ -15949,21 +15949,21 @@
       "dog": true
      },
      {
-      "market_id": "betman:G101:260136:4422",
+      "market_id": "betman:G101:260136:4421",
       "match": "2026-11-17|뉴올리언스 펠리컨스|골든스테이트 워리어스",
       "league": "NBA",
       "sport": "basketball",
       "date": "2026-11-17",
       "home": "뉴올리언스 펠리컨스",
       "away": "골든스테이트 워리어스",
-      "market": "OU",
-      "line": 227.5,
-      "game_no": 4422,
+      "market": "HANDICAP",
+      "line": 3.5,
+      "game_no": 4421,
       "kickoff": "2026-11-17T10:00+09:00",
-      "outcome": "U",
-      "p": 0.4961,
+      "outcome": "A",
+      "p": 0.496,
       "odds": 1.76,
-      "ev": -0.12686399999999998,
+      "ev": -0.12704000000000004,
       "confidence": 62,
       "upset_risk": 50,
       "dog": true
@@ -15972,67 +15972,67 @@
     "size": 2,
     "joint_p": 0.19,
     "total_odds": 4.1,
-    "ev": -0.2208,
+    "ev": -0.221,
     "payout": 41000,
     "stake": 10000,
     "confidence": 68,
     "kelly": 0.0,
-    "key": "betman:G101:260136:4398:H+betman:G101:260136:4422:U",
+    "key": "betman:G101:260136:4398:H+betman:G101:260136:4421:A",
     "strategy": "upset",
     "rank": 1
    },
    {
     "legs": [
      {
-      "market_id": "betman:G101:260136:4398",
-      "match": "2026-11-17|워싱턴 위저즈|멤피스 그리즐리스",
+      "market_id": "betman:G101:260136:4425",
+      "match": "2026-11-17|덴버 너게츠|피닉스 선즈",
       "league": "NBA",
       "sport": "basketball",
       "date": "2026-11-17",
-      "home": "워싱턴 위저즈",
-      "away": "멤피스 그리즐리스",
-      "market": "WL",
-      "line": null,
-      "game_no": 4398,
-      "kickoff": "2026-11-17T09:00+09:00",
+      "home": "덴버 너게츠",
+      "away": "피닉스 선즈",
+      "market": "HANDICAP",
+      "line": -10.5,
+      "game_no": 4425,
+      "kickoff": "2026-11-17T11:00+09:00",
       "outcome": "H",
-      "p": 0.3889,
-      "odds": 2.33,
-      "ev": -0.09386299999999992,
-      "confidence": 74,
-      "upset_risk": 38,
+      "p": 0.494,
+      "odds": 1.77,
+      "ev": -0.12561999999999995,
+      "confidence": 62,
+      "upset_risk": 49,
       "dog": true
      },
      {
-      "market_id": "betman:G101:260136:4449",
+      "market_id": "betman:G101:260136:4448",
       "match": "2026-11-17|중국|바레인",
       "league": "남자축구 국제친선경기",
       "sport": "soccer",
       "date": "2026-11-17",
       "home": "중국",
       "away": "바레인",
-      "market": "OU",
-      "line": 2.5,
-      "game_no": 4449,
+      "market": "HANDICAP",
+      "line": -1.0,
+      "game_no": 4448,
       "kickoff": "2026-11-17T21:00+09:00",
-      "outcome": "O",
-      "p": 0.4504,
-      "odds": 1.94,
-      "ev": -0.126224,
-      "confidence": 65,
-      "upset_risk": 45,
+      "outcome": "H",
+      "p": 0.2324,
+      "odds": 3.5,
+      "ev": -0.1866,
+      "confidence": 73,
+      "upset_risk": 49,
       "dog": true
      }
     ],
     "size": 2,
-    "joint_p": 0.1752,
-    "total_odds": 4.52,
-    "ev": -0.2083,
-    "payout": 45190,
+    "joint_p": 0.1148,
+    "total_odds": 6.19,
+    "ev": -0.2894,
+    "payout": 61900,
     "stake": 10000,
-    "confidence": 70,
+    "confidence": 68,
     "kelly": 0.0,
-    "key": "betman:G101:260136:4398:H+betman:G101:260136:4449:O",
+    "key": "betman:G101:260136:4425:H+betman:G101:260136:4448:H",
     "strategy": "upset",
     "rank": 2
    },
@@ -16059,35 +16059,35 @@
       "dog": true
      },
      {
-      "market_id": "betman:G101:260136:4449",
-      "match": "2026-11-17|중국|바레인",
-      "league": "남자축구 국제친선경기",
-      "sport": "soccer",
+      "market_id": "betman:G101:260136:4407",
+      "match": "2026-11-17|마이애미 히트|휴스턴 로케츠",
+      "league": "NBA",
+      "sport": "basketball",
       "date": "2026-11-17",
-      "home": "중국",
-      "away": "바레인",
-      "market": "OU",
-      "line": 2.5,
-      "game_no": 4449,
-      "kickoff": "2026-11-17T21:00+09:00",
-      "outcome": "O",
-      "p": 0.4504,
-      "odds": 1.94,
-      "ev": -0.126224,
-      "confidence": 65,
-      "upset_risk": 45,
+      "home": "마이애미 히트",
+      "away": "휴스턴 로케츠",
+      "market": "HANDICAP",
+      "line": 3.5,
+      "game_no": 4407,
+      "kickoff": "2026-11-17T09:30+09:00",
+      "outcome": "A",
+      "p": 0.494,
+      "odds": 1.77,
+      "ev": -0.12561999999999995,
+      "confidence": 62,
+      "upset_risk": 49,
       "dog": true
      }
     ],
     "size": 2,
-    "joint_p": 0.1117,
-    "total_odds": 7.33,
-    "ev": -0.1812,
-    "payout": 73300,
+    "joint_p": 0.1207,
+    "total_odds": 6.69,
+    "ev": -0.1927,
+    "payout": 66900,
     "stake": 10000,
-    "confidence": 66,
+    "confidence": 64,
     "kelly": 0.0,
-    "key": "betman:G101:260136:4394:A+betman:G101:260136:4449:O",
+    "key": "betman:G101:260136:4394:A+betman:G101:260136:4407:A",
     "strategy": "upset",
     "rank": 3
    },
@@ -16288,7 +16288,7 @@
       "ev": -0.12686399999999998,
       "confidence": 62,
       "upset_risk": 50,
-      "dog": true
+      "dog": false
      }
     ],
     "size": 7,
