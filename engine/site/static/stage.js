@@ -53,12 +53,14 @@
     ctx.putImageData(img, 0, 0);
     return c;
   }
-  // 야구공·테니스공의 8자형 솔기 곡선
+  // 야구공 솔기 곡선: a+b=1 이면 정확히 단위 구면 위에 놓인다 (꺾임·뾰족점 없음, 최소 곡률반경≈0.6)
   function seamPoints(n) {
-    var pts = [], a = 0.42;
+    var pts = [], b = 0.25, a = 1 - b, c = 2 * Math.sqrt(a * b);
     for (var i = 0; i <= n; i++) {
       var t = i / n * Math.PI * 2;
-      pts.push([Math.cos(t) - a * Math.cos(3 * t), Math.sin(t) + a * Math.sin(3 * t), 2 * Math.sqrt(a) * Math.sin(2 * t)]);
+      var x = a * Math.cos(t) + b * Math.cos(3 * t), y = a * Math.sin(t) - b * Math.sin(3 * t);
+      // 45° 돌려 위도 ±45° 안에 두면 텍스처 극점(왜곡·번짐)을 지나지 않는다
+      pts.push([(x - y) * Math.SQRT1_2, (x + y) * Math.SQRT1_2, c * Math.sin(2 * t)]);
     }
     return pts;
   }
@@ -124,10 +126,56 @@
       });
     },
     baseball: function () {
-      var c = perPixel(function (n, px, py) { var g = hash(px, py) * 10; return [246 - g, 243 - g, 234 - g]; });
-      var ctx = c.getContext("2d"), pts = seamPoints(600);
-      strokeOnSphere(ctx, pts, 4, "rgba(190,175,160,.95)");
-      strokeOnSphere(ctx, pts, 14, "#d3222a", [4, 6]);
+      // 솔기 곡선을 구면 위 거리장으로 래스터화 → 픽셀마다 (부호 있는 거리, 호 길이) 를 얻어
+      // 가운데 홈 + 양쪽으로 갈라지는 V 자 빨간 실밥을 그린다. 2D 선 긋기는 극 근처에서 찌그러지므로 쓰지 않는다.
+      var N = 2400, raw = seamPoints(N), P = [], Tn = [], S = [0], i;
+      for (i = 0; i < N; i++) { var q = raw[i], l = Math.hypot(q[0], q[1], q[2]); P.push([q[0] / l, q[1] / l, q[2] / l]); }
+      for (i = 0; i < N; i++) {
+        var a = P[(i + N - 1) % N], b = P[(i + 1) % N], t = [b[0] - a[0], b[1] - a[1], b[2] - a[2]], tl = Math.hypot(t[0], t[1], t[2]);
+        Tn.push([t[0] / tl, t[1] / tl, t[2] / tl]);
+        if (i > 0) S.push(S[i - 1] + Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1], P[i][2] - P[i - 1][2]));
+      }
+      var L = S[N - 1] + Math.hypot(P[0][0] - P[N - 1][0], P[0][1] - P[N - 1][1], P[0][2] - P[N - 1][2]);
+      var R = 0.13, best = new Float32Array(W * H).fill(9), sd = new Float32Array(W * H), arc = new Float32Array(W * H);
+      for (i = 0; i < N; i++) {
+        var p = P[i], uv = toUV(p), lat = Math.asin(p[1]);
+        var ry = Math.ceil(R / Math.PI * H) + 1, rx = Math.min(W / 2, Math.ceil(R / Math.max(0.05, Math.cos(lat)) / (2 * Math.PI) * W) + 1);
+        var nx = [p[1] * Tn[i][2] - p[2] * Tn[i][1], p[2] * Tn[i][0] - p[0] * Tn[i][2], p[0] * Tn[i][1] - p[1] * Tn[i][0]];
+        for (var yy = Math.max(0, Math.floor(uv[1] - ry)); yy <= Math.min(H - 1, Math.ceil(uv[1] + ry)); yy++) {
+          for (var xo = Math.floor(uv[0] - rx); xo <= Math.ceil(uv[0] + rx); xo++) {
+            var xx = ((xo % W) + W) % W, d = dirAt(xx, yy), k = yy * W + xx;
+            var dist = Math.hypot(d[0] - p[0], d[1] - p[1], d[2] - p[2]);
+            if (dist < best[k]) {
+              best[k] = dist;
+              var sg = d[0] * nx[0] + d[1] * nx[1] + d[2] * nx[2], tg = d[0] * Tn[i][0] + d[1] * Tn[i][1] + d[2] * Tn[i][2];
+              sd[k] = sg; arc[k] = S[i] + tg; // 접선 방향 보정으로 샘플 사이도 매끄럽게
+            }
+          }
+        }
+      }
+      var STITCH = 88, per = L / STITCH, bump = document.createElement("canvas"); bump.width = W; bump.height = H;
+      var bctx = bump.getContext("2d"), bimg = bctx.createImageData(W, H), bd = bimg.data;
+      var c = perPixel(function (n, px, py) {
+        var k = py * W + px, g = hash(px, py) * 9 + hash(px >> 2, py >> 2) * 6, h = 128 + (hash(px, py) - .5) * 10;
+        var col = [247 - g, 243 - g, 232 - g];
+        if (best[k] < R) {
+          var ad = Math.abs(sd[k]), side = sd[k] > 0 ? 1 : 0;
+          if (ad < 0.012) { var gr = 1 - ad / 0.012; col = [col[0] - 38 * gr, col[1] - 42 * gr, col[2] - 44 * gr]; h -= 70 * gr; }
+          if (ad > 0.016 && ad < 0.105) {
+            // V 자: 바깥으로 갈수록 진행 방향 뒤로 기울어진 실밥, 양쪽이 거울 대칭
+            var f = (arc[k] - ad * 0.75 + side * per * 0.5) / per; f -= Math.floor(f);
+            var w = 0.36 * (1 - Math.max(0, ad - 0.085) / 0.04);
+            if (f < w) {
+              var x = f / w, shade = 0.72 + 0.28 * Math.sin(x * Math.PI), tw = hash(px >> 1, py) * 14;
+              col = [214 * shade - tw, 34 * shade, 42 * shade]; h += 60 * Math.sin(x * Math.PI);
+            } else if (ad > 0.09 && ad < 0.105 && f > w && f < w + 0.1) { col = [col[0] - 45, col[1] - 48, col[2] - 50]; h -= 45; } // 바늘 구멍
+          }
+        }
+        var bi = k * 4; bd[bi] = bd[bi + 1] = bd[bi + 2] = Math.max(0, Math.min(255, h)); bd[bi + 3] = 255;
+        return col;
+      });
+      bctx.putImageData(bimg, 0, 0);
+      c.bump = bump;
       return c;
     }
   };
@@ -135,7 +183,7 @@
     soccer: { rough: .28, metal: .05, scale: [1, 1, 1], r: 1 },
     volleyball: { rough: .22, metal: .15, scale: [1, 1, 1], r: 1 },
     basketball: { rough: .6, metal: 0, scale: [1, 1, 1], r: 1.05 },
-    baseball: { rough: .5, metal: 0, scale: [1, 1, 1], r: .62 }
+    baseball: { rough: .55, metal: 0, scale: [1, 1, 1], r: .62, bump: .025 }
 
   };
 
@@ -186,9 +234,11 @@
     // 배치: 앞쪽 큰 공 2개(시즌), 뒤쪽 2개
     var SLOTS = [[1.5, 0.1, 1.1, 1.25], [-1.6, -0.35, 0.5, 1.05], [3.9, 1.05, -1.6, .95], [-3.7, 1.15, -1.8, 1.05]];
     var balls = order.slice(0, 4).map(function (kind, i) {
-      var m = MAT[kind], tex = new T.CanvasTexture(MAKE[kind]());
+      var m = MAT[kind], src = MAKE[kind](), tex = new T.CanvasTexture(src);
       tex.encoding = T.sRGBEncoding; tex.anisotropy = 4;
-      var mesh = new T.Mesh(new T.SphereGeometry(1, 96, 64), new T.MeshStandardMaterial({ map: tex, roughness: m.rough, metalness: m.metal, envMapIntensity: 1.1 }));
+      var mat = new T.MeshStandardMaterial({ map: tex, roughness: m.rough, metalness: m.metal, envMapIntensity: 1.1 });
+      if (src.bump) { var bt = new T.CanvasTexture(src.bump); bt.anisotropy = 4; mat.bumpMap = bt; mat.bumpScale = m.bump || 0.02; }
+      var mesh = new T.Mesh(new T.SphereGeometry(1, 96, 64), mat);
       var s = SLOTS[i], size = m.r * s[3];
       mesh.scale.set(m.scale[0] * size, m.scale[1] * size, m.scale[2] * size);
       mesh.position.set(s[0], s[1], s[2]); mesh.castShadow = true;
