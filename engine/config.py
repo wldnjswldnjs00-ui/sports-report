@@ -63,5 +63,21 @@ def now_kst() -> datetime:
     return datetime.now(KST)
 
 
+# 프로토 구매 시간(08:00~23:00) 기준 '구매일'.
+# - 밤 23시가 되면 다음 구매일로 넘어간다(그 뒤로는 오늘 경기를 살 수 없다).
+# - 킥오프가 아침 8시 30분 전인 경기(유럽 새벽 경기 등)는 전날 밤 23시 전에 사야 하므로 전날 구매일에 속한다.
+SALES_ROLL_HOUR = 23
+DAY_START = timedelta(hours=8, minutes=30)
+
+
 def today_kst() -> str:
-    return now_kst().strftime("%Y-%m-%d")
+    """지금의 구매일(YYYY-MM-DD). 23:00 부터는 다음 날."""
+    return (now_kst() + timedelta(hours=24 - SALES_ROLL_HOUR)).strftime("%Y-%m-%d")
+
+
+def sales_day(kickoff_iso: str) -> str:
+    """경기가 속하는 구매일. 08:30 전 킥오프는 전날."""
+    t = datetime.fromisoformat(kickoff_iso)
+    if t.tzinfo is None:
+        t = t.replace(tzinfo=KST)
+    return (t.astimezone(KST) - DAY_START).strftime("%Y-%m-%d")

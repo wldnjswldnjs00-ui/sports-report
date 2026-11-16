@@ -240,3 +240,34 @@ class Pipeline(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SalesDay(unittest.TestCase):
+    """구매일: 08:00~23:00 구매, 23시에 다음 날로, 08:30 전 킥오프는 전날 구매일."""
+
+    def test_boundaries(self):
+        from datetime import datetime
+        from unittest import mock
+        from engine import config as c
+        self.assertEqual(c.sales_day("2026-11-18T04:45:00+09:00"), "2026-11-17")
+        self.assertEqual(c.sales_day("2026-11-18T08:30:00+09:00"), "2026-11-18")
+        with mock.patch.object(c, "now_kst", lambda: datetime.fromisoformat("2026-11-17T22:59:00+09:00")):
+            self.assertEqual(c.today_kst(), "2026-11-17")
+        with mock.patch.object(c, "now_kst", lambda: datetime.fromisoformat("2026-11-17T23:00:00+09:00")):
+            self.assertEqual(c.today_kst(), "2026-11-18")
+
+
+class Intl(unittest.TestCase):
+    def test_rating_and_markets(self):
+        from engine.sources import intl_history as I
+        rows = ["date,home_team,away_team,home_score,away_score,tournament,city,country,neutral"]
+        for i in range(400):  # 한국이 카타르에 꾸준히 이기는 기록 + 비교용 다른 경기
+            rows.append(f"2010-01-{1 + i % 28:02d},South Korea,Qatar,2,0,Friendly,X,X,FALSE")
+            rows.append(f"2010-01-{1 + i % 28:02d},Qatar,South Korea,0,1,Friendly,X,X,FALSE")
+        b = I.build("\n".join(rows))
+        self.assertGreater(b["teams"]["South Korea"][0], b["teams"]["Qatar"][0])
+        st = I.stat("카타르", "한국", b)
+        self.assertIsNotNone(st)
+        self.assertGreater(st["A"], st["H"])
+        p = I.market_probs(st, "OU", 2.5, {"O", "U"})
+        self.assertAlmostEqual(p["O"] + p["U"], 1, places=6)

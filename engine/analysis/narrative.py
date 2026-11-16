@@ -100,7 +100,12 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
     if side_form and opp_form and m["market"] in ("1X2", "WL", "HANDICAP"):
         reasons.append(f"최근 {side_form['n']}경기 {side_form['w']}승 {side_form['l']}패(평균 득실 {side_form['margin']:+.1f}), "
                        f"상대는 {opp_form['w']}승 {opp_form['l']}패({opp_form['margin']:+.1f})")
-    if a.get("elo") and m["market"] in ("1X2", "WL"):
+    if a.get("intl"):
+        it = a["intl"]
+        reasons.insert(0, f"해외 배당이 없는 경기다. 국가대표 레이팅(A매치 전 경기 기준)은 {m['home']} {it['rh']}, {m['away']} {it['ra']}로 {abs(it['rh'] - it['ra'])}점 차이다")
+    elif not a.get("p_ref") and a.get("elo"):
+        reasons.insert(0, "해외 배당이 없는 경기라 팀 레이팅으로만 봤다")
+    if a.get("elo") and m["market"] in ("1X2", "WL") and not a.get("intl"):
         d = a["elo"]["home"] - a["elo"]["away"]
         if abs(d) >= 40:
             reasons.append(f"팀 레이팅은 {m['home']} {a['elo']['home']}, {m['away']} {a['elo']['away']}로 {abs(d)}점 차이다")

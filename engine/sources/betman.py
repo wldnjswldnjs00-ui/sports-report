@@ -343,12 +343,12 @@ def _fetch(day: str) -> list[dict[str, Any]]:
 
 
 def in_window(ko: str, day: str) -> bool:
-    """리포트 날짜의 '오늘' 범위: 그 날짜 00:00 ~ 24:00 KST."""
-    return ko[:10] == day
+    """리포트의 '오늘' 범위: 그 구매일(당일 08:30 ~ 다음 날 08:30 킥오프)."""
+    return config.sales_day(ko) == day
 
 
 def in_horizon(ko: str, day: str, days: int = 3) -> bool:
-    """미리보기 범위: 당일 00:00 부터 3일."""
+    """미리보기 범위: 그 구매일 시작(당일 08:30)부터 3일."""
     t = datetime.fromisoformat(ko)
-    start = datetime.fromisoformat(day + "T00:00:00+09:00")
+    start = datetime.fromisoformat(day + "T00:00:00+09:00") + config.DAY_START
     return 0 <= (t - start).total_seconds() < 86400 * days

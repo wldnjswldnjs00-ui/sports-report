@@ -137,8 +137,8 @@
   <header class="block-head">
     <h2>경기 분석</h2>
     <div class="filters" data-days>
-      {% for d in r.markets|map(attribute='kickoff')|map('truncate', 10, True, '')|unique %}
-      <button type="button" class="chip" aria-pressed="{{ 'true' if loop.first else 'false' }}" data-d="{{ d }}">{{ d|kdate }}</button>
+      {% for d in r.markets|map(attribute='kickoff')|map('sday')|unique|sort %}
+      <button type="button" class="chip" aria-pressed="{{ 'true' if loop.first else 'false' }}" data-d="{{ d }}" title="08:00~23:00 구매, 다음 날 08:30 전 경기 포함">{{ d|kdate }} 구매</button>
       {% endfor %}
     </div>
     <div class="filters" data-filters>
@@ -154,7 +154,7 @@
   {% for g in groups %}
     {% set mm = g.main %}{% set a = mm.analysis %}
     {% set graded = [] %}{% for m in g.markets %}{% set o = r.outcomes.get(m.id) %}{% if o and o != 'VOID' and m.analysis %}{% set _ = graded.append(o == m.analysis.pick) %}{% endif %}{% endfor %}
-    <li class="match" data-sport="{{ g.sport }}" data-day="{{ g.kickoff[:10] }}" {% if g.markets|selectattr('id', 'in', r.caution)|list %}data-caution{% endif %}>
+    <li class="match" data-sport="{{ g.sport }}" data-day="{{ g.kickoff|sday }}" {% if g.markets|selectattr('id', 'in', r.caution)|list %}data-caution{% endif %}>
       <button type="button" class="match-row" aria-expanded="false" data-expand>
         <span class="m-no">{% if g.round %}<small>{{ round_label(g.round) }}</small>{% endif %}{{ g.game_no or '' }}{% if g.game_no %}번{% endif %}</span>
         <span class="m-time">{{ g.kickoff|kdt }}</span>

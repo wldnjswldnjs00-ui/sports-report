@@ -125,7 +125,7 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
     for m in analyzed:
         if m.get("analysis") and not (datetime.fromisoformat(m["kickoff"]) <= now and m.get("oreo")):
             m["narrative"] = describe(m)
-    # 오늘(당일 06시~익일 06시) 경기만 조합·채점 대상. 그 뒤 경기는 미리보기로만 보여준다
+    # 오늘 구매일(당일 08:30~익일 08:30 킥오프) 경기만 조합·채점 대상. 그 뒤 경기는 미리보기로만 보여준다
     # (다음 날 리포트에서 본 경기로 다시 다뤄지므로 성과가 두 번 집계되지 않는다).
     # 전날 리포트에서 이미 본 경기로 다룬 것은 다시 세지 않는다(날짜 기준을 바꿔도 이중 집계 방지).
     yday = (date.fromisoformat(day) - timedelta(days=1)).isoformat()
@@ -200,8 +200,8 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
         "pending": sorted([x for x in betman.PENDING if x["kickoff"] > now.isoformat()], key=lambda x: x["kickoff"])[:60] if not config.DEMO else [],
         "stats": {
             "markets": len(analyzed),
-            "matches": len({(m["home"], m["away"], m["kickoff"][:10]) for m in primary}),
-            "upcoming": len({(m["home"], m["away"], m["kickoff"][:10]) for m in analyzed if m["preview"]}),
+            "matches": len({(m["home"], m["away"], m["kickoff"][:16]) for m in primary}),
+            "upcoming": len({(m["home"], m["away"], m["kickoff"][:16]) for m in analyzed if m["preview"]}),
             "legs": len(legs),
             "combos": sum(len(v) for v in combos.values()),
         },
@@ -306,6 +306,11 @@ def history(max_rounds: int = 8) -> None:
         overseas_history.backfill()
     except Exception:  # noqa: BLE001
         log.exception("해외 기록 수집 실패")
+    from .sources import intl_history
+    try:
+        intl_history.backfill()
+    except Exception:  # noqa: BLE001
+        log.exception("국가대표 기록 수집 실패")
     try:
         us_history.backfill()
     except Exception:  # noqa: BLE001

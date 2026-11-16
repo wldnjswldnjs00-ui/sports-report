@@ -25,7 +25,7 @@ DIFF_MAX, GOAL_MAX = 6, 10
 US = {"basketball": {"key": "nba", "label": "NBA", "mmax": 45, "rmax": 60.0},
       "baseball": {"key": "mlb", "label": "MLB", "mmax": 15, "rmax": 15.0}}
 NEED = 250  # 한 칸 표본이 이보다 적으면 이웃 칸까지 넓힌다
-SOURCE_LABEL = {"soccer": "유럽 축구", "basketball": "NBA", "baseball": "MLB"}
+SOURCE_LABEL = {"soccer": "유럽 축구", "basketball": "NBA", "baseball": "MLB", "intl": "A매치"}
 
 
 def _bin(p: float, w: float) -> int:

@@ -35,14 +35,33 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
 
     # 분석은 해외 배당 기준으로만 한다. 베트맨 배당·베트맨 지난 기록·베트맨 배당 변동은 확률에 넣지 않는다
     # (베트맨 배당은 구매 배당 표시용). 해외 배당이 없는 경기는 분석하지 않는다.
-    if not ref:
-        return {**m, "analysis": None, "no_x": True}
-    sources = [(ref, 0.65 if p_hist else 0.85)]
-    used = ["해외 배당(기준점 환산)" if m.get("ref_kind") == "환산" else "해외 배당"]
-    if p_hist:
-        sources.append((p_hist, 0.25)); used.append(f"해외 과거 기록({xstat['src']})")
-    if p_elo:
-        sources.append((p_elo, 0.10 if p_hist else 0.15)); used.append("Elo")
+    intl = None
+    cap = 100
+    if ref:
+        sources = [(ref, 0.65 if p_hist else 0.85)]
+        used = ["해외 배당(기준점 환산)" if m.get("ref_kind") == "환산" else "해외 배당"]
+        if p_hist:
+            sources.append((p_hist, 0.25)); used.append(f"해외 과거 기록({xstat['src']})")
+        if p_elo:
+            sources.append((p_elo, 0.10 if p_hist else 0.15)); used.append("Elo")
+    else:
+        # 해외 배당이 없는 경기: 베트맨 배당은 쓰지 않고 레이팅·기록으로만 본다(신뢰도 상한)
+        from ..sources import intl_history as IH
+        st = IH.stat(m["home"], m["away"]) if m["sport"] == "soccer" else None
+        p_i = IH.market_probs(st, m["market"], m.get("line"), set(odds)) if st else None
+        if p_i:
+            intl = {"rh": st["rh"], "ra": st["ra"], "n": st["n"]}
+            xstat = {"src": "A매치", "n": st["n"], "p": {k: round(v, 4) for k, v in p_i.items()},
+                     "basis": f"국가대표 레이팅 {st['rh']} 대 {st['ra']}와 비슷한"}
+            hist_info = hist_for(xstat, odds)
+            p_hist = None
+            sources, used, cap = [(p_i, 1.0)], ["국가대표 레이팅·A매치 기록(해외 배당 없음)"], 55
+        elif p_elo and m["market"] in ("1X2", "WL"):
+            xstat, hist_info, p_hist = None, None, None
+            sources, used, cap = [(p_elo, 1.0)], ["팀 레이팅(해외 배당 없음)"], 40
+        else:
+            return {**m, "analysis": None, "no_x": True}
+        ref = {}
     p = combine(sources)
     if not p:
         return {**m, "analysis": None, "no_x": True}
@@ -63,17 +82,20 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
         value_ev = evs[value_key]
 
     # 신뢰도: 소스 일치도 + 소스 개수 + 픽 확률
-    div = max([_divergence(ref, p_hist or {}), _divergence(ref, p_elo or {}), _divergence(p_hist or {}, p_elo or {})])
+    div = max([_divergence(ref or {}, p_hist or {}), _divergence(ref or {}, p_elo or {}), _divergence(p_hist or {}, p_elo or {})])
     agree = max(0.0, 1 - div / 0.25)
     n_src = len(sources)
     confidence = round(100 * (0.45 * agree + 0.25 * (n_src / 3) + 0.30 * min(1.0, (pick_prob - 1 / len(p)) / 0.45)))
     if n_src == 1:
         confidence = min(confidence, 62)  # 단일 소스는 상한을 둔다
+    confidence = min(confidence, cap)     # 해외 배당 없는 경기는 더 낮은 상한
     upset = round(100 * (1 - pick_prob) * (0.6 + 0.4 * entropy_norm(p)))
     data_score = round(100 * min(1.0, 0.35 * n_src + (0.15 if p_elo else 0)))
 
     flags = []
-    if p_hist and _divergence(ref, p_hist) >= 0.06:
+    if not ref:
+        flags.append("해외 배당 없음")
+    if ref and p_hist and _divergence(ref, p_hist) >= 0.06:
         flags.append("해외 기록과 차이")
     if pick_prob < 0.5 and len(p) == 3:
         flags.append("혼전")
@@ -101,6 +123,7 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
             "payout_rate": round(1 / overround(odds), 4) if odds else None,
             "hist": hist_info or None,
             "pair": xstat,
+            "intl": intl,
             "ref_odds": m.get("ref_odds"),
             # 해외 배당: 승패·승무패는 해외 시장의 실제 배당, 핸디캡·언더오버는 해외 확률을 베트맨 기준점으로 환산한 배당
             "x_odds": ({k: (m["ref_odds"][k] if m.get("ref_kind") == "직접" and (m.get("ref_odds") or {}).get(k) else round(1 / v, 2))
