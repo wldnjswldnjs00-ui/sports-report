@@ -72,6 +72,60 @@ def _outcome(m: dict, key: str) -> str:
     return OUTCOME_LABEL.get(key, key)
 
 
+
+def _short(team: str) -> str:
+    t = str(team or "").split()
+    return t[0] if t and len(t[0]) >= 2 else str(team or "")
+
+
+def _pick_label(x: dict, key: str | None = None) -> str:
+    """팀 기준으로 읽히는 선택 이름: '브루클린 승', '노르웨이 +1', '언더 2.5'."""
+    k = key or x.get("outcome")
+    mk, line = x.get("market"), x.get("line")
+    h, a = _short(x.get("home")), _short(x.get("away"))
+    if mk == "OU":
+        return f"{OUTCOME_LABEL.get(k, k)} {line:g}" if line is not None else OUTCOME_LABEL.get(k, k)
+    if mk == "HANDICAP" and line is not None:
+        if k == "H":
+            return f"{h} {line:+g}"
+        if k == "A":
+            return f"{a} {-line:+g}"
+        return f"핸디 무({line:+g})"
+    return {"H": f"{h} 승", "D": "무승부", "A": f"{a} 승"}.get(k, k)
+
+
+LINE_KINDS = (("up", "역배", "upsets"), ("hd", "핸디캡", "handi_picks"), ("ou", "언더오버", "ou_picks"))
+
+
+def _line_groups(r: dict) -> list[dict]:
+    """역배·핸디캡·언더오버 픽을 경기별로 묶는다(한 경기 = 한 칸)."""
+    groups: dict[tuple, dict] = {}
+    for kind, label, field in LINE_KINDS:
+        for x in r.get(field) or []:
+            key = (x.get("home"), x.get("away"), str(x.get("kickoff"))[:10])
+            g = groups.setdefault(key, {"home": x.get("home"), "away": x.get("away"), "league": x.get("league"),
+                                        "sport": x.get("sport"), "kickoff": x.get("kickoff"), "picks": [], "kinds": []})
+            if any(p["x"].get("market_id") == x.get("market_id") and p["x"].get("outcome") == x.get("outcome") for p in g["picks"]):
+                continue
+            g["picks"].append({"kind": kind, "label": label, "x": x})
+            if kind not in g["kinds"]:
+                g["kinds"].append(kind)
+                g["k_" + kind] = True
+            if str(x.get("kickoff")) < str(g["kickoff"]):
+                g["kickoff"] = x.get("kickoff")
+    return sorted(groups.values(), key=lambda g: (str(g["kickoff"]), g["home"] or ""))
+
+
+def _upset_map(r: dict) -> dict:
+    """경기별 역배 후보(가장 확률 높은 것 하나): 'home|away|date' → 픽."""
+    out: dict[str, dict] = {}
+    for x in r.get("upsets") or []:
+        k = f"{x.get('home')}|{x.get('away')}|{str(x.get('kickoff'))[:10]}"
+        if k not in out or (x.get("p") or 0) > (out[k].get("p") or 0):
+            out[k] = x
+    return out
+
+
 def _flow_key(m: dict) -> str | None:
     """배당이 3% 이상 가장 많이 내려간 선택(=구매가 몰린 쪽)."""
     fl = m.get("flow") or {}
@@ -107,7 +161,7 @@ def _env() -> Environment:
     env.filters.update(sday=config.sales_day, match_groups=_match_groups, pct=_pct, signed=_signed, odds=_odds, won=_won, kdate=_kdate, ktime=_ktime, kdt=_kdt, slug=slug)
     env.globals.update(
         cfg=config, STRATEGIES=STRATEGIES, MARKET_LABEL=MARKET_LABEL, SPORT_LABEL=SPORT_LABEL, XSRC=("유럽 축구", "NBA", "MLB", "A매치"), mk_short=_mk_short,
-        outcome=_outcome, flow_key=_flow_key, round_label=_round_label, rounds_of=_rounds, now=config.now_kst(), asset_v=config.now_kst().strftime("%Y%m%d%H%M"),
+        outcome=_outcome, pick_label=_pick_label, line_groups=_line_groups, upset_map=_upset_map, flow_key=_flow_key, round_label=_round_label, rounds_of=_rounds, now=config.now_kst(), asset_v=config.now_kst().strftime("%Y%m%d%H%M"),
         nav=[("/", "오늘"), ("/odds/", "배당 분석"), ("/tool/", "금액 계산기"), ("/performance/", "성과"),
              ("/reports/", "지난 리포트"), ("/method/", "분석 방법"), ("/guide/", "가이드"), ("/support/", "후원")],
     )

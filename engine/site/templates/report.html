@@ -9,6 +9,7 @@
 <section class="wrap empty"><h1>아직 발행된 리포트가 없습니다</h1><p>첫 리포트는 다음 수집 주기에 올라옵니다.</p></section>
 {% else %}
 {% set mk = {} %}{% for m in r.markets %}{% set _ = mk.update({m.id: m}) %}{% endfor %}
+{% set ups = upset_map(r) %}
 
 <section class="hero">
   <div class="hero-stage" data-stage data-balls='{{ balls|tojson }}' aria-hidden="true">
@@ -24,6 +25,7 @@
       {% if is_home %}<li><b data-remain>{{ r.stats.matches }}</b><span>남은 경기</span></li>{% endif %}
       <li><b data-count="{{ r.stats.combos }}">{{ r.stats.combos }}</b><span>추천 조합</span></li>
     </ul>
+    {% if is_home %}{% if nxt %}<a class="nd-pill is-ready" href="#next-day">다음 구매일 <b>{{ nxt.date|kdate }}</b> 분석 공개 →</a>{% elif next_guess %}<p class="nd-pill">다음 구매일 <b>{{ next_guess.date|kdate }}</b>{% if next_guess.rounds %} · {{ next_guess.rounds|join(' · ') }}{% endif %} · 오후 7시 공개</p>{% endif %}{% endif %}
     <p class="stamp">{{ r.updated_at|kdt }} KST 업데이트</p>
   </div>
 </section>
@@ -48,6 +50,7 @@
     <article class="top-pick" data-ko="{{ t.kickoff }}">
       <div class="tp-body">
         <p class="tp-league">{{ SPORT_LABEL[t.sport] }} · {{ t.league }} · {{ t.kickoff|kdt }}</p>
+        {% set tu = ups.get(t.home ~ '|' ~ t.away ~ '|' ~ t.kickoff[:10]) %}{% if tu %}<p class="tp-upset"><span class="ub">역배 {{ tu.p|pct }}</span> {{ pick_label(tu) }} {{ tu.odds|odds }}배</p>{% endif %}
         <h3 class="tp-match">{{ t.home }} <i>vs</i> {{ t.away }}</h3>
         <p class="tp-pick"><span class="bub on">{{ outcome(t, t.outcome) }}</span> <span>{{ t.odds|odds }}배</span></p>
         {{ prob_bar(tm) }}
@@ -93,44 +96,50 @@
 
 {{ ad('report-mid') }}
 
-{% if r.upsets %}
-<section class="wrap block" data-reveal>
-  <header class="block-head"><h2>역배 후보</h2><p>해외 시장은 열세로 보지만, 해외 과거 기록과 팀 레이팅이 받쳐주는 팀입니다.</p></header>
-  {{ pick_table(r.upsets, '근거') }}
-</section>
-{% endif %}
-{% if r.handi_picks or r.ou_picks %}
-<section class="wrap block" data-reveal id="lines">
-  <header class="block-head"><h2>핸디캡 · 언더오버</h2></header>
-  <div class="tabs" role="tablist" data-tabs>
-    {% for key, label, rows in [('handi', '핸디캡', r.handi_picks), ('ou', '언더오버', r.ou_picks)] %}{% if rows %}
-    <button role="tab" type="button" id="tab-pk-{{ key }}" aria-controls="panel-pk-{{ key }}" aria-selected="{{ 'true' if loop.first or not r.handi_picks else 'false' }}" tabindex="0">{{ label }} <small>{{ rows|length }}</small></button>
+{% set lgs = line_groups(r) %}
+{% if lgs %}
+<section class="wrap block lines" data-reveal id="lines" data-lines>
+  <header class="block-head"><h2>역배 · 핸디 · 언오버</h2><p><span data-lcount>{{ lgs|length }}</span>경기 · 눌러서 자세히 보기</p></header>
+  <div class="filters" data-lf>
+    <button type="button" class="chip" aria-pressed="true" data-k="all">전체</button>
+    {% for kind, label, field in [('up', '역배', 'upsets'), ('hd', '핸디캡', 'handi_picks'), ('ou', '언더오버', 'ou_picks')] %}{% if r[field] %}
+    <button type="button" class="chip k-{{ kind }}" aria-pressed="false" data-k="{{ kind }}">{{ label }} <small>{{ lgs|selectattr('k_' ~ kind)|list|length }}</small></button>
     {% endif %}{% endfor %}
   </div>
-  {% for key, rows in [('handi', r.handi_picks), ('ou', r.ou_picks)] %}{% if rows %}
-  <div class="tab-panel" role="tabpanel" id="panel-pk-{{ key }}" aria-labelledby="tab-pk-{{ key }}" {% if key == 'ou' and r.handi_picks %}hidden{% endif %}>
-    <div class="tblw"><table class="tbl line-tbl">
-      <thead><tr><th>시간</th><th>경기</th><th>기준</th><th>선택과 배당</th><th>추정 확률</th><th class="n">해외 기록 적중률</th></tr></thead>
-      <tbody>
-      {% for l in rows %}{% set m = mk.get(l.market_id) %}
-        <tr data-ko="{{ l.kickoff }}">
-          <td class="muted">{{ l.kickoff|kdt }}</td>
-          <td><b>{{ l.home }} vs {{ l.away }}</b><br><span class="muted">{{ l.league }}</span></td>
-          <td class="n">{% if l.line is not none %}{{ ('%+g'|format(l.line)) if key == 'handi' else l.line }}{% endif %}</td>
-          <td><span class="c-opt">{% for k in ['H', 'D', 'A', 'O', 'U'] if m and k in m.odds %}<span class="{{ 'pk' if k == l.outcome }}">{{ outcome(l, k)|replace(' ' ~ ('%+g'|format(l.line or 0)), '') }}<b>{{ m.odds[k]|odds }}</b></span>{% endfor %}</span></td>
-          <td><span class="mini"><i style="width:{{ (l.p * 100)|round(0)|int }}%"></i></span><span class="n">{{ l.p|pct }}</span></td>
-          <td class="n">{% if l.hist_hit is not none and l.hist_n %}{{ l.hist_hit|pct }} <span class="muted">({{ '{:,}'.format(l.hist_n) }}경기)</span>{% else %}<span class="muted">–</span>{% endif %}</td>
-        </tr>
+  <ul class="lg-list">
+  {% for g in lgs %}
+    <li class="lg" data-ko="{{ g.kickoff }}" data-kinds="{{ g.kinds|join(' ') }}">
+      <button type="button" class="lg-row" aria-expanded="false" data-lg>
+        <span class="lg-top">{{ g.kickoff|kdt }} · {{ g.league }}</span>
+        <span class="lg-match">{{ g.home }} <i>vs</i> {{ g.away }}</span>
+        <span class="lg-chips">{% for p in g.picks %}<span class="kc k-{{ p.kind }}"><em>{{ p.label }}</em>{{ pick_label(p.x) }} <b>{{ p.x.odds|odds }}</b> <s>{{ p.x.p|pct }}</s></span>{% endfor %}</span>
+        <span class="lg-caret" aria-hidden="true"></span>
+      </button>
+      <div class="lg-more" hidden>
+      {% for p in g.picks %}{% set x = p.x %}{% set m = mk.get(x.market_id) %}
+        <div class="lg-d">
+          <p class="lg-dh"><span class="kc k-{{ p.kind }}"><em>{{ p.label }}</em>{{ MARKET_LABEL.get(x.market, x.market) }}{% if x.line is not none %} {{ ('%+g'|format(x.line)) if x.market == 'HANDICAP' else ('%g'|format(x.line)) }}{% endif %}</span>{% if x.game_no %}<small>{{ round_label(x.round) }} {{ x.game_no }}번</small>{% endif %}</p>
+          {% if m %}<div class="lg-opts">{% for k, od in m.odds.items() %}<button type="button" class="opick{% if k == x.outcome %} is-model{% endif %}" data-leg="{{ m.id }}|{{ k }}"><span>{{ pick_label(x, k) }}</span><b>{{ od|odds }}</b></button>{% endfor %}</div>{% endif %}
+          <dl class="lg-nums">
+            <div><dt>추정 확률</dt><dd><span class="mini"><i style="width:{{ (x.p * 100)|round(0)|int }}%"></i></span>{{ x.p|pct }}</dd></div>
+            {% if x.x_odds %}<div><dt>해외 배당</dt><dd>{{ x.x_odds|odds }}{% if x.x_kind == '환산' %} <small class="muted">환산</small>{% endif %}</dd></div>{% endif %}
+            {% if x.hist_hit is not none and x.hist_n %}<div><dt>해외 기록 적중률</dt><dd>{{ x.hist_hit|pct }} <small class="muted">{{ '{:,}'.format(x.hist_n) }}경기</small></dd></div>{% endif %}
+            {% if x.confidence %}<div><dt>신뢰도</dt><dd>{{ x.confidence }}</dd></div>{% endif %}
+          </dl>
+          {% if x.reasons %}<ul class="lg-why">{% for t in x.reasons[:2] %}<li>{{ t }}</li>{% endfor %}</ul>{% endif %}
+        </div>
       {% endfor %}
-      </tbody>
-    </table></div>
-  </div>
-  {% endif %}{% endfor %}
+      {% for y in matches if y.home == g.home and y.away == g.away and y.kickoff[:10] == g.kickoff[:10] %}{% if loop.first %}<a class="lg-link" href="{{ y.url }}">경기 분석 전체 보기 →</a>{% endif %}{% endfor %}
+      </div>
+    </li>
+  {% endfor %}
+  </ul>
+  <button type="button" class="lg-morebtn" data-lmore hidden></button>
 </section>
 {% endif %}
 
-{% if is_home %}
-<section class="wrap block next-day" id="next-day" data-next {% if nxt %}data-ready{% endif %}>
+{% if is_home and nxt %}
+<section class="wrap block next-day" id="next-day" data-next data-ready>
   {% if nxt %}
   {% set nr = rounds_of(nxt) %}
   <header class="block-head"><h2>다음 구매일 · {{ nxt.date|kdate }}</h2><p>{% if nr %}프로토 승부식 {{ nr|join(' · ') }} · {% endif %}{{ nxt.stats.matches }}경기 분석 완료</p></header>
@@ -150,13 +159,10 @@
   </div>
   {% endif %}
   <a class="btn" href="/reports/{{ nxt.date }}/">{{ nxt.date|kdate }} 전체 분석 보기</a>
-  {% else %}
-  <header class="block-head"><h2>다음 구매일 · {{ next_guess.date|kdate }}</h2>{% if next_guess.rounds %}<p>프로토 승부식 {{ next_guess.rounds|join(' · ') }}</p>{% endif %}</header>
-  <p class="nd-lead">{{ next_guess.date|kdate(False) }} 경기 분석은 <b>오후 7시</b>에 올라옵니다. 적중 확률이 높아 보이는 경기, 전략별 조합, 역배 후보와 핸디캡·언더오버 분석이 함께 공개됩니다.</p>
   {% endif %}
 </section>
 {% endif %}
-<section class="wrap block" id="matches" data-reveal data-today="{{ r.date }}">
+<section class="wrap block" id="matches" data-reveal data-today="{{ r.date }}" {% if is_home %}data-live{% endif %}>
   {% set groups = r.markets|match_groups %}
   <header class="block-head">
     <h2>경기 분석</h2>
@@ -176,14 +182,14 @@
   <p class="none" data-empty hidden>이 날짜에는 해당 종목의 배당 공개 경기가 없습니다.</p>
   <ol class="matches">
   {% for g in groups %}
-    {% set mm = g.main %}{% set a = mm.analysis %}
+    {% set mm = g.main %}{% set a = mm.analysis %}{% set ux = ups.get(g.home ~ '|' ~ g.away ~ '|' ~ g.kickoff[:10]) %}
     {% set graded = [] %}{% for m in g.markets %}{% set o = r.outcomes.get(m.id) %}{% if o and o != 'VOID' and m.analysis %}{% set _ = graded.append(o == m.analysis.pick) %}{% endif %}{% endfor %}
     <li class="match" data-sport="{{ g.sport }}" data-day="{{ g.kickoff|sday }}" data-ko="{{ g.kickoff }}" {% if g.markets|selectattr('id', 'in', r.caution)|list %}data-caution{% endif %}>
       <button type="button" class="match-row" aria-expanded="false" data-expand>
         <span class="m-no">{% if g.round %}<small>{{ round_label(g.round) }}</small>{% endif %}{{ g.game_no or '' }}{% if g.game_no %}번{% endif %}</span>
         <span class="m-time">{{ g.kickoff|kdt }}</span>
         <span class="m-league">{{ g.league }} <small>{% if g.markets|length > 1 %}마켓 {{ g.markets|length }}개{% else %}{{ mk_short(g.main) }}{% endif %}</small></span>
-        <span class="m-teams">{{ g.home }} <i>vs</i> {{ g.away }}</span>
+        <span class="m-teams">{{ g.home }} <i>vs</i> {{ g.away }}{% if ux %} <span class="ub">역배 {{ ux.p|pct }}</span>{% endif %}</span>
         {% set others = g.markets|rejectattr('id', 'equalto', mm.id)|selectattr('analysis')|list %}
         {% if others %}<span class="m-also">{% for m in others %}<span>{{ outcome(m, m.analysis.pick) }} <b>{{ m.analysis.pick_prob|pct }}</b></span>{% endfor %}</span>{% endif %}
         {% if a %}
@@ -193,6 +199,7 @@
         <span class="m-res">{% if graded %}{% set hits = graded|select|list|length %}<span class="tag {{ 'hit' if hits == graded|length else ('miss' if hits == 0 else 'part') }}">적중 {{ hits }}/{{ graded|length }}</span>{% elif g.markets|selectattr('id', 'in', r.caution)|list %}<span class="tag warn">주의</span>{% endif %}</span>
       </button>
       <div class="match-more" hidden>
+        {% if ux %}<p class="m-upset"><span class="ub">역배</span> {{ pick_label(ux) }} {{ ux.odds|odds }}배 · 추정 확률 {{ ux.p|pct }}{% if ux.reasons %} · {{ ux.reasons[0] }}{% endif %}</p>{% endif %}
         {% for m in g.markets %}{% set ma = m.analysis %}
         <div class="mk">
           <div class="mk-head"><b>{{ mk_short(m) }}</b>{% if m.game_no %}<small>{{ m.game_no }}번</small>{% endif %}

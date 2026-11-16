@@ -188,9 +188,60 @@
   });
   applyFilters();
 
+  /* 역배·핸디·언오버: 경기별 묶음, 종류 필터, 처음엔 6경기만, 눌러서 자세히 */
+  var linesApply = function () {};
+  $$("[data-lines]").forEach(function (sec) {
+    var LIMIT = 6, kind = "all", all = false;
+    var btn = $("[data-lmore]", sec), cnt = $("[data-lcount]", sec), fchips = $$("[data-lf] .chip", sec);
+    var has = function (li, k) { return (" " + li.dataset.kinds + " ").indexOf(" " + k + " ") >= 0; };
+    linesApply = function () {
+      var items = $$(".lg", sec);
+      if (!items.length) { sec.hidden = true; return; }
+      fchips.forEach(function (c) {
+        var k = c.dataset.k, sm = $("small", c);
+        if (k === "all") return;
+        var n = items.filter(function (li) { return has(li, k); }).length;
+        if (sm) sm.textContent = n;
+        c.hidden = n === 0;
+        if (n === 0 && kind === k) {
+          kind = "all";
+          fchips.forEach(function (x) { x.setAttribute("aria-pressed", String(x.dataset.k === "all")); });
+        }
+      });
+      var match = items.filter(function (li) { return kind === "all" || has(li, kind); });
+      items.forEach(function (li) { li.hidden = true; });
+      match.forEach(function (li, i) { li.hidden = !all && i >= LIMIT; });
+      if (cnt) cnt.textContent = items.length;
+      if (btn) {
+        var rest = match.length - LIMIT;
+        btn.hidden = rest <= 0;
+        btn.textContent = all ? "접기" : rest + "경기 더 보기";
+      }
+    };
+    fchips.forEach(function (c) {
+      c.addEventListener("click", function () {
+        fchips.forEach(function (x) { x.setAttribute("aria-pressed", String(x === c)); });
+        kind = c.dataset.k; all = false; linesApply();
+      });
+    });
+    if (btn) btn.addEventListener("click", function () {
+      all = !all; linesApply();
+      if (!all) sec.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    $$("[data-lg]", sec).forEach(function (b) {
+      b.addEventListener("click", function () {
+        var li = b.parentNode, more = $(".lg-more", li), open = b.getAttribute("aria-expanded") !== "true";
+        b.setAttribute("aria-expanded", String(open));
+        if (more) more.hidden = !open;
+        li.classList.toggle("is-open", open);
+      });
+    });
+    linesApply();
+  });
+
   /* 시작한 경기는 시작 시각이 되면 목록·카드·표에서 뺀다(1분마다 확인, 서버 실행 없음).
      오늘 리포트 첫 화면에서만 적용하고, 지난 리포트·경기 페이지는 기록으로 그대로 둔다. */
-  if (doc.body.classList.contains("page-report") && $("[data-next]")) {
+  if (doc.body.classList.contains("page-report") && $("[data-live]")) {
     var sweep = function () {
       var now = Date.now();
       $$("[data-ko]").forEach(function (el) {
@@ -221,7 +272,8 @@
         hero.parentNode.insertBefore(nx, hero.nextElementSibling);
       }
       var em = $("[data-empty]");
-      if (em && left === 0) { em.hidden = false; em.textContent = "오늘 남은 경기가 없습니다. 위에서 다음 구매일 분석을 확인하세요."; }
+      if (em && left === 0) { em.hidden = false; em.textContent = nx ? "오늘 남은 경기가 없습니다. 위에서 다음 구매일 분석을 확인하세요." : "오늘 남은 경기가 없습니다. 다음 구매일 분석은 오후 7시에 올라옵니다."; }
+      linesApply();
       if (typeof applyFilters === "function") applyFilters();
     };
     sweep();

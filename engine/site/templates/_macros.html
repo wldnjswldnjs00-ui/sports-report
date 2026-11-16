@@ -26,7 +26,7 @@
     <li>
       <span class="leg-no">{{ l.game_no or '' }}</span>
       <span class="leg-match">{{ l.home }} <i>vs</i> {{ l.away }}</span>
-      <span class="bub on">{{ outcome(l, l.outcome) }}</span>
+      <span class="bub on">{{ outcome(l, l.outcome) }}</span>{% if l.dog %}<span class="ub">역배</span>{% endif %}
       <span class="leg-odds">{{ l.odds|odds }}</span>
     </li>
 {% endmacro %}
