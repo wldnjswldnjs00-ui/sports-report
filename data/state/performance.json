@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-16T23:31:31+09:00",
+ "updated": "2026-11-16T23:51:54+09:00",
  "picks": {
   "all": {
    "n": 11,
@@ -59,30 +59,30 @@
   },
   "balanced": {
    "all": {
-    "n": 5,
+    "n": 3,
     "win_rate": 0.0,
-    "expected": 0.3013,
+    "expected": 0.306,
     "roi": -1.0
    },
    "30d": {
-    "n": 5,
+    "n": 3,
     "win_rate": 0.0,
-    "expected": 0.3013,
+    "expected": 0.306,
     "roi": -1.0
    }
   },
   "aggressive": {
    "all": {
-    "n": 0,
-    "win_rate": null,
-    "expected": null,
-    "roi": null
+    "n": 4,
+    "win_rate": 0.0,
+    "expected": 0.0734,
+    "roi": -1.0
    },
    "30d": {
-    "n": 0,
-    "win_rate": null,
-    "expected": null,
-    "roi": null
+    "n": 4,
+    "win_rate": 0.0,
+    "expected": 0.0734,
+    "roi": -1.0
    }
   },
   "lotto": {
