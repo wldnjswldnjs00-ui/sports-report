@@ -184,3 +184,82 @@ def value_legs(markets: list[dict[str, Any]], min_ev: float = 0.0) -> list[dict[
     for l in legs:
         l["kelly"] = round(kelly(l["p"], l["odds"]), 4)
     return legs[:10]
+
+
+def _flow_drop(m: dict[str, Any], key: str) -> float:
+    fl = m.get("flow") or {}
+    f0, f1 = (fl.get("from") or {}).get(key), (fl.get("to") or {}).get(key)
+    return (f0 - f1) / f0 if f0 and f1 else 0.0
+
+
+def upset_legs(markets: list[dict[str, Any]], limit: int = 6) -> list[dict[str, Any]]:
+    """역배 후보: 배당 2.2배 이상이면서 근거가 겹치는 선택.
+
+    점수 = (모델 확률 − 베트맨 내재확률)  +  배당 하락폭(구매 쏠림)  +  같은 배당 구간 과거 수익률.
+    정배만 사서 잃는 것을 막기 위한 목록이다. 근거가 하나도 없으면 싣지 않는다.
+    """
+    out = []
+    for m in markets:
+        a = m.get("analysis")
+        if not a or m["market"] not in ("1X2", "WL", "HANDICAP"):
+            continue
+        for k, o in (m.get("odds") or {}).items():
+            if k == a["pick"] or o < 2.2 or o > 9 or k not in a["p"]:
+                continue
+            p = a["p"][k]
+            edge = p - (a.get("p_betman") or {}).get(k, p)
+            drop = _flow_drop(m, k)
+            hist = (a.get("hist") or {}).get(k) or {}
+            hroi = hist.get("roi", -0.2)
+            reasons = []
+            if edge >= 0.015:
+                reasons.append(f"모델 확률이 베트맨 내재확률보다 {edge * 100:.1f}%p 높음")
+            if drop >= 0.02:
+                reasons.append(f"배당 {drop * 100:.0f}% 하락(구매 쏠림)")
+            if hist and hroi > -0.05 and hist.get("n", 0) >= 100:
+                reasons.append(f"같은 배당 구간 과거 수익률 {hroi * 100:+.1f}%")
+            ref = (a.get("p_ref") or {}).get(k)
+            if ref and ref * o > 0.97:
+                reasons.append("해외 시장 기준 배당이 후함")
+            if not reasons or p < 0.2:
+                continue
+            leg = _leg(m, a, k)
+            leg["score"] = round(edge * 3 + drop * 2 + max(hroi, -0.3) + p * 0.3, 4)
+            leg["reasons"] = reasons
+            out.append(leg)
+    out.sort(key=lambda l: -l["score"])
+    seen, uniq = set(), []
+    for l in out:
+        if l["match"] in seen:
+            continue
+        seen.add(l["match"])
+        uniq.append(l)
+    return uniq[:limit]
+
+
+def market_legs(markets: list[dict[str, Any]], market: str, limit: int = 6) -> list[dict[str, Any]]:
+    """핸디캡·언더오버에서 가장 근거가 좋은 선택."""
+    out = []
+    for m in markets:
+        a = m.get("analysis")
+        if not a or m["market"] != market:
+            continue
+        k = a["pick"]
+        if k not in (m.get("odds") or {}):
+            continue
+        leg = _leg(m, a, k)
+        hist = (a.get("hist") or {}).get(k) or {}
+        drop = _flow_drop(m, k)
+        leg["hist_hit"] = hist.get("hit")
+        leg["hist_n"] = hist.get("n")
+        leg["drop"] = round(drop, 4)
+        leg["score"] = round(leg["p"] - 1 / leg["odds"] * 0.9 + drop * 1.5 + (hist.get("roi", -0.15) if hist else -0.15) * 0.5, 4)
+        out.append(leg)
+    out.sort(key=lambda l: -l["score"])
+    seen, uniq = set(), []
+    for l in out:
+        if l["match"] in seen:
+            continue
+        seen.add(l["match"])
+        uniq.append(l)
+    return uniq[:limit]

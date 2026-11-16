@@ -38,6 +38,7 @@ def _role(market: str, side: str) -> str:
 
 def build(rows: list[list]) -> dict[str, Any]:
     acc: dict[str, dict] = {}
+    moves: dict[str, dict] = {}
 
     def add(key, o, hit):
         a = acc.setdefault(key, {"n": 0, "hit": 0, "ret": 0.0, "inv": 0.0})
@@ -61,11 +62,29 @@ def build(rows: list[list]) -> dict[str, Any]:
             add(f"{sport}|{mk}|{role}|{b}", o, hit)
             add(f"all|{mk}|{role}|{b}", o, hit)
             add(f"all|all|{'D' if side == 'D' else 'X'}|{b}", o, hit)
+            add(f"side|{mk}|{side}|{b}", o, hit)          # 배당 분석 페이지용: 마켓×선택×구간
+            add(f"sidesum|{mk}|{side}|0", o, hit)
+        # 배당 변동: 첫 발매 배당 대비
+        if len(row) >= 17:
+            opens = {0: row[14], 1: row[15], 2: row[16]}
+            for side, o, c in sides:
+                o0 = opens.get(c) or 0
+                if not o or o <= 1 or not o0 or o0 <= 1:
+                    continue
+                chg = o / o0 - 1
+                band = "d3" if chg <= -0.10 else "d2" if chg <= -0.05 else "d1" if chg < -0.005 else "u1" if chg < 0.05 and chg > 0.005 else "u2" if chg >= 0.05 else "flat"
+                mv = moves.setdefault(band, {"n": 0, "hit": 0, "ret": 0.0, "inv": 0.0})
+                mv["n"] += 1
+                mv["hit"] += int(code == c)
+                mv["ret"] += o if code == c else 0.0
+                mv["inv"] += 1 / o
     table = {}
     for k, a in acc.items():
         n = a["n"]
         table[k] = {"n": n, "hit": round(a["hit"] / n, 4), "be": round(a["inv"] / n, 4), "roi": round(a["ret"] / n - 1, 4)}
-    return {"updated": config.now_kst().isoformat(timespec="seconds"), "rows": len(rows), "edges": EDGES, "table": table}
+    mv_out = {k: {"n": v["n"], "hit": round(v["hit"] / v["n"], 4), "be": round(v["inv"] / v["n"], 4), "roi": round(v["ret"] / v["n"] - 1, 4)}
+              for k, v in moves.items() if v["n"]}
+    return {"updated": config.now_kst().isoformat(timespec="seconds"), "rows": len(rows), "edges": EDGES, "table": table, "moves": mv_out}
 
 
 def save(book: dict) -> None:
@@ -110,7 +129,7 @@ def best_buckets(book: dict, limit: int = 6) -> list[dict]:
     out = []
     for k, s in t.items():
         sport, mk, role, b = k.split("|")
-        if s["n"] < 150 or sport == "all" and mk == "all":
+        if s["n"] < 150 or sport in ("all", "side", "sidesum"):
             continue
         out.append({"key": k, "sport": sport, "market": mk, "role": role, "bucket": label(int(b)), **s})
     out.sort(key=lambda x: -x["roi"])

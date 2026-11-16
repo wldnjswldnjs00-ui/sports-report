@@ -120,6 +120,10 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
                         a["flags"].append("주전 결장")
         except Exception:  # noqa: BLE001
             log.exception("흐름·부상자 처리 실패(분석은 계속)")
+    # 근거 데이터가 다 붙은 뒤 분석문(오레오)을 쓴다. 시작된 경기의 글은 고정.
+    for m in analyzed:
+        if m.get("analysis") and not (datetime.fromisoformat(m["kickoff"]) <= now and m.get("oreo")):
+            m["narrative"] = describe(m)
     # 오늘(당일 06시~익일 06시) 경기만 조합·채점 대상. 그 뒤 경기는 미리보기로만 보여준다
     # (다음 날 리포트에서 본 경기로 다시 다뤄지므로 성과가 두 번 집계되지 않는다).
     # 전날 리포트에서 이미 본 경기로 다룬 것은 다시 세지 않는다(날짜 기준을 바꿔도 이중 집계 방지).
@@ -141,6 +145,10 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
             top_n = C.STRATEGIES[name]["top"]
             combos[name] = (locked[:top_n] + fresh)[:top_n]  # 고정된 조합 우선, 전략별 개수는 그대로
     value = C.value_legs(proto)
+    upcoming = [m for m in analyzed if m.get("analysis") and m["pool"] == "proto" and datetime.fromisoformat(m["kickoff"]) > now]
+    upsets = C.upset_legs(upcoming)
+    handi_picks = C.market_legs(upcoming, "HANDICAP")
+    ou_picks = C.market_legs(upcoming, "OU")
 
     legs = C.legs_from(proto)
     top = max((l for l in legs if l["confidence"] >= 55 and l["odds"] >= 1.2), key=lambda l: l["p"] * (1 + l["confidence"] / 200), default=None)
@@ -170,6 +178,9 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
         "markets": analyzed,
         "combos": combos,
         "value_picks": value,
+        "upsets": upsets,
+        "handi_picks": handi_picks,
+        "ou_picks": ou_picks,
         "top_pick": top,
         "caution": [m["id"] for m in caution],
         "odds_moves": moves,

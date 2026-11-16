@@ -56,6 +56,13 @@ def grade_report(report: dict[str, Any], results: dict[str, Any]) -> dict[str, A
             if o:
                 outcomes[m["id"]] = o
     report["outcomes"] = outcomes
+    from .narrative import review
+    for m in report.get("markets", []):
+        o = outcomes.get(m["id"])
+        if o and not m.get("review"):
+            rv = review(m, o)
+            if rv:
+                m["review"] = rv
 
     def grade_legs(legs):
         status, odds = "win", 1.0
