@@ -183,7 +183,7 @@
     soccer: { rough: .28, metal: .05, scale: [1, 1, 1], r: 1 },
     volleyball: { rough: .22, metal: .15, scale: [1, 1, 1], r: 1 },
     basketball: { rough: .6, metal: 0, scale: [1, 1, 1], r: 1.05 },
-    baseball: { rough: .55, metal: 0, scale: [1, 1, 1], r: .62, bump: .025 }
+    baseball: { rough: .55, metal: 0, scale: [1, 1, 1], r: .78, bump: .025 }
 
   };
 

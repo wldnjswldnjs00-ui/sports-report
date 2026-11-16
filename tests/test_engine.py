@@ -184,6 +184,20 @@ class OddsBook(unittest.TestCase):
         self.assertGreater(p["H"], 0.75)
 
 
+class Derive(unittest.TestCase):
+    def test_line_conversion(self):
+        from engine.analysis import derive as D
+        x = {"spread": [-7.5, 0.5], "total": [229.5, 0.5]}
+        h = D.normal_market("basketball", x, "HANDICAP", -8.5, {"H", "A"})
+        self.assertLess(h["H"], 0.5)                      # 더 큰 핸디를 주면 홈 커버 확률은 내려간다
+        o = D.normal_market("basketball", x, "OU", 224.5, {"O", "U"})
+        self.assertGreater(o["O"], 0.5)                   # 기준점이 낮아지면 오버 확률은 올라간다
+        lam = D.fit_soccer({"H": 0.655, "D": 0.21, "A": 0.135}, (2.5, 0.56))
+        hc = D.soccer_market(lam, "HANDICAP", -1.0, {"H", "D", "A"})
+        self.assertAlmostEqual(sum(hc.values()), 1, places=6)
+        self.assertLess(hc["H"], 0.655)
+
+
 class Pipeline(unittest.TestCase):
     def test_demo_end_to_end_and_lock(self):
         from engine import config, pipeline

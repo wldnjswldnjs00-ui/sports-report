@@ -26,7 +26,7 @@
 {% for ld in (jsonld or []) %}<script type="application/ld+json">{{ ld|safe }}</script>
 {% endfor %}
 <meta name="theme-color" content="#edf2ef" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0f1413" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0e0f10" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -77,21 +77,27 @@
   <div class="wrap foot-grid">
     <div>
       <p class="foot-brand">스포츠분석<span>.kr</span></p>
-      <p class="foot-note">베트맨(스포츠토토) 공식 발매 경기만 다룹니다. 이 사이트는 정보 제공용 분석이며, 결과를 보장하지 않습니다. 구매는 본인 판단과 책임입니다.</p>
-      <p class="foot-note strong">만 19세 미만은 체육진흥투표권을 구매할 수 없습니다. 불법 사설 스포츠 도박은 처벌 대상입니다.</p>
-      <p class="foot-note">도박 문제 상담: 한국도박문제예방치유원 국번 없이 <b>1336</b> (24시간)</p>
+      <p class="foot-note">{{ cfg.SLOGAN }}</p>
+      <p class="foot-note strong">만 19세 미만은 체육진흥투표권을 구매할 수 없습니다.</p>
+      <p class="foot-note">이 사이트는 국민체육진흥공단·스포츠토토·베트맨과 관계없는 개인 운영 분석 사이트입니다. 통계 모델이 계산한 참고 정보를 제공하며 적중을 보장하지 않습니다. 구매 대행·알선·픽 판매를 하지 않습니다.</p>
+      <p class="foot-note">체육진흥투표권은 베트맨 공식 사이트와 공식 판매점에서만 구매할 수 있습니다(1회 10만 원 한도). 그 밖의 스포츠 베팅 사이트 이용은 국민체육진흥법에 따라 처벌받습니다.</p>
+      <p class="foot-note">과몰입 상담: 한국도박문제예방치유원 국번 없이 <b>1336</b> (24시간, 무료)</p>
     </div>
     <ul class="foot-links">
       <li><a href="/about/">사이트 소개</a></li>
       <li><a href="/method/">분석 방법</a></li>
+      <li><a href="/guide/">가이드</a></li>
+      <li><a href="/leagues/">리그별 기록</a></li>
       <li><a href="/responsible/">건전한 이용</a></li>
       <li><a href="/privacy/">개인정보처리방침</a></li>
       <li><a href="/terms/">이용약관</a></li>
       <li><a href="/contact/">문의</a></li>
+      <li><a href="/support/">후원</a></li>
     </ul>
   </div>
   <div class="wrap foot-bottom">
     <span>© {{ now.year }} {{ cfg.SITE_DOMAIN_DISPLAY }}</span>
+    {% if cfg.ADSENSE_CLIENT %}<span>이 사이트는 광고 수익으로 운영됩니다.</span>{% endif %}
     {% if cfg.COUPANG_NOTICE %}<span>이 사이트의 일부 링크는 쿠팡 파트너스 활동의 일환으로 일정액의 수수료를 받을 수 있습니다.</span>{% endif %}
   </div>
 </footer>
@@ -106,10 +112,10 @@
     <dl class="slip-sum">
       <div><dt>종합배당</dt><dd data-slip-odds>–</dd></div>
       <div><dt>예상 적중률</dt><dd data-slip-p>–</dd></div>
-      <div><dt>기대값</dt><dd data-slip-ev>–</dd></div>
+      <div><dt>1만 원 적중 시</dt><dd data-slip-pay>–</dd></div>
     </dl>
     <p class="slip-warn" data-slip-warn></p>
-    <div class="slip-act"><button type="button" class="btn ghost" data-slip-clear>비우기</button><a class="btn" href="/tool/">계산기에서 보기</a></div>
+    <div class="slip-act"><button type="button" class="btn ghost" data-slip-clear>비우기</button><a class="btn" href="/tool/">금액 계산하기</a></div>
   </section>
 </div>
 <div class="toast" role="status" aria-live="polite" data-toast></div>

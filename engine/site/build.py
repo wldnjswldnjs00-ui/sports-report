@@ -83,6 +83,21 @@ def _flow_key(m: dict) -> str | None:
     return best
 
 
+def _round_label(ts) -> str:
+    """베트맨 회차 번호 260136 → '136회차'."""
+    t = str(ts or "")
+    return f"{int(t[2:])}회차" if t.isdigit() and len(t) == 6 else ""
+
+
+def _rounds(r: dict) -> list[str]:
+    seen = []
+    for m in r.get("markets", []):
+        lb = _round_label(m.get("round"))
+        if lb and lb not in seen:
+            seen.append(lb)
+    return seen
+
+
 def _env() -> Environment:
     env = Environment(
         loader=FileSystemLoader(HERE / "templates"),
@@ -92,9 +107,9 @@ def _env() -> Environment:
     env.filters.update(pct=_pct, signed=_signed, odds=_odds, won=_won, kdate=_kdate, ktime=_ktime, kdt=_kdt, slug=slug)
     env.globals.update(
         cfg=config, STRATEGIES=STRATEGIES, MARKET_LABEL=MARKET_LABEL, SPORT_LABEL=SPORT_LABEL,
-        outcome=_outcome, flow_key=_flow_key, now=config.now_kst(), asset_v=config.now_kst().strftime("%Y%m%d%H%M"),
-        nav=[("/", "오늘"), ("/reports/", "지난 리포트"), ("/leagues/", "리그"), ("/performance/", "성과"),
-             ("/tool/", "조합 계산기"), ("/method/", "분석 방법"), ("/guide/", "가이드")],
+        outcome=_outcome, flow_key=_flow_key, round_label=_round_label, rounds_of=_rounds, now=config.now_kst(), asset_v=config.now_kst().strftime("%Y%m%d%H%M"),
+        nav=[("/", "오늘"), ("/odds/", "배당 분석"), ("/tool/", "금액 계산기"), ("/performance/", "성과"),
+             ("/reports/", "지난 리포트"), ("/method/", "분석 방법"), ("/guide/", "가이드")],
     )
     return env
 
@@ -164,12 +179,13 @@ def _slip_payload(r: dict | None) -> dict:
     legs = []
     for m in r.get("markets", []):
         a = m.get("analysis")
-        if not a or not m.get("odds"):
-            continue
+        if not a or not m.get("odds") or m["kickoff"] <= config.now_kst().isoformat():
+            continue  # 이미 시작한 경기는 담을 수 없다
         for k, o in m["odds"].items():
             legs.append({"id": f"{m['id']}|{k}", "match": f"{m['kickoff'][:10]}|{m['home']}|{m['away']}", "league": m["league"],
                          "label": f"{m['home']} vs {m['away']}", "pick": _outcome(m, k), "odds": o,
-                         "p": a["p"].get(k), "ko": m["kickoff"], "no": m.get("game_no")})
+                         "p": a["p"].get(k), "ko": m["kickoff"], "no": m.get("game_no"), "mk": m["market"] + str(m.get("line") or ""),
+                         "mkl": MARKET_LABEL.get(m["market"], "") + (f" {m['line']:+g}" if m.get("line") is not None else "")})
     return {"date": r["date"], "legs": legs}
 
 
@@ -262,7 +278,25 @@ def build() -> None:
 
     summaries = [_report_summary(r) for r in reports]
     leagues = _leagues(reports[:60])
-    ctx = dict(book=book, best_buckets=OB.best_buckets(book) if book else [], ob_label=OB.label, perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues)
+    pair_rows, x_rows, xou_rows = [], [], []
+    for k, v in ((book or {}).get("pairs") or {}).items():
+        mk_, lo_, hi_ = k.split("|")
+        if mk_ != "1X2" and v["n"] >= 25:
+            pair_rows.append({"mk": mk_, "lo": int(lo_), "hi": int(hi_), "lo_l": OB.band_label(int(lo_)), "hi_l": OB.band_label(int(hi_)),
+                              "n": v["n"], "hi_rate": v["hi"] / v["n"]})
+    pair_rows.sort(key=lambda x: (x["mk"], x["lo"], x["hi"]))
+    for k, v in ((book or {}).get("xpairs") or {}).items():
+        kind, a_, b_ = k.split("|")
+        if v["n"] < 30:
+            continue
+        if kind == "X":
+            x_rows.append({"h": int(a_), "a": int(b_), "h_l": OB.band_label(int(a_)), "a_l": OB.band_label(int(b_)), "n": v["n"],
+                           "H": v["h"] / v["n"], "D": v["d"] / v["n"], "A": v["a"] / v["n"]})
+        else:
+            xou_rows.append({"o": int(a_), "u": int(b_), "o_l": OB.band_label(int(a_)), "u_l": OB.band_label(int(b_)), "n": v["n"], "over": v["over"] / v["n"]})
+    x_rows.sort(key=lambda x: (x["h"], x["a"]))
+    xou_rows.sort(key=lambda x: (x["o"], x["u"]))
+    ctx = dict(pair_rows=pair_rows, x_rows=x_rows, xou_rows=xou_rows, book=book, best_buckets=OB.best_buckets(book) if book else [], ob_label=OB.label, perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues)
     urls: list[tuple[str, str]] = []
 
     def page(tpl: str, out: str, **kw):
@@ -314,7 +348,7 @@ def build() -> None:
         page("league.html", f"/leagues/{lg['slug']}/", lg=lg)
     page("performance.html", "/performance/")
     page("tool.html", "/tool/")
-    for name in ("method", "guide", "about", "privacy", "terms", "contact", "responsible"):
+    for name in ("method", "guide", "about", "privacy", "terms", "contact", "responsible", "odds", "support"):
         page(f"{name}.html", f"/{name}/")
 
     _write(config.DIST / "404.html", env.get_template("404.html").render(**ctx, path="/404"))

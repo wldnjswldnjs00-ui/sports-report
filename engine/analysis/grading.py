@@ -56,6 +56,13 @@ def grade_report(report: dict[str, Any], results: dict[str, Any]) -> dict[str, A
             if o:
                 outcomes[m["id"]] = o
     report["outcomes"] = outcomes
+    from .narrative import review
+    for m in report.get("markets", []):
+        o = outcomes.get(m["id"])
+        if o and not m.get("review"):
+            rv = review(m, o)
+            if rv:
+                m["review"] = rv
 
     def grade_legs(legs):
         status, odds = "win", 1.0
@@ -177,7 +184,7 @@ def aggregate(reports: list[dict[str, Any]], today: str) -> dict[str, Any]:
              "expected": round(v["p_sum"] / v["n"], 4), "actual": round(v["hit"] / v["n"], 4)}
             for b, v in sorted(buckets.items()) if v["n"]
         ],
-        "strategies": {k: {"all": fin_s(strat[k]), "30d": fin_s(strat30[k])} for k in ("safe", "balanced", "aggressive", "lotto")},
+        "strategies": {k: {"all": fin_s(strat[k]), "30d": fin_s(strat30[k])} for k in ("safe", "balanced", "aggressive", "upset", "lotto")},
         "value": {
             "n": value["n"],
             "hit_rate": round(value["hit"] / value["n"], 4) if value["n"] else None,
@@ -242,11 +249,41 @@ def rebuild_elo(reports: list[dict[str, Any]], results_by_date: dict[str, dict],
     return elo
 
 
-def save_state(perf, cal, elo: Elo):
+def save_state(perf, cal, elo: Elo, lessons: dict | None = None):
     write_json(config.STATE / "performance.json", perf)
+    if lessons is not None:
+        write_json(config.STATE / "lessons.json", lessons)
     write_json(config.STATE / "calibration.json", cal)
     elo.save()
 
 
 def load_perf() -> dict[str, Any]:
     return read_json(config.STATE / "performance.json", {}) or {}
+
+
+def learn(reports: list[dict[str, Any]]) -> dict[str, Any]:
+    """복기에서 배운 것을 숫자로 남긴다(화면에 노출하지 않고 모델 보정에만 쓴다).
+
+    조건별로 '예상 적중률 − 실제 적중률'(부족분)을 잰다. 표본이 쌓이면 model.py 가 그만큼 확률을 깎는다.
+    """
+    acc = {"flow_against": [0, 0, 0.0], "flow_with": [0, 0, 0.0], "high_risk": [0, 0, 0.0]}
+    for rep in reports:
+        outs = rep.get("outcomes") or {}
+        for m in rep.get("markets", []):
+            a, o = m.get("analysis"), outs.get(m["id"])
+            if not a or o in (None, "VOID") or m.get("preview"):
+                continue
+            pick, hit, pp = a["pick"], int(o == a["pick"]), a["pick_prob"]
+            fl = m.get("flow") or {}
+            drops = {k: (fl["from"][k] - v) / fl["from"][k] for k, v in (fl.get("to") or {}).items() if (fl.get("from") or {}).get(k)}
+            conds = []
+            if any(d >= 0.03 for k, d in drops.items() if k != pick):
+                conds.append("flow_against")
+            if drops.get(pick, 0) >= 0.03:
+                conds.append("flow_with")
+            if a.get("upset_risk", 0) >= 40:
+                conds.append("high_risk")
+            for c in conds:
+                acc[c][0] += 1; acc[c][1] += hit; acc[c][2] += pp
+    return {k: {"n": v[0], "hit": round(v[1] / v[0], 4), "expected": round(v[2] / v[0], 4), "gap": round(v[2] / v[0] - v[1] / v[0], 4)}
+            for k, v in acc.items() if v[0]}

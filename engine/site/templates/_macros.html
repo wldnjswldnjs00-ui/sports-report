@@ -11,38 +11,61 @@
 
 {% macro result_tag(res) %}
 {% if res == 'hit' or res == 'win' %}<span class="tag hit">적중</span>
-{% elif res == 'miss' or res == 'lose' %}<span class="tag miss">실패</span>
 {% elif res == 'void' %}<span class="tag void">특례</span>
 {% endif %}
 {% endmacro %}
 
-{% macro combo_card(c, r) %}
-<article class="combo" data-combo>
-  <header class="combo-head">
-    <span class="combo-rank">{{ '%02d' % c.rank }}</span>
-    <span class="combo-size">{{ c.size }}폴더</span>
-    <span class="combo-odds" title="종합배당"><b>×{{ c.total_odds|odds }}</b></span>
-    {{ result_tag(c.result) }}
-  </header>
-  <div class="perf" aria-hidden="true"></div>
-  <ol class="combo-legs">
-    {% for l in c.legs %}
-    <li class="{% if l.result == 'hit' %}is-hit{% elif l.result == 'miss' %}is-miss{% endif %}">
+{% macro leg_row(l) %}
+    <li>
       <span class="leg-no">{{ l.game_no or '' }}</span>
       <span class="leg-match">{{ l.home }} <i>vs</i> {{ l.away }}</span>
       <span class="bub on">{{ outcome(l, l.outcome) }}</span>
       <span class="leg-odds">{{ l.odds|odds }}</span>
     </li>
-    {% endfor %}
+{% endmacro %}
+
+{% macro combo_card(c, r) %}
+<article class="combo" data-combo data-key="{{ c.key }}">
+  <header class="combo-head">
+    <span class="combo-odds" title="종합배당"><b>×{{ c.total_odds|odds }}</b></span>
+    <span class="combo-size">{{ c.size }}폴더</span>
+    {{ result_tag(c.result) }}
+  </header>
+  <div class="perf" aria-hidden="true"></div>
+  <ol class="combo-legs">
+    {% for l in c.legs %}{{ leg_row(l) }}{% endfor %}
   </ol>
   <div class="meter" aria-hidden="true"><i style="--w:{{ [c.joint_p * 120, 100]|min|round(1) }}%"></i></div>
   <dl class="combo-foot">
     <div><dt>예상 적중률</dt><dd>{{ c.joint_p|pct(1) }}</dd></div>
-    <div><dt>기대값</dt><dd class="{{ ev_class(c.ev) }}">{{ c.ev|signed }}</dd></div>
     <div><dt>1만 원 적중 시</dt><dd>{{ c.payout|won }}</dd></div>
   </dl>
   <button type="button" class="combo-add" data-add-combo='{{ c.legs|map(attribute="market_id")|list|tojson }}' data-add-outcomes='{{ c.legs|map(attribute="outcome")|list|tojson }}'>내 조합에 담기</button>
 </article>
+{% endmacro %}
+
+{% macro oreo_block(m) %}
+{% set o = m.oreo %}
+{% if o %}<p class="m-text">{{ o.o1 }} {{ o.r }} {{ o.e }} {{ o.o2 }}</p>
+{% elif m.narrative %}<p class="m-text">{{ m.narrative }}</p>{% endif %}
+{% endmacro %}
+
+{% macro review_block(m) %}
+{% set v = m.review %}
+{% if v %}<p class="m-text review">{{ v.o1 }} {{ v.r }} {% if v.e %}{{ v.e }} {% endif %}{{ v.o2 }}</p>{% endif %}
+{% endmacro %}
+
+{% macro pick_table(rows, title_extra) %}
+<table class="tbl">
+  <thead><tr><th>경기</th><th>선택</th><th class="n">배당</th><th class="n">추정 확률</th><th>{{ title_extra }}</th></tr></thead>
+  <tbody>
+  {% for l in rows %}
+    <tr><td><span class="muted">{{ l.league }} · {{ l.kickoff|kdt }}</span><br>{{ l.home }} vs {{ l.away }}</td>
+    <td><span class="bub on">{{ outcome(l, l.outcome) }}</span></td><td class="n">{{ l.odds|odds }}</td><td class="n">{{ l.p|pct }}</td>
+    <td class="why">{% if l.reasons %}{{ l.reasons|join(' · ') }}{% else %}{% if l.hist_hit is not none and l.hist_n %}같은 배당 과거 적중률 {{ l.hist_hit|pct }} ({{ l.hist_n }}건){% endif %}{% if l.drop and l.drop >= 0.02 %} · 배당 {{ (l.drop * 100)|round(0)|int }}% 하락{% endif %}{% endif %}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
 {% endmacro %}
 
 {% macro prob_bar(m) %}

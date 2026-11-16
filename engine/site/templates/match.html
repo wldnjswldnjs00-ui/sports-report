@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import prob_bar, ev_class, result_tag, form_block, injury_block %}
+{% from "_macros.html" import prob_bar, ev_class, result_tag, form_block, injury_block, oreo_block, review_block %}
 {% block title %}{{ page_title }} | {{ cfg.SITE_NAME }}{% endblock %}
 {% block desc %}{{ page_desc }}{% endblock %}
 {% block ogtype %}article{% endblock %}
@@ -8,7 +8,7 @@
 <article class="wrap">
   <nav class="crumbs" aria-label="위치"><a href="/">홈</a> <span>/</span> <a href="/reports/{{ r.date }}/">{{ r.date|kdate }} 리포트</a> <span>/</span> <span aria-current="page">{{ g.home }} vs {{ g.away }}</span></nav>
   <header class="page-head">
-    <p class="kicker">{{ SPORT_LABEL[g.sport] }} · {{ g.league }}{% if g.no %} · {{ g.no }}번{% endif %}</p>
+    <p class="kicker">{{ SPORT_LABEL[g.sport] }} · {{ g.league }}{% set rd = round_label(g.markets[0].round) %}{% if rd %} · 프로토 승부식 {{ rd }}{% endif %}{% if g.no %} {{ g.no }}번{% endif %}</p>
     <h1>{{ g.home }} <span class="vs">vs</span> {{ g.away }} 분석</h1>
     <p class="lede">{{ g.kickoff|kdt }} KST{% if g.venue %} · {{ g.venue }}{% endif %} · 베트맨 프로토 승부식 {{ g.markets|length }}개 마켓</p>
   </header>
@@ -20,13 +20,14 @@
       <div class="ms-main">
         <p class="tp-pick"><span class="bub on">{{ outcome(main, main.analysis.pick) }}</span> <span>{{ main.analysis.pick_odds|odds }}배</span></p>
         {{ prob_bar(main) }}
-        <p class="tp-text">{{ main.narrative }}</p>
+        {{ oreo_block(main) }}
       </div>
       <dl class="kpis tight">
         <div><dt>추정 확률</dt><dd>{{ main.analysis.pick_prob|pct(1) }}</dd></div>
         <div><dt>신뢰도</dt><dd>{{ main.analysis.confidence }}</dd></div>
         <div><dt>이변 위험</dt><dd>{{ main.analysis.upset_risk }}</dd></div>
-        <div><dt>기대값</dt><dd class="{{ ev_class(main.analysis.ev) }}">{{ main.analysis.ev|signed }}</dd></div>
+        {% set mxo = (main.analysis.x_odds or {}).get(main.analysis.pick) %}
+        <div><dt>{{ '해외 배당' if mxo else '베트맨 배당' }}</dt><dd>{{ (mxo or main.analysis.pick_odds)|odds }}</dd></div>
       </dl>
     </div>
   </section>
@@ -43,20 +44,25 @@
   {% if im %}<section class="block" data-reveal>{{ injury_block(im) }}</section>{% endif %}
 
   <section class="block" data-reveal>
-    <div class="block-head"><h2>마켓별 배당과 확률</h2><p>배당 흐름은 첫 발매 배당에서 지금까지의 변화입니다. 배당이 내려간 쪽으로 구매가 몰립니다. 과거 적중률은 베트맨 지난 회차에서 같은 배당 구간이 실제로 맞은 비율입니다.</p></div>
+    {% for m in g.markets %}{% set pr = m.analysis.pair if m.analysis else none %}{% if pr %}
+    <p class="pairline">{{ MARKET_LABEL[m.market] }}{% if m.line is not none %} {{ m.line }}{% endif %} ·
+      {% if pr.kind == '2way' %}<b>{{ pr.lo|odds }}배 대 {{ pr.hi|odds }}배</b>와 같은 구도 {{ pr.n }}건: {{ outcome(m, pr.lo_key) }}({{ pr.lo|odds }}) {{ pr.lo_rate|pct }} · {{ outcome(m, pr.hi_key) }}({{ pr.hi|odds }}) <b>{{ pr.hi_rate|pct }}</b>
+      {% else %}{{ '해외 배당 ' if pr.src == '해외' }}<b>홈 {{ pr.ho|odds }}배 대 원정 {{ pr.ao|odds }}배</b>와 같은 구도 {{ '{:,}'.format(pr.n) }}경기: 홈승 {{ pr.H|pct }} · 무 {{ pr.D|pct }} · 원정승 {{ pr.A|pct }}{% endif %}</p>
+    {% endif %}{% endfor %}
+    <div class="block-head"><h2>마켓별 배당과 확률</h2><p>확률은 해외 배당을 기준으로 계산합니다. 구매는 베트맨 배당으로 이루어지므로 두 배당을 함께 보여줍니다. 배당 흐름은 첫 발매 배당에서 지금까지의 변화입니다. 배당이 내려간 쪽으로 구매가 몰립니다. 과거 적중률은 베트맨 지난 회차에서 같은 배당 구간이 실제로 맞은 비율입니다.</p></div>
     <table class="tbl">
-      <thead><tr><th>마켓</th><th>선택</th><th class="n">배당</th><th class="n">배당 흐름</th><th class="n">추정 확률</th><th class="n">같은 배당 과거 적중률</th><th class="n">기대값</th><th>결과</th></tr></thead>
+      <thead><tr><th>마켓</th><th>선택</th><th class="n">해외 배당</th><th class="n">베트맨 배당</th><th class="n">배당 흐름</th><th class="n">추정 확률</th><th class="n">같은 배당 과거 적중률</th><th>결과</th></tr></thead>
       <tbody>
       {% for m in g.markets %}{% set a = m.analysis %}{% set o = outs.get(m.id) %}
         {% for k, od in m.odds.items() %}
         <tr>
           {% if loop.first %}<td rowspan="{{ m.odds|length }}">{{ MARKET_LABEL[m.market] }}{% if m.line is not none %} <span class="muted">{{ '%+g'|format(m.line) if m.market != 'OU' else m.line }}</span>{% endif %}</td>{% endif %}
           <td><button type="button" class="opick mini{% if a and k == a.pick %} is-model{% endif %}" data-leg="{{ m.id }}|{{ k }}"><span>{{ outcome(m, k) }}</span></button></td>
+          <td class="n">{% set ro = (a.x_odds or {}).get(k) if a else none %}{% if ro %}{{ ro|odds }}{% if a.x_kind == '환산' %}<small class="muted"> 환산</small>{% endif %}{% else %}<span class="muted">–</span>{% endif %}</td>
           <td class="n">{{ od|odds }}</td>
           <td class="n">{% set f0 = (m.flow.from if m.flow else {}).get(k) %}{% if f0 and f0 != od %}<span class="{{ 'down' if od < f0 else 'up' }}">{{ f0|odds }}→{{ od|odds }}</span>{% else %}<span class="muted">–</span>{% endif %}</td>
           <td class="n">{% if a %}{{ a.p.get(k)|pct(1) }}{% endif %}</td>
-          <td class="n hist-cell">{% set h = (a.hist or {}).get(k) if a else none %}{% if h %}{{ h.hit|pct(1) }}<small>본전 {{ h.be|pct(1) }} · 수익률 {{ h.roi|signed }} · {{ h.n }}건</small>{% else %}<span class="muted">수집 중</span>{% endif %}</td>
-          <td class="n {% if a %}{{ ev_class(a.p.get(k, 0) * od - 1) }}{% endif %}">{% if a %}{{ (a.p.get(k, 0) * od - 1)|signed }}{% endif %}</td>
+          <td class="n hist-cell">{% set h = (a.hist or {}).get(k) if a else none %}{% if h %}{{ h.hit|pct(1) }}<small>{{ h.bucket }}배 구간 · {{ h.n }}건</small>{% else %}<span class="muted">수집 중</span>{% endif %}</td>
           <td>{% if o and loop.first %}{{ result_tag('void' if o == 'VOID' else ('hit' if a and o == a.pick else 'miss')) }}{% endif %}</td>
         </tr>
         {% endfor %}
@@ -65,11 +71,7 @@
     </table>
   </section>
 
-  <section class="block prose-lite" data-reveal>
-    <div class="block-head"><h2>읽는 법</h2></div>
-    <p>추정 확률은 베트맨 배당에서 발행처 몫(마진)을 걷어낸 값에 해외 시장 배당과 팀 레이팅을 합쳐 계산했습니다. 기대값이 마이너스면 같은 선택을 반복할수록 금액이 줄어든다는 뜻입니다. 자세한 계산은 <a href="/method/">분석 방법</a>에 있습니다.</p>
-    <p>킥오프 이후에는 이 페이지의 판단이 바뀌지 않습니다. 결과가 나오면 적중 여부만 덧붙습니다.</p>
-  </section>
+
 
   <nav class="daynav"><a href="/reports/{{ r.date }}/">← {{ r.date|kdate }} 전체 경기</a><a href="/tool/">조합 계산기 →</a></nav>
 </article>

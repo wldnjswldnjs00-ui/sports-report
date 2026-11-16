@@ -161,6 +161,13 @@
       "note": "Capela (ankle) has been ruled out for Sunday's game at Washington."
      }
     ]
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 휴스턴 로케츠 선택이 맞았다.",
+    "r": "추정 확률 82%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -313,6 +320,13 @@
       "note": "Capela (ankle) has been ruled out for Sunday's game at Washington."
      }
     ]
+   },
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 워싱턴 위저즈 핸디, 결과는 휴스턴 로케츠 핸디.",
+    "r": "발행 당시 이변 위험이 48로 이미 높았다. 추정 확률이 52%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
    }
   },
   {
@@ -465,6 +479,13 @@
       "note": "Capela (ankle) has been ruled out for Sunday's game at Washington."
      }
     ]
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 오버 선택이 맞았다.",
+    "r": "추정 확률 50%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -616,6 +637,13 @@
       "note": "Veesaar was diagnosed with a torn right ACL and is expected to miss the 2026-27 season, the Hawks announced Monday."
      }
     ]
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 애틀랜타 호크스 선택이 맞았다.",
+    "r": "추정 확률 80%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -768,6 +796,13 @@
       "note": "Veesaar was diagnosed with a torn right ACL and is expected to miss the 2026-27 season, the Hawks announced Monday."
      }
     ]
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 밀워키 벅스 핸디 선택이 맞았다.",
+    "r": "추정 확률 51%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -920,6 +955,13 @@
       "note": "Veesaar was diagnosed with a torn right ACL and is expected to miss the 2026-27 season, the Hawks announced Monday."
      }
     ]
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 언더 선택이 맞았다.",
+    "r": "추정 확률 51%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -1092,6 +1134,13 @@
       "note": "Williams (leg) underwent successful surgery Wednesday to \"address a fractured left fibula and reconstruction of ankle ligaments following a fracture and disloca"
      }
     ]
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 오클라호마시티 썬더 선택이 맞았다.",
+    "r": "추정 확률 83%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -1186,6 +1235,13 @@
      "streak": ""
     },
     "h2h": null
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 서울SK 나이츠 선택이 맞았다.",
+    "r": "추정 확률 72%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -1282,6 +1338,13 @@
      "streak": ""
     },
     "h2h": null
+   },
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 울산현대모비스 피버스 핸디, 결과는 서울SK 나이츠 핸디.",
+    "r": "발행 당시 이변 위험이 47로 이미 높았다. 추정 확률이 53%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
    }
   },
   {
@@ -1388,6 +1451,13 @@
       }
      ]
     }
+   },
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 우리은행 우리WON, 결과는 하나은행.",
+    "r": "추정 확률 69%는 31%의 빗나갈 몫을 포함한다. 이번이 그 경우였다.",
+    "e": "",
+    "o2": "판단 과정에 오류는 없었다. 확률이 허용한 범위의 결과로 기록한다."
    }
   },
   {
@@ -1496,6 +1566,13 @@
       }
      ]
     }
+   },
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 우리은행 우리WON 핸디, 결과는 하나은행 핸디.",
+    "r": "발행 당시 이변 위험이 49로 이미 높았다. 추정 확률이 51%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
    }
   },
   {
@@ -1653,7 +1730,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 페로제도 선택이 맞았다.",
+    "r": "추정 확률 50%대로 나온 결과다.",
+    "e": "같은 배당 구간은 과거 54% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260136:4343",
@@ -1804,7 +1888,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 몰도바 핸디, 결과는 핸디 무.",
+    "r": "경기 전 핸디 무 배당이 315.00에서 300.00로 내려가고 있었다. 구매 쏠림이 보낸 신호를 충분히 반영하지 못했다. 발행 당시 이변 위험이 49로 이미 높았다.",
+    "e": "같은 배당 구간은 과거 46% 적중했다. 이번은 나머지 54%에 해당한다.",
+    "o2": "다음부터 배당이 반대쪽으로 움직이는 경기는 신뢰도를 한 단계 낮춘다."
+   }
   },
   {
    "id": "betman:G101:260136:4344",
@@ -1927,7 +2018,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 언더 선택이 맞았다.",
+    "r": "추정 확률 58%대로 나온 결과다.",
+    "e": "같은 배당 구간은 과거 58% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260136:4346",
@@ -2083,7 +2181,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 슬로바키아, 결과는 무승부.",
+    "r": "발행 당시 이변 위험이 49로 이미 높았다. 추정 확률이 50%에 그친 박빙 경기였다.",
+    "e": "같은 배당 구간은 과거 54% 적중했다. 이번은 나머지 46%에 해당한다.",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260136:4347",
@@ -2234,7 +2339,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 카자흐스탄 핸디 선택이 맞았다.",
+    "r": "추정 확률 49%대로 나온 결과다.",
+    "e": "같은 배당 구간은 과거 46% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260136:4348",
@@ -2359,7 +2471,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 언더, 결과는 오버.",
+    "r": "발행 당시 이변 위험이 48로 이미 높았다. 추정 확률이 52%에 그친 박빙 경기였다.",
+    "e": "같은 배당 구간은 과거 55% 적중했다. 이번은 나머지 45%에 해당한다.",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260136:4350",
@@ -21160,7 +21279,7 @@
       "ev": -0.07889599999999986,
       "confidence": 73,
       "upset_risk": 49,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4364",
@@ -21277,7 +21396,7 @@
       "ev": -0.07889599999999986,
       "confidence": 73,
       "upset_risk": 49,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4364",
@@ -21394,7 +21513,7 @@
       "ev": -0.09048999999999996,
       "confidence": 79,
       "upset_risk": 49,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4328",
@@ -21471,7 +21590,7 @@
       "ev": -0.09048999999999996,
       "confidence": 79,
       "upset_risk": 49,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4372",
@@ -21588,7 +21707,7 @@
       "ev": -0.07944800000000007,
       "confidence": 73,
       "upset_risk": 49,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4328",
@@ -21644,7 +21763,8 @@
       "odds": 1.88,
       "ev": -0.07880000000000009,
       "confidence": 72,
-      "upset_risk": 50
+      "upset_risk": 50,
+      "result": null
      },
      {
       "market_id": "betman:G101:260136:4354",
@@ -21663,7 +21783,8 @@
       "odds": 1.88,
       "ev": -0.08293600000000001,
       "confidence": 78,
-      "upset_risk": 50
+      "upset_risk": 50,
+      "result": null
      },
      {
       "market_id": "betman:G101:260136:4360",
@@ -21682,7 +21803,8 @@
       "odds": 2.26,
       "ev": -0.07724200000000014,
       "confidence": 67,
-      "upset_risk": 59
+      "upset_risk": 59,
+      "result": null
      }
     ],
     "size": 3,
@@ -21695,7 +21817,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260136:4354:H+betman:G101:260136:4360:H+betman:G101:260136:4365:H",
     "strategy": "aggressive",
-    "rank": 1
+    "rank": 1,
+    "result": "pending",
+    "return": null
    }
   ],
   "lotto": [
@@ -21719,7 +21843,7 @@
       "ev": -0.07493500000000008,
       "confidence": 79,
       "upset_risk": 48,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260136:4354",
@@ -21759,7 +21883,7 @@
       "ev": -0.0796929999999999,
       "confidence": 80,
       "upset_risk": 49,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4364",
@@ -21856,7 +21980,7 @@
       "ev": -0.07493500000000008,
       "confidence": 79,
       "upset_risk": 48,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260136:4354",
@@ -22013,7 +22137,7 @@
       "ev": -0.0796929999999999,
       "confidence": 80,
       "upset_risk": 49,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4364",
@@ -22191,7 +22315,13 @@
   "betman:G101:260136:4326": "H",
   "betman:G101:260136:4328": "H",
   "betman:G101:260136:4331": "H",
-  "betman:G101:260136:4333": "H"
+  "betman:G101:260136:4333": "H",
+  "betman:G101:260136:4342": "H",
+  "betman:G101:260136:4343": "D",
+  "betman:G101:260136:4344": "U",
+  "betman:G101:260136:4346": "D",
+  "betman:G101:260136:4347": "H",
+  "betman:G101:260136:4348": "O"
  },
  "headline": "오늘 프로토 16경기. 가장 확실한 선택은 스코틀랜드 원정승(69%). 이후 27경기 미리보기 포함."
 }

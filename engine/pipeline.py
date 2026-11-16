@@ -94,6 +94,7 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
         if old and old.get("analysis") and started:
             # 고정: 킥오프 이후에는 처음 분석 유지, 배당만 마지막 값 기록
             old["odds_close"] = m["odds"]
+            old["flow"] = m.get("flow")
             analyzed.append(old)
             continue
         a = analyze_market(m, elo, ref.get(m["id"]), alpha, book)
@@ -120,8 +121,16 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
                         a["flags"].append("주전 결장")
         except Exception:  # noqa: BLE001
             log.exception("흐름·부상자 처리 실패(분석은 계속)")
+    # 근거 데이터가 다 붙은 뒤 분석문(오레오)을 쓴다. 시작된 경기의 글은 고정.
+    for m in analyzed:
+        if m.get("analysis") and not (datetime.fromisoformat(m["kickoff"]) <= now and m.get("oreo")):
+            m["narrative"] = describe(m)
     # 오늘(당일 06시~익일 06시) 경기만 조합·채점 대상. 그 뒤 경기는 미리보기로만 보여준다
     # (다음 날 리포트에서 본 경기로 다시 다뤄지므로 성과가 두 번 집계되지 않는다).
+    # 전날 리포트에서 이미 본 경기로 다룬 것은 다시 세지 않는다(날짜 기준을 바꿔도 이중 집계 방지).
+    yday = (date.fromisoformat(day) - timedelta(days=1)).isoformat()
+    covered = {m["id"] for m in (read_json(report_path(yday), {}) or {}).get("markets", []) if not m.get("preview")}
+    analyzed = [m for m in analyzed if m["id"] not in covered]
     for m in analyzed:
         m["preview"] = not betman.in_window(m["kickoff"], day)
     primary = [m for m in analyzed if not m["preview"]]
@@ -137,20 +146,38 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
             top_n = C.STRATEGIES[name]["top"]
             combos[name] = (locked[:top_n] + fresh)[:top_n]  # 고정된 조합 우선, 전략별 개수는 그대로
     value = C.value_legs(proto)
+    upcoming = [m for m in analyzed if m.get("analysis") and m["pool"] == "proto" and datetime.fromisoformat(m["kickoff"]) > now]
+    upsets = C.upset_legs(upcoming)
+    handi_picks = C.market_legs(upcoming, "HANDICAP")
+    ou_picks = C.market_legs(upcoming, "OU")
 
     legs = C.legs_from(proto)
-    top = max((l for l in legs if l["confidence"] >= 55 and l["odds"] >= 1.2), key=lambda l: l["p"] * (1 + l["confidence"] / 200), default=None)
+    cands = sorted((l for l in legs if l["confidence"] >= 55 and l["odds"] >= 1.2 and datetime.fromisoformat(l["kickoff"]) > now),
+                   key=lambda l: -(l["p"] * (1 + l["confidence"] / 200)))
+    top_picks, seen_match = [], set()
+    for l in cands:
+        if l["match"] in seen_match:
+            continue
+        seen_match.add(l["match"])
+        top_picks.append(l)
+        if len(top_picks) >= 6:
+            break
+    top = top_picks[0] if top_picks else (prev.get("top_pick") if prev.get("date") == day else None)
     caution = sorted(
         [m for m in proto if m["analysis"]["pick_odds"] and m["analysis"]["pick_odds"] < 1.9 and m["analysis"]["upset_risk"] >= 33],
         key=lambda m: -m["analysis"]["upset_risk"],
     )[:5]
     moves = []
-    for m in primary:
-        o0, o1 = m.get("odds_open") or {}, m.get("odds_close") or m.get("odds") or {}
+    for m in analyzed:
+        fl = m.get("flow") or {}
+        o0 = fl.get("from") or m.get("odds_open") or {}
+        o1 = m.get("odds_close") or m.get("odds") or {}
         for k in o1:
-            if k in o0 and o0[k] and abs(o1[k] - o0[k]) / o0[k] >= 0.05:
-                moves.append({"market_id": m["id"], "home": m["home"], "away": m["away"], "outcome": k, "from": o0[k], "to": o1[k]})
-
+            if k in o0 and o0[k] and o1[k] != o0[k]:
+                moves.append({"market_id": m["id"], "home": m["home"], "away": m["away"], "market": m["market"], "line": m.get("line"),
+                              "kickoff": m["kickoff"], "outcome": k, "from": o0[k], "to": o1[k],
+                              "chg": round(o1[k] / o0[k] - 1, 4), "n": fl.get("changes")})
+    moves.sort(key=lambda x: x["chg"])
     report = {
         "date": day,
         "generated_at": prev.get("generated_at") or now.isoformat(timespec="seconds"),
@@ -162,9 +189,14 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
         "markets": analyzed,
         "combos": combos,
         "value_picks": value,
+        "upsets": upsets,
+        "handi_picks": handi_picks,
+        "ou_picks": ou_picks,
         "top_pick": top,
+        "top_picks": top_picks,
         "caution": [m["id"] for m in caution],
         "odds_moves": moves,
+        "pending": sorted([x for x in betman.PENDING if x["kickoff"] > now.isoformat()], key=lambda x: x["kickoff"])[:60] if not config.DEMO else [],
         "stats": {
             "markets": len(analyzed),
             "matches": len({(m["home"], m["away"], m["kickoff"][:10]) for m in primary}),
@@ -253,7 +285,7 @@ def grade(today: str, lookback: int = 7, fetch_scores: bool = True) -> dict:
     cal = G.fit_alpha(reports)
     from .sources import betman_history
     elo = G.rebuild_elo(reports, results_by_date, betman_history.load_all())
-    G.save_state(perf, cal, elo)
+    G.save_state(perf, cal, elo, G.learn(reports))
     log.info("채점 완료: 픽 %s", perf["picks"]["all"])
     return perf
 
@@ -266,10 +298,16 @@ def history(max_rounds: int = 8) -> None:
         betman_history.backfill(max_rounds)
     except Exception:  # noqa: BLE001
         log.exception("백필 실패")
+    from .sources import overseas_history
+    try:
+        overseas_history.backfill()
+    except Exception:  # noqa: BLE001
+        log.exception("해외 기록 수집 실패")
     rows = betman_history.load_all()
-    if rows:
-        oddsbook.save(oddsbook.build(rows))
-        log.info("배당 구간표 갱신: %d개 선택 기록", len(rows))
+    xrows = overseas_history.load_all()
+    if rows or xrows:
+        oddsbook.save(oddsbook.build(rows, xrows))
+        log.info("배당 구도표 갱신: 베트맨 %d건, 해외 %d경기", len(rows), len(xrows))
 
 
 def demo(days: int = 21) -> None:

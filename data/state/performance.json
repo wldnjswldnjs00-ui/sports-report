@@ -1,27 +1,33 @@
 {
- "updated": "2026-11-16T23:55:40+09:00",
+ "updated": "2026-11-17T02:41:13+09:00",
  "picks": {
   "all": {
-   "n": 11,
-   "hit_rate": 0.6364,
-   "expected": 0.6307,
-   "brier": 0.199,
-   "logloss": 0.5757
+   "n": 17,
+   "hit_rate": 0.5882,
+   "expected": 0.5899,
+   "brier": 0.214,
+   "logloss": 0.6111
   },
   "30d": {
-   "n": 11,
-   "hit_rate": 0.6364,
-   "expected": 0.6307,
-   "brier": 0.199,
-   "logloss": 0.5757
+   "n": 17,
+   "hit_rate": 0.5882,
+   "expected": 0.5899,
+   "brier": 0.214,
+   "logloss": 0.6111
   }
  },
  "calibration": [
   {
+   "bucket": "40-50%",
+   "n": 3,
+   "expected": 0.4956,
+   "actual": 0.6667
+  },
+  {
    "bucket": "50-60%",
-   "n": 6,
-   "expected": 0.5137,
-   "actual": 0.5
+   "n": 9,
+   "expected": 0.5207,
+   "actual": 0.4444
   },
   {
    "bucket": "60-70%",
@@ -85,6 +91,20 @@
     "roi": -1.0
    }
   },
+  "upset": {
+   "all": {
+    "n": 0,
+    "win_rate": null,
+    "expected": null,
+    "roi": null
+   },
+   "30d": {
+    "n": 0,
+    "win_rate": null,
+    "expected": null,
+    "roi": null
+   }
+  },
   "lotto": {
    "all": {
     "n": 3,
@@ -108,8 +128,8 @@
  "daily": [
   {
    "date": "2026-11-16",
-   "n": 11,
-   "hit": 7
+   "n": 17,
+   "hit": 10
   }
  ]
 }

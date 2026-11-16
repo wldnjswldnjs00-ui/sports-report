@@ -1,36 +1,46 @@
 {% extends "base.html" %}
-{% block title %}조합 계산기 · 적중률과 기대값 · {{ cfg.SITE_NAME }}{% endblock %}
-{% block desc %}오늘 경기에서 직접 고른 조합의 종합배당, 예상 적중률, 기대값, 적정 금액을 바로 계산합니다.{% endblock %}
+{% block title %}금액 계산기 · 시드에 맞는 구매 금액 | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}오늘 프로토 경기에서 조합을 고르면 종합배당, 예상 적중률, 총 시드에 맞는 권장 금액과 적중 시 수령액을 계산합니다.{% endblock %}
 {% block main %}
 <section class="wrap page-head">
-  <p class="kicker">계산기</p><h1>내 조합 검증</h1>
-  <p class="lede">오늘 경기에서 결과를 눌러 담거나, 배당과 확률을 직접 입력하세요. 같은 경기를 두 번 담을 수는 없습니다.</p>
+  <p class="kicker">CALCULATOR</p><h1>금액 계산기</h1>
+  <p class="lede">총 시드를 넣고 경기를 고르면, 켈리 기준으로 한 번에 얼마를 거는 게 적당한지 계산합니다.</p>
 </section>
 <section class="wrap block tool" data-tool>
   <div class="tool-cols">
     <div>
-      <h2 class="sub">오늘 경기에서 고르기</h2>
-      <input class="input" type="search" placeholder="팀 이름 검색" data-tool-search aria-label="팀 이름 검색">
+      <h2 class="sub">1. 총 시드</h2>
+      <div class="budget">
+        <input class="input big" id="budget" type="text" inputmode="numeric" autocomplete="off" value="300,000" data-t-bank aria-label="총 시드(원)">
+        <span>원</span>
+      </div>
+      <div class="filters quick" data-quick>
+        <button type="button" class="chip" data-v="100000">10만</button><button type="button" class="chip" data-v="300000">30만</button>
+        <button type="button" class="chip" data-v="500000">50만</button><button type="button" class="chip" data-v="1000000">100만</button>
+      </div>
+      <p class="fine">가지고 있는 전체 금액을 넣으세요. 권장 금액은 베트맨 1회 구매 한도인 100,000원을 넘지 않게 계산합니다.</p>
+      <h2 class="sub">2. 경기 고르기</h2>
+      <input class="input" id="tool-search" type="search" placeholder="팀 이름 검색" data-tool-search aria-label="팀 이름 검색">
       <ul class="tool-list" data-tool-list><li class="muted">불러오는 중…</li></ul>
     </div>
-    <div>
-      <h2 class="sub">직접 입력</h2>
-      <form class="tool-manual" data-tool-manual>
-        <label>배당 <input class="input" name="odds" type="number" step="0.01" min="1.01" max="500" required></label>
-        <label>내가 보는 확률(%) <input class="input" name="p" type="number" step="0.1" min="0.1" max="99.9" required></label>
-        <button class="btn" type="submit">추가</button>
-      </form>
-      <h2 class="sub">계산 결과</h2>
+    <div class="tool-result">
+      <h2 class="sub">3. 계산 결과</h2>
       <ol class="slip-legs" data-tool-legs></ol>
-      <dl class="kpis tight">
+      <dl class="kpis tight two-col">
         <div><dt>종합배당</dt><dd data-t-odds>–</dd></div>
         <div><dt>예상 적중률</dt><dd data-t-p>–</dd></div>
-        <div><dt>기대값</dt><dd data-t-ev>–</dd></div>
-        <div><dt>적정 비중</dt><dd data-t-kelly>–</dd></div>
+        <div class="hl"><dt>권장 금액</dt><dd data-t-stake>–</dd></div>
+        <div class="hl"><dt>적중 시 수령액</dt><dd data-t-pay>–</dd></div>
       </dl>
-      <label class="bank">내 예산(원) <input class="input" type="number" min="0" step="1000" value="100000" data-t-bank></label>
-      <p class="fine" data-t-advice></p>
-      <p class="fine">적정 비중은 켈리 공식의 1/4 값입니다. 기대값이 마이너스면 0이 나옵니다. 베트맨 1회 구매 한도는 10만 원입니다.</p>
+      <p class="tool-advice" data-t-advice></p>
+      <details class="rule"><summary>권장 금액 계산 기준 (켈리)</summary>
+        <p class="fine">켈리 값 = (적중 확률 × 종합배당 − 1) ÷ (종합배당 − 1). 그 값의 1/4만 겁니다(쿼터 켈리, 최대 시드의 10%). 100원 단위로 내리고 1회 최대 100,000원입니다.</p>
+        <p class="fine">배당이 큰 조합(공격형·로또폴더 등)은 아래처럼 적중률에 따라 시드의 작은 비율만 겁니다.</p>
+        <table class="tbl"><thead><tr><th>조합의 예상 적중률</th><th class="n">시드 대비</th></tr></thead><tbody>
+          <tr><td>60% 이상</td><td class="n">10%</td></tr><tr><td>30% ~ 60%</td><td class="n">5%</td></tr>
+          <tr><td>10% ~ 30%</td><td class="n">3%</td></tr><tr><td>3% ~ 10%</td><td class="n">1.5%</td></tr><tr><td>3% 미만</td><td class="n">0.5%</td></tr>
+        </tbody></table>
+      </details>
     </div>
   </div>
 </section>

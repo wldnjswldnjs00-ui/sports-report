@@ -12,8 +12,28 @@ from .. import config
 from ..util import read_json, write_json
 
 PATH = config.STATE / "oddsbook.json"
-EDGES = [1.0, 1.15, 1.3, 1.45, 1.6, 1.8, 2.0, 2.3, 2.7, 3.2, 4.0, 5.0, 7.0, 10.0, 1000.0]
-MIN_N = 60
+EDGES = [round(1.0 + 0.1 * i, 1) for i in range(21)] + [3.5, 4.0, 5.0, 7.0, 10.0, 1000.0]  # 3.0배까지 0.1 단위
+MIN_N = 30
+
+
+# 배당 대 배당 구도용 구간: 3배까지 0.1, 6배까지 0.5, 10배까지 1 단위
+BANDS = [round(1.0 + 0.1 * i, 1) for i in range(20)] + [3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 7.0, 8.0, 9.0, 10.0]
+
+
+def band(o: float) -> int:
+    i = 0
+    for j, b in enumerate(BANDS):
+        if o + 1e-9 >= b:
+            i = j
+    return i
+
+
+def band_label(i: int) -> str:
+    lo = BANDS[i]
+    if i == len(BANDS) - 1:
+        return "10배 이상"
+    w = round(BANDS[i + 1] - lo, 2)
+    return f"{lo:.1f}배대" if w == 0.1 else f"{lo:g}~{BANDS[i + 1]:g}배"
 
 
 def bucket(o: float) -> int:
@@ -25,7 +45,11 @@ def bucket(o: float) -> int:
 
 def label(i: int) -> str:
     lo, hi = EDGES[i], EDGES[i + 1]
-    return f"{lo:.2f}~{hi:.2f}" if hi < 100 else f"{lo:.0f}배 이상"
+    if hi >= 100:
+        return f"{lo:.0f}배 이상"
+    if round(hi - lo, 2) == 0.1:
+        return f"{lo:.1f}배대"
+    return f"{lo:.1f}~{hi:.1f}배"
 
 
 def _role(market: str, side: str) -> str:
@@ -36,8 +60,24 @@ def _role(market: str, side: str) -> str:
     return "X"  # 승·패 쪽(정·역배는 배당 구간이 구분)
 
 
-def build(rows: list[list]) -> dict[str, Any]:
+def build_overseas(rows: list[list]) -> dict[str, dict]:
+    """해외 평균 마감 배당 기준 구도표. X|홈밴드|원정밴드 → 승·무·패, XOU|오버밴드|언더밴드 → 오버 적중."""
+    out: dict[str, dict] = {}
+    for h, d, a, res, ov, un, goals in rows:
+        pr = out.setdefault(f"X|{band(h)}|{band(a)}", {"n": 0, "h": 0, "d": 0, "a": 0})
+        pr["n"] += 1
+        pr["h" if res == 0 else "d" if res == 1 else "a"] += 1
+        if ov > 1 and un > 1 and goals >= 0:
+            po = out.setdefault(f"XOU|{band(ov)}|{band(un)}", {"n": 0, "over": 0})
+            po["n"] += 1
+            po["over"] += int(goals >= 3)
+    return out
+
+
+def build(rows: list[list], overseas: list[list] | None = None) -> dict[str, Any]:
     acc: dict[str, dict] = {}
+    moves: dict[str, dict] = {}
+    pairs: dict[str, dict] = {}
 
     def add(key, o, hit):
         a = acc.setdefault(key, {"n": 0, "hit": 0, "ret": 0.0, "inv": 0.0})
@@ -61,11 +101,43 @@ def build(rows: list[list]) -> dict[str, Any]:
             add(f"{sport}|{mk}|{role}|{b}", o, hit)
             add(f"all|{mk}|{role}|{b}", o, hit)
             add(f"all|all|{'D' if side == 'D' else 'X'}|{b}", o, hit)
+            add(f"side|{mk}|{side}|{b}", o, hit)          # 배당 분석 페이지용: 마켓×선택×구간
+            add(f"sidesum|{mk}|{side}|0", o, hit)
+        # 배당 대 배당 구도: 소수 첫째 자리 기준 (예: 1.5배 대 1.8배에서 1.8배 쪽이 이긴 비율)
+        if mk in ("WL", "HANDICAP", "OU") and not (d and d > 1):
+            lo_side, hi_side = (0, 2) if w <= l else (2, 0)
+            lo_o, hi_o = min(w, l), max(w, l)
+            pk = f"{mk}|{band(lo_o)}|{band(hi_o)}"
+            pr = pairs.setdefault(pk, {"n": 0, "hi": 0})
+            pr["n"] += 1
+            pr["hi"] += int(code == hi_side)
+        elif mk == "1X2" and d and d > 1:
+            pk = f"1X2|{band(w)}|{band(l)}"
+            pr = pairs.setdefault(pk, {"n": 0, "h": 0, "d": 0, "a": 0})
+            pr["n"] += 1
+            pr["h" if code == 0 else "d" if code == 1 else "a"] += 1
+        # 배당 변동: 첫 발매 배당 대비
+        if len(row) >= 17:
+            opens = {0: row[14], 1: row[15], 2: row[16]}
+            for side, o, c in sides:
+                o0 = opens.get(c) or 0
+                if not o or o <= 1 or not o0 or o0 <= 1:
+                    continue
+                chg = o / o0 - 1
+                mband = "d3" if chg <= -0.10 else "d2" if chg <= -0.05 else "d1" if chg < -0.005 else "u1" if chg < 0.05 and chg > 0.005 else "u2" if chg >= 0.05 else "flat"
+                mv = moves.setdefault(mband, {"n": 0, "hit": 0, "ret": 0.0, "inv": 0.0})
+                mv["n"] += 1
+                mv["hit"] += int(code == c)
+                mv["ret"] += o if code == c else 0.0
+                mv["inv"] += 1 / o
     table = {}
     for k, a in acc.items():
         n = a["n"]
         table[k] = {"n": n, "hit": round(a["hit"] / n, 4), "be": round(a["inv"] / n, 4), "roi": round(a["ret"] / n - 1, 4)}
-    return {"updated": config.now_kst().isoformat(timespec="seconds"), "rows": len(rows), "edges": EDGES, "table": table}
+    mv_out = {k: {"n": v["n"], "hit": round(v["hit"] / v["n"], 4), "be": round(v["inv"] / v["n"], 4), "roi": round(v["ret"] / v["n"] - 1, 4)}
+              for k, v in moves.items() if v["n"]}
+    return {"updated": config.now_kst().isoformat(timespec="seconds"), "rows": len(rows), "edges": EDGES, "table": table, "moves": mv_out, "pairs": pairs,
+            "xpairs": build_overseas(overseas or []), "xrows": len(overseas or [])}
 
 
 def save(book: dict) -> None:
@@ -110,8 +182,60 @@ def best_buckets(book: dict, limit: int = 6) -> list[dict]:
     out = []
     for k, s in t.items():
         sport, mk, role, b = k.split("|")
-        if s["n"] < 150 or sport == "all" and mk == "all":
+        if s["n"] < 150 or sport in ("all", "side", "sidesum"):
             continue
         out.append({"key": k, "sport": sport, "market": mk, "role": role, "bucket": label(int(b)), **s})
     out.sort(key=lambda x: -x["roi"])
     return out[:limit]
+
+
+def _gather(table: dict, prefix: str, a: int, b: int, fields: tuple[str, ...], need: int = 25) -> dict | None:
+    """표본이 모자라면 이웃 구간(±1, ±2)까지 합친다."""
+    acc = {}
+    for width in (0, 1, 2):
+        acc = {"n": 0, **{f: 0 for f in fields}}
+        for da in range(-width, width + 1):
+            for db in range(-width, width + 1):
+                pr = table.get(f"{prefix}|{a + da}|{b + db}")
+                if pr:
+                    acc["n"] += pr["n"]
+                    for f in fields:
+                        acc[f] += pr.get(f, 0)
+        if acc["n"] >= need:
+            acc["wide"] = width
+            return acc
+    return None
+
+
+def pair_stat(book: dict, m: dict) -> dict | None:
+    """이 경기와 같은 '배당 대 배당' 구도의 과거 결과.
+
+    해외 배당이 있는 축구 승무패는 해외 기록(더 크고 정확한 시장)으로, 나머지는 베트맨 기록으로 본다.
+    """
+    book = book or {}
+    odds = m.get("odds") or {}
+    mk = m["market"]
+    ref = m.get("ref_odds") or {}
+    if mk == "1X2" and m.get("sport") == "soccer" and {"H", "A"} <= set(ref):
+        acc = _gather(book.get("xpairs") or {}, "X", band(ref["H"]), band(ref["A"]), ("h", "d", "a"))
+        if acc:
+            n = acc["n"]
+            return {"kind": "1X2", "src": "해외", "n": n, "H": round(acc["h"] / n, 4), "D": round(acc["d"] / n, 4), "A": round(acc["a"] / n, 4),
+                    "ho": ref["H"], "ao": ref["A"]}
+    pairs = book.get("pairs") or {}
+    if mk == "1X2" and {"H", "D", "A"} <= set(odds):
+        acc = _gather(pairs, "1X2", band(odds["H"]), band(odds["A"]), ("h", "d", "a"), 20)
+        if not acc:
+            return None
+        n = acc["n"]
+        return {"kind": "1X2", "src": "베트맨", "n": n, "H": round(acc["h"] / n, 4), "D": round(acc["d"] / n, 4), "A": round(acc["a"] / n, 4),
+                "ho": odds["H"], "ao": odds["A"]}
+    if mk in ("WL", "HANDICAP", "OU") and len(odds) == 2:
+        (k1, o1), (k2, o2) = sorted(odds.items(), key=lambda kv: kv[1])
+        acc = _gather(pairs, mk, band(o1), band(o2), ("hi",), 20)
+        if not acc:
+            return None
+        n = acc["n"]
+        return {"kind": "2way", "src": "베트맨", "n": n, "lo_key": k1, "hi_key": k2, "lo": o1, "hi": o2,
+                "hi_rate": round(acc["hi"] / n, 4), "lo_rate": round(1 - acc["hi"] / n, 4)}
+    return None

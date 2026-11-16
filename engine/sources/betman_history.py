@@ -15,7 +15,7 @@ from .. import config
 from . import betman
 
 log = logging.getLogger("engine.history")
-DIR = config.DATA / "history" / "proto2"  # v2: 팀명·실제 점수 포함
+DIR = config.DATA / "history" / "proto3"  # v3: 팀명·실제 점수·첫 배당 포함
 OLDEST = 250001  # 2025년 1회차까지
 
 
@@ -28,6 +28,7 @@ def compact_rows(doc: dict) -> list[list]:
 
     점수는 승패·승무패 행에서만 실제 점수다(핸디캡은 핸디 적용, 언더오버는 합계라 None)."""
     out = []
+    flows = betman._flows(doc)
     for r in betman._rows(doc):
         mk = betman._market(r)
         code = str(r.get("gameResult") if r.get("gameResult") is not None else "").strip()
@@ -46,8 +47,20 @@ def compact_rows(doc: dict) -> list[list]:
             if sc:
                 hs, as_ = float(sc.group(1)), float(sc.group(2))
         out.append([betman._sport(r), str(r.get("leagueName") or ""), mk, line, w, d if d > 1 else 0, l, int(code),
-                    r.get("gameDate"), under_first, str(r.get("homeName") or "").strip(), str(r.get("awayName") or "").strip(), hs, as_])
+                    r.get("gameDate"), under_first, str(r.get("homeName") or "").strip(), str(r.get("awayName") or "").strip(), hs, as_,
+                    *_open(flows, r.get("matchSeq"))])
     return out
+
+
+def _open(flows: dict, no) -> list:
+    """첫 발매 배당 [왼칸, 무, 오른칸] (변동이 없었으면 0,0,0)."""
+    try:
+        f = flows.get(int(no))
+    except (TypeError, ValueError):
+        f = None
+    if not f:
+        return [0, 0, 0]
+    return [f["first"].get("W", 0), f["first"].get("D", 0), f["first"].get("L", 0)]
 
 
 def _fetch_round(ts: int) -> dict | None:
