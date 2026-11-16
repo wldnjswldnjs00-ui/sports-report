@@ -109,7 +109,7 @@ def _env() -> Environment:
         cfg=config, STRATEGIES=STRATEGIES, MARKET_LABEL=MARKET_LABEL, SPORT_LABEL=SPORT_LABEL, XSRC=("유럽 축구", "NBA", "MLB", "A매치"), mk_short=_mk_short,
         outcome=_outcome, flow_key=_flow_key, round_label=_round_label, rounds_of=_rounds, now=config.now_kst(), asset_v=config.now_kst().strftime("%Y%m%d%H%M"),
         nav=[("/", "오늘"), ("/odds/", "배당 분석"), ("/tool/", "금액 계산기"), ("/performance/", "성과"),
-             ("/reports/", "지난 리포트"), ("/method/", "분석 방법"), ("/guide/", "가이드")],
+             ("/reports/", "지난 리포트"), ("/method/", "분석 방법"), ("/guide/", "가이드"), ("/support/", "후원")],
     )
     return env
 

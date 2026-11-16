@@ -647,3 +647,9 @@ html:not(.is-mobile):not(.is-pc) .mo-only { display: none; }
 .tl-mkl { margin: 0 0 6px; font-size: 12px; color: var(--ink-2); font-weight: 700; }
 /* 권장 금액 기준표: 모바일에서도 폭을 꽉 채운다 */
 .rule .tbl { display: table; width: 100%; white-space: normal; }
+
+/* 상단 메뉴의 후원: 분홍 포인트 */
+.nav a.nav-support { color: var(--hot); }
+.nav a.nav-support::before { content: "♥ "; }
+.nav a.nav-support:hover { background: var(--hot-soft); color: var(--hot); }
+.nav a.nav-support[aria-current] { background: var(--hot); color: #fff; }
