@@ -238,6 +238,10 @@ def build() -> None:
         shutil.rmtree(config.DIST)
     config.DIST.mkdir(parents=True)
     shutil.copytree(HERE / "static", config.DIST / "static")
+    # 루트에 그대로 두어야 하는 파일(검색엔진 소유 확인 파일 등)
+    for f in (HERE / "root").glob("*"):
+        if f.is_file():
+            shutil.copy2(f, config.DIST / f.name)
 
     summaries = [_report_summary(r) for r in reports]
     leagues = _leagues(reports[:60])
