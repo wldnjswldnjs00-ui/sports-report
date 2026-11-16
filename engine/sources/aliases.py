@@ -21,6 +21,9 @@ LEAGUE_TO_ODDS_API = {
     "K리그1": "soccer_korea_kleague1", "J리그": "soccer_japan_j_league", "J1리그": "soccer_japan_j_league",
     "NBA": "basketball_nba", "NHL": "icehockey_nhl", "MLB": "baseball_mlb", "NFL": "americanfootball_nfl",
     "UNL": "soccer_uefa_nations_league", "네이션스리그": "soccer_uefa_nations_league",
+    "UEFA네이션스리그": "soccer_uefa_nations_league", "CONCACAF네이션스리그": "soccer_concacaf_nations_league",
+    "남자축구국제친선경기": "soccer_international_friendlies", "국제친선": "soccer_international_friendlies",
+    "WKBL": None, "KBL": None,
 }
 
 SEED = {
@@ -49,6 +52,28 @@ SEED = {
 }
 
 
+NATIONAL = {
+    "잉글랜드": "England", "스코틀랜드": "Scotland", "웨일스": "Wales", "북아일랜드": "Northern Ireland",
+    "아일랜드": "Republic of Ireland", "프랑스": "France", "독일": "Germany", "스페인": "Spain", "포르투갈": "Portugal",
+    "이탈리아": "Italy", "네덜란드": "Netherlands", "벨기에": "Belgium", "크로아티아": "Croatia", "스위스": "Switzerland",
+    "오스트리아": "Austria", "덴마크": "Denmark", "스웨덴": "Sweden", "노르웨이": "Norway", "핀란드": "Finland",
+    "아이슬란드": "Iceland", "폴란드": "Poland", "체코": "Czech Republic", "슬로바키아": "Slovakia", "헝가리": "Hungary",
+    "루마니아": "Romania", "불가리아": "Bulgaria", "세르비아": "Serbia", "몬테네그로": "Montenegro", "보스니아": "Bosnia and Herzegovina",
+    "슬로베니아": "Slovenia", "북마케도니아": "North Macedonia", "알바니아": "Albania", "그리스": "Greece", "튀르키예": "Turkey",
+    "터키": "Turkey", "우크라이나": "Ukraine", "조지아": "Georgia", "아르메니아": "Armenia", "아제르바이잔": "Azerbaijan",
+    "카자흐스탄": "Kazakhstan", "이스라엘": "Israel", "키프로스": "Cyprus", "몰타": "Malta", "룩셈부르크": "Luxembourg",
+    "에스토니아": "Estonia", "라트비아": "Latvia", "리투아니아": "Lithuania", "벨라루스": "Belarus", "몰도바": "Moldova",
+    "코소보": "Kosovo", "페로제도": "Faroe Islands", "안도라": "Andorra", "산마리노": "San Marino", "지브롤터": "Gibraltar",
+    "리히텐슈타인": "Liechtenstein", "미국": "USA", "멕시코": "Mexico", "캐나다": "Canada", "코스타리카": "Costa Rica",
+    "파나마": "Panama", "온두라스": "Honduras", "자메이카": "Jamaica", "엘살바도르": "El Salvador", "과테말라": "Guatemala",
+    "아이티": "Haiti", "트리니다드토바고": "Trinidad and Tobago", "퀴라소": "Curacao", "수리남": "Suriname",
+    "대한민국": "South Korea", "한국": "South Korea", "일본": "Japan", "브라질": "Brazil", "아르헨티나": "Argentina",
+    "우루과이": "Uruguay", "콜롬비아": "Colombia", "칠레": "Chile", "페루": "Peru", "에콰도르": "Ecuador", "파라과이": "Paraguay",
+    "호주": "Australia", "모로코": "Morocco", "세네갈": "Senegal", "이집트": "Egypt", "나이지리아": "Nigeria",
+}
+SEED.update(NATIONAL)
+
+
 def alias_map() -> dict[str, str]:
     m = {norm_team(k): v for k, v in SEED.items()}
     extra = read_json(config.DATA / "aliases.json", {}) or {}
@@ -57,7 +82,12 @@ def alias_map() -> dict[str, str]:
 
 
 def english(name: str, amap: dict[str, str]) -> str:
-    return amap.get(norm_team(name), name)
+    """정확히 일치 → 없으면 가장 긴 접두사 일치("워싱턴위저즈" → "워싱턴")."""
+    k = norm_team(name)
+    if k in amap:
+        return amap[k]
+    best = max((a for a in amap if len(a) >= 2 and k.startswith(a)), key=len, default=None)
+    return amap[best] if best else name
 
 
 def odds_api_key_for(league: str) -> str | None:

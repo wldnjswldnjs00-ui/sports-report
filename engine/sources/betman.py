@@ -148,6 +148,18 @@ def _json(r) -> dict:
     return r.json()
 
 
+def _schema_note(doc: dict) -> None:
+    """응답 필드 목록과 표본 한 줄을 남긴다(결과·점수 필드 파악용, 수 KB)."""
+    try:
+        cs = doc.get("compSchedules") or {}
+        sample = dict(zip(cs.get("keys") or [], (cs.get("datas") or [[]])[0]))
+        write_json(config.STATE / "betman_schema.json", {
+            "top_keys": sorted(doc.keys()), "row_keys": cs.get("keys"), "sample_row": sample,
+            "at": config.now_kst().isoformat(timespec="seconds")})
+    except Exception:  # noqa: BLE001
+        pass
+
+
 def _fetch(day: str) -> list[dict[str, Any]]:
     ajax = {"Content-Type": "application/json; charset=UTF-8", "X-Requested-With": "XMLHttpRequest",
             "Accept": "application/json, text/javascript, */*; q=0.01", "Origin": BASE}
@@ -184,7 +196,9 @@ def _fetch(day: str) -> list[dict[str, Any]]:
         r = http("POST", GAME_URL, json={"gmId": GM_ID, "gmTs": int(ts), "gameYear": year, "_sbmInfo": {"debugMode": "false"}},
                  headers={**ajax, "Referer": slip})
         _snap(f"game_{ts}", r)
-        out.extend(parse_round(_json(r), ts))
+        doc = _json(r)
+        _schema_note(doc)
+        out.extend(parse_round(doc, ts))
     if not out:
         raise RuntimeError("발매 회차는 있으나 배당이 공개된 경기가 없음(발매 시작 전일 수 있음)")
     return [m for m in out if _in_window(m["kickoff"], day)]
