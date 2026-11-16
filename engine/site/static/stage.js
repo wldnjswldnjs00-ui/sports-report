@@ -124,18 +124,25 @@
       });
     },
     baseball: function () {
-      var c = perPixel(function (n, px, py) { var g = hash(px, py) * 10; return [246 - g, 243 - g, 234 - g]; });
-      var ctx = c.getContext("2d"), pts = seamPoints(600);
-      strokeOnSphere(ctx, pts, 4, "rgba(190,175,160,.95)");
-      strokeOnSphere(ctx, pts, 14, "#d3222a", [4, 6]);
-      return c;
+      // 솔기 = 구와 안장면 z = k(x² − y²) 의 교선(야구공·테니스공의 8자 곡선). 픽셀마다 곡선까지 거리를 근사한다.
+      var K = 1.7;
+      return perPixel(function (n, px, py) {
+        var f = n[2] - K * (n[0] * n[0] - n[1] * n[1]);
+        var gx = -2 * K * n[0], gy = 2 * K * n[1], gz = 1, gn = gx * n[0] + gy * n[1] + gz * n[2];
+        var tx = gx - gn * n[0], ty = gy - gn * n[1], tz = gz - gn * n[2];       // 구면 접평면 위 기울기
+        var dist = Math.abs(f) / Math.max(0.2, Math.hypot(tx, ty, tz));
+        var g = hash(px, py) * 8, along = Math.atan2(n[1], n[0]) * 17 + n[2] * 12;
+        if (dist < 0.012) return [200, 190, 176];                                     // 가죽 이음선
+        if (dist > 0.02 && dist < 0.115 && (along - Math.floor(along)) < 0.55) return [196, 24, 36]; // 빨간 실밥
+        return [247 - g, 244 - g, 236 - g];
+      });
     }
   };
   var MAT = { // 재질: 거칠기·금속감·요철 세기
     soccer: { rough: .28, metal: .05, scale: [1, 1, 1], r: 1 },
     volleyball: { rough: .22, metal: .15, scale: [1, 1, 1], r: 1 },
     basketball: { rough: .6, metal: 0, scale: [1, 1, 1], r: 1.05 },
-    baseball: { rough: .5, metal: 0, scale: [1, 1, 1], r: .62 }
+    baseball: { rough: .5, metal: 0, scale: [1, 1, 1], r: .78 }
 
   };
 

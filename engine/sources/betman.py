@@ -259,8 +259,14 @@ def _schema_note(doc: dict) -> None:
     try:
         cs = doc.get("compSchedules") or {}
         sample = dict(zip(cs.get("keys") or [], (cs.get("datas") or [[]])[0]))
+        from collections import Counter
+        kinds = Counter()
+        for r in _rows(doc):
+            kinds[f"{r.get('itemCode')}|{r.get('betNm')}|{'배당있음' if _num(r.get('winAllot')) > 1 else '배당없음'}|{'사용' if _market(r) else '제외'}"] += 1
+        tips = doc.get("tooltipList") or []
         write_json(config.STATE / "betman_schema.json", {
-            "top_keys": sorted(doc.keys()), "row_keys": cs.get("keys"), "sample_row": sample,
+            "top_keys": sorted(doc.keys()), "row_keys": cs.get("keys"), "sample_row": sample, "kinds": dict(kinds),
+            "tooltip_n": len(tips), "tooltip_sample": tips[:2],
             "at": config.now_kst().isoformat(timespec="seconds")})
     except Exception:  # noqa: BLE001
         pass
@@ -311,14 +317,12 @@ def _fetch(day: str) -> list[dict[str, Any]]:
 
 
 def in_window(ko: str, day: str) -> bool:
-    """리포트 날짜의 '오늘' 범위: 당일 06:00 ~ 다음날 06:00 KST (심야 해외 경기 포함)."""
-    t = datetime.fromisoformat(ko)
-    start = datetime.fromisoformat(day + "T06:00:00+09:00")
-    return 0 <= (t - start).total_seconds() < 86400
+    """리포트 날짜의 '오늘' 범위: 그 날짜 00:00 ~ 24:00 KST."""
+    return ko[:10] == day
 
 
 def in_horizon(ko: str, day: str, days: int = 3) -> bool:
-    """미리보기 범위: 당일 06:00 부터 3일."""
+    """미리보기 범위: 당일 00:00 부터 3일."""
     t = datetime.fromisoformat(ko)
-    start = datetime.fromisoformat(day + "T06:00:00+09:00")
+    start = datetime.fromisoformat(day + "T00:00:00+09:00")
     return 0 <= (t - start).total_seconds() < 86400 * days

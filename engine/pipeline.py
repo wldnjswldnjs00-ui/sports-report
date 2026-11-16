@@ -122,6 +122,10 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
             log.exception("흐름·부상자 처리 실패(분석은 계속)")
     # 오늘(당일 06시~익일 06시) 경기만 조합·채점 대상. 그 뒤 경기는 미리보기로만 보여준다
     # (다음 날 리포트에서 본 경기로 다시 다뤄지므로 성과가 두 번 집계되지 않는다).
+    # 전날 리포트에서 이미 본 경기로 다룬 것은 다시 세지 않는다(날짜 기준을 바꿔도 이중 집계 방지).
+    yday = (date.fromisoformat(day) - timedelta(days=1)).isoformat()
+    covered = {m["id"] for m in (read_json(report_path(yday), {}) or {}).get("markets", []) if not m.get("preview")}
+    analyzed = [m for m in analyzed if m["id"] not in covered]
     for m in analyzed:
         m["preview"] = not betman.in_window(m["kickoff"], day)
     primary = [m for m in analyzed if not m["preview"]]
@@ -145,12 +149,16 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
         key=lambda m: -m["analysis"]["upset_risk"],
     )[:5]
     moves = []
-    for m in primary:
-        o0, o1 = m.get("odds_open") or {}, m.get("odds_close") or m.get("odds") or {}
+    for m in analyzed:
+        fl = m.get("flow") or {}
+        o0 = fl.get("from") or m.get("odds_open") or {}
+        o1 = m.get("odds_close") or m.get("odds") or {}
         for k in o1:
-            if k in o0 and o0[k] and abs(o1[k] - o0[k]) / o0[k] >= 0.05:
-                moves.append({"market_id": m["id"], "home": m["home"], "away": m["away"], "outcome": k, "from": o0[k], "to": o1[k]})
-
+            if k in o0 and o0[k] and o1[k] != o0[k]:
+                moves.append({"market_id": m["id"], "home": m["home"], "away": m["away"], "market": m["market"], "line": m.get("line"),
+                              "kickoff": m["kickoff"], "outcome": k, "from": o0[k], "to": o1[k],
+                              "chg": round(o1[k] / o0[k] - 1, 4), "n": fl.get("changes")})
+    moves.sort(key=lambda x: x["chg"])
     report = {
         "date": day,
         "generated_at": prev.get("generated_at") or now.isoformat(timespec="seconds"),
