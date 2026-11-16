@@ -18,7 +18,8 @@ on:
     paths: ["data/manual/**", "data/results/manual/**", "data/aliases.json", "engine/sources/**", "engine/analysis/**"]
 
 concurrency:
-  group: pipeline
+  # 이름을 바꿔 둠: 예전에 GitHub 쪽에서 '대기'로 멈춰 취소도 안 되는 실행(30번)이 이 묶음을 붙잡지 않게
+  group: pipeline-v2
   cancel-in-progress: false
 
 permissions:
