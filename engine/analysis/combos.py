@@ -18,22 +18,22 @@ STRATEGIES = {
     "safe": {
         "label": "안정형", "sizes": (2, 3), "min_leg_p": 0.66, "min_conf": 50,
         "odds_range": (1.2, 3.5), "min_joint": 0.40, "top": 4, "pool": 14,
-        "desc": "확률이 높은 경기만 2~3개 묶습니다. 배당은 낮고 적중 가능성이 우선입니다.",
+        "desc": "확률이 높은 경기만 2~3개 묶습니다.",
     },
     "balanced": {
         "label": "밸런스형", "sizes": (2, 3, 4), "min_leg_p": 0.50, "min_conf": 40,
         "odds_range": (2.5, 8.0), "min_joint": 0.15, "top": 6, "pool": 18,
-        "desc": "적중 가능성과 배당을 함께 봅니다. 기대값이 덜 나쁜 조합을 위로 올립니다.",
+        "desc": "적중 가능성과 배당의 균형을 맞춘 3~4경기 조합입니다.",
     },
     "aggressive": {
         "label": "공격형", "sizes": (3, 4, 5), "min_leg_p": 0.38, "min_conf": 30,
         "odds_range": (7.0, 80.0), "min_joint": 0.03, "top": 6, "pool": 18,
-        "desc": "배당을 크게 노립니다. 맞을 확률은 낮습니다. 소액 전용입니다.",
+        "desc": "역배를 섞어 7배 이상을 노리는 조합입니다.",
     },
     "lotto": {
         "label": "로또폴더", "sizes": (5, 6, 7, 8), "min_leg_p": 0.30, "min_conf": 25,
         "odds_range": (40.0, 5000.0), "min_joint": 0.0008, "top": 3, "pool": 16,
-        "desc": "5~8경기를 묶어 수십~수백 배를 노리는 한 장. 커피값으로 즐기는 용도입니다.",
+        "desc": "5~8경기를 묶어 수십 배 이상을 노리는 한 장입니다.",
     },
 }
 

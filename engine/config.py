@@ -27,6 +27,10 @@ CONTACT_EMAIL = os.getenv("CONTACT_EMAIL", "")
 ADSENSE_CLIENT = os.getenv("ADSENSE_CLIENT", "").strip()
 COUPANG_NOTICE = os.getenv("COUPANG_NOTICE", "") == "1"
 SUPPORT_URL = os.getenv("SUPPORT_URL", "").strip()
+# 후원: 카카오페이 송금 링크(https://qr.kakaopay.com/...), 토스 익명 송금 링크(https://toss.me/...)
+SUPPORT_KAKAOPAY = os.getenv("SUPPORT_KAKAOPAY", "").strip()
+SUPPORT_TOSS = os.getenv("SUPPORT_TOSS", "").strip()
+SLOGAN = "데이터와 수학으로, 분석을 똑똑하게"
 
 # 검색엔진 소유 확인(서치 콘솔 / 네이버 서치어드바이저에서 받은 content 값)
 GOOGLE_SITE_VERIFICATION = os.getenv("GOOGLE_SITE_VERIFICATION", "iXRqVBnVwoPNywIn7DYmi6t38IMQlf6xogGn4SVxiuw").strip()

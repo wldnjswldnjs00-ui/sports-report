@@ -158,8 +158,7 @@
   }
 
   /* ───── 내 조합 ───── */
-  var MAX_LEGS = 10;
-  var CORR = 0.985;
+  var MAX_LEGS = 10, MAX_BUDGET = 100000, CORR = 0.985;
   var data = null, byId = {};
   var slip = { date: null, ids: [] };
 
@@ -176,9 +175,7 @@
       })
       .catch(function () { data = { legs: [] }; return data; });
   }
-
   function legsOf(ids) { return ids.map(function (id) { return byId[id]; }).filter(Boolean); }
-
   function calc(legs) {
     if (!legs.length) return null;
     var odds = 1, p = 1, pairs = 0, missing = false;
@@ -191,15 +188,16 @@
       }
     });
     odds = Math.floor(odds * 100) / 100;
-    if (missing) return { odds: odds, p: null, ev: null, kelly: null };
-    p *= Math.pow(CORR, pairs);
-    var ev = p * odds - 1;
-    var kelly = odds > 1 ? Math.max(0, (p * odds - 1) / (odds - 1)) * 0.25 : 0;
-    return { odds: odds, p: p, ev: ev, kelly: kelly };
+    return { odds: odds, p: missing ? null : p * Math.pow(CORR, pairs) };
   }
-
-  function pct(x, d) { return x == null ? "–" : (x * 100).toFixed(d == null ? 1 : d) + "%"; }
-  function sgn(x) { return x == null ? "–" : (x >= 0 ? "+" : "") + (x * 100).toFixed(1) + "%"; }
+  function won(x) { return Math.floor(x).toLocaleString("ko-KR") + "원"; }
+  function pct(x) { return x == null ? "–" : (x * 100).toFixed(x < 0.1 ? 1 : 0) + "%"; }
+  /* 권장 금액: 맞을 확률이 낮은 조합일수록 예산의 작은 몫만 */
+  function stakeFor(p, budget) {
+    var f = p >= 0.6 ? 0.5 : p >= 0.3 ? 0.25 : p >= 0.1 ? 0.1 : p >= 0.03 ? 0.05 : 0.02;
+    var s = Math.floor(budget * f / 100) * 100;
+    return { f: f, stake: Math.min(MAX_BUDGET, Math.max(budget >= 100 ? 100 : 0, s)) };
+  }
 
   function addIds(ids, quiet) {
     if (!data) return;
@@ -207,8 +205,7 @@
     ids.forEach(function (id) {
       var l = byId[id];
       if (!l) { past++; return; }
-      var idx = slip.ids.indexOf(id);
-      if (idx >= 0) return;
+      if (slip.ids.indexOf(id) >= 0) return;
       var same = slip.ids.filter(function (x) { return byId[x] && byId[x].match === l.match; });
       if (same.length) { slip.ids = slip.ids.filter(function (x) { return same.indexOf(x) < 0; }); replaced++; }
       if (slip.ids.length >= MAX_LEGS) return;
@@ -216,20 +213,18 @@
     });
     save();
     if (!quiet) {
-      if (past && !added) toast("오늘 발매 경기만 담을 수 있습니다.");
+      if (past && !added) toast("지금 발매 중인 경기만 담을 수 있습니다.");
       else if (replaced) toast("같은 경기는 하나만 담깁니다. 선택을 바꿨습니다.");
       else if (added) toast(added + "경기를 담았습니다.");
       else if (slip.ids.length >= MAX_LEGS) toast("최대 10경기까지 묶을 수 있습니다.");
     }
     bump();
   }
-
   function toggleId(id) {
     var i = slip.ids.indexOf(id);
     if (i >= 0) { slip.ids.splice(i, 1); save(); toast("뺐습니다."); }
     else addIds([id]);
   }
-
   function save() { slip.date = data && data.date; store.set("slip", slip); render(); }
 
   var slipEl = $("[data-slip]");
@@ -238,7 +233,6 @@
     if (!t || reduce) return;
     t.classList.remove("bump"); void t.offsetWidth; t.classList.add("bump");
   }
-
   function legLi(l, i) {
     var li = doc.createElement("li");
     li.innerHTML = '<span><small></small><span class="lbl"></span></span><b></b><button type="button" aria-label="빼기">×</button>';
@@ -248,7 +242,6 @@
     li.querySelector("button").addEventListener("click", function () { slip.ids.splice(i, 1); save(); });
     return li;
   }
-
   function render() {
     var legs = legsOf(slip.ids);
     if (slipEl) {
@@ -260,15 +253,12 @@
       var c = calc(legs);
       $("[data-slip-odds]").textContent = c ? c.odds.toFixed(2) : "–";
       $("[data-slip-p]").textContent = c ? pct(c.p) : "–";
-      var evEl = $("[data-slip-ev]");
-      evEl.textContent = c ? sgn(c.ev) : "–";
-      evEl.className = c && c.ev != null ? (c.ev > 0 ? "pos" : c.ev > -0.1 ? "mid" : "neg") : "";
+      $("[data-slip-pay]").textContent = c ? won(Math.floor(10000 * c.odds / 10) * 10) : "–";
       $("[data-slip-warn]").textContent = legs.length === 1 ? "프로토 승부식은 2경기 이상 묶어야 합니다." : "";
     }
     $$(".opick[data-leg]").forEach(function (b) { b.classList.toggle("is-on", slip.ids.indexOf(b.dataset.leg) >= 0); });
     renderTool(legs);
   }
-
   if (slipEl) {
     $("[data-slip-open]").addEventListener("click", function () { slipEl.classList.toggle("is-open"); });
     $("[data-slip-close]").addEventListener("click", function () { slipEl.classList.remove("is-open"); });
@@ -276,64 +266,104 @@
     doc.addEventListener("keydown", function (e) { if (e.key === "Escape") slipEl.classList.remove("is-open"); });
   }
 
+  /* ───── 전체 조합 보기(작은 창) ───── */
+  var dlg = $("[data-reveal-dialog]"), dlgCard = null, adLoaded = false;
+  function comboIds(card) {
+    var b = card.querySelector("[data-add-combo]");
+    try {
+      var ids = JSON.parse(b.dataset.addCombo), outs = JSON.parse(b.dataset.addOutcomes);
+      return ids.map(function (id, i) { return id + "|" + outs[i]; });
+    } catch (e) { return []; }
+  }
+  function unmask(card) {
+    var full = card.querySelector("template[data-full]"), ol = card.querySelector("[data-legs]");
+    if (full && ol && card.querySelector("[data-masked]")) { ol.innerHTML = full.innerHTML; }
+    var rb = card.querySelector("[data-reveal-combo]"), ab = card.querySelector(".after-reveal");
+    if (rb) rb.hidden = true;
+    if (ab) ab.hidden = false;
+  }
+  var seen = store.get("revealed") || {};
+  $$("[data-combo]").forEach(function (card) { if (seen[card.dataset.key]) unmask(card); });
+  function openReveal(card) {
+    dlgCard = card;
+    var full = card.querySelector("template[data-full]");
+    $("[data-reveal-legs]", dlg).innerHTML = full ? full.innerHTML : "";
+    $("[data-reveal-odds]", dlg).textContent = card.querySelector(".combo-odds").textContent.trim() + " · " + card.querySelector(".combo-size").textContent.trim();
+    $("[data-reveal-foot]", dlg).innerHTML = card.querySelector(".combo-foot").innerHTML;
+    if (typeof dlg.showModal === "function") dlg.showModal(); else dlg.setAttribute("open", "");
+    if (!adLoaded && dlg.querySelector(".adsbygoogle")) { adLoaded = true; try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {} }
+    unmask(card);
+    seen[card.dataset.key] = 1; store.set("revealed", seen);
+  }
+  if (dlg) {
+    dlg.addEventListener("click", function (e) { if (e.target === dlg) dlg.close(); });
+    $("[data-reveal-add]", dlg).addEventListener("click", function () {
+      if (dlgCard) addIds(comboIds(dlgCard));
+      dlg.close();
+      if (slipEl) slipEl.classList.add("is-open");
+    });
+  }
+
   doc.addEventListener("click", function (e) {
-    var b = e.target.closest && e.target.closest(".opick[data-leg]");
+    var t = e.target.closest ? e.target : null;
+    if (!t) return;
+    var b = t.closest(".opick[data-leg]");
     if (b) { e.stopPropagation(); toggleId(b.dataset.leg); return; }
-    var c = e.target.closest && e.target.closest("[data-add-combo]");
+    var rv = t.closest("[data-reveal-combo]");
+    if (rv && dlg) { openReveal(rv.closest("[data-combo]")); return; }
+    var c = t.closest("[data-add-combo]");
     if (c) {
-      try {
-        var ids = JSON.parse(c.dataset.addCombo), outs = JSON.parse(c.dataset.addOutcomes);
-        addIds(ids.map(function (id, i) { return id + "|" + outs[i]; }));
-        if (slipEl && !slipEl.classList.contains("is-open")) slipEl.classList.add("is-open");
-      } catch (err) {}
+      addIds(comboIds(c.closest("[data-combo]")));
+      if (slipEl && !slipEl.classList.contains("is-open")) slipEl.classList.add("is-open");
     }
   });
 
-  /* ───── 계산기 페이지 ───── */
-  var tool = $("[data-tool]"), manual = [];
+  /* ───── 금액 계산기 ───── */
+  var tool = $("[data-tool]"), bankEl = $("[data-t-bank]");
+  function budget() {
+    if (!bankEl) return 0;
+    var v = parseInt(String(bankEl.value).replace(/[^0-9]/g, ""), 10) || 0;
+    return Math.min(MAX_BUDGET, v);
+  }
+  function fmtBudget() {
+    if (!bankEl) return;
+    var v = budget();
+    bankEl.value = v ? v.toLocaleString("ko-KR") : "";
+    store.set("budget", v);
+  }
   function renderTool(legs) {
     if (!tool) return;
-    var all = legs.concat(manual);
     var ol = $("[data-tool-legs]");
     ol.innerHTML = "";
     legs.forEach(function (l, i) { ol.appendChild(legLi(l, i)); });
-    manual.forEach(function (l, i) {
-      var li = legLi(l, 0);
-      li.querySelector("button").onclick = function (ev) { ev.stopPropagation(); manual.splice(i, 1); render(); };
-      ol.appendChild(li);
-    });
-    var c = calc(all);
-    $("[data-t-odds]").textContent = c ? c.odds.toFixed(2) : "–";
+    var c = calc(legs), adv = $("[data-t-advice]"), B = budget();
+    $("[data-t-odds]").textContent = c ? c.odds.toFixed(2) + "배" : "–";
     $("[data-t-p]").textContent = c ? pct(c.p) : "–";
-    var ev = $("[data-t-ev]");
-    ev.textContent = c ? sgn(c.ev) : "–";
-    ev.className = c && c.ev != null ? (c.ev > 0 ? "pos" : c.ev > -0.1 ? "mid" : "neg") : "";
-    $("[data-t-kelly]").textContent = c && c.kelly != null ? pct(c.kelly) : "–";
-    var bank = parseFloat($("[data-t-bank]").value) || 0, adv = $("[data-t-advice]");
-    if (!c || c.p == null) adv.textContent = "";
-    else if (c.ev <= 0) adv.textContent = "기대값이 마이너스입니다. 수학적으로는 사지 않는 쪽이 낫습니다. 산다면 잃어도 괜찮은 금액만.";
-    else {
-      var amt = Math.min(100000, Math.floor(bank * c.kelly / 100) * 100);
-      adv.textContent = "기대값 플러스. 예산 기준 적정 금액은 약 " + amt.toLocaleString("ko-KR") + "원입니다.";
+    if (!c || c.p == null || legs.length < 2 || !B) {
+      $("[data-t-stake]").textContent = "–"; $("[data-t-pay]").textContent = "–";
+      adv.textContent = !B ? "예산을 입력하세요." : legs.length < 2 ? "경기를 2개 이상 고르면 권장 금액이 나옵니다." : "";
+      return;
     }
+    var s = stakeFor(c.p, B), pay = Math.floor(s.stake * c.odds / 10) * 10;
+    $("[data-t-stake]").textContent = won(s.stake);
+    $("[data-t-pay]").textContent = won(pay);
+    adv.textContent = "예산 " + won(B) + " 중 " + Math.round(s.f * 100) + "%인 " + won(s.stake) + "을 권장합니다. 이 조합이 맞을 확률은 " + pct(c.p) +
+      "이고, 맞으면 " + won(pay) + "을 받습니다. 남은 " + won(B - s.stake) + "은 다른 조합에 나눠 쓰세요.";
   }
   function renderToolList(q) {
     var ul = $("[data-tool-list]");
-    if (!data || !data.legs.length) { ul.innerHTML = '<li class="muted">오늘 발매 경기가 아직 없습니다.</li>'; return; }
+    if (!data || !data.legs.length) { ul.innerHTML = '<li class="muted">지금 발매 중인 경기가 없습니다.</li>'; return; }
     var groups = {};
-    data.legs.forEach(function (l) { (groups[l.match] = groups[l.match] || []).push(l); });
+    data.legs.forEach(function (l) { (groups[l.match + "|" + l.mk] = groups[l.match + "|" + l.mk] || []).push(l); });
     ul.innerHTML = "";
     q = (q || "").trim().toLowerCase();
     Object.keys(groups).forEach(function (k) {
       var g = groups[k], first = g[0];
       if (q && first.label.toLowerCase().indexOf(q) < 0) return;
-      var li = doc.createElement("li");
-      var head = doc.createElement("div");
-      head.className = "tl-head";
-      head.innerHTML = "<small></small>";
-      head.querySelector("small").textContent = (first.no ? first.no + "번 " : "") + first.league;
+      var li = doc.createElement("li"), head = doc.createElement("div"), row = doc.createElement("div");
+      head.className = "tl-head"; head.innerHTML = "<small></small>";
+      head.querySelector("small").textContent = (first.no ? first.no + "번 " : "") + first.league + (first.mkl ? " · " + first.mkl : "");
       head.appendChild(doc.createTextNode(first.label));
-      var row = doc.createElement("div");
       row.className = "odds-pick";
       g.forEach(function (l) {
         var b = doc.createElement("button");
@@ -343,23 +373,17 @@
         b.querySelector("b").textContent = l.odds.toFixed(2);
         row.appendChild(b);
       });
-      li.appendChild(head); li.appendChild(row);
-      ul.appendChild(li);
+      li.appendChild(head); li.appendChild(row); ul.appendChild(li);
     });
     render();
   }
   if (tool) {
+    var saved = store.get("budget");
+    if (saved) bankEl.value = String(saved);
+    fmtBudget();
+    bankEl.addEventListener("input", function () { fmtBudget(); render(); });
+    $$("[data-quick] .chip").forEach(function (c) { c.addEventListener("click", function () { bankEl.value = c.dataset.v; fmtBudget(); render(); }); });
     $("[data-tool-search]").addEventListener("input", function (e) { renderToolList(e.target.value); });
-    $("[data-t-bank]").addEventListener("input", function () { render(); });
-    $("[data-tool-manual]").addEventListener("submit", function (e) {
-      e.preventDefault();
-      var f = e.target, o = parseFloat(f.odds.value), p = parseFloat(f.p.value) / 100;
-      if (!(o >= 1.01 && p > 0 && p < 1)) { toast("배당과 확률을 확인하세요."); return; }
-      if (slip.ids.length + manual.length >= MAX_LEGS) { toast("최대 10경기까지입니다."); return; }
-      manual.push({ id: "m" + Date.now(), label: "직접 입력", pick: (p * 100).toFixed(1) + "%", odds: o, p: p, league: "직접" + manual.length });
-      f.reset();
-      render();
-    });
   }
 
   loadData().then(function () { if (tool) renderToolList(""); render(); });

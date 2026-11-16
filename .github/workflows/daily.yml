@@ -45,6 +45,13 @@ jobs:
           [ "${{ github.event.schedule }}" = "0 9 * * *" ] && ARGS="$ARGS --refresh"
           [ "${{ github.event.schedule }}" != "0 21 * * *" ] && [ "${{ github.event_name }}" = "schedule" ] && ARGS="$ARGS --no-scores"
           python -m engine run $ARGS
+      - name: Threads 게시(키가 있을 때만, 하루 한 번)
+        if: github.event.schedule == '30 0 * * *' || github.event_name == 'workflow_dispatch'
+        continue-on-error: true
+        env:
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+          THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
+        run: python -m engine threads
       - name: 사이트 빌드 검증
         id: build
         if: always()

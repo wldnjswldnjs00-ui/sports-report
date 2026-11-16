@@ -94,6 +94,7 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
         if old and old.get("analysis") and started:
             # 고정: 킥오프 이후에는 처음 분석 유지, 배당만 마지막 값 기록
             old["odds_close"] = m["odds"]
+            old["flow"] = m.get("flow")
             analyzed.append(old)
             continue
         a = analyze_market(m, elo, ref.get(m["id"]), alpha, book)

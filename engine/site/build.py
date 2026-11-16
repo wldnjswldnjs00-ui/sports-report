@@ -93,8 +93,8 @@ def _env() -> Environment:
     env.globals.update(
         cfg=config, STRATEGIES=STRATEGIES, MARKET_LABEL=MARKET_LABEL, SPORT_LABEL=SPORT_LABEL,
         outcome=_outcome, flow_key=_flow_key, now=config.now_kst(), asset_v=config.now_kst().strftime("%Y%m%d%H%M"),
-        nav=[("/", "오늘"), ("/reports/", "지난 리포트"), ("/leagues/", "리그"), ("/performance/", "성과"),
-             ("/tool/", "조합 계산기"), ("/method/", "분석 방법"), ("/guide/", "가이드")],
+        nav=[("/", "오늘"), ("/odds/", "배당 분석"), ("/tool/", "금액 계산기"), ("/performance/", "성과"),
+             ("/reports/", "지난 리포트"), ("/method/", "분석 방법"), ("/guide/", "가이드")],
     )
     return env
 
@@ -164,12 +164,13 @@ def _slip_payload(r: dict | None) -> dict:
     legs = []
     for m in r.get("markets", []):
         a = m.get("analysis")
-        if not a or not m.get("odds"):
-            continue
+        if not a or not m.get("odds") or m["kickoff"] <= config.now_kst().isoformat():
+            continue  # 이미 시작한 경기는 담을 수 없다
         for k, o in m["odds"].items():
             legs.append({"id": f"{m['id']}|{k}", "match": f"{m['kickoff'][:10]}|{m['home']}|{m['away']}", "league": m["league"],
                          "label": f"{m['home']} vs {m['away']}", "pick": _outcome(m, k), "odds": o,
-                         "p": a["p"].get(k), "ko": m["kickoff"], "no": m.get("game_no")})
+                         "p": a["p"].get(k), "ko": m["kickoff"], "no": m.get("game_no"), "mk": m["market"] + str(m.get("line") or ""),
+                         "mkl": MARKET_LABEL.get(m["market"], "") + (f" {m['line']:+g}" if m.get("line") is not None else "")})
     return {"date": r["date"], "legs": legs}
 
 
@@ -314,7 +315,7 @@ def build() -> None:
         page("league.html", f"/leagues/{lg['slug']}/", lg=lg)
     page("performance.html", "/performance/")
     page("tool.html", "/tool/")
-    for name in ("method", "guide", "about", "privacy", "terms", "contact", "responsible"):
+    for name in ("method", "guide", "about", "privacy", "terms", "contact", "responsible", "odds", "support"):
         page(f"{name}.html", f"/{name}/")
 
     _write(config.DIST / "404.html", env.get_template("404.html").render(**ctx, path="/404"))
