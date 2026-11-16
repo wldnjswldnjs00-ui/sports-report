@@ -52,7 +52,7 @@
         <p class="tp-league">{{ SPORT_LABEL[t.sport] }} · {{ t.league }} · {{ t.kickoff|kdt }}</p>
         {% set tu = ups.get(t.home ~ '|' ~ t.away ~ '|' ~ t.kickoff[:10]) %}{% if tu %}<p class="tp-upset"><span class="ub">역배 {{ tu.p|pct }}</span> {{ pick_label(tu) }} {{ tu.odds|odds }}배</p>{% endif %}
         <h3 class="tp-match">{{ t.home }} <i>vs</i> {{ t.away }}</h3>
-        <p class="tp-pick"><span class="bub on">{{ outcome(t, t.outcome) }}</span> <span>{{ t.odds|odds }}배</span></p>
+        <p class="tp-pick"><span class="bub on {{ (outcome(t, t.outcome))|tone }}">{{ outcome(t, t.outcome) }}</span> <span>{{ t.odds|odds }}배</span></p>
         {{ prob_bar(tm) }}
         {{ oreo_block(tm) }}
       </div>
@@ -112,14 +112,14 @@
       <button type="button" class="lg-row" aria-expanded="false" data-lg>
         <span class="lg-top">{{ g.kickoff|kdt }} · {{ g.league }}</span>
         <span class="lg-match">{{ g.home }} <i>vs</i> {{ g.away }}</span>
-        <span class="lg-chips">{% for p in g.picks %}<span class="kc k-{{ p.kind }}"><em>{{ p.label }}</em>{{ pick_label(p.x) }} <b>{{ p.x.odds|odds }}</b> <s>{{ p.x.p|pct }}</s></span>{% endfor %}</span>
+        <span class="lg-chips">{% for p in g.picks %}<span class="kc k-{{ p.kind }}"><em>{{ p.label }}</em><span class="{{ pick_label(p.x)|tone }}">{{ pick_label(p.x) }}</span> <b>{{ p.x.odds|odds }}</b> <s>{{ p.x.p|pct }}</s></span>{% endfor %}</span>
         <span class="lg-caret" aria-hidden="true"></span>
       </button>
       <div class="lg-more" hidden>
       {% for p in g.picks %}{% set x = p.x %}{% set m = mk.get(x.market_id) %}
         <div class="lg-d">
           <p class="lg-dh"><span class="kc k-{{ p.kind }}"><em>{{ p.label }}</em>{{ MARKET_LABEL.get(x.market, x.market) }}{% if x.line is not none %} {{ ('%+g'|format(x.line)) if x.market == 'HANDICAP' else ('%g'|format(x.line)) }}{% endif %}</span>{% if x.game_no %}<small>{{ round_label(x.round) }} {{ x.game_no }}번</small>{% endif %}</p>
-          {% if m %}<div class="lg-opts">{% for k, od in m.odds.items() %}<button type="button" class="opick{% if k == x.outcome %} is-model{% endif %}" data-leg="{{ m.id }}|{{ k }}"><span>{{ pick_label(x, k) }}</span><b>{{ od|odds }}</b></button>{% endfor %}</div>{% endif %}
+          {% if m %}<div class="lg-opts">{% for k, od in m.odds.items() %}<button type="button" class="opick{% if k == x.outcome %} is-model{% endif %}" data-leg="{{ m.id }}|{{ k }}"><span class="{{ pick_label(x, k)|tone }}">{{ pick_label(x, k) }}</span><b>{{ od|odds }}</b></button>{% endfor %}</div>{% endif %}
           <dl class="lg-nums">
             <div><dt>추정 확률</dt><dd><span class="mini"><i style="width:{{ (x.p * 100)|round(0)|int }}%"></i></span>{{ x.p|pct }}</dd></div>
             {% if x.x_odds %}<div><dt>해외 배당</dt><dd>{{ x.x_odds|odds }}{% if x.x_kind == '환산' %} <small class="muted">환산</small>{% endif %}</dd></div>{% endif %}
@@ -153,7 +153,7 @@
     <div class="nd-card">
       <p class="tp-league">{{ SPORT_LABEL[t.sport] }} · {{ t.league }} · {{ t.kickoff|kdt }}</p>
       <p class="nd-match">{{ t.home }} <i>vs</i> {{ t.away }}</p>
-      <p class="nd-pick"><span class="bub on">{{ outcome(t, t.outcome) }}</span> <b>{{ t.p|pct }}</b> <small>{{ t.odds|odds }}배</small></p>
+      <p class="nd-pick"><span class="bub on {{ (outcome(t, t.outcome))|tone }}">{{ outcome(t, t.outcome) }}</span> <b>{{ t.p|pct }}</b> <small>{{ t.odds|odds }}배</small></p>
     </div>
     {% endfor %}
   </div>
@@ -191,9 +191,9 @@
         <span class="m-league">{{ g.league }} <small>{% if g.markets|length > 1 %}마켓 {{ g.markets|length }}개{% else %}{{ mk_short(g.main) }}{% endif %}</small></span>
         <span class="m-teams">{{ g.home }} <i>vs</i> {{ g.away }}{% if ux %} <span class="ub">역배 {{ ux.p|pct }}</span>{% endif %}</span>
         {% set others = g.markets|rejectattr('id', 'equalto', mm.id)|selectattr('analysis')|list %}
-        {% if others %}<span class="m-also">{% for m in others %}<span>{{ outcome(m, m.analysis.pick) }} <b>{{ m.analysis.pick_prob|pct }}</b></span>{% endfor %}</span>{% endif %}
+        {% if others %}<span class="m-also">{% for m in others %}<span><i class="{{ outcome(m, m.analysis.pick)|tone }}">{{ outcome(m, m.analysis.pick) }}</i> <b>{{ m.analysis.pick_prob|pct }}</b></span>{% endfor %}</span>{% endif %}
         {% if a %}
-        <span class="m-pick"><span class="bub on">{{ outcome(mm, a.pick) }}</span><b>{{ a.pick_prob|pct }}</b></span>
+        <span class="m-pick"><span class="bub on {{ (outcome(mm, a.pick))|tone }}">{{ outcome(mm, a.pick) }}</span><b>{{ a.pick_prob|pct }}</b></span>
         <span class="m-conf" style="--c:{{ a.confidence }}"><span></span>{{ a.confidence }}</span>
         {% else %}<span class="m-pick muted">해외 배당 없음</span><span></span>{% endif %}
         <span class="m-res">{% if graded %}{% set hits = graded|select|list|length %}<span class="tag {{ 'hit' if hits == graded|length else ('miss' if hits == 0 else 'part') }}">적중 {{ hits }}/{{ graded|length }}</span>{% elif g.markets|selectattr('id', 'in', r.caution)|list %}<span class="tag warn">주의</span>{% endif %}</span>
@@ -203,14 +203,14 @@
         {% for m in g.markets %}{% set ma = m.analysis %}
         <div class="mk">
           <div class="mk-head"><b>{{ mk_short(m) }}</b>{% if m.game_no %}<small>{{ m.game_no }}번</small>{% endif %}
-            {% if ma %}<span class="mk-pick">{{ outcome(m, ma.pick) }} {{ ma.pick_prob|pct }} · 신뢰도 {{ ma.confidence }}</span>{% endif %}
+            {% if ma %}<span class="mk-pick"><i class="{{ outcome(m, ma.pick)|tone }}">{{ outcome(m, ma.pick) }}</i> {{ ma.pick_prob|pct }} · 신뢰도 {{ ma.confidence }}</span>{% endif %}
             {% set o = r.outcomes.get(m.id) %}{% if o and ma %}{{ result_tag('void' if o == 'VOID' else ('hit' if o == ma.pick else 'miss')) }}{% endif %}
           </div>
           {% if ma %}{{ prob_bar(m) }}{% endif %}
           <div class="odds-pick" role="group" aria-label="{{ mk_short(m) }} 결과 선택해서 내 조합에 담기">
             {% for k, od in m.odds.items() %}
             <button type="button" class="opick{% if ma and k == ma.pick %} is-model{% endif %}" data-leg="{{ m.id }}|{{ k }}">
-              <span>{{ outcome(m, k) }}</span><b>{{ od|odds }}</b>
+              <span class="{{ outcome(m, k)|tone }}">{{ outcome(m, k) }}</span><b>{{ od|odds }}</b>
             </button>
             {% endfor %}
           </div>

@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import json
+import re
 import logging
 import shutil
 from collections import defaultdict
@@ -126,6 +127,25 @@ def _upset_map(r: dict) -> dict:
     return out
 
 
+def _tone(label) -> str:
+    """선택 이름에 맞는 색 클래스. 핸디는 부호(+ 초록, − 빨강), 그 외는 승/오버 초록, 패/언더 빨강."""
+    t = str(label or "")
+    mt = re.search(r"([+\-−])\d", t)
+    if mt:
+        return "t-neg" if mt.group(1) in "-−" else "t-pos"
+    if "오버" in t:
+        return "t-pos"
+    if "언더" in t:
+        return "t-neg"
+    if "무" in t:
+        return "t-draw"
+    if "패" in t:
+        return "t-neg"
+    if "승" in t:
+        return "t-pos"
+    return ""
+
+
 def _flow_key(m: dict) -> str | None:
     """배당이 3% 이상 가장 많이 내려간 선택(=구매가 몰린 쪽)."""
     fl = m.get("flow") or {}
@@ -158,11 +178,11 @@ def _env() -> Environment:
         autoescape=select_autoescape(["html", "xml"]),
         trim_blocks=True, lstrip_blocks=True,
     )
-    env.filters.update(sday=config.sales_day, match_groups=_match_groups, pct=_pct, signed=_signed, odds=_odds, won=_won, kdate=_kdate, ktime=_ktime, kdt=_kdt, slug=slug)
+    env.filters.update(tone=_tone, sday=config.sales_day, match_groups=_match_groups, pct=_pct, signed=_signed, odds=_odds, won=_won, kdate=_kdate, ktime=_ktime, kdt=_kdt, slug=slug)
     env.globals.update(
         cfg=config, STRATEGIES=STRATEGIES, MARKET_LABEL=MARKET_LABEL, SPORT_LABEL=SPORT_LABEL, XSRC=("유럽 축구", "NBA", "MLB", "A매치"), mk_short=_mk_short,
         outcome=_outcome, pick_label=_pick_label, line_groups=_line_groups, upset_map=_upset_map, flow_key=_flow_key, round_label=_round_label, rounds_of=_rounds, now=config.now_kst(), asset_v=config.now_kst().strftime("%Y%m%d%H%M"),
-        nav=[("/", "오늘"), ("/odds/", "배당 분석"), ("/tool/", "금액 계산기"), ("/performance/", "성과"),
+        nav=[("/", "TODAY"), ("/odds/", "배당 분석"), ("/tool/", "금액 계산기"), ("/performance/", "성과"),
              ("/reports/", "지난 리포트"), ("/method/", "분석 방법"), ("/guide/", "가이드"), ("/support/", "후원")],
     )
     return env
@@ -441,7 +461,7 @@ def build() -> None:
     for lg in leagues.values():
         page("league.html", f"/leagues/{lg['slug']}/", lg=lg)
     page("performance.html", "/performance/")
-    page("tool.html", "/tool/")
+    page("tool.html", "/tool/", jsonld=_jsonld({'@context': 'https://schema.org', '@type': 'FAQPage', 'mainEntity': [{'@type': 'Question', 'name': '켈리 기준(Kelly Criterion)이란 무엇인가요?', 'acceptedAnswer': {'@type': 'Answer', 'text': '가진 자금 중 몇 %를 걸어야 장기적으로 자금이 가장 빨리 불어나는지 알려주는 공식입니다. 1956년 벨 연구소의 존 L. 켈리 주니어가 발표했습니다. 베팅 비율 = (적중 확률 × 배당 − 1) ÷ (배당 − 1).'}}, {'@type': 'Question', 'name': '왜 켈리 금액의 1/4만 거나요?', 'acceptedAnswer': {'@type': 'Answer', 'text': '스포츠 경기의 적중 확률은 추정값이라 오차가 있습니다. 1/4 켈리는 성장 속도를 약 44%로 낮추는 대신 자금 변동을 1/4로 줄여 안전합니다. 이 계산기는 1/4 켈리에 시드의 10%와 1회 100,000원 상한을 둡니다.'}}, {'@type': 'Question', 'name': '켈리 크리테온과 켈리 기준은 같은 말인가요?', 'acceptedAnswer': {'@type': 'Answer', 'text': "네, 모두 Kelly Criterion을 가리킵니다. 영어 발음은 '크라이테리언'에 가깝고, 우리말로는 '켈리 기준'이 가장 많이 쓰입니다."}}]}))
     for name in ("method", "guide", "about", "privacy", "terms", "contact", "responsible", "odds", "support"):
         page(f"{name}.html", f"/{name}/")
 

@@ -26,7 +26,7 @@
     <li>
       <span class="leg-no">{{ l.game_no or '' }}</span>
       <span class="leg-match">{{ l.home }} <i>vs</i> {{ l.away }}</span>
-      <span class="bub on">{{ outcome(l, l.outcome) }}</span>{% if l.dog %}<span class="ub">역배</span>{% endif %}
+      <span class="bub on {{ (outcome(l, l.outcome))|tone }}">{{ outcome(l, l.outcome) }}</span>
       <span class="leg-odds">{{ l.odds|odds }}</span>
     </li>
 {% endmacro %}
@@ -69,7 +69,7 @@
   <tbody>
   {% for l in rows %}
     <tr data-ko="{{ l.kickoff }}"><td><span class="muted">{{ l.league }} · {{ l.kickoff|kdt }}</span><br>{{ l.home }} vs {{ l.away }}</td>
-    <td><span class="bub on">{{ outcome(l, l.outcome) }}</span></td><td class="n">{{ l.odds|odds }}</td><td class="n">{{ l.p|pct }}</td>
+    <td><span class="bub on {{ (outcome(l, l.outcome))|tone }}">{{ outcome(l, l.outcome) }}</span></td><td class="n">{{ l.odds|odds }}</td><td class="n">{{ l.p|pct }}</td>
     <td class="why">{% if l.reasons %}{{ l.reasons|join(' · ') }}{% else %}{% if l.hist_hit is not none and l.hist_n %}해외 기록 적중률 {{ l.hist_hit|pct }} ({{ '{:,}'.format(l.hist_n) }}경기){% endif %}{% endif %}</td></tr>
   {% endfor %}
   </tbody>
