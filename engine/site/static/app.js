@@ -148,9 +148,13 @@
   /* 날짜·종목 필터 */
   var fDay = null, fSport = "all";
   function applyFilters() {
+    var shown = 0;
     $$(".match").forEach(function (m) {
       m.hidden = !((fSport === "all" || m.dataset.sport === fSport) && (!fDay || m.dataset.day === fDay));
+      if (!m.hidden) shown++;
     });
+    var em = $("[data-empty]");
+    if (em) em.hidden = shown > 0;
   }
   $$("[data-days]").forEach(function (box) {
     var chips = $$(".chip", box);

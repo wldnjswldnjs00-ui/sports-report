@@ -17,7 +17,7 @@
   </div>
   <div class="wrap hero-copy">
     <p class="slogan">데이터와 수학으로, 분석을 <em>똑똑하게</em></p>
-    <p class="kicker">{% if is_home %}TODAY{% else %}REPORT{% endif %} · {{ r.date|kdate }}</p>
+    <p class="kicker">{% if is_home %}TODAY{% else %}REPORT{% endif %} · {{ r.date|kdate }}{% set rs = rounds_of(r) %}{% if rs %} · 프로토 승부식 {{ rs|join(' · ') }}{% endif %}</p>
     <h1 class="hero-title"><span class="hero-en">{% if is_home %}TODAY'S PICK{% else %}PROTO REPORT{% endif %}</span>{{ r.headline }}</h1>
     <ul class="stat-row" aria-label="분석 규모">
       <li><b data-count="{{ r.stats.matches }}">{{ r.stats.matches }}</b><span>오늘 경기</span></li>
@@ -140,17 +140,19 @@
     </div>
     <div class="filters" data-filters>
       <button type="button" class="chip" aria-pressed="true" data-f="all">전체</button>
-      {% for sp in r.markets|map(attribute='sport')|unique %}
-      <button type="button" class="chip" aria-pressed="false" data-f="{{ sp }}">{{ SPORT_LABEL[sp] }}</button>
+      {% for sp in ['soccer', 'basketball', 'baseball', 'volleyball'] %}
+      {% set cnt = r.markets|selectattr('sport', 'equalto', sp)|list|length %}
+      <button type="button" class="chip" aria-pressed="false" data-f="{{ sp }}">{{ SPORT_LABEL[sp] }} <small>{{ cnt }}</small></button>
       {% endfor %}
     </div>
   </header>
+  <p class="none" data-empty hidden>이 날짜에는 해당 종목의 배당 공개 경기가 없습니다.</p>
   <ol class="matches">
   {% for m in r.markets %}
     {% set a = m.analysis %}
     <li class="match" data-sport="{{ m.sport }}" data-day="{{ m.kickoff[:10] }}" {% if m.id in r.caution %}data-caution{% endif %}>
       <button type="button" class="match-row" aria-expanded="false" data-expand>
-        <span class="m-no">{{ m.game_no or '' }}</span>
+        <span class="m-no">{% if m.round %}<small>{{ round_label(m.round) }}</small>{% endif %}{{ m.game_no or '' }}{% if m.game_no %}번{% endif %}</span>
         <span class="m-time">{{ m.kickoff|kdt }}</span>
         <span class="m-league">{{ m.league }} <small>{{ MARKET_LABEL[m.market] }}{% if m.line is not none %} {{ '%+g'|format(m.line) }}{% endif %}</small></span>
         <span class="m-teams">{{ m.home }} <i>vs</i> {{ m.away }}</span>

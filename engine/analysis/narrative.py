@@ -114,7 +114,9 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
     ev: list[str] = []
     pr = a.get("pair")
     if pr and pr["kind"] == "2way":
-        ev.append(f"과거 {pr['lo']:.2f}배 대 {pr['hi']:.2f}배와 같은 구도 {pr['n']:,}건에서 {pr['lo']:.2f}배 쪽이 {_pct(pr['lo_rate'])}, {pr['hi']:.2f}배 쪽이 {_pct(pr['hi_rate'])} 이겼다")
+        ln, hn = _call(m, pr["lo_key"]), _call(m, pr["hi_key"])
+        ev.append(f"{ln} {pr['lo']:.2f}배, {hn} {pr['hi']:.2f}배와 같은 배당 구도는 과거 {pr['n']:,}건이고 "
+                  f"{pr['lo']:.2f}배 쪽({ln})이 {_pct(pr['lo_rate'])}, {pr['hi']:.2f}배 쪽({hn})이 {_pct(pr['hi_rate'])} 맞았다")
     elif pr and pr["kind"] == "1X2":
         src = "해외 배당 " if pr.get("src") == "해외" else ""
         ev.append(f"{src}홈 {pr['ho']:.2f}배 대 원정 {pr['ao']:.2f}배와 같은 구도 {pr['n']:,}경기는 홈승 {_pct(pr['H'])}, 무 {_pct(pr['D'])}, 원정승 {_pct(pr['A'])}였다")

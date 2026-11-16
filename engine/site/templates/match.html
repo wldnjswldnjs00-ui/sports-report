@@ -8,7 +8,7 @@
 <article class="wrap">
   <nav class="crumbs" aria-label="위치"><a href="/">홈</a> <span>/</span> <a href="/reports/{{ r.date }}/">{{ r.date|kdate }} 리포트</a> <span>/</span> <span aria-current="page">{{ g.home }} vs {{ g.away }}</span></nav>
   <header class="page-head">
-    <p class="kicker">{{ SPORT_LABEL[g.sport] }} · {{ g.league }}{% if g.no %} · {{ g.no }}번{% endif %}</p>
+    <p class="kicker">{{ SPORT_LABEL[g.sport] }} · {{ g.league }}{% set rd = round_label(g.markets[0].round) %}{% if rd %} · 프로토 승부식 {{ rd }}{% endif %}{% if g.no %} {{ g.no }}번{% endif %}</p>
     <h1>{{ g.home }} <span class="vs">vs</span> {{ g.away }} 분석</h1>
     <p class="lede">{{ g.kickoff|kdt }} KST{% if g.venue %} · {{ g.venue }}{% endif %} · 베트맨 프로토 승부식 {{ g.markets|length }}개 마켓</p>
   </header>

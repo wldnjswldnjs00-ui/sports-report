@@ -83,6 +83,21 @@ def _flow_key(m: dict) -> str | None:
     return best
 
 
+def _round_label(ts) -> str:
+    """베트맨 회차 번호 260136 → '136회차'."""
+    t = str(ts or "")
+    return f"{int(t[2:])}회차" if t.isdigit() and len(t) == 6 else ""
+
+
+def _rounds(r: dict) -> list[str]:
+    seen = []
+    for m in r.get("markets", []):
+        lb = _round_label(m.get("round"))
+        if lb and lb not in seen:
+            seen.append(lb)
+    return seen
+
+
 def _env() -> Environment:
     env = Environment(
         loader=FileSystemLoader(HERE / "templates"),
@@ -92,7 +107,7 @@ def _env() -> Environment:
     env.filters.update(pct=_pct, signed=_signed, odds=_odds, won=_won, kdate=_kdate, ktime=_ktime, kdt=_kdt, slug=slug)
     env.globals.update(
         cfg=config, STRATEGIES=STRATEGIES, MARKET_LABEL=MARKET_LABEL, SPORT_LABEL=SPORT_LABEL,
-        outcome=_outcome, flow_key=_flow_key, now=config.now_kst(), asset_v=config.now_kst().strftime("%Y%m%d%H%M"),
+        outcome=_outcome, flow_key=_flow_key, round_label=_round_label, rounds_of=_rounds, now=config.now_kst(), asset_v=config.now_kst().strftime("%Y%m%d%H%M"),
         nav=[("/", "오늘"), ("/odds/", "배당 분석"), ("/tool/", "금액 계산기"), ("/performance/", "성과"),
              ("/reports/", "지난 리포트"), ("/method/", "분석 방법"), ("/guide/", "가이드")],
     )

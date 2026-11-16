@@ -17,27 +17,27 @@ STAKE = 10_000  # 예시 금액(원)
 STRATEGIES = {
     "safe": {
         "label": "안정형", "sizes": (2, 3), "min_leg_p": 0.66, "min_conf": 50,
-        "odds_range": (1.2, 3.5), "min_joint": 0.40, "top": 4, "pool": 14,
+        "odds_range": (1.2, 3.5), "min_joint": 0.40, "top": 10, "pool": 16,
         "desc": "확률이 높은 경기만 2~3개 묶습니다.",
     },
     "balanced": {
         "label": "밸런스형", "sizes": (2, 3, 4), "min_leg_p": 0.50, "min_conf": 40,
-        "odds_range": (2.5, 8.0), "min_joint": 0.08, "top": 6, "pool": 18,
+        "odds_range": (2.5, 8.0), "min_joint": 0.10, "top": 12, "pool": 18,
         "desc": "적중 가능성과 배당의 균형을 맞춘 3~4경기 조합입니다.",
     },
     "aggressive": {
         "label": "공격형", "sizes": (3, 4, 5), "min_leg_p": 0.38, "min_conf": 30,
-        "odds_range": (7.0, 80.0), "min_joint": 0.01, "top": 6, "pool": 18,
+        "odds_range": (7.0, 80.0), "min_joint": 0.012, "top": 12, "pool": 18,
         "desc": "역배를 섞어 7배 이상을 노리는 조합입니다.",
     },
     "upset": {
         "label": "역배 조합", "sizes": (2, 3), "min_leg_p": 0.22, "min_conf": 25,
-        "odds_range": (4.0, 60.0), "min_joint": 0.02, "top": 4, "pool": 14,
+        "odds_range": (4.0, 60.0), "min_joint": 0.025, "top": 10, "pool": 14,
         "desc": "배당이 더 높은 쪽만 2~3경기 묶은 조합입니다.",
     },
     "lotto": {
         "label": "로또폴더", "sizes": (5, 6, 7, 8), "min_leg_p": 0.22, "min_conf": 25,
-        "odds_range": (40.0, 5000.0), "min_joint": 0.0002, "top": 3, "pool": 16,
+        "odds_range": (40.0, 5000.0), "min_joint": 0.0003, "top": 6, "pool": 16,
         "desc": "5~8경기를 묶어 수십 배 이상을 노리는 한 장입니다.",
     },
 }
@@ -72,7 +72,7 @@ def _leg(m: dict[str, Any], a: dict[str, Any], key: str) -> dict[str, Any]:
         return ({
             "market_id": m["id"], "match": match_key(m), "league": m["league"], "sport": m["sport"],
             "date": m["kickoff"][:10], "home": m["home"], "away": m["away"], "market": m["market"],
-            "line": m.get("line"), "game_no": m.get("game_no"), "kickoff": m["kickoff"],
+            "line": m.get("line"), "game_no": m.get("game_no"), "round": m.get("round"), "kickoff": m["kickoff"],
             "outcome": key, "p": p, "odds": o, "ev": p * o - 1, "confidence": a["confidence"],
             "upset_risk": a["upset_risk"],
         })
@@ -190,7 +190,7 @@ def strategy_combos(legs: list[dict[str, Any]], name: str, used_all: dict[str, i
     used_all = used_all if used_all is not None else {}
     n_matches = len({l["match"] for l in legs})
     # 경기가 적은 날은 조합 수를 줄인다(억지로 채우면 같은 경기만 반복된다)
-    top_n = cfg["top"] if name == "lotto" else min(cfg["top"], max(2, n_matches // 3))
+    top_n = cfg["top"]  # 개수 상한. 실제 개수는 확률 기준(min_joint)과 겹침 제한을 통과한 만큼만 나온다
     bonus = 3 if name == "lotto" else 0   # 로또폴더는 폴더 수가 많아 합계 한도를 넉넉히
 
     def take(pool_c, n, cap=1, cap_all=3):
@@ -210,12 +210,12 @@ def strategy_combos(legs: list[dict[str, Any]], name: str, used_all: dict[str, i
             n -= 1
 
     # 배당이 한 구간에 몰리지 않게: 구간별로 가장 좋은 조합을 먼저 뽑고, 모자라면 전체에서 채운다
-    tiers = {"lotto": [(40, 80, 1), (80, 200, 1), (200, 5000, 1)],
-             "aggressive": [(7, 12, 2), (12, 25, 2), (25, 80, 2)],
-             "upset": [(4, 8, 2), (8, 16, 1), (16, 60, 1)],
-             "balanced": [(2.5, 3.5, 2), (3.5, 5, 2), (5, 8, 2)]}.get(name)
+    tiers = {"lotto": [(40, 80, 2), (80, 200, 2), (200, 5000, 2)],
+             "aggressive": [(7, 12, 4), (12, 25, 4), (25, 80, 4)],
+             "upset": [(4, 8, 4), (8, 16, 3), (16, 60, 3)],
+             "balanced": [(2.5, 3.5, 4), (3.5, 5, 4), (5, 8, 4)]}.get(name)
     # 같은 경기가 여러 조합에 반복되지 않게: 먼저 '경기당 1번'으로 뽑고, 모자랄 때만 2번·3번까지 허용
-    for cap, cap_all in ((1, 3), (2, 4), (3, 6)):
+    for cap, cap_all in ((1, 4), (2, 7), (3, 10), (4, 14)):
         if tiers:
             for lo_t, hi_t, n_t in tiers:
                 have = sum(1 for c in chosen if lo_t <= c["total_odds"] < hi_t)
@@ -285,7 +285,7 @@ def upset_legs(markets: list[dict[str, Any]], limit: int = 6) -> list[dict[str, 
                 reasons.append("해외 시장 기준 배당이 후함")
             pr = a.get("pair")
             if pr and pr["kind"] == "2way" and pr["hi_key"] == k and pr["hi_rate"] * o > 0.93:
-                reasons.append(f"과거 {pr['lo']:.2f} 대 {pr['hi']:.2f}배 구도에서 {pr['hi_rate'] * 100:.0f}% 승리")
+                reasons.append(f"과거 같은 배당 구도({pr['lo']:.2f} 대 {pr['hi']:.2f})에서 {pr['hi_rate'] * 100:.0f}% 승리")
             if pr and pr["kind"] == "1X2" and pr.get(k, 0) * o > 0.93:
                 reasons.append(f"과거 같은 배당 구도에서 {pr[k] * 100:.0f}% 승리")
             if not reasons or p < 0.2:
