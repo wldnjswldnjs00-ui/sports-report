@@ -562,9 +562,7 @@ html:not(.is-mobile):not(.is-pc) .mo-only { display: none; }
 /* 조합 카드 권장 금액 · 내 시드 입력 */
 .combo-stake { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin: 10px 0 0; padding: 9px 12px; border-radius: 10px; background: var(--card-2); font-size: 12.5px; color: var(--ink-2); }
 .combo-stake b { font-size: 14px; color: var(--ink); white-space: nowrap; }
-.block-head.split { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
-.seed-in { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-2); }
-.seed-in .input { width: 120px; text-align: right; padding: 8px 10px; }
+.combo-stake a { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; }
 
 /* 배당 분석 계산기 */
 .xo { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 22px; align-items: start; }
