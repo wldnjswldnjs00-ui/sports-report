@@ -168,7 +168,7 @@
         <div class="odds-pick" role="group" aria-label="결과 선택해서 내 조합에 담기">
           {% for k, o in m.odds.items() %}
           <button type="button" class="opick{% if k == a.pick %} is-model{% endif %}" data-leg="{{ m.id }}|{{ k }}">
-            <span>{{ outcome(m, k) }}</span><b>{{ o|odds }}</b>
+            <span>{{ outcome(m, k) }}</span><b>{{ o|odds }}</b>{% set ro = (m.ref_odds or {}).get(k) %}{% if ro %}<small class="ref" title="해외 배당">해외 {{ ro|odds }}</small>{% endif %}
             {% set open = (m.odds_open or {}).get(k) %}{% if open and open != o %}<small class="{{ 'up' if o > open else 'down' }}">{{ open|odds }}→</small>{% endif %}
           </button>
           {% endfor %}

@@ -34,13 +34,22 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
     sources = []
     used = []
     if ref:
-        sources.append((ref, W_REF)); used.append("해외 배당")
-    if p_bet:
-        sources.append((p_bet, W_BETMAN)); used.append("베트맨 배당")
-    if p_elo:
-        sources.append((p_elo, W_ELO)); used.append("Elo")
-    if p_hist:
-        sources.append((p_hist, W_HIST)); used.append("과거 배당 적중률")
+        # 해외 배당이 있으면 그것을 기준으로 삼는다(가장 크고 정확한 시장). 나머지는 보조.
+        sources.append((ref, 0.80)); used.append("해외 배당")
+        if p_elo:
+            sources.append((p_elo, 0.08)); used.append("Elo")
+        if p_hist:
+            sources.append((p_hist, 0.07)); used.append("과거 배당 적중률")
+        if p_bet:
+            sources.append((p_bet, 0.05)); used.append("베트맨 배당")
+    else:
+        # 해외 배당이 없는 경기(국내 리그, 핸디캡·언더오버 등)는 베트맨 배당·과거 기록·레이팅으로 본다
+        if p_bet:
+            sources.append((p_bet, W_BETMAN)); used.append("베트맨 배당")
+        if p_elo:
+            sources.append((p_elo, W_ELO)); used.append("Elo")
+        if p_hist:
+            sources.append((p_hist, W_HIST)); used.append("과거 배당 적중률")
     p = combine(sources)
     if not p:
         return {**m, "analysis": None}
@@ -102,6 +111,7 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
             "payout_rate": round(1 / overround(odds), 4) if odds else None,
             "hist": hist_info or None,
             "pair": pair_stat(book or {}, m) if odds else None,
+            "ref_odds": m.get("ref_odds"),
             "elo": {
                 "home": round(elo.rating(m["sport"], m["home"])),
                 "away": round(elo.rating(m["sport"], m["away"])),
