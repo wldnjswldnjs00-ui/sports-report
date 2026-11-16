@@ -55,7 +55,8 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
                      "basis": f"국가대표 레이팅 {st['rh']} 대 {st['ra']}와 비슷한"}
             hist_info = hist_for(xstat, odds)
             p_hist = None
-            sources, used, cap = [(p_i, 1.0)], ["국가대표 레이팅·A매치 기록(해외 배당 없음)"], 55
+            # 상한 50: '적중 확률 높은 경기'(신뢰도 55 이상)에는 들어가지 않고 조합 후보로만 쓰인다
+            sources, used, cap = [(p_i, 1.0)], ["국가대표 레이팅·A매치 기록(해외 배당 없음)"], 50
         elif p_elo and m["market"] in ("1X2", "WL"):
             xstat, hist_info, p_hist = None, None, None
             sources, used, cap = [(p_elo, 1.0)], ["팀 레이팅(해외 배당 없음)"], 40

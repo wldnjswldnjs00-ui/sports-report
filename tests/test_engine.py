@@ -271,3 +271,14 @@ class Intl(unittest.TestCase):
         self.assertGreater(st["A"], st["H"])
         p = I.market_probs(st, "OU", 2.5, {"O", "U"})
         self.assertAlmostEqual(p["O"] + p["U"], 1, places=6)
+
+
+class ComboRound(unittest.TestCase):
+    def test_same_round_only(self):
+        from engine.analysis.combos import _valid
+        a = {"match": "1", "round": "260136"}
+        b = {"match": "2", "round": "260136"}
+        c = {"match": "3", "round": "260137"}
+        self.assertTrue(_valid([a, b]))
+        self.assertFalse(_valid([a, c]))          # 회차가 다르면 한 장으로 살 수 없다
+        self.assertFalse(_valid([a, dict(a)]))    # 같은 경기 중복

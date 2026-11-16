@@ -44,7 +44,9 @@ jobs:
           API_SPORTS_KEY: ${{ secrets.API_SPORTS_KEY }}
         run: |
           ARGS=""
+          # 해외 배당 새로고침: 18:00, 그리고 아침 쓰레드 게시 전 07:00(밤사이 바뀐 배당 반영, API 잔여량이 부족하면 엔진이 알아서 건너뜀)
           [ "${{ github.event.schedule }}" = "0 9 * * *" ] && ARGS="$ARGS --refresh"
+          [ "${{ github.event.schedule }}" = "0 22 * * *" ] && ARGS="$ARGS --refresh"
           [ "${{ github.event.schedule }}" != "0 21 * * *" ] && [ "${{ github.event_name }}" = "schedule" ] && ARGS="$ARGS --no-scores"
           python -m engine run $ARGS
           # 22:00: 23시 전환 전에 다음 구매일 분석을 미리 만들어 둔다(쓰레드 밤 게시용, 사이트 첫 화면은 23시까지 오늘 그대로)
@@ -100,6 +102,5 @@ jobs:
         if: steps.commit.outputs.pushed == '1'
         continue-on-error: true
         run: |
-          sleep 150   # Cloudflare 배포가 끝날 때까지 대기
           python -m engine build >/dev/null
           python -m engine indexnow

@@ -123,7 +123,10 @@ def build_combo(legs: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def _valid(legs) -> bool:
-    return len({l["match"] for l in legs}) == len(legs)
+    """같은 경기 중복 금지 + 같은 회차끼리만(베트맨은 회차가 다른 경기를 한 장으로 살 수 없다)."""
+    if len({l["match"] for l in legs}) != len(legs):
+        return False
+    return len({str(l.get("round") or "") for l in legs}) <= 1
 
 
 def _overlap(a: dict, b: dict) -> float:

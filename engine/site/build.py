@@ -215,7 +215,7 @@ def _slip_payload(r: dict | None) -> dict:
         for k, o in m["odds"].items():
             legs.append({"id": f"{m['id']}|{k}", "match": f"{m['kickoff'][:10]}|{m['home']}|{m['away']}", "league": m["league"],
                          "label": f"{m['home']} vs {m['away']}", "pick": _outcome(m, k), "odds": o,
-                         "p": a["p"].get(k), "ko": m["kickoff"], "no": m.get("game_no"), "mk": m["market"] + str(m.get("line") or ""),
+                         "p": a["p"].get(k), "ko": m["kickoff"], "no": m.get("game_no"), "rd": str(m.get("round") or ""), "mk": m["market"] + str(m.get("line") or ""),
                          "mkl": MARKET_LABEL.get(m["market"], "") + (f" {m['line']:+g}" if m.get("line") is not None else "")})
     return {"date": r["date"], "legs": legs}
 
@@ -311,6 +311,7 @@ def build() -> None:
             reports.append(r)
     perf = load_perf()
     today = date.fromisoformat(config.today_kst())
+    reports = [r for r in reports if r["date"] <= today.isoformat()]  # 미리 만든 다음 구매일 리포트는 23시 전환 후 공개
     latest = next((r for r in reports if r["date"] <= today.isoformat()), reports[0] if reports else None)
     is_demo = any(r.get("demo") for r in reports[:1])
 

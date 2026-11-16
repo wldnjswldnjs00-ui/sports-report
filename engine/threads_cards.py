@@ -103,7 +103,20 @@ h1{{font:400 84px/1.1 DH;margin:0 0 10px}}
 .url b{{font:800 34px UB;color:#ff3d7f}}
 .url .lockic{{font-size:40px}}
 .cta p{{font:500 30px PT;color:#bfc1c4;margin:36px 0 0}}
+.slogan{{font:400 40px DH!important;color:#fff!important;margin:0 0 40px!important;letter-spacing:1px;background:linear-gradient(90deg,#18c4b0,#6c7bff 55%,#ff3d7f);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}
+.care{{position:absolute;left:64px;right:64px;bottom:64px;font:500 24px/1.6 PT;color:#9a9ea3;border-top:1px solid #2a2c30;padding-top:28px}}
+.care b{{color:#fff;font-weight:700;font-size:28px}}
 .note{{font:500 24px PT;color:#7b8581;margin-top:18px}}
+.cover{{background:radial-gradient(circle at 80% 10%,rgba(255,61,127,.28) 0,transparent 45%),radial-gradient(circle at 10% 90%,rgba(24,196,176,.28) 0,transparent 45%),radial-gradient(circle at 50% 50%,#202426 0,#121414 70%);color:#fff}}
+.cv-top{{display:flex;align-items:center;gap:16px}}.cover .brand{{color:#fff}}
+.cv-mid{{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}}
+.cv-date{{font:800 92px UB;letter-spacing:-4px;margin:0;line-height:1}}
+.cv-date span{{font:400 64px DH;letter-spacing:0;color:#ffd23d;margin-left:12px;vertical-align:8px}}
+.cv-round{{font:700 38px PT;color:#121414;background:#fff;border-radius:999px;padding:12px 34px;margin:34px 0 0}}
+.cv-title{{font:400 150px/1.05 DH;margin:56px 0 0;background:linear-gradient(90deg,#18c4b0,#6c7bff 50%,#ff3d7f);-webkit-background-clip:text;-webkit-text-fill-color:transparent}}
+.cv-slogan{{font:500 40px PT;color:#e6e7e8;margin:40px 0 0}}
+.cv-chips{{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}}
+.cv-chips span{{font:700 26px PT;color:#bfc1c4;border:2px solid #34373b;border-radius:999px;padding:10px 22px}}
 .many{{gap:6px;padding-top:26px}}.many .leg{{padding:6px 0}}.many .leg .match{{font-size:29px}}.many .meta{{font-size:21px}}.many .total{{font-size:64px}}.many .leg.lock{{margin:0;padding:8px 14px}}
 """
 
@@ -165,10 +178,25 @@ def card_combo(d: str, title: str, c: dict, hide: int = 2) -> str:
                  f'<p class="note">숨긴 {len(hid)}경기는 사이트에서 확인하세요.</p>')
 
 
+def card_cover(d: str, rep: dict, slot: str) -> str:
+    """표지(썸네일): 날짜·요일, 베트맨 회차, 제목, 슬로건."""
+    x = date.fromisoformat(d)
+    rd = _round(list(rep.get("markets") or []))
+    n = (rep.get("stats") or {}).get("matches", 0)
+    when = "내일 08시 발매" if slot == "night" else "오늘 08시 발매"
+    return ('<div class="card cover"><div class="cv-top"><span class="mark"></span><span class="brand">스포츠분석<b>.kr</b></span></div>'
+            f'<div class="cv-mid"><p class="cv-date">{x.month}월 {x.day}일 <span>{WEEK[x.weekday()]}요일</span></p>'
+            f'<p class="cv-round">{("베트맨 " + _e(rd)) if rd else "베트맨 프로토 승부식"}</p>'
+            '<h1 class="cv-title">프로토<br>스포츠 분석</h1>'
+            '<p class="cv-slogan">데이터와 수학으로, 분석을 똑똑하게</p></div>'
+            f'<div class="cv-chips"><span>{when}</span><span>{n}경기 분석</span><span>적중 확률 · 역배 · 공격형 · 로또</span></div></div>')
+
+
 def card_cta(d: str) -> str:
-    return ('<div class="card cta"><h2>숨긴 경기와<br>전체 조합은 여기서</h2>'
+    return ('<div class="card cta"><p class="slogan">데이터와 수학으로, 분석을 똑똑하게</p><h2>숨긴 경기와<br>전체 조합은 여기서</h2>'
             '<div class="url"><span class="lockic">🔗</span>스포츠분석<b>.kr</b></div>'
-            '<p>매일 밤 10시 · 아침 7시 업데이트<br>만 19세 이상 · 체육진흥투표권은 베트맨 공식 채널에서만</p></div>')
+            '<p>매일 밤 10시 · 아침 7시 업데이트</p>'
+            '<div class="care"><b>잃어도 괜찮은 소액으로, 재미로만 즐기세요.</b><br>분석은 참고용이며 적중을 보장하지 않습니다. 만 19세 이상 · 베트맨 공식 채널에서만<br>도박 문제 상담 1336 (24시간 무료)</div></div>')
 
 
 def _best(cs: list[dict]) -> dict | None:
@@ -196,6 +224,7 @@ def build(rep: dict, slot: str = "night", exclude: set[str] | None = None) -> tu
                 break
         return res
 
+    out.append(card_cover(d, rep, slot))
     tops = list(rep.get("top_picks") or [])
     if slot == "morning":
         tops = sorted(tops + list(rep.get("handi_picks") or []) + list(rep.get("ou_picks") or []), key=lambda l: -l["p"])

@@ -232,6 +232,13 @@
     return { odds: odds, p: missing ? null : p * Math.pow(CORR, pairs) };
   }
   function won(x) { return Math.floor(x).toLocaleString("ko-KR") + "원"; }
+  /* 베트맨은 회차가 다른 경기를 한 장에 묶을 수 없다 */
+  function mixedRounds(legs) {
+    var rs = {};
+    legs.forEach(function (l) { if (l.rd) rs[l.rd] = 1; });
+    return Object.keys(rs).length > 1;
+  }
+  var MIXED_MSG = "회차가 다른 경기가 섞여 있습니다. 베트맨에서는 같은 회차 경기끼리만 한 장으로 살 수 있습니다.";
   function pct(x) { return x == null ? "–" : (x * 100).toFixed(x < 0.1 ? 1 : 0) + "%"; }
   /* 권장 금액: 켈리 기준. f = (p × 배당 − 1) ÷ (배당 − 1), 그 1/4 만 건다(쿼터 켈리).
      켈리 값이 0 이하(배당이 확률보다 낮게 잡힌 조합)면 적중률 구간별 기본 비율을 쓴다. */
@@ -298,7 +305,7 @@
       $("[data-slip-odds]").textContent = c ? c.odds.toFixed(2) : "–";
       $("[data-slip-p]").textContent = c ? pct(c.p) : "–";
       $("[data-slip-pay]").textContent = c ? won(Math.floor(10000 * c.odds / 10) * 10) : "–";
-      $("[data-slip-warn]").textContent = "";
+      $("[data-slip-warn]").textContent = mixedRounds(legs) ? MIXED_MSG : "";
     }
     $$(".opick[data-leg]").forEach(function (b) { b.classList.toggle("is-on", slip.ids.indexOf(b.dataset.leg) >= 0); });
     renderTool(legs);
@@ -389,6 +396,11 @@
     var c = calc(legs), adv = $("[data-t-advice]"), B = budget();
     $("[data-t-odds]").textContent = c ? c.odds.toFixed(2) + "배" : "–";
     $("[data-t-p]").textContent = c ? pct(c.p) : "–";
+    if (c && mixedRounds(legs)) {
+      $("[data-t-stake]").textContent = "–"; $("[data-t-pay]").textContent = "–";
+      adv.textContent = MIXED_MSG + " 한 회차 경기만 남겨 주세요.";
+      return;
+    }
     if (!c || c.p == null || !B) {
       $("[data-t-stake]").textContent = "–"; $("[data-t-pay]").textContent = "–";
       adv.textContent = !B ? "총 시드를 입력하세요." : !legs.length ? "경기를 고르면 권장 금액이 나옵니다." : "";
