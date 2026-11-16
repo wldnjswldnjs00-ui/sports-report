@@ -188,7 +188,7 @@
   }
 
   /* ───── 내 조합 ───── */
-  var MAX_LEGS = 10, MAX_BUDGET = 100000, CORR = 0.985;
+  var MAX_LEGS = 10, MAX_STAKE = 100000, MAX_SEED = 1000000000, CORR = 0.985;
   var data = null, byId = {};
   var slip = { date: null, ids: [] };
 
@@ -224,9 +224,9 @@
   function pct(x) { return x == null ? "–" : (x * 100).toFixed(x < 0.1 ? 1 : 0) + "%"; }
   /* 권장 금액: 맞을 확률이 낮은 조합일수록 예산의 작은 몫만 */
   function stakeFor(p, budget) {
-    var f = p >= 0.6 ? 0.5 : p >= 0.3 ? 0.25 : p >= 0.1 ? 0.1 : p >= 0.03 ? 0.05 : 0.02;
+    var f = p >= 0.6 ? 0.1 : p >= 0.3 ? 0.05 : p >= 0.1 ? 0.03 : p >= 0.03 ? 0.015 : 0.005;
     var s = Math.floor(budget * f / 100) * 100;
-    return { f: f, stake: Math.min(MAX_BUDGET, Math.max(budget >= 100 ? 100 : 0, s)) };
+    return { f: f, capped: s > MAX_STAKE, stake: Math.min(MAX_STAKE, Math.max(budget >= 100 ? 100 : 0, s)) };
   }
 
   function addIds(ids, quiet) {
@@ -353,7 +353,7 @@
   function budget() {
     if (!bankEl) return 0;
     var v = parseInt(String(bankEl.value).replace(/[^0-9]/g, ""), 10) || 0;
-    return Math.min(MAX_BUDGET, v);
+    return Math.min(MAX_SEED, v);
   }
   function fmtBudget() {
     if (!bankEl) return;
@@ -371,14 +371,14 @@
     $("[data-t-p]").textContent = c ? pct(c.p) : "–";
     if (!c || c.p == null || !B) {
       $("[data-t-stake]").textContent = "–"; $("[data-t-pay]").textContent = "–";
-      adv.textContent = !B ? "예산을 입력하세요." : !legs.length ? "경기를 고르면 권장 금액이 나옵니다." : "";
+      adv.textContent = !B ? "총 시드를 입력하세요." : !legs.length ? "경기를 고르면 권장 금액이 나옵니다." : "";
       return;
     }
     var s = stakeFor(c.p, B), pay = Math.floor(s.stake * c.odds / 10) * 10;
     $("[data-t-stake]").textContent = won(s.stake);
     $("[data-t-pay]").textContent = won(pay);
-    adv.textContent = "예산 " + won(B) + " 중 " + Math.round(s.f * 100) + "%인 " + won(s.stake) + "을 권장합니다. 이 조합이 맞을 확률은 " + pct(c.p) +
-      "이고, 맞으면 " + won(pay) + "을 받습니다." + (legs.length === 1 ? " 한 경기 구매는 베트맨에서 '한경기구매' 표시가 있는 경기만 가능합니다." : "") + " 남은 " + won(B - s.stake) + "은 다른 조합에 나눠 쓰세요.";
+    adv.textContent = "총 시드 " + won(B) + "의 " + (s.f * 100) + "%" + (s.capped ? "는 1회 한도를 넘어 " : "인 ") + won(s.stake) + "을 권장합니다. 이 조합이 맞을 확률은 " + pct(c.p) +
+      "이고, 맞으면 " + won(pay) + "을 받습니다." + (legs.length === 1 ? " 한 경기 구매는 베트맨에서 '한경기구매' 표시가 있는 경기만 가능합니다." : "");
   }
   function renderToolList(q) {
     var ul = $("[data-tool-list]");

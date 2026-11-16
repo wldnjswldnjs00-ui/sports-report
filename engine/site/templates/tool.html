@@ -1,24 +1,24 @@
 {% extends "base.html" %}
-{% block title %}금액 계산기 · 예산에 맞는 구매 금액 | {{ cfg.SITE_NAME }}{% endblock %}
-{% block desc %}오늘 프로토 경기에서 조합을 고르면 종합배당, 예상 적중률, 예산에 맞는 권장 금액과 적중 시 수령액을 계산합니다.{% endblock %}
+{% block title %}금액 계산기 · 시드에 맞는 구매 금액 | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}오늘 프로토 경기에서 조합을 고르면 종합배당, 예상 적중률, 총 시드에 맞는 권장 금액과 적중 시 수령액을 계산합니다.{% endblock %}
 {% block main %}
 <section class="wrap page-head">
   <p class="kicker">CALCULATOR</p><h1>금액 계산기</h1>
-  <p class="lede">예산을 넣고 경기를 고르면, 조합의 적중 확률에 맞춰 얼마를 거는 게 적당한지 계산합니다.</p>
+  <p class="lede">총 시드를 넣고 경기를 고르면, 조합의 적중 확률에 맞춰 한 번에 얼마를 거는 게 적당한지 계산합니다.</p>
 </section>
 <section class="wrap block tool" data-tool>
   <div class="tool-cols">
     <div>
-      <h2 class="sub">1. 오늘 쓸 예산</h2>
+      <h2 class="sub">1. 총 시드</h2>
       <div class="budget">
-        <input class="input big" id="budget" type="text" inputmode="numeric" autocomplete="off" value="50,000" data-t-bank aria-label="예산(원)">
+        <input class="input big" id="budget" type="text" inputmode="numeric" autocomplete="off" value="300,000" data-t-bank aria-label="총 시드(원)">
         <span>원</span>
       </div>
       <div class="filters quick" data-quick>
-        <button type="button" class="chip" data-v="10000">1만</button><button type="button" class="chip" data-v="30000">3만</button>
-        <button type="button" class="chip" data-v="50000">5만</button><button type="button" class="chip" data-v="100000">10만</button>
+        <button type="button" class="chip" data-v="100000">10만</button><button type="button" class="chip" data-v="300000">30만</button>
+        <button type="button" class="chip" data-v="500000">50만</button><button type="button" class="chip" data-v="1000000">100만</button>
       </div>
-      <p class="fine">베트맨 1회 구매 한도에 맞춰 최대 100,000원까지 입력됩니다.</p>
+      <p class="fine">가지고 있는 전체 금액을 넣으세요. 권장 금액은 베트맨 1회 구매 한도인 100,000원을 넘지 않게 계산합니다.</p>
       <h2 class="sub">2. 경기 고르기</h2>
       <input class="input" id="tool-search" type="search" placeholder="팀 이름 검색" data-tool-search aria-label="팀 이름 검색">
       <ul class="tool-list" data-tool-list><li class="muted">불러오는 중…</li></ul>
@@ -34,11 +34,11 @@
       </dl>
       <p class="tool-advice" data-t-advice></p>
       <details class="rule"><summary>권장 금액 계산 기준</summary>
-        <table class="tbl"><thead><tr><th>조합의 예상 적중률</th><th class="n">예산 대비</th></tr></thead><tbody>
-          <tr><td>60% 이상</td><td class="n">50%</td></tr><tr><td>30% ~ 60%</td><td class="n">25%</td></tr>
-          <tr><td>10% ~ 30%</td><td class="n">10%</td></tr><tr><td>3% ~ 10%</td><td class="n">5%</td></tr><tr><td>3% 미만</td><td class="n">2%</td></tr>
+        <table class="tbl"><thead><tr><th>조합의 예상 적중률</th><th class="n">시드 대비</th></tr></thead><tbody>
+          <tr><td>60% 이상</td><td class="n">10%</td></tr><tr><td>30% ~ 60%</td><td class="n">5%</td></tr>
+          <tr><td>10% ~ 30%</td><td class="n">3%</td></tr><tr><td>3% ~ 10%</td><td class="n">1.5%</td></tr><tr><td>3% 미만</td><td class="n">0.5%</td></tr>
         </tbody></table>
-        <p class="fine">맞을 확률이 낮은 조합일수록 적게 겁니다. 한 조합에 예산을 전부 쓰지 않도록 나눈 기준이며, 100원 단위로 내립니다.</p>
+        <p class="fine">맞을 확률이 낮은 조합일수록 적게 겁니다. 몇 번 연속으로 빗나가도 시드가 남도록 잡은 기준이며, 100원 단위로 내리고 1회 최대 100,000원입니다.</p>
       </details>
     </div>
   </div>
