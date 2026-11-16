@@ -689,3 +689,10 @@ html:not(.is-mobile):not(.is-pc) .mo-only { display: none; }
 .h2h-dot.win b { background: var(--win); } .h2h-dot.loss b { background: var(--loss); } .h2h-dot.draw b { background: var(--draw); }
 .h2h-dot span { font: 600 13px var(--en); } .h2h-dot small { font-size: 11px; color: var(--ink-3); }
 @media (max-width: 720px) { .fchart-grid { grid-template-columns: 1fr; } .ha-row { grid-template-columns: minmax(0, 1fr) 90px; } .ha-bar { grid-column: 1 / -1; grid-row: 2; } }
+
+/* 시작·종료된 경기 묶음, 내일 분석 안내 */
+.started-box { margin-top: 14px; }
+.started-box > summary { cursor: pointer; font-weight: 700; font-size: 14px; color: var(--ink-2); padding: 12px 4px; }
+.started-box .match { opacity: .78; }
+.next-day-btn { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; text-decoration: none; color: var(--on-ink); background: var(--on); border-radius: var(--r); padding: 16px 20px; }
+.next-day-btn span { font-weight: 700; }

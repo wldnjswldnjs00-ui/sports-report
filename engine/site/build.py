@@ -8,7 +8,7 @@ import json
 import logging
 import shutil
 from collections import defaultdict
-from datetime import date, datetime
+from datetime import date, timedelta, datetime
 from email.utils import format_datetime
 from pathlib import Path
 from typing import Any
@@ -311,7 +311,10 @@ def build() -> None:
             reports.append(r)
     perf = load_perf()
     today = date.fromisoformat(config.today_kst())
-    reports = [r for r in reports if r["date"] <= today.isoformat()]  # 미리 만든 다음 구매일 리포트는 23시 전환 후 공개
+    # 다음 구매일 리포트는 19시부터 '내일 분석'으로 공개(첫 화면은 23시 전환까지 오늘 그대로)
+    tomorrow = (today + timedelta(days=1)).isoformat()
+    show_next = config.now_kst().hour >= 19
+    reports = [r for r in reports if r["date"] <= today.isoformat() or (show_next and r["date"] == tomorrow)]
     latest = next((r for r in reports if r["date"] <= today.isoformat()), reports[0] if reports else None)
     is_demo = any(r.get("demo") for r in reports[:1])
 
@@ -348,7 +351,8 @@ def build() -> None:
         return _jsonld(_article_ld(title, r.get("headline", ""), url, r.get("generated_at") or r["date"], r.get("updated_at") or r["date"]),
                        items, _crumbs([("홈", "/"), ("지난 리포트", "/reports/"), (_kdate(r["date"]), f"/reports/{r['date']}/")]))
 
-    page("report.html", "/", r=latest, is_home=True, lastmod=(latest or {}).get("date"),
+    next_rep = next((r for r in reports if r["date"] > today.isoformat()), None)
+    page("report.html", "/", r=latest, is_home=True, next_day=(next_rep or {}).get("date"), lastmod=(latest or {}).get("date"),
          matches=_matches(latest) if latest else [], leagues_top=_leagues_of(latest) if latest else [],
          jsonld=_jsonld(site_ld) + report_ld(latest, "/"))
     rss_items = []

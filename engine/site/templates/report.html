@@ -130,6 +130,9 @@
 </section>
 {% endif %}
 
+{% if is_home and next_day %}
+<section class="wrap block next-day"><a class="next-day-btn" href="/reports/{{ next_day }}/"><b>내일({{ next_day|kdate }}) 구매일 분석이 나왔습니다</b><span>미리 보기 →</span></a></section>
+{% endif %}
 <section class="wrap block" id="matches" data-reveal>
   {% set groups = r.markets|match_groups %}
   <header class="block-head">
@@ -152,7 +155,7 @@
   {% for g in groups %}
     {% set mm = g.main %}{% set a = mm.analysis %}
     {% set graded = [] %}{% for m in g.markets %}{% set o = r.outcomes.get(m.id) %}{% if o and o != 'VOID' and m.analysis %}{% set _ = graded.append(o == m.analysis.pick) %}{% endif %}{% endfor %}
-    <li class="match" data-sport="{{ g.sport }}" data-day="{{ g.kickoff|sday }}" {% if g.markets|selectattr('id', 'in', r.caution)|list %}data-caution{% endif %}>
+    <li class="match" data-sport="{{ g.sport }}" data-day="{{ g.kickoff|sday }}" data-ko="{{ g.kickoff }}" {% if g.markets|selectattr('id', 'in', r.caution)|list %}data-caution{% endif %}>
       <button type="button" class="match-row" aria-expanded="false" data-expand>
         <span class="m-no">{% if g.round %}<small>{{ round_label(g.round) }}</small>{% endif %}{{ g.game_no or '' }}{% if g.game_no %}번{% endif %}</span>
         <span class="m-time">{{ g.kickoff|kdt }}</span>

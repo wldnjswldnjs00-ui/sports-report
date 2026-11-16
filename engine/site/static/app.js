@@ -188,6 +188,31 @@
   });
   applyFilters();
 
+  /* 시작한 경기는 목록 아래 '시작·종료된 경기' 묶음으로(보는 사람의 현재 시각 기준, 1분마다) */
+  var mlist = $("#matches ol.matches");
+  if (mlist) {
+    var box = doc.createElement("details"), sum = doc.createElement("summary"), done = doc.createElement("ol");
+    box.className = "started-box"; done.className = "matches"; box.appendChild(sum); box.appendChild(done); box.hidden = true;
+    mlist.parentNode.insertBefore(box, mlist.nextSibling);
+    var sweep = function () {
+      var now = Date.now();
+      $$("li.match", mlist).forEach(function (li) {
+        var t = Date.parse(li.dataset.ko || "");
+        if (t && t <= now) done.appendChild(li);
+      });
+      var n = done.children.length;
+      box.hidden = !n;
+      sum.textContent = "시작·종료된 경기 (" + n + ")";
+      var em = $("[data-empty]");
+      if (em && !$$("li.match", mlist).some(function (li) { return !li.hidden; })) {
+        em.hidden = false;
+        em.textContent = "남은 경기가 없습니다. 시작·종료된 경기는 아래에서 결과를 볼 수 있습니다.";
+      }
+    };
+    sweep();
+    setInterval(sweep, 60000);
+  }
+
   /* 토스트 */
   var toastEl = $("[data-toast]"), toastT;
   function toast(msg) {

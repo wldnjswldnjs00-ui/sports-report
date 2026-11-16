@@ -8,7 +8,7 @@ on:
     - cron: "30 0 * * *"   # 09:30 KST  발매 경기 재수집
     - cron: "0 4 * * *"    # 13:00 KST  재수집
     - cron: "0 9 * * *"    # 18:00 KST  배당 갱신(해외 배당 새로고침)
-    - cron: "0 11 * * *"   # 20:00 KST  재수집
+    - cron: "0 10 * * *"   # 19:00 KST  재수집 + 다음 구매일 분석 생성·공개
     - cron: "0 13 * * *"   # 22:00 KST  다음 구매일 분석 미리 생성 + 쓰레드 밤 게시
   workflow_dispatch:
   push:
@@ -50,7 +50,8 @@ jobs:
           [ "${{ github.event.schedule }}" != "0 21 * * *" ] && [ "${{ github.event_name }}" = "schedule" ] && ARGS="$ARGS --no-scores"
           python -m engine run $ARGS
           # 22:00: 23시 전환 전에 다음 구매일 분석을 미리 만들어 둔다(쓰레드 밤 게시용, 사이트 첫 화면은 23시까지 오늘 그대로)
-          if [ "${{ github.event.schedule }}" = "0 13 * * *" ]; then
+          # 19:00·22:00: 다음 구매일 분석을 만든다(19시부터 사이트에 '내일 분석'으로 공개, 22시는 쓰레드용으로 다시 갱신)
+          if [ "${{ github.event.schedule }}" = "0 10 * * *" ] || [ "${{ github.event.schedule }}" = "0 13 * * *" ]; then
             python -m engine collect --date "$(TZ=Asia/Seoul date -d tomorrow +%F)"
           fi
       - name: 쓰레드 카드 준비(밤 22:00·아침 07:00, 토큰이 있을 때만)
