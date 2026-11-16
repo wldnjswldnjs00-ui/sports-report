@@ -240,7 +240,7 @@
   }
   var MIXED_MSG = "회차가 다른 경기가 섞여 있습니다. 베트맨에서는 같은 회차 경기끼리만 한 장으로 살 수 있습니다.";
   function pct(x) { return x == null ? "–" : (x * 100).toFixed(x < 0.1 ? 1 : 0) + "%"; }
-  /* 권장 금액: 켈리 기준. f = (p × 배당 − 1) ÷ (배당 − 1), 그 1/4 만 건다(쿼터 켈리).
+  /* 켈리 기준 금액. f = (p × 배당 − 1) ÷ (배당 − 1), 그 1/4 만 건다(쿼터 켈리).
      켈리 값이 0 이하(배당이 확률보다 낮게 잡힌 조합)면 적중률 구간별 기본 비율을 쓴다. */
   function stakeFor(p, odds, seed) {
     var kelly = odds > 1 ? (p * odds - 1) / (odds - 1) : 0, f, mode;
@@ -403,14 +403,14 @@
     }
     if (!c || c.p == null || !B) {
       $("[data-t-stake]").textContent = "–"; $("[data-t-pay]").textContent = "–";
-      adv.textContent = !B ? "총 시드를 입력하세요." : !legs.length ? "경기를 고르면 권장 금액이 나옵니다." : "";
+      adv.textContent = !B ? "총 시드를 입력하세요." : !legs.length ? "경기를 고르면 켈리 기준 금액이 나옵니다." : "";
       return;
     }
     var s = stakeFor(c.p, c.odds, B), pay = Math.floor(s.stake * c.odds / 10) * 10;
     $("[data-t-stake]").textContent = won(s.stake);
     $("[data-t-pay]").textContent = won(pay);
     var fp = (s.f * 100).toFixed(s.f < 0.01 ? 2 : 1).replace(/\.?0+$/, "") + "%";
-    adv.textContent = "총 시드 " + won(B) + "의 " + fp + (s.capped ? "는 1회 한도를 넘어 " : "인 ") + won(s.stake) + " 베팅을 권장합니다. 맞을 확률은 " + pct(c.p) +
+    adv.textContent = "총 시드 " + won(B) + "의 " + fp + (s.capped ? "는 1회 한도를 넘어 " : "인 ") + won(s.stake) + "가 켈리 기준 베팅 금액입니다. 맞을 확률은 " + pct(c.p) +
       "이고, 맞으면 " + won(pay) + "을 받습니다." + (legs.length === 1 ? " 한 경기 구매는 베트맨에서 '한경기구매' 표시가 있는 경기만 가능합니다." : "");
   }
   /* 경기 고르기: 경기 하나 = 한 줄. 누르면 승무패·핸디캡·언더오버가 펼쳐진다 */
@@ -479,7 +479,7 @@
     $("[data-tool-search]").addEventListener("input", function (e) { renderToolList(e.target.value); });
   }
 
-  /* 조합 카드 권장 금액: 금액 계산기에 넣은 시드(없으면 30만 원) 기준 "시드 30만 원의 1.5% · 4,500원 베팅 권장" */
+  /* 조합 카드 켈리 기준 금액: 금액 계산기에 넣은 시드(없으면 30만 원) 기준 "시드 30만 원의 1.5% · 켈리 기준 4,500원" */
   function paintStakes() {
     var B = Math.min(MAX_SEED, parseInt(store.get("budget"), 10) || 300000);
     $$("[data-stake]").forEach(function (el) {
@@ -488,7 +488,7 @@
       var s = stakeFor(p, o, B), fp = (s.f * 100).toFixed(s.f < 0.01 ? 2 : 1).replace(/\.?0+$/, "") + "%";
       el.innerHTML = '<a href="/tool/" title="시드는 금액 계산기에서 바꿀 수 있습니다"></a><b></b>';
       el.querySelector("a").textContent = "시드 " + won(B) + "의 " + fp + (s.capped ? " (1회 한도)" : "");
-      el.querySelector("b").textContent = won(s.stake) + " 베팅 권장";
+      el.querySelector("b").textContent = "켈리 기준 " + won(s.stake);
     });
   }
   paintStakes();

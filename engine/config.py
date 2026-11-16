@@ -22,6 +22,7 @@ SITE_URL = os.getenv("SITE_URL", "https://xn--sr3bw9dq7a9xy85g.kr").rstrip("/")
 SITE_DOMAIN_DISPLAY = "스포츠분석.kr"
 SITE_DESC = "베트맨 공식 발매 경기를 데이터로 분석하는 매일 스포츠 리포트"
 CONTACT_EMAIL = os.getenv("CONTACT_EMAIL", "")
+THREADS_URL = os.getenv("THREADS_URL", "https://www.threads.net/@sports_report.kr")
 
 # 애드센스: 승인 후 ca-pub-XXXXXXXX 값을 넣으면 광고 슬롯이 자동 활성화된다.
 # 애드센스 게시자 ID. 페이지 소스에 공개되는 값이라 비밀이 아니다(환경 변수로 바꿀 수 있음)
