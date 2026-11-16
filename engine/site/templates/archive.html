@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}지난 리포트 보관함 · {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}날짜별 경기 분석 리포트와 적중 결과를 한곳에 모았습니다.{% endblock %}
+{% block main %}
+<section class="wrap page-head">
+  <p class="kicker">보관함</p>
+  <h1>지난 리포트</h1>
+  <p class="lede">발행된 리포트는 수정하지 않습니다. 킥오프 이후에는 픽과 조합이 고정되고, 결과가 나오면 적중 여부만 덧붙습니다.</p>
+</section>
+<section class="wrap block">
+{% set ns = namespace(month='') %}
+{% for s in summaries %}
+  {% if s.date[:7] != ns.month %}
+    {% if ns.month %}</ul>{% endif %}
+    {% set ns.month = s.date[:7] %}
+    <h2 class="month">{{ s.date[:4] }}년 {{ s.date[5:7]|int }}월</h2>
+    <ul class="past">
+  {% endif %}
+  <li><a href="/reports/{{ s.date }}/"><span class="past-d">{{ s.date|kdate }}</span><span class="past-h">{{ s.headline }}</span>
+    <span class="past-r">{% if s.graded %}픽 {{ s.hit }}/{{ s.graded }} · 조합 {{ s.combo_win }}/{{ s.combo_win + s.combo_lose }}{% else %}채점 전{% endif %}</span></a></li>
+{% endfor %}
+{% if ns.month %}</ul>{% else %}<p class="none">아직 리포트가 없습니다.</p>{% endif %}
+</section>
+{% endblock %}

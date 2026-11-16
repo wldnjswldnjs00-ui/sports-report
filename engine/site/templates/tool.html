@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}조합 계산기 · 적중률과 기대값 · {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}오늘 경기에서 직접 고른 조합의 종합배당, 예상 적중률, 기대값, 적정 금액을 바로 계산합니다.{% endblock %}
+{% block main %}
+<section class="wrap page-head">
+  <p class="kicker">계산기</p><h1>내 조합 검증</h1>
+  <p class="lede">오늘 경기에서 결과를 눌러 담거나, 배당과 확률을 직접 입력하세요. 같은 경기를 두 번 담을 수는 없습니다.</p>
+</section>
+<section class="wrap block tool" data-tool>
+  <div class="tool-cols">
+    <div>
+      <h2 class="sub">오늘 경기에서 고르기</h2>
+      <input class="input" type="search" placeholder="팀 이름 검색" data-tool-search aria-label="팀 이름 검색">
+      <ul class="tool-list" data-tool-list><li class="muted">불러오는 중…</li></ul>
+    </div>
+    <div>
+      <h2 class="sub">직접 입력</h2>
+      <form class="tool-manual" data-tool-manual>
+        <label>배당 <input class="input" name="odds" type="number" step="0.01" min="1.01" max="500" required></label>
+        <label>내가 보는 확률(%) <input class="input" name="p" type="number" step="0.1" min="0.1" max="99.9" required></label>
+        <button class="btn" type="submit">추가</button>
+      </form>
+      <h2 class="sub">계산 결과</h2>
+      <ol class="slip-legs" data-tool-legs></ol>
+      <dl class="kpis tight">
+        <div><dt>종합배당</dt><dd data-t-odds>–</dd></div>
+        <div><dt>예상 적중률</dt><dd data-t-p>–</dd></div>
+        <div><dt>기대값</dt><dd data-t-ev>–</dd></div>
+        <div><dt>적정 비중</dt><dd data-t-kelly>–</dd></div>
+      </dl>
+      <label class="bank">내 예산(원) <input class="input" type="number" min="0" step="1000" value="100000" data-t-bank></label>
+      <p class="fine" data-t-advice></p>
+      <p class="fine">적정 비중은 켈리 공식의 1/4 값입니다. 기대값이 마이너스면 0이 나옵니다. 베트맨 1회 구매 한도는 10만 원입니다.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,106 @@
+"""경기별 분석: 확률 결합, 추천 픽, 기대값, 신뢰도, 이변 위험."""
+from __future__ import annotations
+
+from typing import Any
+
+from .. import config
+from ..util import read_json
+from .elo import Elo
+from .probability import combine, entropy_norm, overround, remove_margin_power, shrink
+
+CAL_PATH = config.STATE / "calibration.json"
+
+# 소스별 기본 가중치. 해외 배당(마진 작음)이 가장 정확한 시장 정보다.
+W_REF = 0.60
+W_BETMAN = 0.25
+W_ELO = 0.15
+
+
+def _divergence(a: dict[str, float], b: dict[str, float]) -> float:
+    keys = set(a) & set(b)
+    if not keys:
+        return 0.0
+    return max(abs(a[k] - b[k]) for k in keys)
+
+
+def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, alpha: float) -> dict[str, Any]:
+    odds = m.get("odds") or {}
+    p_bet = remove_margin_power(odds) if odds else {}
+    p_elo = elo.probs(m["sport"], m["home"], m["away"], m["market"]) if m["market"] in ("1X2", "WL") else None
+
+    sources = []
+    used = []
+    if ref:
+        sources.append((ref, W_REF)); used.append("해외 배당")
+    if p_bet:
+        sources.append((p_bet, W_BETMAN)); used.append("베트맨 배당")
+    if p_elo:
+        sources.append((p_elo, W_ELO)); used.append("Elo")
+    p = combine(sources)
+    if not p:
+        return {**m, "analysis": None}
+    p = shrink(p, alpha)
+
+    pick = max(p, key=p.get)
+    pick_prob = p[pick]
+    pick_odds = odds.get(pick)
+    ev = pick_prob * pick_odds - 1 if pick_odds else None
+
+    # 가치 픽: 추천 결과와 무관하게 기대값이 가장 높은 결과
+    value_key, value_ev = None, None
+    if odds:
+        evs = {k: p[k] * odds[k] - 1 for k in odds if k in p}
+        value_key = max(evs, key=evs.get)
+        value_ev = evs[value_key]
+
+    # 신뢰도: 소스 일치도 + 소스 개수 + 픽 확률
+    div = max([_divergence(p_bet, ref or {}), _divergence(p_bet, p_elo or {}), _divergence(ref or {}, p_elo or {})])
+    agree = max(0.0, 1 - div / 0.25)
+    n_src = len(sources)
+    confidence = round(100 * (0.45 * agree + 0.25 * (n_src / 3) + 0.30 * min(1.0, (pick_prob - 1 / len(p)) / 0.45)))
+    if n_src == 1:
+        confidence = min(confidence, 62)  # 단일 소스는 상한을 둔다
+    upset = round(100 * (1 - pick_prob) * (0.6 + 0.4 * entropy_norm(p)))
+    data_score = round(100 * min(1.0, 0.35 * n_src + (0.15 if p_elo else 0)))
+
+    flags = []
+    if ref and _divergence(p_bet, ref) >= 0.08:
+        flags.append("배당 괴리")
+    if pick_prob < 0.5 and len(p) == 3:
+        flags.append("혼전")
+    if upset >= 45:
+        flags.append("이변 주의")
+    if odds and overround(odds) > 1.35:
+        flags.append("고마진")
+
+    return {
+        **m,
+        "analysis": {
+            "p": {k: round(v, 4) for k, v in p.items()},
+            "p_betman": {k: round(v, 4) for k, v in p_bet.items()},
+            "p_ref": {k: round(v, 4) for k, v in ref.items()} if ref else None,
+            "p_elo": {k: round(v, 4) for k, v in p_elo.items()} if p_elo else None,
+            "pick": pick,
+            "pick_prob": round(pick_prob, 4),
+            "pick_odds": pick_odds,
+            "ev": round(ev, 4) if ev is not None else None,
+            "value_key": value_key,
+            "value_ev": round(value_ev, 4) if value_ev is not None else None,
+            "confidence": max(0, min(100, confidence)),
+            "upset_risk": max(0, min(100, upset)),
+            "data_score": data_score,
+            "sources": used,
+            "flags": flags,
+            "payout_rate": round(1 / overround(odds), 4) if odds else None,
+            "elo": {
+                "home": round(elo.rating(m["sport"], m["home"])),
+                "away": round(elo.rating(m["sport"], m["away"])),
+            } if p_elo else None,
+        },
+    }
+
+
+def calibration_alpha() -> float:
+    cal = read_json(CAL_PATH, {}) or {}
+    a = cal.get("alpha", 0.03)
+    return min(max(float(a), 0.0), 0.3)

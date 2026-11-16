@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% from "_macros.html" import ev_class %}
+{% block title %}예측 성과와 확률 보정 · {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}모델이 매긴 확률과 실제 결과를 비교한 성과 기록. 보정 곡선, 전략별 수익률.{% endblock %}
+{% block main %}
+<section class="wrap page-head">
+  <p class="kicker">성과</p><h1>숫자로 보는 성적표</h1>
+  <p class="lede">좋은 날만 골라 보여주지 않습니다. 발행된 모든 픽과 조합을 채점한 누적 기록입니다.{% if perf.updated %} 마지막 집계 {{ perf.updated|kdt }}.{% endif %}</p>
+</section>
+{% if not perf.picks or not perf.picks.all.n %}
+<section class="wrap block"><p class="none">채점된 결과가 아직 없습니다. 첫 결과가 나오면 자동으로 채워집니다.</p></section>
+{% else %}
+<section class="wrap block" data-reveal>
+  <h2 class="sub">단일 픽</h2>
+  <table class="tbl">
+    <thead><tr><th>기간</th><th class="n">표본</th><th class="n">예상 적중률</th><th class="n">실제 적중률</th><th class="n">브라이어 점수</th></tr></thead>
+    <tbody>
+    {% for key, label in [('30d', '최근 30일'), ('all', '전체')] %}{% set p = perf.picks[key] %}
+      <tr><td>{{ label }}</td><td class="n">{{ p.n }}</td><td class="n">{{ p.expected|pct(1) }}</td><td class="n">{{ p.hit_rate|pct(1) }}</td><td class="n">{{ '%.3f'|format(p.brier) if p.brier is not none else '–' }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <p class="fine">브라이어 점수는 낮을수록 좋습니다. 매번 반반으로 찍으면 0.25가 나옵니다.</p>
+</section>
+
+<section class="wrap block" data-reveal>
+  <h2 class="sub">확률 보정 곡선</h2>
+  <p class="fine">가로축은 모델이 매긴 확률, 세로축은 실제로 맞은 비율입니다. 점이 대각선에 붙을수록 정직한 확률입니다. 점 크기는 표본 수.</p>
+  {% set W, H, P = 560, 360, 44 %}
+  <figure class="chart" data-reveal>
+    <svg viewBox="0 0 {{ W }} {{ H }}" role="img" aria-label="확률 보정 곡선">
+      {% for t in [0, 0.25, 0.5, 0.75, 1] %}
+      <line class="grid" x1="{{ P }}" x2="{{ W - 12 }}" y1="{{ H - P - t * (H - P - 16) }}" y2="{{ H - P - t * (H - P - 16) }}"/>
+      <text class="axis" x="{{ P - 8 }}" y="{{ H - P - t * (H - P - 16) + 4 }}" text-anchor="end">{{ (t * 100)|int }}%</text>
+      <text class="axis" x="{{ P + t * (W - P - 12) }}" y="{{ H - P + 18 }}" text-anchor="middle">{{ (t * 100)|int }}%</text>
+      {% endfor %}
+      <line class="diag" x1="{{ P }}" y1="{{ H - P }}" x2="{{ W - 12 }}" y2="16"/>
+      {% set pts = [] %}
+      {% for b in perf.calibration %}{% set _ = pts.append(((P + b.expected * (W - P - 12))|round(1), (H - P - b.actual * (H - P - 16))|round(1))) %}{% endfor %}
+      <polyline class="cal-line" points="{% for x, y in pts %}{{ x }},{{ y }} {% endfor %}"/>
+      {% for b in perf.calibration %}
+      <circle class="cal-dot" cx="{{ P + b.expected * (W - P - 12) }}" cy="{{ H - P - b.actual * (H - P - 16) }}" r="{{ [3, (b.n ** 0.5) * 0.9]|max|round(1) }}"><title>{{ b.bucket }} 구간 · 예상 {{ b.expected|pct(1) }} · 실제 {{ b.actual|pct(1) }} · {{ b.n }}건</title></circle>
+      {% endfor %}
+    </svg>
+  </figure>
+</section>
+
+<section class="wrap block" data-reveal>
+  <h2 class="sub">전략별 조합 수익률</h2>
+  <table class="tbl">
+    <thead><tr><th>전략</th><th class="n">채점 조합</th><th class="n">예상 적중률</th><th class="n">실제 적중률</th><th class="n">수익률(전체)</th><th class="n">수익률(30일)</th></tr></thead>
+    <tbody>
+    {% for key, s in STRATEGIES.items() %}{% set a = perf.strategies[key].all %}{% set b = perf.strategies[key]['30d'] %}
+      <tr><td>{{ s.label }}</td><td class="n">{{ a.n }}</td><td class="n">{{ a.expected|pct(1) }}</td><td class="n">{{ a.win_rate|pct(1) }}</td>
+      <td class="n {{ ev_class(a.roi) }}">{{ a.roi|signed }}</td><td class="n {{ ev_class(b.roi) }}">{{ b.roi|signed }}</td></tr>
+    {% endfor %}
+    {% if perf.value.n %}
+      <tr><td>가치 선택(단일)</td><td class="n">{{ perf.value.n }}</td><td class="n">–</td><td class="n">{{ perf.value.hit_rate|pct(1) }}</td><td class="n {{ ev_class(perf.value.roi) }}">{{ perf.value.roi|signed }}</td><td class="n">–</td></tr>
+    {% endif %}
+    </tbody>
+  </table>
+  <p class="fine">수익률은 모든 조합에 같은 금액을 걸었다고 가정한 값입니다. 마이너스라면 그대로 따라 샀을 때 손실이었다는 뜻입니다.</p>
+</section>
+
+{% if perf.daily %}
+<section class="wrap block" data-reveal>
+  <h2 class="sub">일별 픽 적중률</h2>
+  {% set n = perf.daily|length %}{% set bw = 560 / n %}
+  <figure class="chart">
+    <svg viewBox="0 0 560 140" role="img" aria-label="일별 적중률 막대">
+      <line class="grid" x1="0" x2="560" y1="70" y2="70"/>
+      {% for d in perf.daily %}{% set v = d.hit / d.n %}
+      <rect class="bar{% if v >= 0.5 %} up{% endif %}" x="{{ loop.index0 * bw + 1 }}" width="{{ [bw - 2, 1]|max }}" y="{{ 130 - v * 120 }}" height="{{ v * 120 }}"><title>{{ d.date }} · {{ d.hit }}/{{ d.n }}</title></rect>
+      {% endfor %}
+    </svg>
+  </figure>
+</section>
+{% endif %}
+{% endif %}
+{% endblock %}

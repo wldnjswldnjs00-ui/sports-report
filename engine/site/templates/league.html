@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from "_macros.html" import result_tag %}
+{% block title %}{{ lg.name }} 경기 분석 기록 · {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}{{ lg.name }} 최근 분석 {{ lg.n }}건과 결과.{% endblock %}
+{% block main %}
+<section class="wrap page-head">
+  <p class="kicker"><a href="/leagues/">리그</a> · {{ SPORT_LABEL[lg.sport] }}</p><h1>{{ lg.name }}</h1>
+  <p class="lede">분석 {{ lg.n }}건{% if lg.graded %}, 채점 {{ lg.graded }}건 중 {{ lg.hit }}건 적중{% endif %}.</p>
+</section>
+<section class="wrap block">
+  <h2 class="sub">최근 경기</h2>
+  <table class="tbl">
+    <thead><tr><th>날짜</th><th>경기</th><th>모델 픽</th><th class="n">확률</th><th class="n">배당</th><th>결과</th></tr></thead>
+    <tbody>
+    {% for m in lg.recent %}{% set a = m.analysis %}
+    <tr><td><a href="/reports/{{ m.date }}/">{{ m.kickoff|kdt }}</a></td><td>{{ m.home }} vs {{ m.away }}</td>
+    <td>{% if a %}{{ outcome(m, a.pick) }}{% endif %}</td><td class="n">{% if a %}{{ a.pick_prob|pct }}{% endif %}</td><td class="n">{% if a %}{{ a.pick_odds|odds }}{% endif %}</td>
+    <td>{% if m.result and a %}{{ result_tag('void' if m.result == 'VOID' else ('hit' if m.result == a.pick else 'miss')) }}{% endif %}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <h2 class="sub">자주 등장한 팀</h2>
+  <p class="teams">{% for t, n in lg.teams[:30] %}<span>{{ t }} <small>{{ n }}</small></span>{% endfor %}</p>
+</section>
+{% endblock %}

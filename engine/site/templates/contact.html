@@ -1,0 +1,12 @@
+{% extends "_page.html" %}
+{% block title %}문의 · {{ cfg.SITE_NAME }}{% endblock %}
+{% block kicker %}문의{% endblock %}{% block h1 %}문의하기{% endblock %}
+{% block body %}
+<p class="lede">데이터 오류 제보, 제휴, 개인정보 관련 문의를 받습니다.</p>
+{% if cfg.CONTACT_EMAIL %}
+<p>이메일: <a href="mailto:{{ cfg.CONTACT_EMAIL }}">{{ cfg.CONTACT_EMAIL }}</a></p>
+{% else %}
+<p>문의 메일 주소를 준비 중입니다.</p>
+{% endif %}
+<p>배당이나 결과가 베트맨 공식 정보와 다르다면 날짜와 경기 번호를 함께 알려주세요. 확인 후 해당 리포트에 정정 표시를 남깁니다.</p>
+{% endblock %}

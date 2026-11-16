@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}리그별 분석 · {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}리그별 분석 경기 수와 모델 적중률을 정리했습니다.{% endblock %}
+{% block main %}
+<section class="wrap page-head">
+  <p class="kicker">리그</p><h1>리그별 기록</h1>
+  <p class="lede">최근 60일 리포트 기준입니다. 표본이 적은 리그의 적중률은 크게 흔들릴 수 있습니다.</p>
+</section>
+<section class="wrap block">
+<table class="tbl">
+  <thead><tr><th>리그</th><th>종목</th><th class="n">분석 마켓</th><th class="n">채점</th><th class="n">픽 적중률</th></tr></thead>
+  <tbody>
+  {% for lg in leagues.values() %}
+  <tr class="row-link"><td><a href="/leagues/{{ lg.slug }}/">{{ lg.name }}</a></td><td>{{ SPORT_LABEL[lg.sport] }}</td><td class="n">{{ lg.n }}</td><td class="n">{{ lg.graded }}</td>
+  <td class="n">{% if lg.graded >= 10 %}{{ (lg.hit / lg.graded)|pct(1) }}{% else %}<span class="muted">표본 부족</span>{% endif %}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</section>
+{% endblock %}

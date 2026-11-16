@@ -1,0 +1,5 @@
+pool,game_no,sport,league,kickoff,home,away,market,line,H,D,A
+proto,1,soccer,EPL,2026-11-16 21:00,맨체스C,리버풀,1X2,,1.85,3.40,3.60
+proto,2,basketball,NBA,2026-11-17 09:30,보스턴,LA레이커,WL,,1.45,,2.40
+proto,3,basketball,KBL,2026-11-16 19:00,서울SK,창원LG,HANDICAP,-3.5,1.75,,1.80
+proto,4,volleyball,V리그,2026-11-16 19:00,대한항공,현대캐피탈,WL,,1.62,,2.05

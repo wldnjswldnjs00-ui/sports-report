@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ cfg.SITE_NAME }}{% endblock %}</title>
+<meta name="description" content="{% block desc %}{{ cfg.SITE_DESC }}{% endblock %}">
+<link rel="canonical" href="{{ cfg.SITE_URL }}{{ path }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ cfg.SITE_NAME }}">
+<meta property="og:title" content="{{ self.title() }}">
+<meta property="og:description" content="{{ self.desc() }}">
+<meta property="og:url" content="{{ cfg.SITE_URL }}{{ path }}">
+<meta property="og:locale" content="ko_KR">
+<meta name="theme-color" content="#f3efe6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700;900&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="/static/style.css?v={{ asset_v }}">
+<script>document.documentElement.classList.add('js');setTimeout(function(){if(!window.__app)document.documentElement.classList.remove('js')},3000);try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+{% if cfg.ADSENSE_CLIENT %}
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ cfg.ADSENSE_CLIENT }}" crossorigin="anonymous"></script>
+{% endif %}
+{% block head %}{% endblock %}
+</head>
+<body class="{% block bodyclass %}{% endblock %}">
+<a class="skip" href="#main">본문 바로가기</a>
+<header class="mast">
+  <div class="mast-top wrap">
+    <span class="mast-date">{{ now.strftime('%Y.%m.%d') }} · {{ '월화수목금토일'[now.weekday()] }}요일</span>
+    <span class="mast-meta">모델 {{ cfg.MODEL_VERSION }}</span>
+    <button class="theme-btn" type="button" aria-label="화면 밝기 전환" data-theme-toggle>
+      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z" fill="currentColor"/></svg>
+    </button>
+  </div>
+  <div class="mast-main wrap">
+    <a class="logo" href="/" aria-label="{{ cfg.SITE_NAME }} 홈">
+      <span class="logo-mark" aria-hidden="true"></span>
+      <span class="logo-word">스포츠분석</span><span class="logo-tld">.kr</span>
+    </a>
+    <button class="nav-btn" type="button" aria-expanded="false" aria-controls="nav" data-nav-toggle>
+      <span></span><span></span><span class="sr">메뉴</span>
+    </button>
+  </div>
+  <nav id="nav" class="nav wrap" aria-label="주요 메뉴">
+    {% for href, label in nav %}
+    <a href="{{ href }}" {% if (href == '/' and path == '/') or (href != '/' and path.startswith(href)) %}aria-current="page"{% endif %}>{{ label }}</a>
+    {% endfor %}
+  </nav>
+</header>
+
+{% if demo %}
+<div class="demo-bar"><div class="wrap">샘플 데이터로 만든 미리보기 화면입니다. 실제 경기와 배당이 아닙니다.</div></div>
+{% endif %}
+
+<main id="main">
+{% block main %}{% endblock %}
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-grid">
+    <div>
+      <p class="foot-brand">스포츠분석<span>.kr</span></p>
+      <p class="foot-note">베트맨(스포츠토토) 공식 발매 경기만 다룹니다. 이 사이트는 정보 제공용 분석이며, 결과를 보장하지 않습니다. 구매는 본인 판단과 책임입니다.</p>
+      <p class="foot-note strong">만 19세 미만은 체육진흥투표권을 구매할 수 없습니다. 불법 사설 스포츠 도박은 처벌 대상입니다.</p>
+      <p class="foot-note">도박 문제 상담: 한국도박문제예방치유원 국번 없이 <b>1336</b> (24시간)</p>
+    </div>
+    <ul class="foot-links">
+      <li><a href="/about/">사이트 소개</a></li>
+      <li><a href="/method/">분석 방법</a></li>
+      <li><a href="/responsible/">건전한 이용</a></li>
+      <li><a href="/privacy/">개인정보처리방침</a></li>
+      <li><a href="/terms/">이용약관</a></li>
+      <li><a href="/contact/">문의</a></li>
+    </ul>
+  </div>
+  <div class="wrap foot-bottom">
+    <span>© {{ now.year }} {{ cfg.SITE_DOMAIN_DISPLAY }}</span>
+    {% if cfg.COUPANG_NOTICE %}<span>이 사이트의 일부 링크는 쿠팡 파트너스 활동의 일환으로 일정액의 수수료를 받을 수 있습니다.</span>{% endif %}
+  </div>
+</footer>
+
+<div class="slip" data-slip hidden>
+  <button class="slip-tab" type="button" data-slip-open>
+    <span>내 조합</span><b data-slip-count>0</b>
+  </button>
+  <section class="slip-panel" aria-label="내 조합" data-slip-panel>
+    <header><h2>내 조합</h2><button type="button" class="x" data-slip-close aria-label="닫기">×</button></header>
+    <ol class="slip-legs" data-slip-legs></ol>
+    <dl class="slip-sum">
+      <div><dt>종합배당</dt><dd data-slip-odds>–</dd></div>
+      <div><dt>예상 적중률</dt><dd data-slip-p>–</dd></div>
+      <div><dt>기대값</dt><dd data-slip-ev>–</dd></div>
+    </dl>
+    <p class="slip-warn" data-slip-warn></p>
+    <div class="slip-act"><button type="button" class="btn ghost" data-slip-clear>비우기</button><a class="btn" href="/tool/">계산기에서 보기</a></div>
+  </section>
+</div>
+<div class="toast" role="status" aria-live="polite" data-toast></div>
+
+<script src="/static/app.js?v={{ asset_v }}" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

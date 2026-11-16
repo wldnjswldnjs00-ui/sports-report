@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% from "_macros.html" import ad, combo_card, prob_bar, ev_class, result_tag %}
+{% block title %}{% if r %}{{ r.date|kdate }} 경기 분석 리포트{% if is_home %} · {{ cfg.SITE_NAME }}{% endif %}{% else %}{{ cfg.SITE_NAME }}{% endif %}{% endblock %}
+{% block desc %}{% if r %}{{ r.date|kdate(False) }} 베트맨 발매 {{ r.stats.matches }}경기 분석. {{ r.headline }}{% else %}{{ cfg.SITE_DESC }}{% endif %}{% endblock %}
+{% block bodyclass %}page-report{% endblock %}
+{% block main %}
+{% if not r %}
+<section class="wrap empty"><h1>아직 발행된 리포트가 없습니다</h1><p>첫 리포트는 다음 수집 주기에 올라옵니다.</p></section>
+{% else %}
+{% set mk = {} %}{% for m in r.markets %}{% set _ = mk.update({m.id: m}) %}{% endfor %}
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="kicker">{% if is_home %}오늘의 리포트{% else %}리포트{% endif %} · {{ r.date|kdate }}</p>
+      <h1 class="hero-title">{{ r.headline }}</h1>
+      <ul class="stat-row" aria-label="오늘 분석 규모">
+        <li><b data-count="{{ r.stats.matches }}">{{ r.stats.matches }}</b><span>경기</span></li>
+        <li><b data-count="{{ r.stats.markets }}">{{ r.stats.markets }}</b><span>마켓</span></li>
+        <li><b data-count="{{ r.stats.combos }}">{{ r.stats.combos }}</b><span>조합</span></li>
+        <li><b data-count="{{ (r.value_picks or [])|length }}">{{ r.value_picks|length }}</b><span>가치 선택</span></li>
+      </ul>
+      <p class="stamp">분석 {{ r.updated_at|kdt }} KST 기준{% if r.sources %} · 소스 {% for k, v in r.sources.items() %}<span class="src" title="{{ v }}">{{ {'betman':'베트맨','manual':'수동입력','odds_api':'해외배당','sample':'샘플'}.get(k, k) }}</span>{% endfor %}{% endif %}</p>
+    </div>
+    <div class="hero-stage" data-stage data-balls='{{ balls|tojson }}' aria-hidden="true">
+      <canvas class="stage-canvas"></canvas>
+      <div class="stage-fallback">
+        <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="80" fill="var(--ball)"/><path d="M20 100h160M100 20v160M43 43c30 30 30 84 0 114M157 43c-30 30-30 84 0 114" stroke="var(--ink)" stroke-width="4" fill="none"/></svg>
+      </div>
+      <p class="stage-hint">끌어서 돌리기 · 눌러서 튕기기</p>
+    </div>
+  </div>
+</section>
+
+{% if not is_home %}
+<nav class="wrap daynav" aria-label="날짜 이동">
+  {% if prev_d %}<a href="/reports/{{ prev_d }}/" rel="prev">← {{ prev_d|kdate }}</a>{% else %}<span></span>{% endif %}
+  <a href="/reports/">전체 보관함</a>
+  {% if next_d %}<a href="/reports/{{ next_d }}/" rel="next">{{ next_d|kdate }} →</a>{% else %}<span></span>{% endif %}
+</nav>
+{% endif %}
+
+{% if not r.markets %}
+<section class="wrap block"><p class="none">이 날짜에는 분석된 경기가 없습니다. 발매가 열리면 다음 수집 주기(06:00 · 09:30 · 13:00 · 18:00 · 22:30)에 자동으로 채워집니다.</p></section>
+{% else %}
+{% if r.top_pick %}
+{% set t = r.top_pick %}{% set tm = mk[t.market_id] %}
+<section class="wrap block top-pick" data-reveal>
+  <div class="tp-label"><span>가장 확실한 한 경기</span></div>
+  <div class="tp-body">
+    <p class="tp-league">{{ SPORT_LABEL[t.sport] }} · {{ t.league }} · {{ t.kickoff|kdt }}</p>
+    <h2 class="tp-match">{{ t.home }} <i>vs</i> {{ t.away }}</h2>
+    <p class="tp-pick"><b>{{ outcome(t, t.outcome) }}</b> <span>{{ t.odds|odds }}배</span></p>
+    {{ prob_bar(tm) }}
+    <p class="tp-text">{{ tm.narrative }}</p>
+  </div>
+  <dl class="tp-nums">
+    <div><dt>추정 확률</dt><dd>{{ t.p|pct(1) }}</dd></div>
+    <div><dt>신뢰도</dt><dd>{{ t.confidence }}</dd></div>
+    <div><dt>이변 위험</dt><dd>{{ t.upset_risk }}</dd></div>
+    <div><dt>기대값</dt><dd class="{{ ev_class(t.ev) }}">{{ t.ev|signed }}</dd></div>
+  </dl>
+</section>
+{% endif %}
+
+<section class="wrap block" id="combos" data-reveal>
+  <header class="block-head">
+    <h2>전략별 조합</h2>
+    <p>같은 리그·같은 날 경기끼리는 결과가 엮일 수 있어 적중률을 보수적으로 깎아 계산했습니다.</p>
+  </header>
+  <div class="tabs" role="tablist" data-tabs>
+    {% for key, s in STRATEGIES.items() %}
+    <button role="tab" type="button" id="tab-{{ key }}" aria-controls="panel-{{ key }}" aria-selected="{{ 'true' if loop.first else 'false' }}" tabindex="{{ 0 if loop.first else -1 }}">
+      {{ s.label }} <small>{{ r.combos[key]|length }}</small>
+    </button>
+    {% endfor %}
+    <span class="tabs-ink" aria-hidden="true"></span>
+  </div>
+  {% for key, s in STRATEGIES.items() %}
+  <div class="tab-panel" role="tabpanel" id="panel-{{ key }}" aria-labelledby="tab-{{ key }}" {% if not loop.first %}hidden{% endif %}>
+    <p class="panel-desc">{{ s.desc }}</p>
+    {% if r.combos[key] %}
+    <div class="combo-grid">{% for c in r.combos[key] %}{{ combo_card(c, r) }}{% endfor %}</div>
+    {% else %}
+    <p class="none">조건을 통과한 조합이 없습니다. 억지로 만들지 않았습니다.</p>
+    {% endif %}
+  </div>
+  {% endfor %}
+  {% set neg = r.combos.values()|sum(start=[])|selectattr('ev', 'lt', 0)|list|length %}
+  {% if neg and neg == r.stats.combos %}
+  <p class="honest">오늘 조합은 모두 기대값이 마이너스입니다. 베트맨 환급률 구조상 흔한 일이며, 장기적으로는 금액이 줄어든다는 뜻입니다. 재미 삼아 소액으로만 보시길 권합니다.</p>
+  {% endif %}
+</section>
+
+{{ ad('report-mid') }}
+
+{% if r.value_picks %}
+<section class="wrap block" data-reveal>
+  <header class="block-head"><h2>배당이 확률보다 후한 선택</h2>
+    <p>해외 시장 확률과 비교해 베트맨 배당이 높게 잡힌 결과입니다. 정배가 아닐 수 있습니다.</p></header>
+  <table class="tbl value-tbl">
+    <thead><tr><th>경기</th><th>선택</th><th class="n">배당</th><th class="n">추정</th><th class="n">기대값</th><th class="n">권장 비중</th><th></th></tr></thead>
+    <tbody>
+    {% for l in r.value_picks %}
+      <tr><td><span class="muted">{{ l.league }}</span> {{ l.home }} vs {{ l.away }}</td><td>{{ outcome(l, l.outcome) }}</td>
+      <td class="n">{{ l.odds|odds }}</td><td class="n">{{ l.p|pct(1) }}</td><td class="n pos">{{ l.ev|signed }}</td>
+      <td class="n" title="1/4 켈리 기준, 자금 대비">{{ l.kelly|pct(1) }}</td><td>{{ result_tag(l.result) }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endif %}
+
+<section class="wrap block" id="matches" data-reveal>
+  <header class="block-head">
+    <h2>전체 경기</h2>
+    <div class="filters" data-filters>
+      <button type="button" class="chip" aria-pressed="true" data-f="all">전체</button>
+      {% for sp in r.markets|map(attribute='sport')|unique %}
+      <button type="button" class="chip" aria-pressed="false" data-f="{{ sp }}">{{ SPORT_LABEL[sp] }}</button>
+      {% endfor %}
+    </div>
+  </header>
+  <ol class="matches">
+  {% for m in r.markets %}
+    {% set a = m.analysis %}
+    <li class="match" data-sport="{{ m.sport }}" {% if m.id in r.caution %}data-caution{% endif %}>
+      <button type="button" class="match-row" aria-expanded="false" data-expand>
+        <span class="m-no">{{ m.game_no or '' }}</span>
+        <span class="m-time">{{ m.kickoff|kdt }}</span>
+        <span class="m-league">{{ m.league }} <small>{{ MARKET_LABEL[m.market] }}{% if m.line is not none %} {{ '%+g'|format(m.line) }}{% endif %}</small></span>
+        <span class="m-teams">{{ m.home }} <i>vs</i> {{ m.away }}</span>
+        {% if a %}
+        <span class="m-pick">{{ outcome(m, a.pick) }} <b>{{ a.pick_prob|pct }}</b></span>
+        <span class="m-conf" style="--c:{{ a.confidence }}"><span></span>{{ a.confidence }}</span>
+        {% else %}<span class="m-pick muted">데이터 부족</span><span></span>{% endif %}
+        <span class="m-res">{% set o = r.outcomes.get(m.id) %}{% if o and a %}{{ result_tag('void' if o == 'VOID' else ('hit' if o == a.pick else 'miss')) }}{% elif m.id in r.caution %}<span class="tag warn">주의</span>{% endif %}</span>
+      </button>
+      {% if a %}
+      <div class="match-more" hidden>
+        {{ prob_bar(m) }}
+        <div class="odds-pick" role="group" aria-label="결과 선택해서 내 조합에 담기">
+          {% for k, o in m.odds.items() %}
+          <button type="button" class="opick{% if k == a.pick %} is-model{% endif %}" data-leg="{{ m.id }}|{{ k }}">
+            <span>{{ outcome(m, k) }}</span><b>{{ o|odds }}</b>
+            {% set open = (m.odds_open or {}).get(k) %}{% if open and open != o %}<small class="{{ 'up' if o > open else 'down' }}">{{ open|odds }}→</small>{% endif %}
+          </button>
+          {% endfor %}
+        </div>
+        <p class="m-text">{{ m.narrative }}</p>
+        <dl class="m-nums">
+          <div><dt>신뢰도</dt><dd>{{ a.confidence }}</dd></div>
+          <div><dt>이변 위험</dt><dd>{{ a.upset_risk }}</dd></div>
+          <div><dt>데이터 충분성</dt><dd>{{ a.data_score }}</dd></div>
+          <div><dt>환급률</dt><dd>{{ a.payout_rate|pct(1) }}</dd></div>
+          <div><dt>근거</dt><dd>{{ a.sources|join(', ') }}</dd></div>
+          {% if a.flags %}<div><dt>표시</dt><dd>{{ a.flags|join(' · ') }}</dd></div>{% endif %}
+        </dl>
+      </div>
+      {% endif %}
+    </li>
+  {% endfor %}
+  </ol>
+</section>
+
+{% if r.caution %}
+<section class="wrap block caution" data-reveal>
+  <header class="block-head"><h2>정배인데 불안한 경기</h2><p>배당은 낮은데 이변 위험 점수가 높게 나온 경기입니다. 조합에 넣을 때 한 번 더 보세요.</p></header>
+  <ul class="caution-list">
+  {% for id in r.caution %}{% set m = mk[id] %}
+    <li><span class="c-risk" style="--r:{{ m.analysis.upset_risk }}">{{ m.analysis.upset_risk }}</span>
+      <span class="c-match">{{ m.home }} vs {{ m.away }}</span><span class="c-pick">{{ outcome(m, m.analysis.pick) }} {{ m.analysis.pick_odds|odds }}</span></li>
+  {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+{% if r.odds_moves %}
+<section class="wrap block" data-reveal>
+  <header class="block-head"><h2>배당 변동</h2><p>첫 수집 대비 5% 이상 움직인 배당입니다.</p></header>
+  <ul class="moves">{% for mv in r.odds_moves[:12] %}<li>{{ mv.home }} vs {{ mv.away }} · {{ mv.outcome }} <s>{{ mv.from|odds }}</s> → <b class="{{ 'up' if mv.to > mv.from else 'down' }}">{{ mv.to|odds }}</b></li>{% endfor %}</ul>
+</section>
+{% endif %}
+
+{% endif %}
+{{ ad('report-bottom') }}
+
+{% if is_home %}
+<section class="wrap block perf-strip" data-reveal>
+  <header class="block-head"><h2>최근 30일 성과</h2><p><a href="/performance/">자세히 보기 →</a></p></header>
+  {% set p30 = (perf.picks or {}).get('30d') or {} %}
+  <dl class="kpis">
+    <div><dt>분석 경기</dt><dd data-count="{{ p30.n or 0 }}">{{ p30.n or 0 }}</dd></div>
+    <div><dt>예상 적중률</dt><dd>{{ p30.expected|pct(1) }}</dd></div>
+    <div><dt>실제 적중률</dt><dd>{{ p30.hit_rate|pct(1) }}</dd></div>
+    <div><dt>안정형 조합 수익률</dt><dd class="{{ ev_class(((perf.strategies or {}).get('safe') or {}).get('30d', {}).get('roi')) }}">{{ (((perf.strategies or {}).get('safe') or {}).get('30d') or {}).get('roi')|signed }}</dd></div>
+  </dl>
+  <p class="fine">예상과 실제가 비슷할수록 확률이 정직하게 매겨졌다는 뜻입니다. 적중률이 높다는 뜻은 아닙니다.</p>
+</section>
+
+<section class="wrap block" data-reveal>
+  <header class="block-head"><h2>지난 리포트</h2><p><a href="/reports/">전체 보기 →</a></p></header>
+  <ul class="past">
+  {% for s in summaries[1:8] %}
+    <li><a href="/reports/{{ s.date }}/"><span class="past-d">{{ s.date|kdate }}</span><span class="past-h">{{ s.headline }}</span>
+      <span class="past-r">{% if s.graded %}픽 {{ s.hit }}/{{ s.graded }}{% else %}채점 전{% endif %}</span></a></li>
+  {% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script src="/static/stage.js?v={{ asset_v }}" defer></script>
+{% endblock %}

@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+dist/
+.demo/
+.venv/
+*.tmp
+.DS_Store

@@ -1,0 +1,53 @@
+{% macro ad(name) %}
+{% if cfg.ADSENSE_CLIENT %}
+<aside class="ad" aria-label="광고"><span class="ad-label">광고</span>
+<ins class="adsbygoogle" style="display:block" data-ad-client="{{ cfg.ADSENSE_CLIENT }}" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</aside>
+{% endif %}
+{% endmacro %}
+
+{% macro ev_class(x) %}{% if x is none %}{% elif x > 0 %}pos{% elif x > -0.1 %}mid{% else %}neg{% endif %}{% endmacro %}
+
+{% macro result_tag(res) %}
+{% if res == 'hit' or res == 'win' %}<span class="tag hit">적중</span>
+{% elif res == 'miss' or res == 'lose' %}<span class="tag miss">실패</span>
+{% elif res == 'void' %}<span class="tag void">특례</span>
+{% endif %}
+{% endmacro %}
+
+{% macro combo_card(c, r) %}
+<article class="combo" data-combo>
+  <header class="combo-head">
+    <span class="combo-rank">{{ '%02d' % c.rank }}</span>
+    <span class="combo-size">{{ c.size }}폴더</span>
+    <span class="combo-odds" title="종합배당"><b>{{ c.total_odds|odds }}</b>배</span>
+    {{ result_tag(c.result) }}
+  </header>
+  <ol class="combo-legs">
+    {% for l in c.legs %}
+    <li class="{% if l.result == 'hit' %}is-hit{% elif l.result == 'miss' %}is-miss{% endif %}">
+      <span class="leg-no">{{ l.game_no or '' }}</span>
+      <span class="leg-match">{{ l.home }} <i>vs</i> {{ l.away }}</span>
+      <span class="leg-pick">{{ outcome(l, l.outcome) }}</span>
+      <span class="leg-odds">{{ l.odds|odds }}</span>
+    </li>
+    {% endfor %}
+  </ol>
+  <dl class="combo-foot">
+    <div><dt>예상 적중률</dt><dd>{{ c.joint_p|pct(1) }}</dd></div>
+    <div><dt>기대값</dt><dd class="{{ ev_class(c.ev) }}">{{ c.ev|signed }}</dd></div>
+    <div><dt>1만 원 적중 시</dt><dd>{{ c.payout|won }}</dd></div>
+  </dl>
+  <button type="button" class="combo-add" data-add-combo='{{ c.legs|map(attribute="market_id")|list|tojson }}' data-add-outcomes='{{ c.legs|map(attribute="outcome")|list|tojson }}'>내 조합에 담기</button>
+</article>
+{% endmacro %}
+
+{% macro prob_bar(m) %}
+{% set a = m.analysis %}
+<div class="pbar" role="img" aria-label="{% for k, v in a.p.items() %}{{ outcome(m, k) }} {{ v|pct }} {% endfor %}">
+  {% for k, v in a.p.items() %}
+  <span class="seg seg-{{ k }}{% if k == a.pick %} is-pick{% endif %}" style="--w:{{ (v * 100)|round(1) }}%"><em>{{ v|pct }}</em></span>
+  {% endfor %}
+</div>
+{% endmacro %}
