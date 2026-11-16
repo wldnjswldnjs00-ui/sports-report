@@ -2632,7 +2632,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 아이슬란드 선택이 맞았다.",
+    "r": "추정 확률 82%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260136:4351",
@@ -2780,7 +2787,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 아이슬란드 핸디 선택이 맞았다.",
+    "r": "추정 확률 57%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260136:4352",
@@ -2914,7 +2928,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 오버 선택이 맞았다.",
+    "r": "추정 확률 59%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260136:4354",
@@ -3071,7 +3092,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 에스토니아 선택이 맞았다.",
+    "r": "추정 확률 49%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260136:4355",
@@ -3221,7 +3249,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 불가리아 핸디, 결과는 핸디 무.",
+    "r": "발행 당시 이변 위험이 47로 이미 높았다. 추정 확률이 52%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260136:4356",
@@ -3355,7 +3390,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 언더, 결과는 오버.",
+    "r": "발행 당시 이변 위험이 40로 이미 높았다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260136:4358",
@@ -3509,7 +3551,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 리투아니아 선택이 맞았다.",
+    "r": "추정 확률 87%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260136:4359",
@@ -3644,7 +3693,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 리투아니아 핸디, 결과는 핸디 무.",
+    "r": "추정 확률 64%는 36%의 빗나갈 몫을 포함한다. 이번이 그 경우였다.",
+    "e": "",
+    "o2": "판단 과정에 오류는 없었다. 확률이 허용한 범위의 결과로 기록한다."
+   }
   },
   {
    "id": "betman:G101:260136:4360",
@@ -3795,7 +3851,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 리투아니아 핸디, 결과는 리히텐슈타인 핸디.",
+    "r": "발행 당시 이변 위험이 59로 이미 높았다. 추정 확률이 41%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260136:4361",
@@ -3929,7 +3992,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 리히텐슈타인 핸디 선택이 맞았다.",
+    "r": "추정 확률 81%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260136:4362",
@@ -4054,7 +4124,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 오버 선택이 맞았다.",
+    "r": "추정 확률 54%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260136:4364",
@@ -20585,7 +20662,7 @@
       "ev": -0.04493999999999998,
       "confidence": 62,
       "upset_risk": 7,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4314",
@@ -20619,8 +20696,8 @@
     "key": "betman:G101:260136:4314:A+betman:G101:260136:4358:H",
     "strategy": "safe",
     "rank": 3,
-    "result": "pending",
-    "return": null
+    "result": "win",
+    "return": 12100
    },
    {
     "legs": [
@@ -20756,7 +20833,7 @@
       "ev": -0.07705799999999996,
       "confidence": 83,
       "upset_risk": 10,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4318",
@@ -20790,8 +20867,8 @@
     "key": "betman:G101:260136:4318:A+betman:G101:260136:4358:H",
     "strategy": "safe",
     "rank": 2,
-    "result": "pending",
-    "return": null
+    "result": "win",
+    "return": 12400
    }
   ],
   "balanced": [
@@ -21240,7 +21317,7 @@
       "ev": -0.07782400000000012,
       "confidence": 62,
       "upset_risk": 33,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 3,
@@ -21254,8 +21331,8 @@
     "key": "betman:G101:260136:4326:H+betman:G101:260136:4359:H+betman:G101:260136:4411:H",
     "strategy": "balanced",
     "rank": 2,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    }
   ],
   "aggressive": [
@@ -21784,7 +21861,7 @@
       "ev": -0.08293600000000001,
       "confidence": 78,
       "upset_risk": 50,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4360",
@@ -21804,7 +21881,7 @@
       "ev": -0.07724200000000014,
       "confidence": 67,
       "upset_risk": 59,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 3,
@@ -21818,8 +21895,8 @@
     "key": "betman:G101:260136:4354:H+betman:G101:260136:4360:H+betman:G101:260136:4365:H",
     "strategy": "aggressive",
     "rank": 1,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    }
   ],
   "lotto": [
@@ -21863,7 +21940,7 @@
       "ev": -0.0750400000000001,
       "confidence": 79,
       "upset_risk": 50,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4342",
@@ -21923,7 +22000,7 @@
       "ev": -0.08944600000000014,
       "confidence": 66,
       "upset_risk": 59,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260136:4328",
@@ -22000,7 +22077,7 @@
       "ev": -0.0750400000000001,
       "confidence": 79,
       "upset_risk": 50,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4364",
@@ -22040,7 +22117,7 @@
       "ev": -0.08944600000000014,
       "confidence": 66,
       "upset_risk": 59,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260136:4315",
@@ -22117,7 +22194,7 @@
       "ev": -0.0750400000000001,
       "confidence": 79,
       "upset_risk": 50,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4342",
@@ -22177,7 +22254,7 @@
       "ev": -0.08944600000000014,
       "confidence": 66,
       "upset_risk": 59,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260136:4319",
@@ -22321,7 +22398,18 @@
   "betman:G101:260136:4344": "U",
   "betman:G101:260136:4346": "D",
   "betman:G101:260136:4347": "H",
-  "betman:G101:260136:4348": "O"
+  "betman:G101:260136:4348": "O",
+  "betman:G101:260136:4350": "H",
+  "betman:G101:260136:4351": "H",
+  "betman:G101:260136:4352": "O",
+  "betman:G101:260136:4354": "H",
+  "betman:G101:260136:4355": "D",
+  "betman:G101:260136:4356": "O",
+  "betman:G101:260136:4358": "H",
+  "betman:G101:260136:4359": "D",
+  "betman:G101:260136:4360": "A",
+  "betman:G101:260136:4361": "A",
+  "betman:G101:260136:4362": "O"
  },
  "headline": "오늘 프로토 16경기. 가장 확실한 선택은 스코틀랜드 원정승(69%). 이후 27경기 미리보기 포함."
 }
