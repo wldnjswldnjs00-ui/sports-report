@@ -18,6 +18,7 @@ class FormIndex:
     def __init__(self) -> None:
         self.games: dict[tuple[str, str], list[tuple[int, str, float, float, bool]]] = defaultdict(list)
         self._seen: set[tuple] = set()
+        self.names: dict[str, str] = {}  # 내부 키 → 화면용 이름
 
     def add(self, sport: str, ko_ms: int, home: str, away: str, hs: float, as_: float) -> None:
         key = (sport, ko_ms // 3_600_000, norm_team(home), norm_team(away))
@@ -25,6 +26,7 @@ class FormIndex:
             return
         self._seen.add(key)
         h, a = norm_team(home), norm_team(away)
+        self.names[h], self.names[a] = home, away
         self.games[(sport, h)].append((ko_ms, a, hs, as_, True))
         self.games[(sport, a)].append((ko_ms, h, as_, hs, False))
 
@@ -54,7 +56,10 @@ class FormIndex:
         home = [x for x in past if x[4]][-10:]
         away = [x for x in past if not x[4]][-10:]
         rest = (ko_ms - past[-1][0]) / 86_400_000
+        games = [{"d": datetime.fromtimestamp(t / 1000, config.KST).strftime("%m.%d"), "o": self.names.get(o, o),
+                  "s": f"{int(f)}:{int(a)}", "m": round(f - a, 1), "h": hm} for t, o, f, a, hm in last]
         return {
+            "games": games,
             "n": len(last), "w": w, "d": d, "l": l, "seq": "".join(seq),
             "margin": round(margin / len(last), 1),
             "home": [sum(1 for x in home if x[2] > x[3]), len(home)],

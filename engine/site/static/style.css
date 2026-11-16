@@ -653,3 +653,39 @@ html:not(.is-mobile):not(.is-pc) .mo-only { display: none; }
 .nav a.nav-support::before { content: "♥ "; }
 .nav a.nav-support:hover { background: var(--hot-soft); color: var(--hot); }
 .nav a.nav-support[aria-current] { background: var(--hot); color: #fff; }
+
+/* 최근 흐름 차트 (승·패 색은 색각이상 검증 통과: 밝은 #3b63d6/#e5345f, 어두운 #5f75ff/#f0507a) */
+:root { --win: #3b63d6; --loss: #e5345f; --draw: #9aa3a0; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --win: #5f75ff; --loss: #f0507a; --draw: #6b7270; } }
+:root[data-theme="dark"] { --win: #5f75ff; --loss: #f0507a; --draw: #6b7270; }
+.fchart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0 6px; }
+.fchart { margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 14px 10px; min-width: 0; }
+.fchart figcaption { font-size: 13px; color: var(--ink-2); margin-bottom: 6px; }
+.fchart figcaption small { color: var(--ink-3); margin-left: 4px; }
+.fchart svg { width: 100%; height: auto; display: block; overflow: visible; }
+.fc-zero { stroke: var(--line); stroke-width: 1; }
+.fc-ax { font: 500 9px var(--en); fill: var(--ink-3); }
+.fc-bar rect:not(.hit) { transition: opacity .15s; }
+.fc-bar .hit { fill: transparent; }
+.fc-bar.win rect:not(.hit) { fill: var(--win); }
+.fc-bar.loss rect:not(.hit) { fill: var(--loss); }
+.fc-bar.draw rect:not(.hit) { fill: var(--draw); }
+.fchart svg:hover .fc-bar rect:not(.hit) { opacity: .35; }
+.fchart svg .fc-bar:hover rect:not(.hit), .fchart svg .fc-bar:focus rect:not(.hit) { opacity: 1; }
+.fc-bar:focus { outline: none; }
+.fc-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; font-size: 12px; color: var(--ink-2); margin: 6px 0 0; }
+.sw { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-left: 4px; }
+.sw.win { background: var(--win); } .sw.loss { background: var(--loss); } .sw.draw { background: var(--draw); }
+.ha-bars { display: grid; gap: 8px; margin: 12px 0; }
+.ha-row { display: grid; grid-template-columns: minmax(0, 170px) minmax(0, 1fr) 110px; gap: 10px; align-items: center; font-size: 13px; }
+.ha-k { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+.ha-k small { color: var(--ink-3); font-weight: 500; margin-left: 2px; }
+.ha-bar { height: 10px; border-radius: 5px; background: var(--card-2); overflow: hidden; }
+.ha-bar i { display: block; height: 100%; border-radius: 5px; background: var(--ink-2); }
+.ha-v { text-align: right; font-weight: 600; } .ha-v small { color: var(--ink-3); font-weight: 500; }
+.h2h-line { display: flex; gap: 10px; overflow-x: auto; padding: 6px 2px 4px; position: relative; }
+.h2h-dot { flex: 0 0 auto; display: grid; justify-items: center; gap: 4px; min-width: 64px; }
+.h2h-dot b { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 13px; }
+.h2h-dot.win b { background: var(--win); } .h2h-dot.loss b { background: var(--loss); } .h2h-dot.draw b { background: var(--draw); }
+.h2h-dot span { font: 600 13px var(--en); } .h2h-dot small { font-size: 11px; color: var(--ink-3); }
+@media (max-width: 720px) { .fchart-grid { grid-template-columns: 1fr; } .ha-row { grid-template-columns: minmax(0, 1fr) 90px; } .ha-bar { grid-column: 1 / -1; grid-row: 2; } }

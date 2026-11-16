@@ -107,6 +107,7 @@
   </div>
   {% endfor %}
 </div>
+{{ form_charts(m) }}
 {% if F.h2h %}
 <p class="h2h">{% if F.h2h.season %}올 시즌 맞대결 <b>{{ F.h2h.season.w }}승{% if F.h2h.season.d %} {{ F.h2h.season.d }}무{% endif %} {{ F.h2h.season.l }}패</b> · {% endif %}상대 전적(최근 {{ F.h2h.n }}경기, {{ m.home }} 기준) <b>{{ F.h2h.w }}승{% if F.h2h.d %} {{ F.h2h.d }}무{% endif %} {{ F.h2h.l }}패</b>
   {% for g in F.h2h.last %}<span>{{ g.date }} {{ g.score }}{{ '' if g.home else ' (원정)' }}</span>{% endfor %}</p>
@@ -115,3 +116,51 @@
 {% endmacro %}
 
 
+
+
+{# 최근 흐름 차트: 득실 차 막대(두 팀 같은 눈금), 홈·원정 승률, 상대 전적 타임라인. 저장된 기록으로만 그린다. #}
+{% macro form_charts(m) %}
+{% set F = m.form %}
+{% set ms = [] %}{% for side in ['home', 'away'] %}{% for g in ((F[side] or {}).games or []) %}{% set _ = ms.append(g.m|abs) %}{% endfor %}{% endfor %}
+{% set top = [ms|max if ms else 1, 1]|max %}
+<div class="fchart-grid">
+  {% for side, name in [('home', m.home), ('away', m.away)] %}{% set f = F[side] %}{% if f and f.games %}
+  <figure class="fchart">
+    <figcaption><b>{{ name }}</b> 최근 {{ f.games|length }}경기 득실 차 <small>막대에 올리면 상대·점수</small></figcaption>
+    {% set W, H, pad = 320, 132, 4 %}{% set bw = (W - pad * 2) / 10 %}{% set mid = H / 2 %}
+    <svg viewBox="0 0 {{ W }} {{ H }}" role="img" aria-label="{{ name }} 최근 {{ f.games|length }}경기: {{ f.w }}승 {{ f.d }}무 {{ f.l }}패">
+      <line class="fc-zero" x1="0" x2="{{ W }}" y1="{{ mid }}" y2="{{ mid }}"/>
+      {% for g in f.games %}{% set x = pad + loop.index0 * bw + 2 %}{% set hgt = [(g.m|abs) / top * (mid - 14), 3]|max %}
+      <g class="fc-bar {{ 'win' if g.m > 0 else ('loss' if g.m < 0 else 'draw') }}" tabindex="0">
+        <title>{{ g.d }} {{ '홈' if g.h else '원정' }} vs {{ g.o }} · {{ g.s }} ({{ '승' if g.m > 0 else ('패' if g.m < 0 else '무') }} {{ '%+g'|format(g.m) }})</title>
+        <rect class="hit" x="{{ x - 2 }}" y="0" width="{{ bw }}" height="{{ H }}"/>
+        {% if g.m > 0 %}<rect x="{{ x }}" y="{{ mid - hgt }}" width="{{ bw - 4 }}" height="{{ hgt }}" rx="3"/>
+        {% elif g.m < 0 %}<rect x="{{ x }}" y="{{ mid }}" width="{{ bw - 4 }}" height="{{ hgt }}" rx="3"/>
+        {% else %}<rect x="{{ x }}" y="{{ mid - 1.5 }}" width="{{ bw - 4 }}" height="3" rx="1.5"/>{% endif %}
+      </g>
+      {% endfor %}
+      <text class="fc-ax" x="{{ W - 2 }}" y="10" text-anchor="end">+{{ top|round(0)|int }}</text>
+      <text class="fc-ax" x="{{ W - 2 }}" y="{{ H - 2 }}" text-anchor="end">−{{ top|round(0)|int }}</text>
+    </svg>
+    <p class="fc-legend"><span class="sw win"></span>승 {{ f.w }}<span class="sw loss"></span>패 {{ f.l }}{% if f.d %}<span class="sw draw"></span>무 {{ f.d }}{% endif %}<span class="muted">· {{ f.games[0].d }} → {{ f.games[-1].d }}</span></p>
+  </figure>
+  {% endif %}{% endfor %}
+</div>
+{% set rows = [] %}{% for side, name in [('home', m.home), ('away', m.away)] %}{% set f = F[side] %}{% if f %}{% set _ = rows.append((name, '홈', f.home)) %}{% set _ = rows.append((name, '원정', f.away)) %}{% endif %}{% endfor %}
+{% if rows %}
+<div class="ha-bars" role="table" aria-label="홈·원정 성적">
+  {% for name, where, rec in rows %}{% if rec[1] %}
+  <div class="ha-row" role="row"><span class="ha-k" role="cell">{{ name }} <small>{{ where }}</small></span>
+    <span class="ha-bar" role="cell"><i style="width:{{ (rec[0] / rec[1] * 100)|round(1) }}%"></i></span>
+    <span class="ha-v" role="cell">{{ rec[0] }}승 {{ rec[1] - rec[0] }}패 <small>{{ (rec[0] / rec[1] * 100)|round(0)|int }}%</small></span></div>
+  {% endif %}{% endfor %}
+</div>
+{% endif %}
+{% if F.h2h and F.h2h.last %}
+<div class="h2h-line" aria-label="상대 전적 타임라인({{ m.home }} 기준)">
+  {% for g in F.h2h.last|reverse %}{% set sc = g.score.split(':') %}{% set r = 'win' if sc[0]|float > sc[1]|float else ('loss' if sc[0]|float < sc[1]|float else 'draw') %}
+  <div class="h2h-dot {{ r }}"><b>{{ '승' if r == 'win' else ('패' if r == 'loss' else '무') }}</b><span>{{ g.score }}</span><small>{{ g.date }}{{ '' if g.home else ' 원정' }}</small></div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endmacro %}
