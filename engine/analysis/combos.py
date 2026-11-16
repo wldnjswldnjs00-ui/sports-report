@@ -60,7 +60,7 @@ def legs_from(markets: list[dict[str, Any]], use_value: bool = False, all_outcom
             if key is None or key not in m["odds"] or key not in a["p"]:
                 continue
             leg = _leg(m, a, key)
-            leg["dog"] = key != "D" and m["odds"][key] > min(m["odds"].values())  # 그 경기에서 배당이 더 높은 쪽
+            leg["dog"] = m["market"] != "OU" and key != "D" and m["odds"][key] > min(m["odds"].values())  # 그 경기에서 배당이 더 높은 쪽
             legs.append(leg)
     return legs
 
