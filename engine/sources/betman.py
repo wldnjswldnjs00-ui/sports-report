@@ -16,7 +16,7 @@ from datetime import datetime
 from typing import Any
 
 from .. import config
-from ..util import http
+from ..util import http, write_json
 
 log = logging.getLogger("engine.betman")
 
@@ -92,9 +92,38 @@ def _market_type(t, line) -> str:
     return "1X2"
 
 
+_debug: dict[str, Any] = {}
+
+
+def _snap(name: str, r) -> None:
+    """응답 형식 진단용 스냅샷(앞부분만). 수집 실패 시 data/state/betman_debug.json 에 남는다."""
+    try:
+        _debug[name] = {"status": r.status_code, "type": r.headers.get("content-type"), "url": r.url,
+                        "body": r.text[:6000]}
+    except Exception:  # noqa: BLE001
+        pass
+
+
 def fetch(day: str) -> list[dict[str, Any]]:
+    _debug.clear()
+    try:
+        out = _fetch(day)
+    except Exception as e:
+        _debug["error"] = f"{type(e).__name__}: {e}"
+        _debug["at"] = config.now_kst().isoformat(timespec="seconds")
+        write_json(config.STATE / "betman_debug.json", _debug)
+        raise
+    dbg = config.STATE / "betman_debug.json"
+    if dbg.exists():
+        dbg.unlink()
+    return out
+
+
+def _fetch(day: str) -> list[dict[str, Any]]:
     headers = {"Content-Type": "application/json; charset=UTF-8", "Referer": BASE + "/", "X-Requested-With": "XMLHttpRequest"}
-    lst = http("POST", LIST_URL, json={"_sbmInfo": {"debugMode": "false"}}, headers=headers).json()
+    r = http("POST", LIST_URL, json={"_sbmInfo": {"debugMode": "false"}}, headers=headers)
+    _snap("list", r)
+    lst = r.json()
     games = []
     for g in _rows(lst) or (lst.get("data") if isinstance(lst, dict) else []) or []:
         gid = g.get("gmId") or g.get("GM_ID")
@@ -108,7 +137,9 @@ def fetch(day: str) -> list[dict[str, Any]]:
     for gid, ts in games:
         time.sleep(1.5)  # 서버 부담 최소화
         body = {"gmId": gid, "gmTs": ts, "gameYear": "", "_sbmInfo": {"debugMode": "false"}}
-        payload = http("POST", GAME_URL, json=body, headers=headers).json()
+        rr = http("POST", GAME_URL, json=body, headers=headers)
+        _snap(f"game_{gid}", rr)
+        payload = rr.json()
         rows = _rows(payload.get("compSchedules", payload) if isinstance(payload, dict) else payload)
         pool = GAME_IDS[gid]
         for r in rows:
