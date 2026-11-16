@@ -141,15 +141,32 @@ class BetmanParse(unittest.TestCase):
 
 
 class BetmanResults(unittest.TestCase):
-    def test_scores_and_cancel(self):
+    def test_codes_not_adjusted_scores(self):
+        from engine.analysis.grading import settle
         from engine.sources.betman import parse_results
-        keys = ["matchSeq", "mchScore", "gameReject", "gameResult"]
-        payload = {"compSchedules": {"keys": keys, "datas": [[1, "2:1", "0", "1"], [2, None, "0", None], [3, None, "1", None], [4, "88 - 90", "0", "3"]]}}
-        r = parse_results(payload, "260133")
-        self.assertEqual(r["betman:G101:260133:1"]["home_score"], 2)
-        self.assertNotIn("betman:G101:260133:2", r)
-        self.assertEqual(r["betman:G101:260133:3"]["status"], "CANCELLED")
-        self.assertEqual(r["betman:G101:260133:4"]["away_score"], 90)
+        keys = ["matchSeq", "mchScore", "gameReject", "gameResult", "betNm", "winTxt"]
+        rows = [
+            [1, "106:113", "0", "2", "농구 승패", "승"],
+            [2, "114.5:113", "0", "0", "농구 핸디캡", "승"],   # 핸디 적용 점수: 홈 핸디승
+            [3, "219:0", "0", "0", "농구 언더오버", "언더"],    # 합계: 언더
+            [4, "266:0", "0", "2", "농구 언더오버", "언더"],    # 합계: 오버
+            [5, None, "0", None, "축구 승무패", "승"],
+            [6, None, "1", None, "축구 승무패", "승"],
+            [7, "1:1", "0", "1", "축구 승무패", "승"],
+        ]
+        r = parse_results({"compSchedules": {"keys": keys, "datas": rows}}, "260133")
+        g = lambda n: r[f"betman:G101:260133:{n}"]
+        self.assertEqual(g(1)["outcome"], "A")
+        self.assertEqual(g(1)["away_score"], 113)
+        self.assertEqual(g(2)["outcome"], "H")
+        self.assertNotIn("home_score", g(2))  # 조정 점수는 Elo 에 쓰지 않는다
+        self.assertEqual(g(3)["outcome"], "U")
+        self.assertEqual(g(4)["outcome"], "O")
+        self.assertNotIn("betman:G101:260133:5", r)
+        self.assertEqual(g(6)["status"], "CANCELLED")
+        self.assertEqual(g(7)["outcome"], "D")
+        m = mk(2, {"H": 1.7, "A": 1.8}, market="HANDICAP", line=8.5, sport="basketball")
+        self.assertEqual(settle(m, g(2)), "H")
 
 
 class Pipeline(unittest.TestCase):

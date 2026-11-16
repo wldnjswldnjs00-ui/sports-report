@@ -22,6 +22,8 @@ def settle(market: dict[str, Any], res: dict[str, Any]) -> str | None:
         return "VOID"
     if status != "FT":
         return None
+    if res.get("outcome"):  # 발행처가 판정한 결과가 있으면 그대로 따른다(핸디·언오버 규정 차이 방지)
+        return res["outcome"]
     try:
         hs, as_ = float(res["home_score"]), float(res["away_score"])
     except (KeyError, TypeError, ValueError):

@@ -154,7 +154,12 @@ _SCORE = re.compile(r"(\d+)\s*[:\-]\s*(\d+)")
 
 
 def parse_results(payload: dict, gm_ts: str) -> dict[str, dict]:
-    """마감 회차 응답에서 경기 결과 추출. mchScore 는 '홈:원정' 점수."""
+    """마감 회차 결과.
+
+    베트맨 gameResult 는 칸 번호다: 0=승(왼쪽) 칸, 1=무 칸, 2=패(오른쪽) 칸.
+    mchScore 는 마켓마다 다르다(핸디캡은 핸디 적용 점수, 언더오버는 '합계:0').
+    그래서 결과 판정은 gameResult 로 하고, 실제 점수는 승패·승무패 행에서만 Elo 용으로 쓴다.
+    """
     out: dict[str, dict] = {}
     for r in _rows(payload):
         no = r.get("matchSeq")
@@ -162,10 +167,23 @@ def parse_results(payload: dict, gm_ts: str) -> dict[str, dict]:
         if str(r.get("gameReject") or "0") != "0":
             out[mid] = {"status": "CANCELLED", "src": "betman"}
             continue
-        m = _SCORE.search(str(r.get("mchScore") or ""))
-        if m:
-            out[mid] = {"home_score": float(m.group(1)), "away_score": float(m.group(2)), "status": "FT",
-                        "src": "betman", "raw": r.get("mchScore"), "code": r.get("gameResult")}
+        code = str(r.get("gameResult") if r.get("gameResult") is not None else "").strip()
+        score = str(r.get("mchScore") or "")
+        if code not in ("0", "1", "2") or not score:
+            continue
+        mk = _market(r)
+        if mk == "OU":
+            under_first = not str(r.get("winTxt") or "언더").startswith("오버")
+            outcome = {"0": "U" if under_first else "O", "2": "O" if under_first else "U"}.get(code)
+        else:
+            outcome = {"0": "H", "1": "D", "2": "A"}[code]
+        if outcome is None:
+            continue
+        rec = {"status": "FT", "outcome": outcome, "src": "betman", "raw": score, "code": code, "market": mk}
+        m = _SCORE.search(score)
+        if m and mk in ("1X2", "WL"):
+            rec["home_score"], rec["away_score"] = float(m.group(1)), float(m.group(2))
+        out[mid] = rec
     return out
 
 

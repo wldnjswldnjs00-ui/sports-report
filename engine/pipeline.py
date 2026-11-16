@@ -169,6 +169,9 @@ def _collect_results(rep: dict, fetch_scores: bool = True) -> dict:
     path = results_path(rep["date"])
     res = read_json(path, {"markets": {}}) or {"markets": {}}
     rmap = res.setdefault("markets", {})
+    # 예전 형식(판정 코드 없는) 베트맨 결과는 다시 받는다
+    for k in [k for k, v in rmap.items() if v.get("src") == "betman" and v.get("status") == "FT" and not v.get("outcome")]:
+        del rmap[k]
     pending = [m for m in rep.get("markets", []) if m["id"] not in rmap]
     if not pending:
         return res
