@@ -16,7 +16,8 @@ from . import betman
 
 log = logging.getLogger("engine.history")
 DIR = config.DATA / "history" / "proto3"  # v3: 팀명·실제 점수·첫 배당 포함
-OLDEST = 250001  # 2025년 1회차까지
+OLDEST = 240001  # 2024년 1회차까지(KBL·WKBL·KOVO 지난 시즌 포함)
+MAX_ROUND = 200   # 한 해 회차 번호 상한(실제로는 160 안팎)
 
 
 def _path(ts: int) -> Path:
@@ -85,6 +86,23 @@ def current_round() -> int | None:
     return min(rounds) if rounds else None
 
 
+def _cleanup_once(cur: int) -> None:
+    """예전 연도 경계 버그로 만든 없는 회차 표시(예: 259721)와, 올해 빈 표시를 한 번만 지우고 다시 받게 한다."""
+    mark = DIR / ".cleanup-v2"
+    if mark.exists():
+        return
+    for p in DIR.glob("*.json"):
+        try:
+            ts = int(p.stem)
+        except ValueError:
+            continue
+        bogus = ts % 10000 > MAX_ROUND
+        empty = p.stat().st_size <= 2
+        if bogus or (empty and ts < cur):
+            p.unlink()
+    mark.write_text("done", encoding="utf-8")
+
+
 def backfill(max_rounds: int = 8) -> int:
     cur = current_round()
     if not cur or config.DEMO:
@@ -97,15 +115,17 @@ def backfill(max_rounds: int = 8) -> int:
     except Exception as e:  # noqa: BLE001
         log.warning("백필 접속 실패: %s", e)
         return 0
+    _cleanup_once(cur)
     # 최근 회차는 결과가 늦게 채워질 수 있어 다시 받는다
     for recent in range(cur - 4, cur):
         if _path(recent).exists():
             _path(recent).unlink()
     ts = cur - 1
     while ts >= OLDEST and done < max_rounds:
-        # 연도 경계: 260001 아래는 2025년 마지막 회차로 건너뛴다
+        # 연도 경계: 260001 아래는 전년도 마지막 회차 번호 상한으로 건너뛴다(260000 → 250200)
         if ts % 10000 == 0:
-            ts = (ts // 10000 - 1) * 10000 + 9999
+            ts = (ts // 10000 - 1) * 10000 + MAX_ROUND
+            misses = 0
             continue
         if _path(ts).exists():
             ts -= 1
@@ -124,6 +144,7 @@ def backfill(max_rounds: int = 8) -> int:
             else:
                 _path(ts).write_text(json.dumps(rows, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
                 done += 1
+                misses = 0
         except Exception as e:  # noqa: BLE001
             log.warning("백필 %s 실패: %s", ts, e)
             break

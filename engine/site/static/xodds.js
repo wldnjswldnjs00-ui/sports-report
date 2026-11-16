@@ -1,5 +1,5 @@
-/* 배당 분석 계산기: 해외 배당 → 해외 배당이 비슷했던 과거 경기의 실제 결과.
-   승패(승무패)·핸디캡·언더오버 모두 해외 기준점·해외 배당으로 넣고 본다. 베트맨 배당·베트맨 기록은 쓰지 않는다.
+/* 배당 분석 계산기: 배당 → 배당이 비슷했던 과거 경기의 실제 결과.
+   유럽 축구·NBA·MLB 는 해외 배당 기록, 해외 기록이 없는 리그(KBL·WKBL·KOVO·K리그·KBO 등)는 베트맨 배당 기록으로 센다.
    데이터(/data/xbook.json)는 엔진의 xbook.py 와 같은 구간·같은 방식으로 센다. */
 (function () {
   "use strict";
@@ -9,13 +9,45 @@
   var $$ = function (s, r) { return Array.prototype.slice.call((r || root).querySelectorAll(s)); };
   var NEED = 250;
   var D = null;
-  var st = { sport: "soccer", mk: "main" };
+  var st = { sport: "soccer", mk: "main", grp: "x" };
   var DEF = {
     soccer: { h: "2.10", d: "3.30", a: "3.40", hl: "-0.5", ho: "1.95", ao: "1.95", ol: "2.5", o: "1.90", u: "1.90" },
     basketball: { h: "1.60", a: "2.35", hl: "-5.5", ho: "1.91", ao: "1.91", ol: "220.5", o: "1.91", u: "1.91" },
     baseball: { h: "1.75", a: "2.10", hl: "-1.5", ho: "2.10", ao: "1.75", ol: "8.5", o: "1.91", u: "1.91" }
   };
+  /* 베트맨 배당 기준(해외 기록이 없는 리그) 기본값 */
+  DEF.soccer_b = { h: "2.10", d: "3.10", a: "3.20", hl: "-1", ho: "3.40", hd: "3.40", ao: "1.75", ol: "2.5", o: "1.85", u: "1.65" };
+  DEF.basketball_b = { h: "1.55", a: "2.15", hl: "-3.5", ho: "1.75", ao: "1.75", ol: "160.5", o: "1.75", u: "1.75" };
+  DEF.baseball_b = { h: "1.80", a: "1.80", hl: "-1.5", ho: "2.10", ao: "1.55", ol: "8.5", o: "1.75", u: "1.75" };
+  DEF.volleyball_b = { h: "1.45", a: "2.40", hl: "-1.5", ho: "1.75", ao: "1.75", ol: "180.5", o: "1.75", u: "1.75" };
   var V = JSON.parse(JSON.stringify(DEF));
+  /* 종목별 리그 선택: x = 해외 배당 기록, 나머지 = 베트맨 배당 기록 */
+  var LGS = {
+    soccer: [["x", "유럽 리그"], ["kleague"], ["jleague"], ["soc_intl"], ["soc_etc"]],
+    basketball: [["x", "NBA"], ["kbl"], ["wkbl"], ["bk_intl"]],
+    baseball: [["x", "MLB"], ["kbo"], ["npb"]],
+    volleyball: [["kovo_m"], ["kovo_w"], ["vb_intl"]]
+  };
+  function bm() { return st.grp !== "x"; }
+  function vk() { return st.sport + (bm() ? "_b" : ""); }
+  function gLabel(k) { var g = D && D.bb && D.bb.groups && D.bb.groups[k]; return g ? g.label : k; }
+  function drawLgs() {
+    var box = $("[data-xo-lgs]");
+    if (!box) return;
+    var list = LGS[st.sport] || [];
+    if (!list.some(function (x) { return x[0] === st.grp; })) st.grp = list[0][0];
+    box.innerHTML = "";
+    list.forEach(function (x) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "chip"; b.dataset.xoLg = x[0];
+      b.setAttribute("aria-pressed", String(x[0] === st.grp));
+      var n = x[0] === "x" ? 0 : (((D && D.bb && D.bb.groups[x[0]]) || {}).n || {}).WL || 0;
+      b.innerHTML = (x[1] || gLabel(x[0])) + ' <small>' + (x[0] === "x" ? "해외" : "베트맨") + "</small>";
+      if (x[0] !== "x" && n) b.title = "베트맨 기록 " + n + "경기";
+      b.addEventListener("click", function () { st.grp = x[0]; drawLgs(); drawInputs(); calc(); });
+      box.appendChild(b);
+    });
+  }
   var LABEL = { soccer: "유럽 축구", basketball: "NBA", baseball: "MLB" };
 
   function num(x) { var v = parseFloat(String(x).replace(",", ".")); return isFinite(v) ? v : NaN; }
@@ -68,7 +100,16 @@
       hcp: [["hl", "해외 핸디 (홈)"], ["ho", "홈 배당"], ["ao", "원정 배당"]],
       ou: [["ol", "해외 기준점"], ["o", "오버 배당"], ["u", "언더 배당"]] }
   };
-  function fields() { return (st.sport === "soccer" ? FIELDS.soccer : FIELDS.us)[st.mk]; }
+  FIELDS.bsoc = { main: [["h", "승"], ["d", "무"], ["a", "패"]],
+    hcp: [["hl", "핸디 기준점 (홈)"], ["ho", "핸디승"], ["hd", "핸디무"], ["ao", "핸디패"]],
+    ou: [["ol", "기준점"], ["o", "오버"], ["u", "언더"]] };
+  FIELDS.bus = { main: [["h", "승"], ["a", "패"]],
+    hcp: [["hl", "핸디 기준점 (홈)"], ["ho", "핸디승"], ["ao", "핸디패"]],
+    ou: [["ol", "기준점"], ["o", "오버"], ["u", "언더"]] };
+  function fields() {
+    if (bm()) return (st.sport === "soccer" ? FIELDS.bsoc : FIELDS.bus)[st.mk];
+    return (st.sport === "soccer" ? FIELDS.soccer : FIELDS.us)[st.mk];
+  }
   function drawInputs() {
     var box = $("[data-xo-inputs]");
     box.innerHTML = "";
@@ -76,13 +117,17 @@
       var lab = document.createElement("label"), sp = document.createElement("span"), inp = document.createElement("input");
       sp.textContent = f[1];
       inp.className = "input"; inp.type = "text"; inp.inputMode = "decimal"; inp.autocomplete = "off";
-      inp.value = V[st.sport][f[0]] || ""; inp.dataset.k = f[0];
+      inp.value = V[vk()][f[0]] || ""; inp.dataset.k = f[0];
       inp.setAttribute("aria-label", f[1]);
-      inp.addEventListener("input", function () { V[st.sport][f[0]] = inp.value; calc(); });
+      inp.addEventListener("input", function () { V[vk()][f[0]] = inp.value; calc(); });
       lab.appendChild(sp); lab.appendChild(inp); box.appendChild(lab);
     });
     box.style.setProperty("--cols", fields().length);
     $("[data-xo-main]").textContent = st.sport === "soccer" ? "승무패" : "승패";
+    var hint = $(".xo-hint");
+    if (hint) hint.textContent = bm()
+      ? gLabel(st.grp) + "은(는) 해외 배당 기록이 없어 베트맨 배당 기록으로 셉니다. 베트맨 배당을 그대로 넣으세요. 핸디캡·언더오버는 기준점과 상관없이 배당 확률이 비슷했던 지난 경기로 셉니다."
+      : "해외 배당을 넣으세요. 핸디캡·언더오버는 해외 기준점과 그 기준점의 해외 배당을 넣습니다. '오늘 경기에서 불러오기'를 쓰면 자동으로 채워집니다.";
   }
 
   /* ───── 결과 그리기 ───── */
@@ -95,7 +140,7 @@
         '</b><small>배당 확률 ' + pct(r.imp) + ' · <em class="' + cls + '">' + (d >= 0 ? "+" : "") + d.toFixed(1) + "%p</em></small></li>";
     }).join("") + "</ul>";
   }
-  var SUBJ = { "홈승": "홈승이", "무": "무승부가", "원정승": "원정승이", "홈": "홈이", "원정": "원정이", "오버": "오버가", "언더": "언더가" };
+  var SUBJ = { "승": "승이", "패": "패가", "핸디승": "핸디승이", "핸디무": "핸디무가", "핸디패": "핸디패가", "홈승": "홈승이", "무": "무승부가", "원정승": "원정승이", "홈": "홈이", "원정": "원정이", "오버": "오버가", "언더": "언더가" };
   function say(rows) {
     var big = rows.slice().sort(function (a, b) { return Math.abs(b.real - b.imp) - Math.abs(a.real - a.imp); })[0];
     var d = (big.real - big.imp) * 100;
@@ -117,7 +162,49 @@
 
   function calc() {
     if (!D) return;
+    if (bm()) return calcBM(V[vk()]);
     return st.sport === "soccer" ? calcSoccer(V.soccer) : calcUS(V[st.sport]);
+  }
+
+  /* 베트맨 배당 기준: 베트맨 배당 확률이 비슷했던 지난 경기(같은 리그 → 부족하면 종목 전체) */
+  function calcBM(v) {
+    var B = D.bb;
+    if (!B || !B.data) return need("베트맨 기록을 모으는 중입니다.");
+    var MK = st.mk === "main" ? "WL" : st.mk === "hcp" ? "HANDICAP" : "OU";
+    var f, names;
+    if (MK === "OU") {
+      f = fair([num(v.o), num(v.u)]); names = ["오버", "언더"];
+      if (!f) return need("오버·언더 배당을 1보다 큰 숫자로 넣으세요.");
+    } else {
+      var three = st.sport === "soccer" && num(v[MK === "WL" ? "d" : "hd"]) > 1;
+      var arr = MK === "WL" ? (three ? [num(v.h), num(v.d), num(v.a)] : [num(v.h), num(v.a)]) : (three ? [num(v.ho), num(v.hd), num(v.ao)] : [num(v.ho), num(v.ao)]);
+      f = fair(arr);
+      names = MK === "WL" ? (three ? ["승", "무", "패"] : ["승", "패"]) : (three ? ["핸디승", "핸디무", "핸디패"] : ["핸디승", "핸디패"]);
+      if (!f) return need((MK === "WL" ? "승·패" : "핸디승·핸디패") + " 배당을 1보다 큰 숫자로 넣으세요.");
+    }
+    var w = B.w || 0.05, need0 = B.need || 40, i0 = bin(f[0], w), gTot = 0;
+    var keys = [st.grp, "all_" + st.sport];
+    for (var ki = 0; ki < keys.length; ki++) {
+      var k = keys[ki], t = (B.data[k] || {})[MK] || {}, tot = 0;
+      Object.keys(t).forEach(function (x) { tot += t[x][0]; });
+      if (ki === 0) gTot = tot;
+      if (ki === 0 && tot < (B.min_group || 25)) continue;
+      for (var r = 0; r <= 3; r++) {
+        var acc = null;
+        ring(i0, r).forEach(function (x) { if (t[x]) acc = add(acc, t[x]); });
+        if (acc && acc[0] >= need0) {
+          var n = acc[0], rows;
+          var n2 = acc[1] + acc[3] || 1;  // 두 칸 마켓은 적중특례(무 칸)를 빼고 센다
+          if (MK === "OU") rows = [{ k: "오버", real: acc[1] / n2, imp: f[0] }, { k: "언더", real: acc[3] / n2, imp: f[1] }];
+          else if (names.length === 3) rows = [{ k: names[0], real: acc[1] / n, imp: f[0] }, { k: names[1], real: acc[2] / n, imp: f[1] }, { k: names[2], real: acc[3] / n, imp: f[2] }];
+          else rows = [{ k: names[0], real: acc[1] / n2, imp: f[0] }, { k: names[1], real: acc[3] / n2, imp: f[1] }];
+          var sub = gLabel(k) + " · 베트맨 배당 확률 " + f.map(function (x) { return pct(x, 0); }).join(" · ");
+          var note = ki > 0 ? '<p class="fine xo-note">' + gLabel(st.grp) + " 기록이 아직 " + gTot + "경기라 이 배당 구도는 " + gLabel(k) + " 베트맨 기록으로 계산했습니다. 기록은 자동 업데이트마다 쌓입니다.</p>" : "";
+          return out(head(n, sub) + bars(rows) + say(rows) + note);
+        }
+      }
+    }
+    return need("이 배당 구도는 베트맨 지난 기록이 부족합니다. 기록은 자동 업데이트마다 쌓입니다.");
   }
 
   function calcSoccer(v) {
@@ -202,42 +289,55 @@
   /* ───── 조작 ───── */
   function press(attr, val) { $$("[" + attr + "]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute(attr) === val)); }); }
   $$("[data-xo-sport]").forEach(function (b) {
-    b.addEventListener("click", function () { st.sport = b.dataset.xoSport; press("data-xo-sport", st.sport); $("[data-xo-match]").value = ""; drawInputs(); calc(); });
+    b.addEventListener("click", function () { st.sport = b.dataset.xoSport; st.grp = (LGS[st.sport] || [["x"]])[0][0]; press("data-xo-sport", st.sport); $("[data-xo-match]").value = ""; drawLgs(); drawInputs(); calc(); });
   });
   $$("[data-xo-mk]").forEach(function (b) {
     b.addEventListener("click", function () { st.mk = b.dataset.xoMk; press("data-xo-mk", st.mk); drawInputs(); calc(); });
   });
 
   function two(p) { return p > 0 && p < 1 ? [(1 / p).toFixed(2), (1 / (1 - p)).toFixed(2)] : null; }
-  function loadToday(list) {
+  function loadToday(list, blist) {
     var sel = $("[data-xo-match]");
-    if (!list || !list.length) return;
-    list.forEach(function (g, i) {
-      var o = document.createElement("option"), ko = String(g.ko);
+    var all = (list || []).map(function (g) { return { g: g, b: false }; }).concat((blist || []).map(function (g) { return { g: g, b: true }; }));
+    all.sort(function (a, b) { return String(a.g.ko) < String(b.g.ko) ? -1 : 1; });
+    if (!all.length) return;
+    all.forEach(function (it, i) {
+      var g = it.g, o = document.createElement("option"), ko = String(g.ko);
       o.value = String(i);
       o.textContent = (+ko.slice(5, 7)) + "/" + (+ko.slice(8, 10)) + " " + ko.slice(11, 16) + " · " + g.label + " (" + g.league + ")";
       sel.appendChild(o);
     });
     $("[data-xo-load]").hidden = false;
     sel.addEventListener("change", function () {
-      var g = list[+sel.value];
-      if (!g) return;
+      var it = all[+sel.value];
+      if (!it) return;
+      var g = it.g;
       st.sport = g.sport; press("data-xo-sport", st.sport);
-      var v = V[st.sport], h = g.h2h || {};
-      if (h.H) v.h = String(h.H);
-      if (h.A) v.a = String(h.A);
-      if (h.D) v.d = String(h.D);
-      var sp = g.spread && two(g.spread[1]);
-      if (sp) { v.hl = String(g.spread[0]); v.ho = sp[0]; v.ao = sp[1]; }
-      var tt = g.total && two(g.total[1]);
-      if (tt) { v.ol = String(g.total[0]); v.o = tt[0]; v.u = tt[1]; }
-      drawInputs(); calc();
+      if (it.b) {
+        st.grp = g.grp;
+        var b = V[st.sport + "_b"], m = g.bm || {};
+        if (m.WL) { b.h = String(m.WL.H || ""); b.a = String(m.WL.A || ""); b.d = m.WL.D ? String(m.WL.D) : ""; }
+        if (m.HANDICAP) { b.hl = String(m.HANDICAP.line); b.ho = String(m.HANDICAP.H || ""); b.ao = String(m.HANDICAP.A || ""); b.hd = m.HANDICAP.D ? String(m.HANDICAP.D) : ""; }
+        if (m.OU) { b.ol = String(m.OU.line); b.o = String(m.OU.O || ""); b.u = String(m.OU.U || ""); }
+      } else {
+        st.grp = "x";
+        var v = V[st.sport], h = g.h2h || {};
+        if (h.H) v.h = String(h.H);
+        if (h.A) v.a = String(h.A);
+        if (h.D) v.d = String(h.D);
+        var sp = g.spread && two(g.spread[1]);
+        if (sp) { v.hl = String(g.spread[0]); v.ho = sp[0]; v.ao = sp[1]; }
+        var tt = g.total && two(g.total[1]);
+        if (tt) { v.ol = String(g.total[0]); v.o = tt[0]; v.u = tt[1]; }
+      }
+      drawLgs(); drawInputs(); calc();
     });
   }
 
+  drawLgs();
   drawInputs();
   fetch("/data/xbook.json", { cache: "no-cache" })
     .then(function (r) { return r.ok ? r.json() : null; })
-    .then(function (d) { D = d || {}; loadToday(D.today); calc(); })
+    .then(function (d) { D = d || {}; drawLgs(); loadToday(D.today, D.btoday); calc(); })
     .catch(function () { D = {}; need("기록을 불러오지 못했습니다. 새로고침해 보세요."); });
 })();

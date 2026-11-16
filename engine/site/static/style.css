@@ -821,3 +821,6 @@ i.t-pos, i.t-neg, i.t-draw { font-style: normal; }
 .k-ex ol { margin: 0; padding-left: 20px; }
 .kelly details.rule { margin-top: 8px; }
 .kelly details.rule p { margin: 8px 0 4px; }
+.xo-lgs .chip small { font-size: 10.5px; color: var(--ink-3); margin-left: 3px; }
+.xo-lgs .chip[aria-pressed="true"] small { color: inherit; opacity: .8; }
+.xo-note { margin-top: 10px; }

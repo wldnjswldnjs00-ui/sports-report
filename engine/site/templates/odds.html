@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}배당 분석 · 해외 배당이 이렇게 붙으면 실제로는 | {{ cfg.SITE_NAME }}{% endblock %}
-{% block desc %}해외 배당을 넣으면 해외 배당이 그렇게 붙었던 과거 경기들이 실제로 어떻게 끝났는지 보여줍니다. 유럽 축구·NBA·MLB 기록, 승무패·핸디캡·언더오버 전 기준점.{% endblock %}
+{% block title %}배당 분석 · 배당이 이렇게 붙으면 실제로는 (NBA·KBL·WKBL·KOVO·K리그·KBO) | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}배당을 넣으면 배당이 그렇게 붙었던 과거 경기들이 실제로 어떻게 끝났는지 보여줍니다. 유럽 축구·NBA·MLB는 해외 배당 기록, KBL·WKBL·KOVO 배구·K리그·J리그·KBO·NPB는 베트맨 배당 기록. 승패·핸디캡·언더오버.{% endblock %}
 {% block main %}
 <section class="wrap page-head">
   <p class="kicker">ODDS</p><h1>배당 분석</h1>
-  <p class="lede">해외 배당을 넣으면, 해외 배당이 그렇게 붙었던 과거 경기들이 실제로 어떻게 끝났는지 바로 보여줍니다.</p>
+  <p class="lede">배당을 넣으면, 배당이 그렇게 붙었던 과거 경기들이 실제로 어떻게 끝났는지 바로 보여줍니다. 리그를 고르면 그 리그에 맞는 기록으로 셉니다.</p>
 </section>
 <section class="wrap block xo" data-xo>
   <noscript><p class="none">이 계산기는 자바스크립트가 필요합니다.</p></noscript>
@@ -17,7 +17,9 @@
       <button type="button" class="chip" data-xo-sport="soccer" aria-pressed="true">축구</button>
       <button type="button" class="chip" data-xo-sport="basketball" aria-pressed="false">농구</button>
       <button type="button" class="chip" data-xo-sport="baseball" aria-pressed="false">야구</button>
+      <button type="button" class="chip" data-xo-sport="volleyball" aria-pressed="false">배구</button>
     </div>
+    <div class="xo-row xo-lgs" role="group" aria-label="리그" data-xo-lgs></div>
     <div class="xo-row" role="group" aria-label="마켓">
       <button type="button" class="chip" data-xo-mk="main" aria-pressed="true"><span data-xo-main>승무패</span></button>
       <button type="button" class="chip" data-xo-mk="hcp" aria-pressed="false">핸디캡</button>
@@ -32,7 +34,7 @@
   <details class="rule">
     <summary>어떻게 계산하나요</summary>
     <p class="fine">넣은 배당에서 발행처 몫을 걷어낸 확률(공정확률)을 구하고, 해외 마감 배당의 공정확률이 같은 구간에 있던 과거 경기를 모읍니다. 핸디캡·언더오버는 그 해외 기준점에서 해외 확률이 비슷했던 경기를 모읍니다. 그 경기들의 실제 점수 차와 총점 분포로 각 기준점의 결과를 셉니다. 표본이 {{ 250 }}경기보다 적으면 이웃 구간까지 넓혀서 셉니다.</p>
-    <p class="fine">기록: 유럽 축구 16개 리그 최근 6시즌(football-data.co.uk), NBA·MLB 2011~2021 시즌(sportsbookreviewsonline 기록). MLB 기록은 배당 기록 시점이 섞인 경기가 있어 NBA보다 오차가 큽니다. 베트맨 지난 회차 기록은 분석에 쓰지 않습니다.</p>
+    <p class="fine">기록: 유럽 축구 16개 리그 최근 6시즌(football-data.co.uk), NBA·MLB 2011~2021 시즌(sportsbookreviewsonline 기록). MLB 기록은 배당 기록 시점이 섞인 경기가 있어 NBA보다 오차가 큽니다. KBL·WKBL·KOVO 배구·K리그·J리그·KBO·NPB·국제 대회처럼 해외 배당 기록이 없는 리그는 베트맨 지난 회차의 배당과 공식 결과로 셉니다(2024년부터, 자동 업데이트마다 지난 회차를 더 모읍니다). 리그 기록이 적으면 같은 종목 전체 베트맨 기록으로 계산하고 그렇다고 표시합니다.</p>
   </details>
 </section>
 {% endblock %}

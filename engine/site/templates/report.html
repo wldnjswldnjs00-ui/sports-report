@@ -221,7 +221,7 @@
         {% for x in matches if x.home == g.home and x.away == g.away and x.kickoff[:10] == g.kickoff[:10] %}{% if loop.first %}<p class="m-link"><a href="{{ x.url }}">{{ g.home }} vs {{ g.away }} 경기 분석 전체 보기 →</a></p>{% endif %}{% endfor %}
         <dl class="m-nums">
           <div><dt>이변 위험</dt><dd>{{ a.upset_risk }}</dd></div>
-          {% if a.hist and a.pick in a.hist and a.hist[a.pick].bucket in XSRC %}{% set h = a.hist[a.pick] %}<div><dt>해외 기록 적중률</dt><dd>{{ h.hit|pct(1) }} <small class="muted">({{ h.bucket }}, {{ '{:,}'.format(h.n) }}경기)</small></dd></div>{% endif %}
+          {% if a.hist and a.pick in a.hist and a.hist[a.pick].bucket in XSRC %}{% set h = a.hist[a.pick] %}<div><dt>해외 기록 적중률</dt><dd>{{ h.hit|pct(1) }} <small class="muted">({{ h.bucket }}, {{ '{:,}'.format(h.n) }}경기)</small></dd></div>{% endif %}{% if a.bhist %}<div><dt>베트맨 기록 적중률</dt><dd>{{ a.bhist.hit|pct(1) }} <small class="muted">({{ a.bhist.group }}, {{ '{:,}'.format(a.bhist.n) }}경기)</small></dd></div>{% endif %}
           <div><dt>근거</dt><dd>{{ a.sources|join(', ') }}</dd></div>
           {% if a.flags %}<div><dt>표시</dt><dd>{{ a.flags|join(' · ') }}</dd></div>{% endif %}
         </dl>

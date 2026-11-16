@@ -113,6 +113,24 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
             status["form"] = f"{nf}개 마켓"
         except Exception:  # noqa: BLE001
             log.exception("흐름 처리 실패(분석은 계속)")
+    # 해외 배당이 없는 경기(KBL·WKBL·KOVO 등): 베트맨 배당이 비슷했던 지난 경기의 실제 적중률을 붙인다
+    if not config.DEMO:
+        try:
+            from .analysis import bbook
+            from .sources import betman_history
+            book = bbook.build(betman_history.load_all())
+            nb = 0
+            for m in analyzed:
+                a = m.get("analysis")
+                if not a or a.get("p_ref"):
+                    continue
+                bh = bbook.lookup(book, m.get("sport"), m.get("league"), m.get("market"), m.get("odds") or {}, a.get("pick"))
+                if bh:
+                    a["bhist"] = bh
+                    nb += 1
+            status["bbook"] = f"{nb}개 마켓"
+        except Exception:  # noqa: BLE001
+            log.exception("베트맨 기록 처리 실패(분석은 계속)")
     # 근거 데이터가 다 붙은 뒤 분석문(오레오)을 쓴다. 시작된 경기의 글은 고정.
     for m in analyzed:
         if m.get("analysis") and not (datetime.fromisoformat(m["kickoff"]) <= now and m.get("oreo")):
@@ -284,7 +302,7 @@ def grade(today: str, lookback: int = 7, fetch_scores: bool = True) -> dict:
     return perf
 
 
-def history(max_rounds: int = 8) -> None:
+def history(max_rounds: int = 20) -> None:
     """과거 기록 백필 + 해외 배당 구도표 재계산. 실패해도 다른 단계에 영향 없음.
 
     베트맨 지난 회차는 채점·Elo용으로만 모은다. 배당 분석은 해외 기록(xbook)만 쓴다."""

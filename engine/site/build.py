@@ -309,6 +309,24 @@ def _xbook_payload(r: dict | None) -> dict:
             "h2h": x.get("h2h_odds") or {k: round(1 / v, 2) for k, v in x["h2h"].items() if v > 0},
             "spread": x.get("spread"), "total": x.get("total")})
     out["today"] = sorted(games.values(), key=lambda g: g["ko"])
+    # 베트맨 배당 기록(해외 기록이 없는 리그용) + 오늘 경기의 베트맨 배당(불러오기용)
+    try:
+        from ..analysis import bbook
+        from ..sources import betman_history
+        bk = bbook.build(betman_history.load_all())
+        out["bb"] = {"w": bk["w"], "need": bk["need"], "min_group": bk["min_group"], "groups": bk["groups"], "data": bk["data"]}
+        bgames: dict[str, dict] = {}
+        for m in (r or {}).get("markets", []):
+            grp = bbook.group_of(m.get("sport"), m.get("league"))
+            if not grp or m["kickoff"] <= now or not m.get("odds"):
+                continue
+            g = bgames.setdefault(f"{m['kickoff']}|{m['home']}|{m['away']}", {
+                "sport": m["sport"], "grp": grp, "label": f"{m['home']} vs {m['away']}", "league": m["league"], "ko": m["kickoff"], "bm": {}})
+            mk = "WL" if m["market"] == "1X2" else m["market"]
+            g["bm"][mk] = {**m["odds"], "line": m.get("line")}
+        out["btoday"] = sorted(bgames.values(), key=lambda g: g["ko"])
+    except Exception:  # noqa: BLE001
+        log.exception("베트맨 기록 구도표 실패")
     return out
 
 
