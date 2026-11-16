@@ -263,7 +263,13 @@ def build() -> None:
 
     summaries = [_report_summary(r) for r in reports]
     leagues = _leagues(reports[:60])
-    ctx = dict(book=book, best_buckets=OB.best_buckets(book) if book else [], ob_label=OB.label, perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues)
+    pair_rows = []
+    for k, v in ((book or {}).get("pairs") or {}).items():
+        mk_, lo_, hi_ = k.split("|")
+        if mk_ != "1X2" and v["n"] >= 25:
+            pair_rows.append({"mk": mk_, "lo": int(lo_) / 10, "hi": int(hi_) / 10, "n": v["n"], "hi_rate": v["hi"] / v["n"]})
+    pair_rows.sort(key=lambda x: (x["mk"], x["lo"], x["hi"]))
+    ctx = dict(pair_rows=pair_rows, book=book, best_buckets=OB.best_buckets(book) if book else [], ob_label=OB.label, perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues)
     urls: list[tuple[str, str]] = []
 
     def page(tpl: str, out: str, **kw):

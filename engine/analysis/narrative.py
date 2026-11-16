@@ -37,6 +37,17 @@ def _side(m: dict, key: str) -> str:
     return OUTCOME_LABEL.get(key, key)
 
 
+def _call(m: dict, key: str) -> str:
+    """'한국 승', '무승부', '보스턴 핸디승', '2.5 언더' 같은 예측 표기."""
+    mk = m["market"]
+    if mk == "OU":
+        return f"기준점 {m.get('line'):g} {OUTCOME_LABEL.get(key, key)}"
+    if key == "D":
+        return "핸디 무" if mk == "HANDICAP" else "무승부"
+    team = m["home"] if key == "H" else m["away"]
+    return f"{team} {'핸디승' if mk == 'HANDICAP' else '승'}"
+
+
 def _josa(word: str, pair: tuple[str, str]) -> str:
     ch = word[-1] if word else ""
     if "가" <= ch <= "힣":
@@ -67,12 +78,11 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
     strong = pp >= (0.62 if n == 2 else 0.55)
 
     # O
-    if m["market"] == "OU":
-        o1 = f"기준점 {m.get('line')} {name} 쪽을 본다. 추정 확률 {_pct(pp)}."
-    elif strong:
-        o1 = r.choice([f"{_josa(name, ('이', '가'))} 유리하다. 추정 확률 {_pct(pp)}.", f"{name} 쪽을 고른다. 추정 확률 {_pct(pp)}."])
+    call = _call(m, pick)
+    if strong:
+        o1 = f"{call} 예측. 추정 확률 {_pct(pp)}."
     else:
-        o1 = f"근소하게 {name} 쪽이다. 추정 확률 {_pct(pp)}로 확신할 경기는 아니다."
+        o1 = f"{call} 예측. 추정 확률 {_pct(pp)}로 접전이다."
 
     # R: 가장 강한 근거부터 최대 2개
     reasons: list[str] = []
@@ -102,9 +112,14 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
 
     # E: 숫자 증거
     ev: list[str] = []
+    pr = a.get("pair")
+    if pr and pr["kind"] == "2way":
+        ev.append(f"과거 {pr['lo']:.1f}배 대 {pr['hi']:.1f}배 구도 {pr['n']:,}건에서 {pr['lo']:.1f}배 쪽이 {_pct(pr['lo_rate'])}, {pr['hi']:.1f}배 쪽이 {_pct(pr['hi_rate'])} 이겼다")
+    elif pr and pr["kind"] == "1X2":
+        ev.append(f"과거 홈 {pr['ho']:.1f}배 대 원정 {pr['ao']:.1f}배 구도 {pr['n']:,}건은 홈승 {_pct(pr['H'])}, 무 {_pct(pr['D'])}, 원정승 {_pct(pr['A'])}였다")
     h = (a.get("hist") or {}).get(pick)
-    if h:
-        ev.append(f"베트맨에서 같은 배당 구간({h['bucket']})은 과거 {h['n']:,}건 중 {_pct(h['hit'])}가 맞았다")
+    if h and not pr:
+        ev.append(f"베트맨에서 {h['bucket']} 배당은 과거 {h['n']:,}건 중 {_pct(h['hit'])}가 맞았다")
     if F.get("h2h"):
         hh = F["h2h"]
         ev.append(f"최근 맞대결 {hh['n']}경기는 {m['home']} 기준 {hh['w']}승 {hh['l']}패")
@@ -119,7 +134,7 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
         ev.append("결장·결장 유력 " + ", ".join(parts))
     if side_form and side_form.get("streak"):
         ev.append(f"{name.replace(' 핸디', '')} {side_form['streak']} 중")
-    e_txt = (". ".join(ev[:3]) + ".") if ev else "비교할 과거 기록은 아직 쌓이는 중이다."
+    e_txt = (". ".join(ev[:3]) + ".") if ev else ""
 
     # O: 쓰임새
     risk = a["upset_risk"]
@@ -139,7 +154,7 @@ def describe(m: dict[str, Any]) -> str:
     if not o:
         return "분석에 필요한 데이터가 부족하다."
     m["oreo"] = o
-    return " ".join([o["o1"], o["r"], o["e"], o["o2"]])
+    return " ".join(x for x in [o["o1"], o["r"], o["e"], o["o2"]] if x)
 
 
 def review(m: dict[str, Any], outcome: str) -> dict[str, str] | None:

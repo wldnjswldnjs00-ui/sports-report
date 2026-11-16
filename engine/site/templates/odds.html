@@ -24,7 +24,7 @@
 </section>
 {% for mk, label, sides in MK %}
 <section class="wrap block" data-reveal>
-  <header class="block-head"><h2>{{ label }}</h2><p>배당 구간별로 실제 맞은 비율입니다. 본전 기준(배당의 역수)보다 높게 맞은 칸에 색이 들어갑니다.</p></header>
+  <header class="block-head"><h2>{{ label }}</h2><p>0.1배 단위로 실제 맞은 비율입니다. 본전 기준(배당의 역수)보다 높게 맞은 칸에 색이 들어갑니다.</p></header>
   <div class="tblw"><table class="tbl odds-tbl">
     <thead><tr><th>배당 구간</th>{% for sk, sl in sides %}<th class="n">{{ sl }} 적중률</th>{% endfor %}</tr></thead>
     <tbody>
@@ -39,6 +39,20 @@
   </table></div>
 </section>
 {% endfor %}
+{% if pair_rows %}
+<section class="wrap block" data-reveal id="pairs">
+  <header class="block-head"><h2>배당 대 배당</h2><p>두 선택의 배당이 이렇게 붙었을 때, 배당이 높은 쪽(역배)이 실제로 이긴 비율입니다. 소수 첫째 자리 기준, 25건 이상만 표시합니다.</p></header>
+  <div class="tblw"><table class="tbl">
+    <thead><tr><th>마켓</th><th class="n">낮은 배당</th><th class="n">높은 배당</th><th class="n">표본</th><th class="n">낮은 쪽 승률</th><th class="n">높은 쪽 승률</th><th class="n">높은 쪽 본전 기준</th></tr></thead>
+    <tbody>
+    {% for x in pair_rows %}
+      <tr><td>{{ MARKET_LABEL[x.mk] }}</td><td class="n">{{ '%.1f'|format(x.lo) }}배대</td><td class="n">{{ '%.1f'|format(x.hi) }}배대</td><td class="n">{{ x.n }}</td>
+      <td class="n">{{ (1 - x.hi_rate)|pct(1) }}</td><td class="n{% if x.hi_rate > 1 / (x.hi + 0.05) %} good{% endif %}">{{ x.hi_rate|pct(1) }}</td><td class="n muted">{{ (1 / (x.hi + 0.05))|pct(1) }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</section>
+{% endif %}
 <section class="wrap block" data-reveal id="moves">
   <header class="block-head"><h2>배당이 움직였을 때</h2><p>첫 발매 배당에서 마감 배당까지의 변동 폭별 결과입니다. 배당이 내려갔다는 것은 그쪽으로 구매가 몰렸다는 뜻입니다.</p></header>
   {% set ML = [('d3', '10% 이상 하락'), ('d2', '5~10% 하락'), ('d1', '5% 미만 하락'), ('flat', '변동 없음'), ('u1', '5% 미만 상승'), ('u2', '5% 이상 상승')] %}

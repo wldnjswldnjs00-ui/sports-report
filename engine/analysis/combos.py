@@ -204,7 +204,9 @@ def upset_legs(markets: list[dict[str, Any]], limit: int = 6) -> list[dict[str, 
         if not a or m["market"] not in ("1X2", "WL", "HANDICAP"):
             continue
         for k, o in (m.get("odds") or {}).items():
-            if k == a["pick"] or o < 2.2 or o > 9 or k not in a["p"]:
+            fav = min(m["odds"].values())
+            # 역배 = 그 경기에서 배당이 더 높은 쪽(1.48 대 1.80 이면 1.80). 무승부는 따로 다루지 않는다.
+            if k == "D" or o <= fav or o > 9 or k not in a["p"]:
                 continue
             p = a["p"][k]
             edge = p - (a.get("p_betman") or {}).get(k, p)
@@ -221,6 +223,11 @@ def upset_legs(markets: list[dict[str, Any]], limit: int = 6) -> list[dict[str, 
             ref = (a.get("p_ref") or {}).get(k)
             if ref and ref * o > 0.97:
                 reasons.append("해외 시장 기준 배당이 후함")
+            pr = a.get("pair")
+            if pr and pr["kind"] == "2way" and pr["hi_key"] == k and pr["hi_rate"] * o > 0.93:
+                reasons.append(f"과거 {pr['lo']:.1f} 대 {pr['hi']:.1f}배 구도에서 {pr['hi_rate'] * 100:.0f}% 승리")
+            if pr and pr["kind"] == "1X2" and pr.get(k, 0) * o > 0.93:
+                reasons.append(f"과거 같은 배당 구도에서 {pr[k] * 100:.0f}% 승리")
             if not reasons or p < 0.2:
                 continue
             leg = _leg(m, a, k)

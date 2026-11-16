@@ -76,6 +76,21 @@
   }
   tiltCards(doc);
 
+  /* 레일: 5초마다 자동으로 다음 카드, 손대면 멈춤 */
+  $$("[data-rail]").forEach(function (rail) {
+    var n = rail.children.length, hold = false, timer;
+    if (n < 2 || reduce) return;
+    function next() {
+      if (hold || doc.hidden) return;
+      var w = rail.clientWidth + 16, i = Math.round(rail.scrollLeft / w);
+      rail.scrollTo({ left: ((i + 1) % n) * w, behavior: "smooth" });
+    }
+    ["pointerdown", "touchstart", "wheel", "focusin", "mouseenter"].forEach(function (ev) {
+      rail.addEventListener(ev, function () { hold = true; clearTimeout(timer); timer = setTimeout(function () { hold = false; }, 9000); }, { passive: true });
+    });
+    setInterval(next, 5000);
+  });
+
   /* 탭 */
   $$("[data-tabs]").forEach(function (tabs) {
     var btns = $$("[role=tab]", tabs), ink = $(".tabs-ink", tabs);

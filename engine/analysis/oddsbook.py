@@ -12,8 +12,8 @@ from .. import config
 from ..util import read_json, write_json
 
 PATH = config.STATE / "oddsbook.json"
-EDGES = [1.0, 1.15, 1.3, 1.45, 1.6, 1.8, 2.0, 2.3, 2.7, 3.2, 4.0, 5.0, 7.0, 10.0, 1000.0]
-MIN_N = 60
+EDGES = [round(1.0 + 0.1 * i, 1) for i in range(21)] + [3.5, 4.0, 5.0, 7.0, 10.0, 1000.0]  # 3.0배까지 0.1 단위
+MIN_N = 30
 
 
 def bucket(o: float) -> int:
@@ -25,7 +25,11 @@ def bucket(o: float) -> int:
 
 def label(i: int) -> str:
     lo, hi = EDGES[i], EDGES[i + 1]
-    return f"{lo:.2f}~{hi:.2f}" if hi < 100 else f"{lo:.0f}배 이상"
+    if hi >= 100:
+        return f"{lo:.0f}배 이상"
+    if round(hi - lo, 2) == 0.1:
+        return f"{lo:.1f}배대"
+    return f"{lo:.1f}~{hi:.1f}배"
 
 
 def _role(market: str, side: str) -> str:
@@ -39,6 +43,7 @@ def _role(market: str, side: str) -> str:
 def build(rows: list[list]) -> dict[str, Any]:
     acc: dict[str, dict] = {}
     moves: dict[str, dict] = {}
+    pairs: dict[str, dict] = {}
 
     def add(key, o, hit):
         a = acc.setdefault(key, {"n": 0, "hit": 0, "ret": 0.0, "inv": 0.0})
@@ -64,6 +69,19 @@ def build(rows: list[list]) -> dict[str, Any]:
             add(f"all|all|{'D' if side == 'D' else 'X'}|{b}", o, hit)
             add(f"side|{mk}|{side}|{b}", o, hit)          # 배당 분석 페이지용: 마켓×선택×구간
             add(f"sidesum|{mk}|{side}|0", o, hit)
+        # 배당 대 배당 구도: 소수 첫째 자리 기준 (예: 1.5배 대 1.8배에서 1.8배 쪽이 이긴 비율)
+        if mk in ("WL", "HANDICAP", "OU") and not (d and d > 1):
+            lo_side, hi_side = (0, 2) if w <= l else (2, 0)
+            lo_o, hi_o = min(w, l), max(w, l)
+            pk = f"{mk}|{int(lo_o * 10 + 1e-6)}|{int(hi_o * 10 + 1e-6)}"
+            pr = pairs.setdefault(pk, {"n": 0, "hi": 0})
+            pr["n"] += 1
+            pr["hi"] += int(code == hi_side)
+        elif mk == "1X2" and d and d > 1:
+            pk = f"1X2|{int(w * 10 + 1e-6)}|{int(l * 10 + 1e-6)}"
+            pr = pairs.setdefault(pk, {"n": 0, "h": 0, "d": 0, "a": 0})
+            pr["n"] += 1
+            pr["h" if code == 0 else "d" if code == 1 else "a"] += 1
         # 배당 변동: 첫 발매 배당 대비
         if len(row) >= 17:
             opens = {0: row[14], 1: row[15], 2: row[16]}
@@ -84,7 +102,7 @@ def build(rows: list[list]) -> dict[str, Any]:
         table[k] = {"n": n, "hit": round(a["hit"] / n, 4), "be": round(a["inv"] / n, 4), "roi": round(a["ret"] / n - 1, 4)}
     mv_out = {k: {"n": v["n"], "hit": round(v["hit"] / v["n"], 4), "be": round(v["inv"] / v["n"], 4), "roi": round(v["ret"] / v["n"] - 1, 4)}
               for k, v in moves.items() if v["n"]}
-    return {"updated": config.now_kst().isoformat(timespec="seconds"), "rows": len(rows), "edges": EDGES, "table": table, "moves": mv_out}
+    return {"updated": config.now_kst().isoformat(timespec="seconds"), "rows": len(rows), "edges": EDGES, "table": table, "moves": mv_out, "pairs": pairs}
 
 
 def save(book: dict) -> None:
@@ -134,3 +152,45 @@ def best_buckets(book: dict, limit: int = 6) -> list[dict]:
         out.append({"key": k, "sport": sport, "market": mk, "role": role, "bucket": label(int(b)), **s})
     out.sort(key=lambda x: -x["roi"])
     return out[:limit]
+
+
+def pair_stat(book: dict, m: dict) -> dict | None:
+    """이 경기와 같은 '배당 대 배당' 구도의 과거 결과. 표본이 20 미만이면 이웃(±0.1) 구간까지 합친다."""
+    pairs = (book or {}).get("pairs") or {}
+    odds = m.get("odds") or {}
+    mk = m["market"]
+    if mk == "1X2" and {"H", "D", "A"} <= set(odds):
+        a, b = int(odds["H"] * 10 + 1e-6), int(odds["A"] * 10 + 1e-6)
+        acc = {"n": 0, "h": 0, "d": 0, "a": 0}
+        for width in (0, 1, 2):
+            acc = {"n": 0, "h": 0, "d": 0, "a": 0}
+            for da in range(-width, width + 1):
+                for db in range(-width, width + 1):
+                    pr = pairs.get(f"1X2|{a + da}|{b + db}")
+                    if pr:
+                        for k in acc:
+                            acc[k] += pr.get(k, 0)
+            if acc["n"] >= 20:
+                break
+        if acc["n"] < 20:
+            return None
+        n = acc["n"]
+        return {"kind": "1X2", "n": n, "H": round(acc["h"] / n, 4), "D": round(acc["d"] / n, 4), "A": round(acc["a"] / n, 4),
+                "ho": a / 10, "ao": b / 10}
+    if mk in ("WL", "HANDICAP", "OU") and len(odds) == 2:
+        (k1, o1), (k2, o2) = sorted(odds.items(), key=lambda kv: kv[1])
+        a, b = int(o1 * 10 + 1e-6), int(o2 * 10 + 1e-6)
+        n = hi = 0
+        for width in (0, 1, 2):
+            n = hi = 0
+            for da in range(-width, width + 1):
+                for db in range(-width, width + 1):
+                    pr = pairs.get(f"{mk}|{a + da}|{b + db}")
+                    if pr:
+                        n += pr["n"]; hi += pr["hi"]
+            if n >= 20:
+                break
+        if n < 20:
+            return None
+        return {"kind": "2way", "n": n, "lo_key": k1, "hi_key": k2, "lo": a / 10, "hi": b / 10, "hi_rate": round(hi / n, 4), "lo_rate": round(1 - hi / n, 4)}
+    return None

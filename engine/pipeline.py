@@ -152,7 +152,17 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
     ou_picks = C.market_legs(upcoming, "OU")
 
     legs = C.legs_from(proto)
-    top = max((l for l in legs if l["confidence"] >= 55 and l["odds"] >= 1.2), key=lambda l: l["p"] * (1 + l["confidence"] / 200), default=None)
+    cands = sorted((l for l in legs if l["confidence"] >= 55 and l["odds"] >= 1.2 and datetime.fromisoformat(l["kickoff"]) > now),
+                   key=lambda l: -(l["p"] * (1 + l["confidence"] / 200)))
+    top_picks, seen_match = [], set()
+    for l in cands:
+        if l["match"] in seen_match:
+            continue
+        seen_match.add(l["match"])
+        top_picks.append(l)
+        if len(top_picks) >= 6:
+            break
+    top = top_picks[0] if top_picks else (prev.get("top_pick") if prev.get("date") == day else None)
     caution = sorted(
         [m for m in proto if m["analysis"]["pick_odds"] and m["analysis"]["pick_odds"] < 1.9 and m["analysis"]["upset_risk"] >= 33],
         key=lambda m: -m["analysis"]["upset_risk"],
@@ -183,6 +193,7 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
         "handi_picks": handi_picks,
         "ou_picks": ou_picks,
         "top_pick": top,
+        "top_picks": top_picks,
         "caution": [m["id"] for m in caution],
         "odds_moves": moves,
         "pending": sorted([x for x in betman.PENDING if x["kickoff"] > now.isoformat()], key=lambda x: x["kickoff"])[:60] if not config.DEMO else [],
@@ -274,7 +285,7 @@ def grade(today: str, lookback: int = 7, fetch_scores: bool = True) -> dict:
     cal = G.fit_alpha(reports)
     from .sources import betman_history
     elo = G.rebuild_elo(reports, results_by_date, betman_history.load_all())
-    G.save_state(perf, cal, elo)
+    G.save_state(perf, cal, elo, G.learn(reports))
     log.info("채점 완료: 픽 %s", perf["picks"]["all"])
     return perf
 

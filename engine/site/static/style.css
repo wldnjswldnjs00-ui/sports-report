@@ -520,3 +520,14 @@ html:not(.is-mobile):not(.is-pc) .mo-only { display: none; }
 @media (max-width: 960px) { .two { grid-template-columns: 1fr; } .tool-result { position: static; } }
 
 .m-text.review { background: var(--card-2); border-radius: var(--r-sm); padding: 12px 14px; }
+
+/* 적중 확률 높은 경기: 옆으로 넘기는 레일(점 표시 없음) */
+.tp-wrap { padding-top: 30px; }
+.tp-rail { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 4px 2px 26px; margin: 0 -2px; -webkit-overflow-scrolling: touch; }
+.tp-rail::-webkit-scrollbar { display: none; }
+.tp-rail .top-pick { flex: 0 0 100%; width: 100%; max-width: none; margin: 0; scroll-snap-align: center; }
+.tp-rail .tp-body { padding-top: 22px; }
+.tp-rail .tp-nums { padding-top: 22px; }
+.tp-match { font: 400 clamp(26px, 3.2vw, 38px)/1.15 var(--ko); margin: 6px 0 12px; }
+.pairline { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 10px 14px; font-size: 14px; margin: 0 0 8px; }
+.pairline b { color: var(--hot); }

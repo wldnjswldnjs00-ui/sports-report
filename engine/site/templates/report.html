@@ -41,23 +41,29 @@
 {% if not r.markets %}
 <section class="wrap block"><p class="none">이 날짜에는 분석된 경기가 없습니다. 발매가 열리면 다음 수집 주기(06:00 · 09:30 · 13:00 · 18:00 · 22:30)에 자동으로 채워집니다.</p></section>
 {% else %}
-{% if r.top_pick %}
-{% set t = r.top_pick %}{% set tm = mk[t.market_id] %}
-<section class="wrap block top-pick" data-reveal>
-  <div class="tp-label"><span>가장 확실한 한 경기</span></div>
-  <div class="tp-body">
-    <p class="tp-league">{{ SPORT_LABEL[t.sport] }} · {{ t.league }} · {{ t.kickoff|kdt }}</p>
-    <h2 class="tp-match">{{ t.home }} <i>vs</i> {{ t.away }}</h2>
-    <p class="tp-pick"><span class="bub on">{{ outcome(t, t.outcome) }}</span> <span>{{ t.odds|odds }}배</span></p>
-    {{ prob_bar(tm) }}
-    {{ oreo_block(tm) }}
+{% set tps = r.top_picks or ([r.top_pick] if r.top_pick else []) %}
+{% if tps %}
+<section class="wrap block tp-wrap" data-reveal>
+  <header class="block-head"><h2>적중 확률이 높아 보이는 경기</h2>{% if tps|length > 1 %}<p>{{ tps|length }}경기 · 옆으로 넘겨 보세요</p>{% endif %}</header>
+  <div class="tp-rail" data-rail tabindex="0" aria-label="적중 확률이 높아 보이는 경기">
+  {% for t in tps %}{% set tm = mk.get(t.market_id) %}{% if tm %}
+    <article class="top-pick">
+      <div class="tp-body">
+        <p class="tp-league">{{ SPORT_LABEL[t.sport] }} · {{ t.league }} · {{ t.kickoff|kdt }}</p>
+        <h3 class="tp-match">{{ t.home }} <i>vs</i> {{ t.away }}</h3>
+        <p class="tp-pick"><span class="bub on">{{ outcome(t, t.outcome) }}</span> <span>{{ t.odds|odds }}배</span></p>
+        {{ prob_bar(tm) }}
+        {{ oreo_block(tm) }}
+      </div>
+      <dl class="tp-nums">
+        <div><dt>추정 확률</dt><dd>{{ t.p|pct(1) }}</dd></div>
+        <div><dt>신뢰도</dt><dd>{{ t.confidence }}</dd></div>
+        <div><dt>이변 위험</dt><dd>{{ t.upset_risk }}</dd></div>
+        <div><dt>배당</dt><dd>{{ t.odds|odds }}</dd></div>
+      </dl>
+    </article>
+  {% endif %}{% endfor %}
   </div>
-  <dl class="tp-nums">
-    <div><dt>추정 확률</dt><dd>{{ t.p|pct(1) }}</dd></div>
-    <div><dt>신뢰도</dt><dd>{{ t.confidence }}</dd></div>
-    <div><dt>이변 위험</dt><dd>{{ t.upset_risk }}</dd></div>
-    <div><dt>배당</dt><dd>{{ t.odds|odds }}</dd></div>
-  </dl>
 </section>
 {% endif %}
 
@@ -91,7 +97,7 @@
 
 {% if r.upsets %}
 <section class="wrap block" data-reveal>
-  <header class="block-head"><h2>역배 후보</h2><p>배당 2.2배 이상이면서 근거가 겹치는 선택입니다.</p></header>
+  <header class="block-head"><h2>역배 후보</h2><p>배당이 더 높은 쪽인데 근거가 붙은 선택입니다.</p></header>
   {{ pick_table(r.upsets, '근거') }}
 </section>
 {% endif %}
@@ -146,7 +152,6 @@
           </button>
           {% endfor %}
         </div>
-        {{ review_block(m) }}
         {{ oreo_block(m) }}
         {% if m.form and (m.form.home or m.form.away) %}<p class="m-form"><span>{{ m.home }}</span>{{ form_seq(m.form.home) }}<span>{{ m.away }}</span>{{ form_seq(m.form.away) }}</p>{% endif %}
         {% if m.injuries %}{% set outs_n = (m.injuries.home|selectattr('out')|list|length) + (m.injuries.away|selectattr('out')|list|length) %}{% if outs_n %}<p class="m-inj">결장·결장 유력 {{ outs_n }}명 — 경기 페이지에서 확인</p>{% endif %}{% endif %}

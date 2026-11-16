@@ -26,7 +26,7 @@ def _divergence(a: dict[str, float], b: dict[str, float]) -> float:
 
 def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, alpha: float, book: dict | None = None) -> dict[str, Any]:
     odds = m.get("odds") or {}
-    from .oddsbook import hist_probs
+    from .oddsbook import hist_probs, pair_stat
     p_hist, hist_info = hist_probs(book or {}, m) if odds else (None, {})
     p_bet = remove_margin_power(odds) if odds else {}
     p_elo = elo.probs(m["sport"], m["home"], m["away"], m["market"]) if m["market"] in ("1X2", "WL") else None
@@ -45,6 +45,7 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
     if not p:
         return {**m, "analysis": None}
     p = shrink(p, alpha)
+    p = _apply_lessons(p, m)
     order = ("H", "D", "A", "O", "U")  # 화면 표시 순서 고정(승·무·패, 오버·언더)
     p = {k: p[k] for k in order if k in p}
 
@@ -100,12 +101,37 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
             "flags": flags,
             "payout_rate": round(1 / overround(odds), 4) if odds else None,
             "hist": hist_info or None,
+            "pair": pair_stat(book or {}, m) if odds else None,
             "elo": {
                 "home": round(elo.rating(m["sport"], m["home"])),
                 "away": round(elo.rating(m["sport"], m["away"])),
             } if p_elo else None,
         },
     }
+
+
+_LESSONS: dict | None = None
+
+
+def _apply_lessons(p: dict[str, float], m: dict[str, Any]) -> dict[str, float]:
+    """복기에서 배운 보정: 배당이 다른 쪽으로 내려가는 경기에서 과거에 덜 맞았다면 그만큼 확률을 옮긴다."""
+    global _LESSONS
+    if _LESSONS is None:
+        _LESSONS = read_json(config.STATE / "lessons.json", {}) or {}
+    ls = _LESSONS.get("flow_against") or {}
+    if ls.get("n", 0) < 40 or ls.get("gap", 0) <= 0.02:
+        return p
+    fl = m.get("flow") or {}
+    pick = max(p, key=p.get)
+    drops = {k: (fl["from"][k] - v) / fl["from"][k] for k, v in (fl.get("to") or {}).items() if (fl.get("from") or {}).get(k) and k in p}
+    rival = max((k for k in drops if k != pick), key=lambda k: drops[k], default=None)
+    if not rival or drops[rival] < 0.03:
+        return p
+    shift = min(p[pick] * 0.5, ls["gap"] * min(1.0, ls["n"] / 150))
+    q = dict(p)
+    q[pick] -= shift
+    q[rival] += shift
+    return q
 
 
 def calibration_alpha() -> float:
