@@ -22,6 +22,7 @@ from ..analysis.grading import is_pick
 from ..analysis.grading import load_perf
 from ..schema import MARKET_LABEL, OUTCOME_LABEL, SPORT_LABEL
 from ..util import read_json, slug, write_json
+from . import insight as INS
 
 log = logging.getLogger("engine.build")
 HERE = Path(__file__).resolve().parent
@@ -496,11 +497,18 @@ def build() -> None:
     def team_info(sport, name):
         return tinfo.get((sport, name))
 
+    def insights(g):
+        try:
+            return INS.build(g, team_info(g["sport"], g["home"]), team_info(g["sport"], g["away"]))
+        except Exception:  # noqa: BLE001
+            log.exception("숫자 비교 실패")
+            return None
+
     def match_url(m):
         return murl.get((m.get("home"), m.get("away"), str(m.get("kickoff"))[:10])) if m else None
 
     ctx = dict(perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues,
-               team_link=team_link, match_url=match_url, team_info=team_info, box_of=box_of)
+               team_link=team_link, match_url=match_url, team_info=team_info, box_of=box_of, insights=insights)
     urls: list[tuple[str, str]] = []
 
     def page(tpl: str, out: str, **kw):

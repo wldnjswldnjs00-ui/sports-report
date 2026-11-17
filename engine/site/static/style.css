@@ -1151,3 +1151,18 @@ h1, h2, h3, .block-head h2 { text-wrap: balance; }
 .flow-sum { margin: 8px 0 0; font-size: 13.5px; color: var(--ink-2); }
 .flow-svg .z { stroke: var(--ink-3); stroke-width: 1; stroke-dasharray: 2 3; }
 @media (min-width: 900px) { .flow-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .flow-grid .flow-card { margin-bottom: 0; } }
+/* 숫자가 말하는 것 */
+.ins-notes { list-style: none; margin: 0 0 12px; padding: 0; background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.ins-notes li + li { border-top: 1px solid var(--line); }
+.ins-notes li { position: relative; padding: 12px 14px 12px 30px; font-size: 14.5px; line-height: 1.6; color: var(--ink-2); word-break: keep-all; overflow-wrap: anywhere; }
+.ins-notes li::before { content: ""; position: absolute; left: 14px; top: 21px; width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); }
+.ins-more { margin: 0 0 8px; }
+.ins-more > summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: var(--ink-2); padding: 6px 0; user-select: none; }
+.ins-more > summary::-webkit-details-marker { display: none; }
+.ins-more > summary::after { content: ""; width: 7px; height: 7px; border-right: 1.6px solid currentColor; border-bottom: 1.6px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform .2s; }
+.ins-more[open] > summary::after { transform: rotate(-135deg) translateY(-2px); }
+.ins-more[open] > summary { margin-bottom: 8px; }
+.vs-tbl tr.vs-sep td { width: auto; text-align: center; font-size: 11.5px; font-weight: 700; color: var(--ink-3); letter-spacing: .02em; background: var(--card-2, transparent); padding-top: 10px; }
+.fseq .rW { background: color-mix(in srgb, var(--t-pos, var(--hit)) 16%, transparent); color: var(--t-pos, var(--hit)); }
+.fseq .rD { background: color-mix(in srgb, var(--t-draw, #d9a21b) 16%, transparent); color: var(--t-draw, #b8860b); }
+.fseq .rL { background: color-mix(in srgb, var(--t-neg, var(--neg)) 16%, transparent); color: var(--t-neg, var(--neg)); }

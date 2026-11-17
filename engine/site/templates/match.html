@@ -16,8 +16,13 @@
 
   {% set th = team_info(g.sport, g.home) %}{% set ta = team_info(g.sport, g.away) %}
   {% if th and ta %}
+  {% set ins = insights(g) %}
   <section class="vs-card" aria-label="두 팀 비교">
-    <h2 class="sub">두 팀 비교</h2>
+    <h2 class="sub">{{ '숫자가 말하는 것' if ins else '두 팀 비교' }}</h2>
+    {% if ins %}
+    <ul class="ins-notes">{% for t in ins.notes %}<li>{{ t }}</li>{% endfor %}</ul>
+    <details class="ins-more"><summary>자세한 숫자 보기</summary>
+    {% endif %}
     <div class="tblw"><table class="tbl vs-tbl">
       <thead><tr><th><a href="{{ th.url }}">{{ g.home }}</a><small class="muted"> 홈</small></th><th class="vs-mid"></th><th class="n"><a href="{{ ta.url }}">{{ g.away }}</a><small class="muted"> 원정</small></th></tr></thead>
       <tbody>
@@ -29,9 +34,13 @@
         {% if th.avg_for is not none and ta.avg_for is not none %}<tr><td>{{ th.avg_for }} / {{ th.avg_against }}</td><td class="vs-mid">득점·실점</td><td class="n">{{ ta.avg_for }} / {{ ta.avg_against }}</td></tr>{% endif %}
         <tr><td>{% if th.fav_n %}{{ (th.fav_w / th.fav_n)|pct }} <small class="muted">{{ th.fav_n }}</small>{% else %}–{% endif %}</td><td class="vs-mid">정배 승률</td><td class="n">{% if ta.fav_n %}{{ (ta.fav_w / ta.fav_n)|pct }} <small class="muted">{{ ta.fav_n }}</small>{% else %}–{% endif %}</td></tr>
         <tr><td>{% if th.dog_n %}{{ (th.dog_w / th.dog_n)|pct }} <small class="muted">{{ th.dog_n }}</small>{% else %}–{% endif %}</td><td class="vs-mid">역배 승률</td><td class="n">{% if ta.dog_n %}{{ (ta.dog_w / ta.dog_n)|pct }} <small class="muted">{{ ta.dog_n }}</small>{% else %}–{% endif %}</td></tr>
+        {% if ins %}<tr class="vs-sep"><td colspan="3">경기 내용 · 최근 최대 20경기</td></tr>
+        {% for lab, a, b in ins.rows[1:] %}<tr><td>{{ a }}</td><td class="vs-mid">{{ lab }}</td><td class="n">{{ b }}</td></tr>{% endfor %}{% endif %}
       </tbody>
     </table></div>
-    <p class="fine">베트맨 발매 경기 결과 기준입니다. 팀 이름을 누르면 팀별 기록으로 이동합니다.</p>
+    {% if ins %}<p class="fine">{% if g.sport != 'soccer' %}득실 기준: 득점과 실점만으로 계산한 기대 승수입니다. {% endif %}접전: 근소한 차이로 끝난 경기입니다. 기복: 경기별 득실의 편차로, 클수록 결과가 들쭉날쭉합니다.</p>
+    </details>{% endif %}
+    <p class="fine">베트맨 발매 경기 결과 기준이며 매 갱신 때 다시 계산합니다. 팀 이름을 누르면 팀별 기록으로 이동합니다.</p>
   </section>
   {% endif %}
 
