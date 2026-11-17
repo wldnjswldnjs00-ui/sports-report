@@ -41,7 +41,7 @@ async function dispatch(slot, env) {
       },
       body: JSON.stringify({ ref: "main", inputs: { slot } }),
     });
-    if (r.status === 204) { console.log(`시작함: ${slot}`); return; }
+    if (r.status === 204) { console.log(`시작함: ${slot}`); return true; }
     const body = await r.text();
     console.log(`실패 ${r.status} (${slot}): ${body.slice(0, 300)}`);
     if (r.status === 401 || r.status === 403 || r.status === 404 || r.status === 422) return;
@@ -78,14 +78,24 @@ function dueSlots(now) {
   return out;
 }
 
+// 무료 요금제는 예약 실행 1번에 CPU 10ms 까지라, 큰 JSON 을 해석하지 않는다.
+// 1) 우리가 시작한 기록(KV)이 있으면 끝. 2) 없으면 GitHub 실행 목록(수동 시작분, 최근 10개)을 글자 그대로 찾아본다.
+const ranKey = (slot, start) => `ran:${slot}:${new Date(start).toISOString().slice(0, 10)}`;
+
 async function alreadyRan(slot, start, env) {
+  if (env.PUSH && await env.PUSH.get(ranKey(slot, start))) return true;
   const since = new Date(start - 10 * 60000).toISOString().slice(0, 19) + "Z";
-  const url = `https://api.github.com/repos/${REPO}/actions/workflows/${WORKFLOW}/runs?per_page=30&created=%3E%3D${since}`;
+  const url = `https://api.github.com/repos/${REPO}/actions/workflows/${WORKFLOW}/runs?per_page=10&created=%3E%3D${since}`;
   const r = await fetch(url, { headers: GH(env) });
   if (!r.ok) throw new Error(`실행 목록 ${r.status}`);
-  const runs = (await r.json()).workflow_runs || [];
-  return runs.some((x) => x.display_title === `매일 분석 · ${slot}` || x.name === `매일 분석 · ${slot}` ||
-    String((x.head_commit || {}).message || "").includes(`[slot:${slot}]`));
+  const text = await r.text();
+  return text.includes(`매일 분석 · ${slot}"`) || text.includes(`[slot:${slot}]`);
+}
+
+async function note(env, msg) {
+  // 마지막 상태만 덮어쓴다(값에 비밀 없음). /api/status 로 확인
+  if (!env.PUSH) return;
+  try { await env.PUSH.put("cronlog", JSON.stringify({ at: new Date().toISOString(), msg })); } catch (e) {}
 }
 
 async function alert(slot, env) {
@@ -101,14 +111,19 @@ async function alert(slot, env) {
 }
 
 async function ensure(now, env) {
-  if (!env.GH_TOKEN) { console.log("GH_TOKEN 없음"); return; }
-  for (const { slot, start, age } of dueSlots(now)) {
+  const due = dueSlots(now);
+  if (!due.length) return;
+  if (!env.GH_TOKEN) { console.log("GH_TOKEN 없음"); await note(env, "GH_TOKEN 없음"); return; }
+  for (const { slot, start, age } of due) {
     try {
       if (await alreadyRan(slot, start, env)) continue;
-      if (age >= WINDOW - 5) { await alert(slot, env); continue; }
-      await dispatch(slot, env);
+      if (age >= WINDOW - 5) { await alert(slot, env); await note(env, `누락 경고 ${slot}`); continue; }
+      const ok = await dispatch(slot, env);
+      if (ok && env.PUSH) await env.PUSH.put(ranKey(slot, start), "1", { expirationTtl: 172800 });
+      await note(env, ok ? `시작 ${slot}` : `시작 실패 ${slot}`);
     } catch (e) {
       console.log(`확인 실패 ${slot}: ${e}`); // 다음 깨어남(5분 뒤)에 다시
+      await note(env, `확인 실패 ${slot}: ${String(e).slice(0, 80)}`);
     }
   }
 }
@@ -275,6 +290,12 @@ export default {
       await ensure(Date.now(), env);
       return json({ ok: true });
     }
+    if (path === "/api/status") {
+      // 예약 실행이 살아 있는지 확인용(비밀 값 없음): 마지막 깨어남 시각과 마지막 시작 기록
+      const hb = env.PUSH ? await env.PUSH.get("hb") : null;
+      const log = env.PUSH ? await env.PUSH.get("cronlog", "json") : null;
+      return json({ ok: true, cron_last: hb, last: log, kv: !!env.PUSH, gh: !!env.GH_TOKEN });
+    }
     if (path === "/api/tt") {
       try { return await ttApi(request, env); } catch (e) { return json({ ok: false }, 500); }
     }
@@ -287,6 +308,10 @@ export default {
     const t = hhmm(event);
     if (t === PUSH_AT) ctx.waitUntil(sendAll(env));
     ctx.waitUntil(ensure(event.scheduledTime, env));
+    // 살아 있음 표시: 15분마다 한 번만 쓴다(KV 무료 쓰기 한도 보호)
+    if (env.PUSH && /:(00|15|30|45)$/.test(t)) {
+      ctx.waitUntil(env.PUSH.put("hb", new Date(event.scheduledTime).toISOString()).catch(() => null));
+    }
     ctx.waitUntil(ttRefresh(env).catch(() => null)); // 7일마다 쓰레드 토큰 연장(지났을 때만)
   },
 };
