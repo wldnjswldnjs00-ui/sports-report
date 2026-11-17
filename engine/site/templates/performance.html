@@ -80,7 +80,7 @@
   <h2 class="sub">일별 픽 적중률</h2>
   {% set days = perf.daily[-30:] %}{% set n = days|length %}
   {% set th = days|sum(attribute='hit') %}{% set tn = days|sum(attribute='n') %}
-  <p class="fine">최근 {{ n }}일 픽 {{ tn }}개 중 {{ th }}개 적중 · 평균 <b>{{ (th / tn * 100)|round|int }}%</b>. 막대를 누르거나 손을 올리면 그날 숫자가 나옵니다.</p>
+  <p class="fine">최근 {{ n }}일 픽 {{ tn }}개 중 {{ th }}개 적중 · 평균 <b>{{ (th / tn * 100)|round|int }}%</b>.</p>
   {% macro daily_svg(VW, minslots, maxlabels, cls) %}
   {% set X0, Y0, H = 38, 14, 120 %}{% set W = VW - X0 - 6 %}{% set slots = [n, minslots]|max %}{% set sw = W / slots %}{% set bw = [sw - 6, 34]|min %}
   {% set step = ((n / maxlabels)|round(0, 'ceil')|int) or 1 %}
@@ -93,7 +93,7 @@
       <g class="dbar" tabindex="0">
         <rect class="hit-area" x="{{ X0 + loop.index0 * sw }}" y="{{ Y0 }}" width="{{ sw }}" height="{{ H }}"/>
         <path class="bar" d="M{{ x }},{{ Y0 + H }}V{{ y + 4 }}Q{{ x }},{{ y }} {{ x + 4 }},{{ y }}H{{ x + bw - 4 }}Q{{ x + bw }},{{ y }} {{ x + bw }},{{ y + 4 }}V{{ Y0 + H }}Z"/>
-        {% if loop.last %}<text class="val" x="{{ x + bw / 2 }}" y="{{ y - 6 }}" text-anchor="middle">{{ (v * 100)|round|int }}%</text>{% endif %}
+        {% if loop.last or (loop.revindex0 % step == 0) %}<text class="val" x="{{ x + bw / 2 }}" y="{{ y - 6 }}" text-anchor="middle">{{ (v * 100)|round|int }}%</text>{% endif %}
         {% if loop.last or (loop.revindex0 % step == 0) %}<text class="axis" x="{{ x + bw / 2 }}" y="{{ Y0 + H + 18 }}" text-anchor="middle">{{ d.date[5:]|replace('-', '/') }}</text>{% endif %}
         <title>{{ d.date[5:]|replace('-', '/') }} · {{ d.n }}개 중 {{ d.hit }}개 적중 ({{ (v * 100)|round|int }}%)</title>
       </g>
