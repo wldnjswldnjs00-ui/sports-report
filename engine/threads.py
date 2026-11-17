@@ -121,13 +121,24 @@ def post() -> bool:
     key = f"{pend['day']}:{pend['slot']}"
     if key in (st.get("posted") or []):
         return False
+    # 토큰 확인: Worker 토큰이 안 되면 GitHub Secrets 토큰으로 한 번 더(둘 중 되는 것을 쓴다)
+    from . import threads_token
+    cands = list(dict.fromkeys([token, threads_token._seed()]))
+    me, errs = None, []
+    for tk in [c for c in cands if c]:
+        try:
+            me = str(http("GET", f"{API}/me", params={"fields": "id", "access_token": tk}, retries=2).json()["id"])
+            token = tk
+            break
+        except Exception as e:  # noqa: BLE001
+            r = getattr(e, "response", None)
+            errs.append(f"{getattr(r, 'status_code', '?')} {(r.text if r is not None else str(e))[:200]}".replace(tk, "***"))
+    if not me:
+        log.warning("Threads 토큰 확인 실패(토큰 만료·권한 문제일 수 있음): %s", " | ".join(errs))
+        return False
     uid = os.getenv("THREADS_USER_ID", "").strip()
     if not uid.isdigit():
-        try:
-            uid = str(http("GET", f"{API}/me", params={"fields": "id", "access_token": token}, retries=2).json()["id"])
-        except Exception as e:  # noqa: BLE001
-            log.warning("Threads 사용자 ID 확인 실패(토큰을 다시 확인): %s", type(e).__name__)
-            return False
+        uid = me
     urls = [f"{config.SITE_URL}/threads/{f}" for f in pend["files"]]
     if not _wait_live(urls):
         log.warning("Threads: 카드 이미지가 사이트에 아직 없음(배포 지연) — 게시하지 않음")

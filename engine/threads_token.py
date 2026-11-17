@@ -58,7 +58,9 @@ def current() -> str:
                 return _cached
             log.info("Worker 토큰 응답 %s: Secrets 토큰 사용", r.status_code)
     except Exception as e:  # noqa: BLE001
-        log.info("Worker 토큰 확인 실패(%s): Secrets 토큰 사용", type(e).__name__)
+        r = getattr(e, "response", None)
+        log.info("Worker 토큰 확인 실패(%s %s): Secrets 토큰 사용", type(e).__name__,
+                 f"{r.status_code} {r.text[:160]}" if r is not None else "")
     _note("seed")
     _cached = seed
     return seed
