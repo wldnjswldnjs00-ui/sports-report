@@ -583,7 +583,11 @@
       head.type = "button"; head.className = "tl-head";
       head.innerHTML = '<span class="tl-meta"></span><span class="tl-name"></span><span class="tl-n"></span><span class="tl-caret" aria-hidden="true"></span>';
       var ko = String(f.ko || "");
-      $(".tl-meta", head).textContent = (f.no ? f.no + "번 · " : "") + f.league + (ko ? " · " + (+ko.slice(5, 7)) + "/" + (+ko.slice(8, 10)) + " " + ko.slice(11, 16) : "");
+      var tm = $(".tl-meta", head);
+      [f.no ? f.no + "번" : "", ko ? (+ko.slice(5, 7)) + "/" + (+ko.slice(8, 10)) + " " + ko.slice(11, 16) : "", f.league].forEach(function (t, i) {
+        if (!t) return;
+        var sp = doc.createElement("span"); sp.textContent = t; if (i === 2) sp.className = "tl-lg"; tm.appendChild(sp);
+      });
       $(".tl-name", head).textContent = f.label;
       var picked = g.mkOrder.reduce(function (n, mk) { return n + g.mks[mk].filter(function (l) { return slip.ids.indexOf(l.id) >= 0; }).length; }, 0);
       $(".tl-n", head).textContent = picked ? picked + "개 담음" : "마켓 " + g.mkOrder.length + "개";

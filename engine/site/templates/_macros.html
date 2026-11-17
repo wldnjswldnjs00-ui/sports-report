@@ -25,7 +25,7 @@
 {% macro leg_row(l) %}
     <li>
       <span class="leg-no">{{ l.game_no or '' }}</span>
-      <span class="leg-match">{{ l.home }} <i>vs</i> {{ l.away }}</span>
+      <span class="leg-match"><span class="tm">{{ l.home }}</span> <span class="tm"><i>vs</i> {{ l.away }}</span></span>
       <span class="bub on {{ (outcome(l, l.outcome))|tone }}">{{ outcome(l, l.outcome) }}</span>
       <span class="leg-odds">{{ l.odds|odds }}</span>
     </li>
