@@ -93,7 +93,9 @@ def prepare(slot: str | None = None, force: bool = False) -> bool:
 
 
 def _token() -> str:
-    return "".join(os.getenv("THREADS_TOKEN", "").split()).strip('"\'')  # 복사할 때 붙은 공백·줄바꿈·따옴표 제거
+    """Worker(KV)에 보관·자동 연장되는 최신 토큰. 못 받으면 GitHub Secrets 토큰(공백·따옴표 제거)."""
+    from . import threads_token
+    return threads_token.current()
 
 
 def _wait_live(urls: list[str], minutes: int = 10) -> bool:

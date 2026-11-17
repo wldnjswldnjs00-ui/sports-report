@@ -27,6 +27,7 @@ concurrency:
 permissions:
   contents: write
   issues: write   # 자동 점검 경고를 이슈로 남긴다(이메일 알림)
+  id-token: write # 쓰레드 토큰을 Cloudflare Worker 에서 받을 때 GitHub 신원 증명(OIDC)을 쓴다
 
 jobs:
   run:

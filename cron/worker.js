@@ -195,6 +195,77 @@ async function api(request, env, path) {
   return json({ ok: false }, 404);
 }
 
+// ───────── 쓰레드 토큰 보관·자동 연장 ─────────
+// 쓰레드 장기 토큰은 60일이면 만료된다. 토큰을 KV(PUSH, 비공개)에만 두고, 이 Worker 가 7일마다 스스로 연장한다.
+// GitHub 자동 실행은 게시할 때 /api/tt 로 최신 토큰을 받아 간다. 요청자는 GitHub 이 발급한 OIDC 신원 증명(JWT)으로 확인한다:
+//   발급자 token.actions.githubusercontent.com, 대상 "sports-report-worker", 저장소 REPO 일 때만 응답(따로 둘 비밀 값 없음).
+// 처음 한 번은 GitHub Secrets 의 토큰을 함께 보내 KV 에 넣고(KV 에 없을 때만), 그 뒤로는 KV 의 토큰을 연장해 쓴다.
+const OIDC_ISS = "https://token.actions.githubusercontent.com";
+const OIDC_AUD = "sports-report-worker";
+const TT_EVERY = 7 * 24 * 3600 * 1000;
+
+const b64uToBytes = (s) => Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((s.length + 3) % 4)), (c) => c.charCodeAt(0));
+
+async function verifyGithub(jwt) {
+  const parts = String(jwt || "").split(".");
+  if (parts.length !== 3) return null;
+  let head, claims;
+  try {
+    head = JSON.parse(new TextDecoder().decode(b64uToBytes(parts[0])));
+    claims = JSON.parse(new TextDecoder().decode(b64uToBytes(parts[1])));
+  } catch (e) { return null; }
+  if (head.alg !== "RS256" || claims.iss !== OIDC_ISS || claims.aud !== OIDC_AUD || claims.repository !== REPO) return null;
+  const now = Math.floor(Date.now() / 1000);
+  if (!(claims.exp > now) || (claims.nbf && claims.nbf > now + 60)) return null;
+  const jwks = await (await fetch(OIDC_ISS + "/.well-known/jwks", { cf: { cacheTtl: 3600 } })).json();
+  const jwk = (jwks.keys || []).find((k) => k.kid === head.kid);
+  if (!jwk) return null;
+  const key = await crypto.subtle.importKey("jwk", { kty: jwk.kty, n: jwk.n, e: jwk.e, alg: "RS256", ext: true },
+    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["verify"]);
+  const ok = await crypto.subtle.verify("RSASSA-PKCS1-v1_5", key, b64uToBytes(parts[2]), new TextEncoder().encode(parts[0] + "." + parts[1]));
+  return ok ? claims : null;
+}
+
+async function ttRefresh(env, force = false) {
+  if (!env.PUSH) return null;
+  const st = await env.PUSH.get("tt", "json");
+  if (!st || !st.token) return st;
+  if (!force && Date.now() - (st.refreshed || 0) < TT_EVERY) return st;
+  const r = await fetch(`https://graph.threads.net/refresh_access_token?grant_type=th_refresh_token&access_token=${encodeURIComponent(st.token)}`);
+  if (!r.ok) {
+    st.error = { at: Date.now(), status: r.status, body: (await r.text()).slice(0, 200).replace(st.token, "***") };
+    await env.PUSH.put("tt", JSON.stringify(st));
+    console.log(`쓰레드 토큰 연장 실패 ${r.status}`);
+    return st;
+  }
+  const d = await r.json();
+  if (!d.access_token) return st;
+  const next = { token: d.access_token, refreshed: Date.now(), expires: Date.now() + (Number(d.expires_in) || 0) * 1000 };
+  await env.PUSH.put("tt", JSON.stringify(next));
+  console.log(`쓰레드 토큰 연장 완료(만료 ${new Date(next.expires).toISOString().slice(0, 10)})`);
+  return next;
+}
+
+async function ttApi(request, env) {
+  if (!env.PUSH) return json({ ok: false, reason: "off" }, 503);
+  if (request.method !== "POST") return json({ ok: false }, 405);
+  const auth = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
+  const who = await verifyGithub(auth);
+  if (!who) return json({ ok: false }, 401);
+  let body = {};
+  try { body = await request.json(); } catch (e) {}
+  let st = await env.PUSH.get("tt", "json");
+  const seedOk = body.seed && typeof body.seed === "string" && body.seed.length > 20;
+  // KV 토큰이 없거나, 이미 만료됐는데 GitHub Secrets 에 새 토큰이 들어온 경우 그 토큰으로 다시 시작
+  if (seedOk && (!st || !st.token || (st.expires && st.expires < Date.now() && st.token !== body.seed.trim()))) {
+    st = { token: body.seed.trim(), refreshed: 0, expires: 0 }; // 처음 한 번: GitHub Secrets 토큰을 넣고 바로 연장
+    await env.PUSH.put("tt", JSON.stringify(st));
+  }
+  if (!st || !st.token) return json({ ok: false, reason: "empty" }, 404);
+  st = (await ttRefresh(env)) || st;
+  return json({ ok: true, token: st.token, expires: st.expires || null, error: st.error || null });
+}
+
 export default {
   async fetch(request, env) {
     const path = new URL(request.url).pathname;
@@ -203,6 +274,9 @@ export default {
       if (await throttled()) return json({ ok: true, skipped: "too soon" });
       await ensure(Date.now(), env);
       return json({ ok: true });
+    }
+    if (path === "/api/tt") {
+      try { return await ttApi(request, env); } catch (e) { return json({ ok: false }, 500); }
     }
     if (path.startsWith("/api/push/")) {
       try { return await api(request, env, path); } catch (e) { return json({ ok: false }, 500); }
@@ -213,5 +287,6 @@ export default {
     const t = hhmm(event);
     if (t === PUSH_AT) ctx.waitUntil(sendAll(env));
     ctx.waitUntil(ensure(event.scheduledTime, env));
+    ctx.waitUntil(ttRefresh(env).catch(() => null)); // 7일마다 쓰레드 토큰 연장(지났을 때만)
   },
 };
