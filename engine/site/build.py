@@ -578,7 +578,9 @@ def build() -> None:
         lg["table"] = tb
     for lg in leagues.values():
         lg["games"] = lgames.get(PX.lkey(lg["name"]), [])
-    page("leagues.html", "/leagues/")
+    # 지금 발매 중인 리그(오늘·다음 구매일 리포트에 경기가 있는 리그)
+    live_lg = {PX.lkey(m["league"]) for r in reports if r["date"] >= today.isoformat() for m in r.get("markets", [])}
+    page("leagues.html", "/leagues/", live_lg=live_lg, lkey=PX.lkey)
     for lg in leagues.values():
         page("league.html", f"/leagues/{lg['slug']}/", og_image=OGP.league(config.DIST, f"/leagues/{lg['slug']}/", lg), lg=lg,
              jsonld=_jsonld(_crumbs([("홈", "/"), ("리그별 기록", "/leagues/"), (lg["name"], f"/leagues/{lg['slug']}/")])))

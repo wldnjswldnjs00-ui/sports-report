@@ -6,22 +6,61 @@
   <p class="kicker">LEAGUES</p><h1>리그별 순위와 분석</h1>
   <p class="lede">리그를 누르면 이번 시즌 순위표, 팀 목록, 최근 분석 경기를 볼 수 있습니다.</p>
 </section>
-<section class="wrap block">
-  {% for sp in ['basketball', 'volleyball', 'soccer', 'baseball'] %}
-  {% set lgs = leagues.values()|selectattr('sport', 'equalto', sp)|list %}
-  {% if lgs %}
-  <h2 class="sub">{{ SPORT_LABEL[sp] }}</h2>
-  <ul class="lg-cards">
-    {% for lg in lgs|sort(attribute='name') %}{% set tb = lg.table %}
-    <li><a href="/leagues/{{ lg.slug }}/">
-      <b>{{ lg.name }}</b>
-      <span class="muted">{% if tb %}{{ tb.season }} · 1위 {{ tb.rows[0].team }}{% else %}순위표 없음(대회·친선전){% endif %}</span>
-      <small class="muted">{% if lg.n %}분석 {{ lg.n }}마켓{% if lg.graded >= 10 %} · 적중률 {{ (lg.hit / lg.graded)|pct(0) }}{% endif %}{% else %}최근 분석 없음{% endif %}</small>
-    </a></li>
+{% set SP = ['soccer', 'basketball', 'baseball', 'volleyball'] %}
+{% set all = leagues.values()|list %}
+{% set ns = namespace(live=[]) %}{% for lg in all %}{% if lkey(lg.name) in live_lg %}{% set ns.live = ns.live + [lg] %}{% endif %}{% endfor %}
+<section class="wrap block lgi-page">
+  {% if ns.live %}
+  <h2 class="sub">지금 발매 중</h2>
+  <ul class="lgi-live">
+    {% for lg in ns.live|sort(attribute='name') %}
+    <li><a href="/leagues/{{ lg.slug }}/"><span class="lgi-dot" aria-hidden="true"></span>{{ lg.name }}<small>{{ SPORT_LABEL[lg.sport] }}</small></a></li>
     {% endfor %}
   </ul>
   {% endif %}
+
+  <div class="chips lgi-filter" role="tablist" data-lgi-filter>
+    <button type="button" class="chip is-on" data-f="all">전체</button>
+    {% for sp in SP %}{% if all|selectattr('sport', 'equalto', sp)|list %}<button type="button" class="chip" data-f="{{ sp }}">{{ SPORT_LABEL[sp] }}</button>{% endif %}{% endfor %}
+  </div>
+
+  {% for sp in SP %}
+  {% set lgs = all|selectattr('sport', 'equalto', sp)|list %}
+  {% if lgs %}
+  {% set leagues_t = lgs|selectattr('table')|sort(attribute='name')|list %}
+  {% set cups = lgs|rejectattr('table')|sort(attribute='name')|list %}
+  <div class="lgi-group" data-sport="{{ sp }}">
+    <h2 class="sub">{{ SPORT_LABEL[sp] }} <small class="muted">{{ lgs|length }}</small></h2>
+    <ul class="lgi-list">
+      {% for lg in leagues_t %}{% set tb = lg.table %}
+      <li><a href="/leagues/{{ lg.slug }}/">
+        <b>{% if lkey(lg.name) in live_lg %}<span class="lgi-dot" title="지금 발매 중"></span>{% endif %}{{ lg.name }}</b>
+        <span class="lgi-top">1위 {{ tb.rows[0].team }}</span>
+      </a></li>
+      {% endfor %}
+    </ul>
+    {% if cups %}
+    <details class="lgi-cups"><summary>대회·컵·친선전 {{ cups|length }}개</summary>
+      <ul class="lgi-list">
+        {% for lg in cups %}
+        <li><a href="/leagues/{{ lg.slug }}/"><b>{% if lkey(lg.name) in live_lg %}<span class="lgi-dot" title="지금 발매 중"></span>{% endif %}{{ lg.name }}</b><span class="lgi-top">순위표 없음</span></a></li>
+        {% endfor %}
+      </ul>
+    </details>
+    {% endif %}
+  </div>
+  {% endif %}
   {% endfor %}
-  <p class="fine">순위는 베트맨에 발매된 경기의 공식 결과로 셉니다. 발매되지 않은 경기는 빠지므로 공식 순위와 다를 수 있습니다. 적중률은 최근 60일 리포트 기준이며 표본이 적으면 크게 흔들릴 수 있습니다.</p>
+  <p class="fine"><span class="lgi-dot"></span> 표시는 지금 베트맨에 발매 중인 경기가 있는 리그입니다. 순위는 베트맨에 발매된 경기의 공식 결과로 셉니다. 발매되지 않은 경기는 빠지므로 공식 순위와 다를 수 있습니다.</p>
 </section>
+<script>
+(function () {
+  var f = document.querySelector("[data-lgi-filter]"); if (!f) return;
+  f.addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    f.querySelectorAll("button").forEach(function (x) { x.classList.toggle("is-on", x === b); });
+    document.querySelectorAll(".lgi-group").forEach(function (g) { g.hidden = b.dataset.f !== "all" && g.dataset.sport !== b.dataset.f; });
+  });
+})();
+</script>
 {% endblock %}
