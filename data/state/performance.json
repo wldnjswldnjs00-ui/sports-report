@@ -1,27 +1,27 @@
 {
- "updated": "2026-11-17T12:23:28+09:00",
+ "updated": "2026-11-17T19:09:38+09:00",
  "picks": {
   "all": {
-   "n": 62,
-   "hit_rate": 0.5,
-   "expected": 0.5727,
-   "brier": 0.2323,
-   "logloss": 0.6527
+   "n": 76,
+   "hit_rate": 0.5395,
+   "expected": 0.5759,
+   "brier": 0.2351,
+   "logloss": 0.6588
   },
   "30d": {
-   "n": 62,
-   "hit_rate": 0.5,
-   "expected": 0.5727,
-   "brier": 0.2323,
-   "logloss": 0.6527
+   "n": 76,
+   "hit_rate": 0.5395,
+   "expected": 0.5759,
+   "brier": 0.2351,
+   "logloss": 0.6588
   }
  },
  "calibration": [
   {
    "bucket": "30-40%",
-   "n": 2,
-   "expected": 0.3674,
-   "actual": 0.5
+   "n": 3,
+   "expected": 0.3731,
+   "actual": 0.6667
   },
   {
    "bucket": "40-50%",
@@ -31,9 +31,9 @@
   },
   {
    "bucket": "50-60%",
-   "n": 33,
-   "expected": 0.5321,
-   "actual": 0.4545
+   "n": 43,
+   "expected": 0.5349,
+   "actual": 0.5116
   },
   {
    "bucket": "60-70%",
@@ -43,43 +43,43 @@
   },
   {
    "bucket": "70-80%",
-   "n": 4,
-   "expected": 0.7506,
-   "actual": 0.75
+   "n": 5,
+   "expected": 0.7545,
+   "actual": 0.6
   },
   {
    "bucket": "80-90%",
-   "n": 5,
-   "expected": 0.8297,
+   "n": 7,
+   "expected": 0.8302,
    "actual": 1.0
   }
  ],
  "strategies": {
   "safe": {
    "all": {
-    "n": 3,
-    "win_rate": 0.6667,
-    "expected": 0.6442,
-    "roi": -0.1833
+    "n": 6,
+    "win_rate": 0.3333,
+    "expected": 0.5665,
+    "roi": -0.5917
    },
    "30d": {
-    "n": 3,
-    "win_rate": 0.6667,
-    "expected": 0.6442,
-    "roi": -0.1833
+    "n": 6,
+    "win_rate": 0.3333,
+    "expected": 0.5665,
+    "roi": -0.5917
    }
   },
   "balanced": {
    "all": {
-    "n": 11,
+    "n": 15,
     "win_rate": 0.0,
-    "expected": 0.2584,
+    "expected": 0.2636,
     "roi": -1.0
    },
    "30d": {
-    "n": 11,
+    "n": 15,
     "win_rate": 0.0,
-    "expected": 0.2584,
+    "expected": 0.2636,
     "roi": -1.0
    }
   },
@@ -99,15 +99,15 @@
   },
   "upset": {
    "all": {
-    "n": 8,
+    "n": 9,
     "win_rate": 0.0,
-    "expected": 0.1212,
+    "expected": 0.1254,
     "roi": -1.0
    },
    "30d": {
-    "n": 8,
+    "n": 9,
     "win_rate": 0.0,
-    "expected": 0.1212,
+    "expected": 0.1254,
     "roi": -1.0
    }
   },
@@ -127,9 +127,9 @@
   }
  },
  "value": {
-  "n": 0,
-  "hit_rate": null,
-  "roi": null
+  "n": 1,
+  "hit_rate": 0.0,
+  "roi": -1.0
  },
  "daily": [
   {
@@ -139,8 +139,8 @@
   },
   {
    "date": "2026-11-17",
-   "n": 15,
-   "hit": 7
+   "n": 29,
+   "hit": 17
   }
  ]
 }

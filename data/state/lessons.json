@@ -1,20 +1,20 @@
 {
  "flow_against": {
-  "n": 20,
-  "hit": 0.4,
-  "expected": 0.5607,
-  "gap": 0.1607
+  "n": 23,
+  "hit": 0.4348,
+  "expected": 0.5804,
+  "gap": 0.1456
  },
  "flow_with": {
-  "n": 10,
-  "hit": 0.7,
-  "expected": 0.5615,
-  "gap": -0.1385
+  "n": 12,
+  "hit": 0.75,
+  "expected": 0.5481,
+  "gap": -0.2019
  },
  "high_risk": {
-  "n": 44,
-  "hit": 0.4318,
-  "expected": 0.5113,
-  "gap": 0.0795
+  "n": 54,
+  "hit": 0.5,
+  "expected": 0.5137,
+  "gap": 0.0137
  }
 }

@@ -89,6 +89,126 @@
    "away_score": 110.0,
    "status": "FT",
    "src": "odds_api"
+  },
+  "betman:G101:260136:4410": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "4:1",
+   "code": "0",
+   "market": "1X2",
+   "home_score": 4.0,
+   "away_score": 1.0
+  },
+  "betman:G101:260136:4411": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "3:1",
+   "code": "0",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260136:4412": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "2:1",
+   "code": "0",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260136:4413": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "0.5:1",
+   "code": "2",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260136:4414": {
+   "status": "FT",
+   "outcome": "O",
+   "src": "betman",
+   "raw": "5:0",
+   "code": "2",
+   "market": "OU"
+  },
+  "betman:G101:260136:4416": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "106:98",
+   "code": "0",
+   "market": "WL",
+   "home_score": 106.0,
+   "away_score": 98.0
+  },
+  "betman:G101:260136:4417": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "103.5:98",
+   "code": "0",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260136:4418": {
+   "status": "FT",
+   "outcome": "U",
+   "src": "betman",
+   "raw": "204:0",
+   "code": "0",
+   "market": "OU"
+  },
+  "betman:G101:260136:4420": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "115:94",
+   "code": "0",
+   "market": "WL",
+   "home_score": 115.0,
+   "away_score": 94.0
+  },
+  "betman:G101:260136:4421": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "118.5:94",
+   "code": "0",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260136:4422": {
+   "status": "FT",
+   "outcome": "U",
+   "src": "betman",
+   "raw": "209:0",
+   "code": "0",
+   "market": "OU"
+  },
+  "betman:G101:260136:4424": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "105:117",
+   "code": "2",
+   "market": "WL",
+   "home_score": 105.0,
+   "away_score": 117.0
+  },
+  "betman:G101:260136:4425": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "94.5:117",
+   "code": "2",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260136:4426": {
+   "status": "FT",
+   "outcome": "U",
+   "src": "betman",
+   "raw": "222:0",
+   "code": "0",
+   "market": "OU"
   }
  }
 }
