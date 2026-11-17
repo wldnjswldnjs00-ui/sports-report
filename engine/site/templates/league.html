@@ -10,24 +10,69 @@
   <p class="lede">{% if tb %}{{ tb.season }} {{ tb.rows|length }}팀 · 집계 {{ tb.n }}경기(마지막 {{ tb.last[5:]|replace('-', '/') }}).{% endif %}{% if lg.n %} 최근 분석 {{ lg.n }}건{% if lg.graded %}, 채점 {{ lg.graded }}건 중 {{ lg.hit }}건 적중{% endif %}.{% endif %}</p>
 </section>
 
-{% if tb %}
-<section class="wrap block">
-  <h2 class="sub">{{ tb.season }} 순위</h2>
+{% macro st_table(rows) %}
   <div class="tblw"><table class="tbl st-tbl">
     <thead><tr><th class="n">#</th><th>팀</th><th class="n">경기</th><th class="n">승</th>{% if lg.sport == 'soccer' %}<th class="n">무</th>{% endif %}<th class="n">패</th>
       {% if tb.points %}<th class="n">승점</th>{% else %}<th class="n">승률</th>{% endif %}<th class="n st-hide">{{ '득실' if lg.sport == 'soccer' else '득실차' }}</th><th class="st-hide">최근 5</th></tr></thead>
     <tbody>
-    {% for r in tb.rows %}
+    {% for r in rows %}
       <tr><td class="n muted">{{ r.rank }}</td>
-        <td>{% set tu = team_link(lg.sport, r.team) %}{% if tu %}<a href="{{ tu }}">{{ r.team }}</a>{% else %}{{ r.team }}{% endif %}</td>
+        <td>{% set tu = team_link(lg.sport, r.team) %}{% if tu %}<a href="{{ tu }}">{{ r.team }}</a>{% else %}{{ r.team }}{% endif %}{% if champ and r.team == champ %} <small class="st-champ">우승</small>{% endif %}</td>
         <td class="n">{{ r.g }}</td><td class="n">{{ r.w }}</td>{% if lg.sport == 'soccer' %}<td class="n">{{ r.d }}</td>{% endif %}<td class="n">{{ r.l }}</td>
         {% if tb.points %}<td class="n"><b>{{ r.pts }}</b></td>{% else %}<td class="n"><b>{{ '%.3f'|format(r.pct) }}</b></td>{% endif %}
         <td class="n st-hide">{{ '%+d'|format(r.gd|int) }}</td>
-        <td class="st-hide"><span class="fseq">{% for c in r.form %}<i class="r{{ c }}">{{ WDL[c] }}</i>{% endfor %}</span></td></tr>
+        <td class="st-hide"><span class="fseq">{% for c in r.form %}<i class="r{{ c }}">{{ {'W': '승', 'D': '무', 'L': '패'}[c] }}</i>{% endfor %}</span></td></tr>
     {% endfor %}
     </tbody>
   </table></div>
-  <p class="fine">베트맨에 발매된 경기의 공식 결과로 셉니다. 발매되지 않은 경기는 빠지므로 공식 순위와 다를 수 있습니다.{% if tb.points and lg.sport == 'volleyball' %} 승점: 3:0·3:1 승 3점, 3:2 승 2점, 2:3 패 1점.{% elif tb.points %} 승점: 승 3점, 무 1점.{% endif %} 자동 업데이트마다 새 결과가 더해집니다.</p>
+{% endmacro %}
+{% if tb %}
+{% set P = tb.post %}{% set champ = P.champion if P and P.champion else none %}
+{% if champ or (tb.over and not P) %}
+<section class="wrap block">
+  <div class="st-banner">
+    <span class="muted">{{ tb.season }} {{ lg.name }}</span>
+    {% if champ %}<b>우승 {% set cu = team_link(lg.sport, champ) %}{% if cu %}<a href="{{ cu }}">{{ champ }}</a>{% else %}{{ champ }}{% endif %}</b>
+      <small class="muted">{% for rd in P.rounds|reverse %}{% if loop.first %}{{ rd.name }} {{ rd.series[0].score }}{% endif %}{% endfor %} · 정규시즌 1위 {{ tb.rows[0].team }}</small>
+    {% else %}<b>정규시즌 1위 {{ tb.rows[0].team }}</b><small class="muted">시즌 종료</small>{% endif %}
+  </div>
+</section>
+{% endif %}
+{% if P %}
+<section class="wrap block">
+  <h2 class="sub">{{ tb.season }} 포스트시즌</h2>
+  <ol class="ps-rounds">
+  {% for rd in P.rounds %}
+    <li>
+      <p class="ps-name">{{ rd.name }}</p>
+      {% for sr in rd.series %}
+      <details class="ps-series">
+        <summary>
+          <span class="ps-teams">{% for t in [sr.a, sr.b] if t %}<span class="{{ 'ps-win' if t == sr.winner }}">{{ t }}</span>{{ ' vs ' if not loop.last }}{% endfor %}</span>
+          <span class="ps-score">{% if sr.winner %}<b>{{ sr.winner }}</b> {{ sr.score }}{% endif %}</span>
+        </summary>
+        <ul>{% for g in sr.games %}<li><span class="muted">{{ g.date[5:]|replace('-', '/') }}</span> {{ g.home }} <b>{{ g.hs|int }} : {{ g.as|int }}</b> {{ g.away }}</li>{% endfor %}</ul>
+      </details>
+      {% endfor %}
+    </li>
+  {% endfor %}
+  </ol>
+  <p class="fine">베트맨에 발매된 포스트시즌 경기로 시리즈를 묶었습니다.{% if not P.finished %} 포스트시즌이 진행 중이라 라운드 이름은 확정 전입니다.{% endif %}</p>
+</section>
+{% endif %}
+<section class="wrap block">
+  <h2 class="sub">{{ tb.season }} {{ '정규시즌 ' if P }}순위</h2>
+  {% if tb.groups %}
+  <div class="tabs" role="tablist" data-tabs>
+    <button role="tab" type="button" id="st-tab-all" aria-controls="st-all" aria-selected="true" tabindex="0">전체</button>
+    {% for g in tb.groups %}<button role="tab" type="button" id="st-tab-{{ loop.index }}" aria-controls="st-g{{ loop.index }}" aria-selected="false" tabindex="-1">{{ g.name }}</button>{% endfor %}
+  </div>
+  <div class="tab-panel" role="tabpanel" id="st-all" aria-labelledby="st-tab-all">{{ st_table(tb.rows) }}</div>
+  {% for g in tb.groups %}<div class="tab-panel" role="tabpanel" id="st-g{{ loop.index }}" aria-labelledby="st-tab-{{ loop.index }}" hidden>{{ st_table(g.rows) }}</div>{% endfor %}
+  {% else %}
+  {{ st_table(tb.rows) }}
+  {% endif %}
+  <p class="fine">베트맨에 발매된 경기의 공식 결과로 셉니다. 발매되지 않은 경기는 빠지므로 공식 순위와 다를 수 있습니다.{% if tb.points and lg.sport == 'volleyball' %} 승점: 3:0·3:1 승 3점, 3:2 승 2점, 2:3 패 1점.{% elif tb.points %} 승점: 승 3점, 무 1점.{% endif %}{% if P %} 포스트시즌 경기는 정규시즌 순위에서 뺐습니다.{% endif %} 자동 업데이트마다 새 결과가 더해집니다.</p>
 </section>
 {% endif %}
 

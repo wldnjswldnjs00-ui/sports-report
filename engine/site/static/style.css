@@ -872,3 +872,21 @@ i.t-pos, i.t-neg, i.t-draw { font-style: normal; }
 .tm-rank a { display: inline-flex; gap: 6px; align-items: baseline; text-decoration: none; background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 6px 13px; font-size: 13.5px; }
 .tm-rank b { font-size: 15px; }
 .tm-intro p { margin: 0 0 6px; color: var(--ink-2); font-size: 15px; line-height: 1.7; word-break: keep-all; }
+
+/* 우승·포스트시즌 */
+.st-banner { display: grid; gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 16px 18px; position: relative; overflow: hidden; }
+.st-banner::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--sun); }
+.st-banner b { font: 400 24px/1.25 var(--ko); }
+.st-banner a { text-decoration: none; }
+.st-champ { font: 700 10.5px/1.5 var(--sans); background: var(--sun); color: #1a1400; border-radius: 6px; padding: 0 6px; margin-left: 4px; }
+.ps-rounds { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.ps-name { margin: 0 0 6px; font-weight: 700; font-size: 14px; color: var(--ink-2); }
+.ps-series { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); margin-bottom: 6px; }
+.ps-series summary { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; padding: 11px 14px; cursor: pointer; list-style: none; }
+.ps-series summary::-webkit-details-marker { display: none; }
+.ps-teams { font-weight: 600; }
+.ps-teams span { color: var(--ink-3); }
+.ps-teams .ps-win { color: var(--ink); }
+.ps-score { font-size: 13.5px; color: var(--ink-2); }
+.ps-series ul { list-style: none; margin: 0; padding: 0 14px 12px; display: grid; gap: 4px; font-size: 13.5px; }
+.lines .tabs, .block .tabs { margin-bottom: 12px; }

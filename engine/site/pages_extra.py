@@ -114,6 +114,17 @@ def teams(history_rows: list[list], reports: list[dict], now_iso: str) -> dict[t
                 t = team(m["sport"], m[side])
                 t["leagues"][m["league"]] += 1
                 t["upcoming"].append({"m": m, "home": side == "home", "opp": m["away"] if side == "home" else m["home"], "date": r["date"]})
+    # '사이타마세이부라이온즈'·'세이부 라이온즈'처럼 앞에 지역명만 붙은 이름은 같은 팀으로 합친다
+    for sp in {k[0] for k in by_team}:
+        cm = canon_map([k[1] for k in by_team if k[0] == sp])
+        for src, dst in cm.items():
+            if src == dst or (sp, src) not in by_team or (sp, dst) not in by_team:
+                continue
+            a, b = by_team.pop((sp, src)), by_team[(sp, dst)]
+            b["games"] += a["games"]
+            b["upcoming"] += a["upcoming"]
+            b["leagues"].update(a["leagues"])
+            b["names"].update(a["names"])
     out = {}
     for k, t in by_team.items():
         if len(t["games"]) < MIN_GAMES and not t["upcoming"]:
@@ -228,6 +239,13 @@ def standings(history_rows: list[list], now: datetime) -> dict[str, dict]:
             cur = [g for g in gs if start <= g["date"] < end]
         if len(cur) < 10:
             continue
+        cm = canon_map([lkey(g["home"]) for g in cur] + [lkey(g["away"]) for g in cur])
+        disp: dict[str, Counter] = defaultdict(Counter)
+        for g in cur:
+            for side in ("home", "away"):
+                disp[cm[lkey(g[side])]][g[side]] += 1
+        cur = [{**g, "home": disp[cm[lkey(g["home"])]].most_common(1)[0][0], "away": disp[cm[lkey(g["away"])]].most_common(1)[0][0]} for g in cur]
+        cur, post = split_post(lk, cur, now)
         tb: dict[str, dict] = {}
         for g in sorted(cur, key=lambda x: x["date"]):
             for side in ("home", "away"):
@@ -258,8 +276,22 @@ def standings(history_rows: list[list], now: datetime) -> dict[str, dict]:
             rows.sort(key=lambda x: (-x["pct"], -x["w"], x["l"], x["team"]))
         for i, r_ in enumerate(rows):
             r_["rank"] = i + 1
+        groups = []
+        if lk in DIVISIONS:
+            for gname, _ in DIVISIONS[lk]:
+                gr = [dict(r_) for r_ in rows if division_of(lk, r_["team"]) == gname]
+                for j, r_ in enumerate(gr):
+                    r_["rank"] = j + 1
+                if gr:
+                    groups.append({"name": gname, "rows": gr})
+            if sum(len(g_["rows"]) for g_ in groups) < len(rows) * 0.8:  # 편성을 못 찾은 팀이 많으면 전체 순위만
+                groups = []
+        last_all = max([g["date"] for g in cur] + [s_["last"] for rd in (post or {}).get("rounds", []) for s_ in rd["series"]])
+        # 정규시즌이 끝났는지: 마지막 경기가 2주 넘게 지났으면 끝난 시즌으로 본다
+        over = (now.date() - datetime.fromisoformat(last_all).date()).days >= 14
         out[lk] = {"name": name, "sport": sport, "season": label, "rows": rows, "n": len(cur),
-                   "last": max(g["date"] for g in cur), "points": sport in ("soccer", "volleyball")}
+                   "last": max(g["date"] for g in cur), "points": sport in ("soccer", "volleyball"),
+                   "post": post, "over": over, "groups": groups}
     return out
 
 
@@ -329,3 +361,143 @@ def rows_from_results(reports: list[dict], results_by_date: dict[str, dict]) -> 
             out.append([m["sport"], m["league"], m["market"], 0, od.get("H", 0), od.get("D", 0), od.get("A", 0), -1, ko, 0,
                         m["home"], m["away"], float(hs), float(as_)])
     return out
+
+
+# ───────────────────────── 포스트시즌 ─────────────────────────
+# 리그별: 포스트시즌 최대 진출 팀 수, 라운드 이름(앞 → 결승), 첫 라운드가 항상 열리는지
+POST = {
+    "KBO": (5, ["와일드카드 결정전", "준플레이오프", "플레이오프", "한국시리즈"], True),
+    "KBL": (6, ["6강 플레이오프", "4강 플레이오프", "챔피언결정전"], True),
+    "WKBL": (4, ["플레이오프", "챔피언결정전"], True),
+    "KOVO남자": (4, ["준플레이오프", "플레이오프", "챔피언결정전"], False),
+    "KOVO여자": (4, ["준플레이오프", "플레이오프", "챔피언결정전"], False),
+    "NBA": (20, ["플레이-인", "1라운드", "콘퍼런스 준결승", "콘퍼런스 결승", "NBA 파이널"], True),
+    "MLB": (12, ["와일드카드 시리즈", "디비전 시리즈", "챔피언십 시리즈", "월드시리즈"], True),
+    "NPB": (6, ["클라이맥스 시리즈 퍼스트", "클라이맥스 시리즈 파이널", "일본시리즈"], True),
+}
+
+
+# 정규시즌이 끝나는 달(이 달이 아니면 포스트시즌으로 보지 않는다)
+POST_END = {"KBO": {9, 10}, "MLB": {9, 10}, "NPB": {9, 10}, "KBL": {3, 4}, "WKBL": {2, 3, 4},
+            "KOVO남자": {3, 4}, "KOVO여자": {3, 4}, "NBA": {4}}
+
+
+def split_post(lk: str, games: list[dict], now: datetime) -> tuple[list[dict], dict | None]:
+    """한 시즌 경기 → (정규시즌 경기, 포스트시즌 정보 또는 None)."""
+    cfg = POST.get(lk)
+    if not cfg or len(games) < 20:
+        return games, None
+    p_max, labels, first_always = cfg
+    end_months = POST_END.get(lk, set(range(1, 13)))
+    last: dict[str, str] = {}
+    for g in games:
+        for t in (g["home"], g["away"]):
+            last[lkey(t)] = max(last.get(lkey(t), ""), g["date"])
+    n = len(last)
+    if n <= p_max:
+        return games, None
+    # 포스트시즌에 못 간 팀들의 마지막 경기 = 정규시즌 끝. 정규시즌이 원래 끝나는 달이 아니면 아직 시즌 중
+    end = sorted(last.values())[n - p_max - 1]
+    if int(end[5:7]) not in end_months:
+        return games, None
+    reg = [g for g in games if g["date"] <= end]
+    post = sorted([g for g in games if g["date"] > end], key=lambda g: g["date"])
+    if not post:
+        return games, None
+    # 시즌 중 기록이 빠져서 정규시즌 끝을 잘못 잡은 경우를 거른다:
+    # 포스트시즌이라면 뛰는 팀이 진출 팀 수 이하이고, 같은 두 팀이 붙는 시리즈 수도 그 이하여야 한다
+    post_teams = {lkey(t) for g in post for t in (g["home"], g["away"])}
+    pairs = {frozenset((lkey(g["home"]), lkey(g["away"]))) for g in post}
+    if len(post_teams) > p_max or len(pairs) > p_max or len(post) > len(pairs) * 7:
+        return games, None
+    # 같은 두 팀의 경기를 시리즈로 묶는다
+    series: dict[frozenset, dict] = {}
+    for g in post:
+        k = frozenset((lkey(g["home"]), lkey(g["away"])))
+        s = series.setdefault(k, {"teams": {}, "wins": Counter(), "games": [], "first": g["date"]})
+        s["teams"][lkey(g["home"])] = g["home"]
+        s["teams"][lkey(g["away"])] = g["away"]
+        s["games"].append(g)
+        if g["hs"] != g["as"]:
+            s["wins"][lkey(g["home"]) if g["hs"] > g["as"] else lkey(g["away"])] += 1
+    ss = sorted(series.values(), key=lambda s: s["first"])
+    # 라운드: 이전 시리즈를 이기고 올라온 팀이 있으면 그 다음 라운드
+    won_round: dict[str, int] = {}
+    for s in ss:
+        prev = [won_round.get(t, 0) for t in s["teams"]]
+        s["round"] = max(prev) + 1
+        s["last"] = max(g["date"] for g in s["games"])
+        if s["wins"]:
+            (w, wn), = s["wins"].most_common(1)
+            s["winner"] = s["teams"][w]
+            s["score"] = f"{wn}승 {sum(s['wins'].values()) - wn}패"
+            won_round[w] = s["round"]
+        else:
+            s["winner"], s["score"] = None, ""
+    rounds_n = max(s["round"] for s in ss)
+    finished = (now.date() - datetime.fromisoformat(max(s["last"] for s in ss)).date()).days >= 7
+    finals = [s for s in ss if s["round"] == rounds_n]
+    done = finished and len(finals) == 1
+
+    def name(r: int) -> str:
+        if done:  # 끝난 시즌: 결승부터 거꾸로 이름을 붙인다
+            i = len(labels) - (rounds_n - r) - 1
+            return labels[i] if i >= 0 else f"{r}라운드"
+        if first_always and r - 1 < len(labels):
+            return labels[r - 1]
+        return f"포스트시즌 {r}라운드"
+
+    out_rounds = []
+    for r in range(1, rounds_n + 1):
+        rs = [s for s in ss if s["round"] == r]
+        out_rounds.append({"name": name(r), "series": [{
+            "a": list(s["teams"].values())[0], "b": list(s["teams"].values())[1] if len(s["teams"]) > 1 else "",
+            "winner": s["winner"], "score": s["score"], "first": s["first"], "last": s["last"],
+            "games": [{"date": g["date"], "home": g["home"], "away": g["away"], "hs": g["hs"], "as": g["as"]} for g in s["games"]],
+        } for s in rs]})
+    champ = finals[0]["winner"] if done else None
+    return reg, {"rounds": out_rounds, "champion": champ, "finished": done, "end": end}
+
+
+# ───────────────────────── 이름 합치기·지구 편성 ─────────────────────────
+def canon_map(keys) -> dict[str, str]:
+    """띄어쓰기 뺀 팀 이름들 중, 짧은 이름이 긴 이름 안에 들어 있으면 같은 팀으로 본다.
+    예: '사이타마세이부라이온즈' → '세이부라이온즈', '도쿄야쿠르트스왈로스' → '야쿠르트스왈로스'."""
+    ks = sorted(set(keys), key=len)
+    out = {}
+    for k in ks:
+        tgt = next((s for s in ks if len(s) >= 5 and s != k and len(s) < len(k) and k.endswith(s)), None)
+        out[k] = out.get(tgt, tgt) if tgt else k
+    return out
+
+
+# (리그 키, [(그룹 이름, [팀 키워드…]), …]) 키워드는 띄어쓰기 뺀 팀 이름에 들어 있으면 맞다
+DIVISIONS = {
+    "NBA": [("동부 콘퍼런스", ["보스턴", "브루클린", "뉴욕닉스", "필라델피아", "토론토", "시카고", "클리블랜드", "디트로이트", "인디애나",
+                          "밀워키", "애틀랜타", "샬럿", "마이애미", "올랜도", "워싱턴"]),
+            ("서부 콘퍼런스", ["덴버", "미네소타", "오클라호마시티", "포틀랜드", "유타", "골든스테이트", "LA클리퍼스", "LA레이커스", "피닉스",
+                          "새크라멘토", "댈러스", "휴스턴", "멤피스", "뉴올리언스", "샌안토니오"])],
+    "MLB": [("AL 동부", ["볼티모어", "보스턴", "뉴욕양키스", "탬파베이", "토론토"]),
+            ("AL 중부", ["시카고화이트삭스", "클리블랜드", "디트로이트", "캔자스시티", "미네소타"]),
+            ("AL 서부", ["휴스턴", "LA에인절스", "애슬레틱스", "시애틀", "텍사스"]),
+            ("NL 동부", ["애틀랜타", "마이애미", "뉴욕메츠", "필라델피아", "워싱턴"]),
+            ("NL 중부", ["시카고컵스", "신시내티", "밀워키", "피츠버그", "세인트루이스"]),
+            ("NL 서부", ["애리조나", "콜로라도", "LA다저스", "샌디에이고", "샌프란시스코"])],
+    "NPB": [("센트럴리그", ["요미우리", "한신", "주니치", "야쿠르트", "히로시마", "요코하마"]),
+            ("퍼시픽리그", ["소프트뱅크", "닛폰햄", "세이부", "라쿠텐", "지바롯데", "오릭스"])],
+    "미국메이저리그사커": [
+        ("동부 콘퍼런스", ["애틀랜타", "샬럿", "시카고", "신시내티", "콜럼버스", "DC유나이티드", "인터마이애미", "몽레알", "내슈빌", "뉴잉글랜드",
+                       "뉴욕레드불스", "뉴욕시티", "올랜도", "필라델피아", "토론토"]),
+        ("서부 콘퍼런스", ["오스틴", "콜로라도", "댈러스", "휴스턴", "LA갤럭시", "LAFC", "미네소타", "포틀랜드", "솔트레이크", "새너제이",
+                       "시애틀", "캔자스시티", "세인트루이스", "밴쿠버", "샌디에이고"])],
+}
+
+
+def division_of(lk: str, team: str) -> str | None:
+    t = lkey(team)
+    best = None
+    for gname, kws in DIVISIONS.get(lk, []):
+        for kw in kws:
+            if kw in t and (best is None or len(kw) > best[1]):
+                best = (gname, len(kw))
+    return best[0] if best else None
