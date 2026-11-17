@@ -417,6 +417,18 @@ def build() -> None:
         r = read_json(p)
         if r and r.get("date"):
             reports.append(r)
+    # 예전 문구 규칙으로 저장된 설명(기대값 마이너스 등)은 지금 규칙으로 다시 쓴다. 다시 못 쓰면 그 문장만 뺀다.
+    from ..analysis.narrative import describe as _describe
+    for r in reports:
+        for m in r.get("markets") or []:
+            nv = m.get("narrative")
+            if nv and "기대값" in nv:
+                try:
+                    m["narrative"] = _describe(m) if m.get("analysis") else None
+                except Exception:  # noqa: BLE001
+                    m["narrative"] = None
+                if m.get("narrative") and "기대값" in m["narrative"]:
+                    m["narrative"] = " ".join(x for x in re.split(r"(?<=\.)\s+", m["narrative"]) if "기대값" not in x) or None
     perf = load_perf()
     today = date.fromisoformat(config.today_kst())
     # 다음 구매일 리포트는 19시부터 '내일 분석'으로 공개(첫 화면은 23시 전환까지 오늘 그대로)
