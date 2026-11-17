@@ -6,7 +6,7 @@
  "calibration_alpha": 0.03,
  "demo": false,
  "sources": {
-  "betman": "실패: RuntimeError",
+  "betman": "실패: ConnectTimeout",
   "odds_api": "0개 매칭",
   "form": "35개 마켓",
   "bbook": "20개 마켓"
@@ -13734,5 +13734,5 @@
  },
  "outcomes": {},
  "headline": "오늘 9경기 분석 완료. 가장 단단한 선택은 샌안토니오 스퍼스 홈승, 추정 75%.",
- "last_attempt": "2026-11-18T02:22:15+09:00"
+ "last_attempt": "2026-11-18T05:45:01+09:00"
 }

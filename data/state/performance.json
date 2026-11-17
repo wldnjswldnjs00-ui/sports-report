@@ -1,19 +1,19 @@
 {
- "updated": "2026-11-18T02:22:13+09:00",
+ "updated": "2026-11-18T05:43:26+09:00",
  "picks": {
   "all": {
-   "n": 89,
-   "hit_rate": 0.5281,
-   "expected": 0.5772,
-   "brier": 0.2458,
-   "logloss": 0.6898
+   "n": 40,
+   "hit_rate": 0.625,
+   "expected": 0.6759,
+   "brier": 0.2422,
+   "logloss": 0.6886
   },
   "30d": {
-   "n": 89,
-   "hit_rate": 0.5281,
-   "expected": 0.5772,
-   "brier": 0.2458,
-   "logloss": 0.6898
+   "n": 40,
+   "hit_rate": 0.625,
+   "expected": 0.6759,
+   "brier": 0.2422,
+   "logloss": 0.6886
   }
  },
  "calibration": [
@@ -67,6 +67,20 @@
     "win_rate": 0.2,
     "expected": 0.5949,
     "roi": -0.755
+   }
+  },
+  "single": {
+   "all": {
+    "n": 0,
+    "win_rate": null,
+    "expected": null,
+    "roi": null
+   },
+   "30d": {
+    "n": 0,
+    "win_rate": null,
+    "expected": null,
+    "roi": null
    }
   },
   "balanced": {
@@ -134,13 +148,13 @@
  "daily": [
   {
    "date": "2026-11-16",
-   "n": 47,
-   "hit": 24
+   "n": 22,
+   "hit": 14
   },
   {
    "date": "2026-11-17",
-   "n": 42,
-   "hit": 23
+   "n": 18,
+   "hit": 11
   }
  ]
 }
