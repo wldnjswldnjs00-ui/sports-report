@@ -73,7 +73,7 @@
   <div class="tabs" role="tablist" data-tabs>
     {% for key, s in STRATEGIES.items() %}
     <button role="tab" type="button" id="tab-{{ key }}" aria-controls="panel-{{ key }}" aria-selected="{{ 'true' if loop.first else 'false' }}" tabindex="{{ 0 if loop.first else -1 }}">
-      {{ s.label }} <small>{{ (r.combos.get(key) or [])|rejectattr('result', 'equalto', 'lose')|list|length }}</small>
+      {{ s.label }} <small>{{ (r.combos.get(key) or [])|rejectattr('result', 'equalto', 'lose')|list|length + (((nxt.combos or {}).get(key) or [])|length if is_home and nxt else 0) }}</small>
     </button>
     {% endfor %}
     <span class="tabs-ink" aria-hidden="true"></span>
@@ -82,10 +82,15 @@
   <div class="tab-panel" role="tabpanel" id="panel-{{ key }}" aria-labelledby="tab-{{ key }}" {% if not loop.first %}hidden{% endif %}>
     <p class="panel-desc">{{ s.desc }}</p>
     {% set live = (r.combos.get(key) or [])|rejectattr('result', 'equalto', 'lose')|list %}
+    {% set nlive = ((nxt.combos or {}).get(key) or []) if is_home and nxt else [] %}
     {% if live %}
     <div class="combo-grid">{% for c in live %}{{ combo_card(c, r) }}{% endfor %}</div>
-    {% else %}
+    {% elif not nlive %}
     <p class="none">지금 볼 수 있는 {{ s.label }} 조합이 없습니다. 다음 업데이트에서 새 조합이 올라옵니다.</p>
+    {% endif %}
+    {% if nlive %}
+    <h3 class="nd-combo-head">다음 구매일 {{ nxt.date|kdate }} 조합</h3>
+    <div class="combo-grid nd-grid">{% for c in nlive %}{{ combo_card(c, nxt) }}{% endfor %}</div>
     {% endif %}
   </div>
   {% endfor %}

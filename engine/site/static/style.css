@@ -952,3 +952,7 @@ tr[aria-expanded="true"] .box-caret, details[open] > summary .box-caret { transf
 .app-bar-txt span { font-size: 13.5px; color: var(--ink-2); }
 .app-bar-btns { display: flex; gap: 8px; flex-wrap: wrap; }
 .btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+
+/* 첫 화면 전략별 조합: 19시부터 다음 구매일 조합을 이어서 */
+.nd-combo-head { margin: 22px 0 10px; font-size: 15px; font-weight: 700; color: var(--ink-2); }
+.tab-panel > .nd-combo-head:first-of-type { margin-top: 6px; }

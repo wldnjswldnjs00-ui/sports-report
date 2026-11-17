@@ -265,10 +265,10 @@
       var rail = $("[data-rail]");
       if (rail && !rail.children.length) { var w = rail.closest("section"); if (w) w.remove(); }
       $$(".tab-panel").forEach(function (pn) {
-        var grid = $(".combo-grid", pn);
+        var grid = $(".combo-grid:not(.nd-grid)", pn);
         if (grid && !grid.children.length) {
           grid.remove();
-          if (!$(".none", pn)) { var pz = doc.createElement("p"); pz.className = "none"; pz.textContent = "오늘 조합은 모두 시작했습니다. 다음 조합은 오후 7시에 올라옵니다."; pn.appendChild(pz); }
+          if (!$(".none", pn) && !$(".nd-grid", pn)) { var pz = doc.createElement("p"); pz.className = "none"; pz.textContent = "오늘 조합은 모두 시작했습니다. 다음 조합은 오후 7시에 올라옵니다."; pn.appendChild(pz); }
         }
         var tab = doc.getElementById(pn.getAttribute("aria-labelledby") || "");
         var sm = tab && $("small", tab);
