@@ -97,7 +97,7 @@
 {% set lgs = line_groups(r) %}
 {% if lgs %}
 <section class="wrap block lines" data-reveal id="lines" data-lines>
-  <header class="block-head"><h2>역배 · 핸디 · 언오버</h2><p><span data-lcount>{{ lgs|length }}</span>경기 · 눌러서 자세히 보기</p></header>
+  <header class="block-head"><h2>역배 · 핸디 · 언오버</h2><p><span data-lcount>{{ lgs|length }}</span>경기</p></header>
   <div class="filters" data-lf>
     <button type="button" class="chip" aria-pressed="true" data-k="all">전체</button>
     {% for kind, label, field in [('up', '역배', 'upsets'), ('hd', '핸디캡', 'handi_picks'), ('ou', '언더오버', 'ou_picks')] %}{% if r[field] %}
@@ -235,7 +235,7 @@
 {% set cz = [] %}{% for id in r.caution %}{% set m = mk.get(id) %}{% if m and m.analysis and m.market != 'OU' and m.analysis.pick_prob >= 0.55 %}{% set _ = cz.append(m) %}{% endif %}{% endfor %}
 {% if cz %}
 <section class="wrap block caution" data-reveal>
-  <header class="block-head"><h2>정배인데 불안한 경기</h2><p>정배로 보지만 뒤집힐 가능성이 작지 않은 경기입니다.</p></header>
+  <header class="block-head"><h2>정배인데 불안한 경기</h2><p>정배지만 뒤집힐 수 있는 경기.</p></header>
   <ul class="caution-list">
   {% for m in cz %}{% set up = 1 - m.analysis.pick_prob %}
     <li data-ko="{{ m.kickoff }}"><span class="c-risk" style="--r:{{ (up * 100)|round(0)|int }}"><small>이변</small>{{ up|pct }}</span>
@@ -248,7 +248,7 @@
 
 {% if r.pending %}
 <section class="wrap block" data-reveal>
-  <header class="block-head"><h2>배당 공개 전 경기</h2><p>베트맨에 일정은 올라왔고 배당은 아직 나오지 않았습니다. 배당이 열리면 자동으로 분석됩니다.</p></header>
+  <header class="block-head"><h2>배당 공개 전 경기</h2><p>일정만 나오고 배당은 아직입니다. 배당이 열리면 바로 분석합니다.</p></header>
   <p class="teams">{% for g in r.pending %}<span>{{ SPORT_LABEL[g.sport] }} · {{ g.kickoff|kdt }} · {{ g.home }} vs {{ g.away }}</span>{% endfor %}</p>
 </section>
 {% endif %}

@@ -268,7 +268,7 @@
         var grid = $(".combo-grid", pn);
         if (grid && !grid.children.length) {
           grid.remove();
-          if (!$(".none", pn)) { var pz = doc.createElement("p"); pz.className = "none"; pz.textContent = "이 전략의 오늘 조합은 모두 시작했습니다. 다음 구매일 조합은 오후 7시에 올라옵니다."; pn.appendChild(pz); }
+          if (!$(".none", pn)) { var pz = doc.createElement("p"); pz.className = "none"; pz.textContent = "오늘 조합은 모두 시작했습니다. 다음 조합은 오후 7시에 올라옵니다."; pn.appendChild(pz); }
         }
         var tab = doc.getElementById(pn.getAttribute("aria-labelledby") || "");
         var sm = tab && $("small", tab);
