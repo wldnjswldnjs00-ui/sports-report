@@ -103,12 +103,6 @@
 {% if lgs %}
 <section class="wrap block lines" data-reveal id="lines" data-lines>
   <header class="block-head"><h2>역배 · 핸디 · 언오버</h2><p><span data-lcount>{{ lgs|length }}</span>경기</p></header>
-  <div class="filters" data-lf>
-    <button type="button" class="chip" aria-pressed="true" data-k="all">전체</button>
-    {% for kind, label, field in [('up', '역배', 'upsets'), ('hd', '핸디캡', 'handi_picks'), ('ou', '언더오버', 'ou_picks')] %}{% if r[field] %}
-    <button type="button" class="chip k-{{ kind }}" aria-pressed="false" data-k="{{ kind }}">{{ label }} <small>{{ lgs|selectattr('k_' ~ kind)|list|length }}</small></button>
-    {% endif %}{% endfor %}
-  </div>
   <ul class="lg-list">
   {% for g in lgs %}
     <li class="lg" data-ko="{{ g.kickoff }}" data-kinds="{{ g.kinds|join(' ') }}">
