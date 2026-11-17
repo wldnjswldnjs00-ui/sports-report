@@ -176,3 +176,156 @@ def team_groups(ts: dict[tuple[str, str], dict]) -> list[dict]:
         lg.sort(key=lambda x: -sum(t["n"] for t in x["teams"]))
         out.append({"sport": sp, "leagues": lg})
     return out
+
+
+# ───────────────────────── 리그 순위표 ─────────────────────────
+NO_TABLE = ("친선", "동남아시아", "네이션스리그", "월드컵", "예선", "컵", "아시안게임", "챔피언스리그", "유로파리그", "컨퍼런스리그",
+            "선수권", "올림픽", "리베르타도레스", "동아시아", "박신자", "골드컵", "코파")
+EURO = ("잉글랜드", "스페인", "이탈리아", "독일", "프랑스", "네덜란드", "포르투갈", "스코틀랜드", "벨기에", "튀르키예", "터키", "그리스")
+
+
+def lkey(name: str) -> str:
+    return str(name or "").replace(" ", "")
+
+
+def _season(sport: str, league: str, now: datetime) -> tuple[str, str, str]:
+    """(시작일, 끝일(포함 안 함), 시즌 이름). 겨울 리그는 9월(유럽 축구는 7월)에 시작, 나머지는 1월."""
+    y = now.year
+    if sport in ("basketball", "volleyball") or (sport == "soccer" and any(k in league for k in EURO)):
+        m0 = 7 if sport == "soccer" else 9
+        sy = y if now.month >= m0 else y - 1
+        return f"{sy}-{m0:02d}-01", f"{sy + 1}-{m0:02d}-01", f"{sy}-{str(sy + 1)[2:]} 시즌"
+    return f"{y}-01-01", f"{y + 1}-01-01", f"{y} 시즌"
+
+
+def standings(history_rows: list[list], now: datetime) -> dict[str, dict]:
+    """리그(띄어쓰기 뺀 이름) → 이번 시즌 순위표. 베트맨 발매 경기 결과로 센다."""
+    games: dict[tuple, dict] = {}
+    for r in history_rows:
+        try:
+            sport, league, mk, ko, home, away, hs, as_ = r[0], r[1], r[2], r[8], r[10], r[11], r[12], r[13]
+        except (IndexError, TypeError):
+            continue
+        if mk not in ("WL", "1X2") or hs is None or as_ is None or any(k in league for k in NO_TABLE):
+            continue
+        try:
+            dt = datetime.fromtimestamp(int(ko) / 1000, KST)
+        except (TypeError, ValueError, OSError):
+            continue
+        k = (lkey(league), dt.date().isoformat(), home, away)
+        games.setdefault(k, {"sport": sport, "league": league, "date": dt.date().isoformat(), "home": home, "away": away, "hs": hs, "as": as_})
+    by_lg: dict[str, list] = defaultdict(list)
+    for g in games.values():
+        by_lg[lkey(g["league"])].append(g)
+    out = {}
+    for lk, gs in by_lg.items():
+        sport, name = gs[0]["sport"], Counter(g["league"] for g in gs).most_common(1)[0][0]
+        start, end, label = _season(sport, name, now)
+        cur = [g for g in gs if start <= g["date"] < end]
+        if len(cur) < 10:  # 비시즌이면 지난 시즌
+            prev = now.replace(year=now.year - 1)
+            start, end, label = _season(sport, name, prev)
+            cur = [g for g in gs if start <= g["date"] < end]
+        if len(cur) < 10:
+            continue
+        tb: dict[str, dict] = {}
+        for g in sorted(cur, key=lambda x: x["date"]):
+            for side in ("home", "away"):
+                t, me, op = (g["home"], g["hs"], g["as"]) if side == "home" else (g["away"], g["as"], g["hs"])
+                row = tb.setdefault(lkey(t), {"team": t, "g": 0, "w": 0, "d": 0, "l": 0, "pts": 0, "gf": 0, "ga": 0, "form": []})
+                row["team"] = t
+                row["g"] += 1
+                row["gf"] += me
+                row["ga"] += op
+                res = "W" if me > op else ("L" if me < op else "D")
+                row[res.lower()] += 1
+                row["form"].append(res)
+                if sport == "soccer":
+                    row["pts"] += 3 if res == "W" else (1 if res == "D" else 0)
+                elif sport == "volleyball":  # 3:0·3:1 승 3점, 3:2 승 2점, 2:3 패 1점
+                    row["pts"] += (3 if op <= 1 else 2) if res == "W" else (1 if me == 2 else 0)
+        rows = list(tb.values())
+        if len(rows) < 4:
+            continue
+        for r_ in rows:
+            dec = r_["w"] + r_["l"]
+            r_["pct"] = r_["w"] / dec if dec else 0.0
+            r_["gd"] = r_["gf"] - r_["ga"]
+            r_["form"] = r_["form"][-5:][::-1]
+        if sport in ("soccer", "volleyball"):
+            rows.sort(key=lambda x: (-x["pts"], -x["w"], -x["gd"], -x["gf"], x["team"]))
+        else:
+            rows.sort(key=lambda x: (-x["pct"], -x["w"], x["l"], x["team"]))
+        for i, r_ in enumerate(rows):
+            r_["rank"] = i + 1
+        out[lk] = {"name": name, "sport": sport, "season": label, "rows": rows, "n": len(cur),
+                   "last": max(g["date"] for g in cur), "points": sport in ("soccer", "volleyball")}
+    return out
+
+
+def _josa(word: str, pair: tuple[str, str]) -> str:
+    ch = (word or " ").rstrip()[-1:]
+    if "가" <= ch <= "힣":
+        return pair[0] if (ord(ch) - 0xAC00) % 28 else pair[1]
+    return pair[1] if ch.isalpha() and ch.lower() in "aeiouy" else pair[0]
+
+
+def team_intro(t: dict, table: dict | None, venue: str | None) -> list[str]:
+    """데이터로 쓰는 팀 소개 문장들."""
+    from ..schema import SPORT_LABEL
+    nm = t["name"]
+    out = [f"{nm}{_josa(nm, ('은', '는'))} 베트맨 프로토 승부식에 발매되는 {t['league'] or SPORT_LABEL.get(t['sport'], '')} 팀입니다."
+           + (f" 홈 경기장은 {venue}입니다." if venue else "")]
+    if table:
+        me = next((r for r in table["rows"] if lkey(r["team"]) == lkey(nm)), None)
+        if me:
+            rec = f"{me['w']}승" + (f" {me['d']}무" if me["d"] else "") + f" {me['l']}패"
+            out.append(f"{table['season']} {table['name']}에서 {me['g']}경기 {rec}"
+                       + (f"(승점 {me['pts']})" if table["points"] else f"(승률 {me['pct'] * 100:.0f}%)")
+                       + f"로 {len(table['rows'])}팀 중 {me['rank']}위입니다.")
+    if t.get("n"):
+        f10 = t["form"]
+        w10 = f10.count("W")
+        out.append(f"최근 {len(f10)}경기는 {w10}승 {len(f10) - w10 - f10.count('D')}패" + (f" {f10.count('D')}무" if f10.count("D") else "")
+                   + f"이고, 홈 {t['home_rec']['w']}승 {t['home_rec']['l']}패 · 원정 {t['away_rec']['w']}승 {t['away_rec']['l']}패입니다.")
+        bits = []
+        if t.get("fav_n", 0) >= 3:
+            bits.append(f"정배였던 {t['fav_n']}경기에서 {t['fav_w'] / t['fav_n'] * 100:.0f}%")
+        if t.get("dog_n", 0) >= 3:
+            bits.append(f"역배였던 {t['dog_n']}경기에서 {t['dog_w'] / t['dog_n'] * 100:.0f}%")
+        if bits:
+            out.append(" · ".join(bits) + " 이겼습니다.")
+    return out
+
+
+def venues(reports: list[dict]) -> dict[tuple[str, str], str]:
+    """(종목, 팀) → 가장 자주 나온 홈 경기장(리포트의 베트맨 경기장 정보)."""
+    c: dict[tuple, Counter] = defaultdict(Counter)
+    for r in reports[:120]:
+        for m in r.get("markets", []):
+            v = (m.get("venue") or "").strip()
+            if v and "(" not in v:  # '더블린(아일랜드공화국)' 같은 중립 경기 도시는 뺀다
+                c[(m["sport"], lkey(m["home"]))][v] += 1
+    return {k: v.most_common(1)[0][0] for k, v in c.items()}
+
+
+def rows_from_results(reports: list[dict], results_by_date: dict[str, dict]) -> list[list]:
+    """최근 리포트의 승패·승무패 결과를 지난 회차 기록과 같은 행 모양으로 바꾼다(아직 마감 안 된 회차 보충)."""
+    out = []
+    for r in reports[:30]:
+        res = (results_by_date.get(r["date"]) or {}).get("markets") or {}
+        for m in r.get("markets", []):
+            if m.get("market") not in ("WL", "1X2"):
+                continue
+            x = res.get(m["id"]) or {}
+            hs, as_ = x.get("home_score"), x.get("away_score")
+            if hs is None or as_ is None or x.get("status") != "FT":
+                continue
+            try:
+                ko = int(datetime.fromisoformat(m["kickoff"]).timestamp() * 1000)
+            except ValueError:
+                continue
+            od = m.get("odds") or {}
+            out.append([m["sport"], m["league"], m["market"], 0, od.get("H", 0), od.get("D", 0), od.get("A", 0), -1, ko, 0,
+                        m["home"], m["away"], float(hs), float(as_)])
+    return out

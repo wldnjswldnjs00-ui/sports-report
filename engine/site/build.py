@@ -439,10 +439,22 @@ def build() -> None:
         for g in _matches(r):
             murl.setdefault((g["home"], g["away"], g["kickoff"][:10]), g["url"])
     try:
-        tms = PX.teams(betman_history.load_all(), reports, config.now_kst().isoformat())
+        from ..pipeline import results_path
+        hrows = betman_history.load_all()
+        rbd = {r["date"]: read_json(results_path(r["date"]), {}) or {} for r in reports[:30]}
+        hrows = PX.rows_from_results(reports, rbd) + hrows  # 최근 결과가 앞(중복이면 이것이 남는다)
+        tms = PX.teams(hrows, reports, config.now_kst().isoformat())
+        tables = PX.standings(hrows, config.now_kst())
+        vns = PX.venues(reports)
     except Exception:  # noqa: BLE001
-        log.exception("팀 페이지 데이터 실패")
-        tms = {}
+        log.exception("팀·순위 데이터 실패")
+        tms, tables, vns = {}, {}, {}
+    for t in tms.values():
+        tb = tables.get(PX.lkey(t["league"]))
+        t["table_slug"] = slug(tb["name"]) if tb else None
+        t["intro"] = PX.team_intro(t, tb, vns.get((t["sport"], PX.lkey(t["name"]))))
+        me = next((r for r in tb["rows"] if PX.lkey(r["team"]) == PX.lkey(t["name"])), None) if tb else None
+        t["rank"] = (me["rank"], len(tb["rows"]), tb["name"], tb["season"]) if me else None
     turl = {(t["sport"], a): t["url"] for t in tms.values() for a in t["aliases"]}
     rds = PX.rounds(reports)
 
@@ -522,9 +534,18 @@ def build() -> None:
              jsonld=_jsonld({"@context": "https://schema.org", "@type": "SportsTeam", "name": t["name"], "sport": SPORT_LABEL.get(t["sport"], t["sport"]),
                              "url": config.SITE_URL + t["url"]},
                             _crumbs([("홈", "/"), ("팀별 기록", "/teams/"), (t["name"], t["url"])])))
+    # 리그 페이지에 순위표를 붙인다(최근 리포트에 없는 리그도 순위표가 있으면 페이지를 만든다)
+    by_key = {PX.lkey(lg["name"]): lg for lg in leagues.values()}
+    for lk, tb in tables.items():
+        lg = by_key.get(lk)
+        if not lg:
+            lg = {"name": tb["name"], "slug": slug(tb["name"]), "sport": tb["sport"], "n": 0, "graded": 0, "hit": 0, "teams": [], "recent": []}
+            leagues[tb["name"]] = lg
+        lg["table"] = tb
     page("leagues.html", "/leagues/")
     for lg in leagues.values():
-        page("league.html", f"/leagues/{lg['slug']}/", lg=lg)
+        page("league.html", f"/leagues/{lg['slug']}/", lg=lg,
+             jsonld=_jsonld(_crumbs([("홈", "/"), ("리그별 기록", "/leagues/"), (lg["name"], f"/leagues/{lg['slug']}/")])))
     page("performance.html", "/performance/")
     page("tool.html", "/tool/", jsonld=_jsonld({'@context': 'https://schema.org', '@type': 'FAQPage', 'mainEntity': [{'@type': 'Question', 'name': '켈리 기준(Kelly Criterion)이란 무엇인가요?', 'acceptedAnswer': {'@type': 'Answer', 'text': '가진 자금 중 몇 %를 걸어야 장기적으로 자금이 가장 빨리 불어나는지 알려주는 공식입니다. 1956년 벨 연구소의 존 L. 켈리 주니어가 발표했습니다. 베팅 비율 = (적중 확률 × 배당 − 1) ÷ (배당 − 1).'}}, {'@type': 'Question', 'name': '왜 켈리 금액의 1/4만 거나요?', 'acceptedAnswer': {'@type': 'Answer', 'text': '스포츠 경기의 적중 확률은 추정값이라 오차가 있습니다. 1/4 켈리는 성장 속도를 약 44%로 낮추는 대신 자금 변동을 1/4로 줄여 안전합니다. 이 계산기는 1/4 켈리에 시드의 10%와 1회 100,000원 상한을 둡니다.'}}, {'@type': 'Question', 'name': '켈리 기준으로 시드를 키우면 어디까지 커지나요?', 'acceptedAnswer': {'@type': 'Answer', 'text': '시드 × 베팅 비율이 베트맨 1회차 구매 한도 100,000원에 닿을 때까지는 거는 금액이 시드와 함께 커져 복리로 불어납니다(예: 비율 5%면 시드 200만 원까지). 그 뒤로는 한 회차 금액이 10만 원에서 멈추므로 기대 수익은 회차 수(1주일 약 3회차)만큼만 늘어납니다.'}}, {'@type': 'Question', 'name': '켈리 크리테온과 켈리 기준은 같은 말인가요?', 'acceptedAnswer': {'@type': 'Answer', 'text': "네, 모두 Kelly Criterion을 가리킵니다. 영어 발음은 '크라이테리언'에 가깝고, 우리말로는 '켈리 기준'이 가장 많이 쓰입니다."}}]}))
     for name in ("method", "guide", "about", "privacy", "terms", "contact", "responsible", "odds", "support"):

@@ -1,25 +1,54 @@
 {% extends "base.html" %}
 {% from "_macros.html" import result_tag %}
-{% block title %}{{ lg.name }} 경기 분석 기록 · {{ cfg.SITE_NAME }}{% endblock %}
-{% block desc %}{{ lg.name }} 최근 분석 {{ lg.n }}건과 결과.{% endblock %}
+{% set tb = lg.table %}
+{% block title %}{{ lg.name }} 순위{% if tb %} ({{ tb.season }}){% endif %} · 팀별 기록과 경기 분석 | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}{{ lg.name }}{% if tb %} {{ tb.season }} 순위표: 1위 {{ tb.rows[0].team }}{% if tb.rows|length > 1 %}, 2위 {{ tb.rows[1].team }}{% endif %}.{% endif %} 팀별 최근 전적, 최근 분석 경기와 결과.{% endblock %}
 {% block main %}
+{% set WDL = {'W': '승', 'D': '무', 'L': '패'} %}
 <section class="wrap page-head">
   <p class="kicker"><a href="/leagues/">리그</a> · {{ SPORT_LABEL[lg.sport] }}</p><h1>{{ lg.name }}</h1>
-  <p class="lede">분석 {{ lg.n }}건{% if lg.graded %}, 채점 {{ lg.graded }}건 중 {{ lg.hit }}건 적중{% endif %}.</p>
+  <p class="lede">{% if tb %}{{ tb.season }} {{ tb.rows|length }}팀 · 집계 {{ tb.n }}경기(마지막 {{ tb.last[5:]|replace('-', '/') }}).{% endif %}{% if lg.n %} 최근 분석 {{ lg.n }}건{% if lg.graded %}, 채점 {{ lg.graded }}건 중 {{ lg.hit }}건 적중{% endif %}.{% endif %}</p>
 </section>
+
+{% if tb %}
 <section class="wrap block">
-  <h2 class="sub">최근 경기</h2>
-  <table class="tbl">
-    <thead><tr><th>날짜</th><th>경기</th><th>모델 픽</th><th class="n">확률</th><th class="n">배당</th><th>결과</th></tr></thead>
+  <h2 class="sub">{{ tb.season }} 순위</h2>
+  <div class="tblw"><table class="tbl st-tbl">
+    <thead><tr><th class="n">#</th><th>팀</th><th class="n">경기</th><th class="n">승</th>{% if lg.sport == 'soccer' %}<th class="n">무</th>{% endif %}<th class="n">패</th>
+      {% if tb.points %}<th class="n">승점</th>{% else %}<th class="n">승률</th>{% endif %}<th class="n st-hide">{{ '득실' if lg.sport == 'soccer' else '득실차' }}</th><th class="st-hide">최근 5</th></tr></thead>
     <tbody>
-    {% for m in lg.recent %}{% set a = m.analysis %}
-    <tr><td><a href="/reports/{{ m.date }}/">{{ m.kickoff|kdt }}</a></td><td>{{ m.home }} vs {{ m.away }}</td>
-    <td>{% if a %}{{ outcome(m, a.pick) }}{% endif %}</td><td class="n">{% if a %}{{ a.pick_prob|pct }}{% endif %}</td><td class="n">{% if a %}{{ a.pick_odds|odds }}{% endif %}</td>
-    <td>{% if m.result and a %}{{ result_tag('void' if m.result == 'VOID' else ('hit' if m.result == a.pick else 'miss')) }}{% endif %}</td></tr>
+    {% for r in tb.rows %}
+      <tr><td class="n muted">{{ r.rank }}</td>
+        <td>{% set tu = team_link(lg.sport, r.team) %}{% if tu %}<a href="{{ tu }}">{{ r.team }}</a>{% else %}{{ r.team }}{% endif %}</td>
+        <td class="n">{{ r.g }}</td><td class="n">{{ r.w }}</td>{% if lg.sport == 'soccer' %}<td class="n">{{ r.d }}</td>{% endif %}<td class="n">{{ r.l }}</td>
+        {% if tb.points %}<td class="n"><b>{{ r.pts }}</b></td>{% else %}<td class="n"><b>{{ '%.3f'|format(r.pct) }}</b></td>{% endif %}
+        <td class="n st-hide">{{ '%+d'|format(r.gd|int) }}</td>
+        <td class="st-hide"><span class="fseq">{% for c in r.form %}<i class="r{{ c }}">{{ WDL[c] }}</i>{% endfor %}</span></td></tr>
     {% endfor %}
     </tbody>
-  </table>
-  <h2 class="sub">자주 등장한 팀</h2>
-  <p class="teams">{% for t, n in lg.teams[:30] %}{% set tu = team_link(lg.sport, t) %}{% if tu %}<a href="{{ tu }}">{{ t }} <small>{{ n }}</small></a>{% else %}<span>{{ t }} <small>{{ n }}</small></span>{% endif %}{% endfor %}</p>
+  </table></div>
+  <p class="fine">베트맨에 발매된 경기의 공식 결과로 셉니다. 발매되지 않은 경기는 빠지므로 공식 순위와 다를 수 있습니다.{% if tb.points and lg.sport == 'volleyball' %} 승점: 3:0·3:1 승 3점, 3:2 승 2점, 2:3 패 1점.{% elif tb.points %} 승점: 승 3점, 무 1점.{% endif %} 자동 업데이트마다 새 결과가 더해집니다.</p>
 </section>
+{% endif %}
+
+{% if not tb and lg.teams %}
+<section class="wrap block">
+  <h2 class="sub">참가 팀</h2>
+  <p class="teams">{% for t, n in lg.teams[:40] %}{% set tu = team_link(lg.sport, t) %}{% if tu %}<a href="{{ tu }}">{{ t }} <small>{{ n }}</small></a>{% else %}<span>{{ t }} <small>{{ n }}</small></span>{% endif %}{% endfor %}</p>
+</section>
+{% endif %}
+
+{% if lg.recent %}
+<section class="wrap block">
+  <h2 class="sub">최근 분석 경기</h2>
+  <div class="tblw"><table class="tbl">
+    <thead><tr><th>날짜</th><th>경기와 픽</th></tr></thead>
+    <tbody>
+    {% for m in lg.recent %}{% set a = m.analysis %}
+    <tr><td class="muted"><a href="/reports/{{ m.date }}/">{{ m.kickoff|kdt }}</a></td><td>{{ m.home }} vs {{ m.away }}<br><small class="muted">{{ mk_short(m) }}</small>{% if a %} <span class="bub on {{ outcome(m, a.pick)|tone }}">{{ outcome(m, a.pick) }}</span> {{ a.pick_prob|pct }} <small class="muted">{{ a.pick_odds|odds }}</small>{% if m.result and m.result != 'VOID' and m.result == a.pick %} <small class="tag hit">적중</small>{% endif %}{% endif %}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</section>
+{% endif %}
 {% endblock %}

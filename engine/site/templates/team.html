@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% block title %}{{ t.name }} 경기 분석 · 최근 전적과 배당 기록 ({{ t.league }}) | {{ cfg.SITE_NAME }}{% endblock %}
-{% block desc %}{{ t.name }}({{ t.league }}) 최근 {{ t.n }}경기 {{ t.w }}승{% if t.d %} {{ t.d }}무{% endif %} {{ t.l }}패. 홈·원정 성적, 정배·역배일 때 승률, 상대 전적, 다가오는 경기 분석.{% endblock %}
+{% block desc %}{% if t.rank %}{{ t.rank[3] }} {{ t.rank[2] }} {{ t.rank[0] }}위. {% endif %}{{ t.name }}({{ t.league }}) 최근 {{ t.n }}경기 {{ t.w }}승{% if t.d %} {{ t.d }}무{% endif %} {{ t.l }}패. 홈·원정 성적, 정배·역배일 때 승률, 상대 전적, 다가오는 경기 분석.{% endblock %}
 {% block main %}
 {% set WDL = {'W': '승', 'D': '무', 'L': '패'} %}
 <section class="wrap page-head">
   <p class="kicker"><a href="/teams/">팀</a> · {{ SPORT_LABEL[t.sport] }} · {{ t.league }}</p>
   <h1>{{ t.name }}</h1>
-  <p class="lede">{% if t.n %}베트맨 발매 경기 기준 최근 {{ t.n }}경기 {{ t.w }}승{% if t.d %} {{ t.d }}무{% endif %} {{ t.l }}패{% if t.avg_for is not none %}, 평균 {{ t.avg_for }}득점 {{ t.avg_against }}실점{% endif %}.{% else %}아직 베트맨 발매 기록이 적은 팀입니다.{% endif %}</p>
+  {% if t.rank %}<p class="tm-rank"><a href="/leagues/{{ t.table_slug }}/">{{ t.rank[3] }} {{ t.rank[2] }} <b>{{ t.rank[0] }}위</b> <small>/ {{ t.rank[1] }}팀</small></a></p>{% endif %}
+  <div class="tm-intro">{% for p in t.intro %}<p>{{ p }}</p>{% endfor %}</div>
 </section>
 
 {% if t.upcoming %}
