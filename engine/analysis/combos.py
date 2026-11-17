@@ -271,9 +271,13 @@ def value_legs(markets: list[dict[str, Any]], min_ev: float = 0.0) -> list[dict[
 
 
 def _is_dog(m: dict[str, Any], a: dict[str, Any], key: str) -> bool:
-    """역배 = 그 경기에서 해외 배당이 더 높은 쪽(무승부·언더오버 제외). 해외 배당이 없으면 역배로 보지 않는다."""
-    xo = {k: v for k, v in (a.get("x_odds") or {}).items() if k != "D" and v}
-    return m["market"] != "OU" and key != "D" and key in xo and len(xo) >= 2 and xo[key] > min(xo.values())
+    """역배 = 승패·승무패에서 베트맨 배당이 상대보다 높은 쪽(무승부 제외).
+
+    핸디캡·언더오버는 기준점으로 양쪽 배당을 맞춘 마켓이라 역배로 보지 않는다. 배당이 같으면 역배가 아니다."""
+    if m.get("market") not in ("1X2", "WL") or key == "D":
+        return False
+    od = {k: v for k, v in (m.get("odds") or {}).items() if k != "D" and v}
+    return key in od and len(od) >= 2 and od[key] > min(v for k, v in od.items() if k != key)
 
 
 def upset_legs(markets: list[dict[str, Any]], limit: int = 6) -> list[dict[str, Any]]:
@@ -286,12 +290,12 @@ def upset_legs(markets: list[dict[str, Any]], limit: int = 6) -> list[dict[str, 
     out = []
     for m in markets:
         a = m.get("analysis")
-        if not a or m["market"] not in ("1X2", "WL", "HANDICAP"):
+        if not a or m["market"] not in ("1X2", "WL"):
             continue
         for k in (m.get("odds") or {}):
             if not _is_dog(m, a, k) or k not in a["p"]:
                 continue
-            xo = a["x_odds"][k]
+            xo = (a.get("x_odds") or {}).get(k) or m["odds"][k]
             if xo > 9:
                 continue
             p = a["p"][k]
