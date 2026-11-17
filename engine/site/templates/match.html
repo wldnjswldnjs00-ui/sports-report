@@ -76,7 +76,7 @@
         {% for k, od in m.odds.items() %}
         <tr>
           {% if loop.first %}<td rowspan="{{ m.odds|length }}">{{ MARKET_LABEL[m.market] }}{% if m.line is not none %} <span class="muted">{{ '%+g'|format(m.line) if m.market != 'OU' else m.line }}</span>{% endif %}</td>{% endif %}
-          <td><button type="button" class="opick osm{% if a and k == a.pick %} is-model{% endif %}" data-leg="{{ m.id }}|{{ k }}"><span class="{{ outcome(m, k)|tone }}">{{ outcome(m, k) }}</span></button></td>
+          <td><button type="button" class="opick osm{% if is_pick(a) and k == a.pick %} is-model{% endif %}" data-leg="{{ m.id }}|{{ k }}"><span class="{{ outcome(m, k)|tone }}">{{ outcome(m, k) }}</span></button></td>
           <td class="n">{{ od|odds }}</td>
           <td class="n">{% if a %}{{ a.p.get(k)|pct(1) }}{% endif %}</td>
           <td class="n hist-cell">{% set h = (a.hist or {}).get(k) if a else none %}{% if h and h.bucket in XSRC %}{{ h.hit|pct(1) }}<small>{{ h.bucket }} · {{ '{:,}'.format(h.n) }}경기</small>{% elif a and a.bhist and k == a.pick %}{{ a.bhist.hit|pct(1) }}<small>베트맨 · {{ a.bhist.group }} · {{ '{:,}'.format(a.bhist.n) }}경기</small>{% else %}<span class="muted">–</span>{% endif %}</td>

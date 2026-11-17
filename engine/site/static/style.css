@@ -1130,3 +1130,11 @@ h1, h2, h3, .block-head h2 { text-wrap: balance; }
   .mc-row { grid-template-columns: minmax(0, 1fr) 96px 8px; gap: 10px; padding: 12px 14px; }
   .mc-teams { font-size: 14.5px; }
 }
+
+/* 역배 후보 선택지 표시(모델 픽과 구분) */
+.opick.is-dog { position: relative; border-style: dashed; border-color: var(--neg); }
+.opick .dog-tag { position: absolute; top: -9px; left: 10px; font: 800 10px/1 var(--sans); font-style: normal; background: var(--neg); color: #fff; border-radius: 4px; padding: 2px 5px; white-space: nowrap; }
+.odds-pick { padding-top: 6px; }
+.mc-legend { margin: -4px 0 12px; }
+.mc-legend .lg-model { border: 1.5px solid var(--ink); border-radius: 4px; padding: 0 4px; }
+.mc-legend .lg-dog { border: 1.5px dashed var(--neg); border-radius: 4px; padding: 0 4px; }

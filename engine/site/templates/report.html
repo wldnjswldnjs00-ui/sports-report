@@ -141,12 +141,13 @@
       {% if cnt %}<button type="button" class="chip" aria-pressed="false" data-f="{{ sp }}">{{ SPORT_LABEL[sp] }} <small>{{ cnt }}</small></button>{% endif %}
       {% endfor %}
       <span class="f-sep" aria-hidden="true"></span>
-      <button type="button" class="chip" aria-pressed="false" data-k="dog">역배</button>
+      <button type="button" class="chip" aria-pressed="false" data-k="dog">역배 후보</button>
       <button type="button" class="chip" aria-pressed="false" data-k="handi">핸디</button>
       <button type="button" class="chip" aria-pressed="false" data-k="ou">언오버</button>
       <button type="button" class="chip" aria-pressed="false" data-k="caution">주의</button>
     </div>
   </header>
+  <p class="fine mc-legend">경기를 누르면 마켓별 배당이 나옵니다. <span class="lg-model">실선 테두리</span>는 모델 픽, <span class="lg-dog">빨간 점선</span>은 역배 후보(배당이 높은 쪽인데 가능성이 있는 선택)입니다. 박빙 마켓은 표시하지 않습니다.</p>
   <p class="none" data-empty hidden>조건에 맞는 경기가 없습니다.</p>
   {% set ns = namespace(order=[]) %}{% for g in groups %}{% if g.league not in ns.order %}{% set ns.order = ns.order + [g.league] %}{% endif %}{% endfor %}
   {% for lgname in ns.order %}{% set lgg = groups|selectattr('league', 'equalto', lgname)|list %}
@@ -168,7 +169,7 @@
             <span class="mc-teams">{{ g.home }}{% if th and th.rank_short %}<small class="rk">{{ th.rank_short }}</small>{% endif %} <i>vs</i> {{ g.away }}{% if ta and ta.rank_short %}<small class="rk">{{ ta.rank_short }}</small>{% endif %}</span>
             <span class="mc-meta">{{ g.kickoff|kdt }}{% if g.game_no %} · {{ g.game_no }}번{% endif %} · 마켓 {{ g.markets|length }}개
               {% if graded %}{% set hits = graded|select|list|length %}<span class="tag {{ 'hit' if hits == graded|length else ('miss' if hits == 0 else 'part') }}">적중 {{ hits }}/{{ graded|length }}</span>{% endif %}
-              {% if warn and not graded %}<span class="bd warn">주의</span>{% endif %}{% if ux and not graded %}<span class="bd dog">역배</span>{% endif %}</span>
+              {% if warn and not graded %}<span class="bd warn">주의</span>{% endif %}{% if ux and not graded %}<span class="bd dog">역배 후보</span>{% endif %}</span>
           </span>
           <span class="mc-pick">
             {% if a and not is_pick(a) %}
@@ -192,7 +193,9 @@
             {% if ma %}{{ prob_bar(m) }}{% endif %}
             <div class="odds-pick" role="group" aria-label="{{ mk_short(m) }} 결과 선택해서 내 조합에 담기">
               {% for k, od in m.odds.items() %}
-              <button type="button" class="opick{% if ma and k == ma.pick %} is-model{% endif %}" data-leg="{{ m.id }}|{{ k }}">
+              {% set isdog = ux and ux.market_id == m.id and ux.outcome == k %}
+              <button type="button" class="opick{% if is_pick(ma) and k == ma.pick %} is-model{% endif %}{% if isdog %} is-dog{% endif %}" data-leg="{{ m.id }}|{{ k }}"{% if isdog %} title="역배 후보 · 확률 {{ ux.p|pct }}"{% endif %}>
+                {% if isdog %}<em class="dog-tag">역배 후보 {{ ux.p|pct }}</em>{% endif %}
                 <span class="{{ outcome(m, k)|tone }}">{{ outcome(m, k) }}</span><b>{{ od|odds }}</b>
               </button>
               {% endfor %}
