@@ -1032,3 +1032,44 @@ body { word-break: keep-all; overflow-wrap: break-word; }
 .lgi-group { margin-bottom: 20px; }
 .lgi-group[hidden] { display: none; }
 .lgi-filter { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
+
+/* 글자 줄바꿈 정리: 한글 단어 중간에서 끊지 않고, 숫자·짧은 표시는 한 줄로, 마지막 줄에 한두 글자만 남지 않게 */
+h1, h2, h3, p, li, dt, dd, td, th, summary, .lede, .fine { word-break: keep-all; overflow-wrap: anywhere; }
+p, li, dd, .lede, .fine { text-wrap: pretty; }
+h1, h2, h3, .block-head h2 { text-wrap: balance; }
+.n, .bub, .tag, .rk, .c-risk, .c-pick, .leg-odds, .combo-odds, .combo-size, .kc b, .kc s, .m-pick, .m-time, .m-no, .m-conf, .tp-pick, .opick b, .lg-top, .ps-score { white-space: nowrap; }
+/* 정배인데 불안한 경기: 숫자가 두 줄로 깨지지 않게 */
+.caution-list li { grid-template-columns: 74px minmax(0, 1fr) auto; }
+.c-risk { font-size: 20px; line-height: 1.1; }
+.c-risk small { margin-bottom: 2px; }
+.c-pick { display: inline-flex; align-items: center; gap: 8px; font: 600 14px var(--sans); }
+.c-pick b { font: 700 15px var(--en); color: var(--ink); }
+@media (max-width: 520px) {
+  .caution-list li { grid-template-columns: 62px minmax(0, 1fr); row-gap: 6px; }
+  .c-pick { grid-column: 2; }
+  .c-risk { font-size: 18px; }
+}
+
+/* 줄바꿈 단위: 팀 이름(+순위)은 한 덩어리, vs 는 원정 팀 앞에 */
+.tm { display: inline-block; max-width: 100%; }
+.c-match .meta { display: flex; flex-wrap: wrap; gap: 0 6px; }
+.c-match .meta span { white-space: nowrap; }
+.c-match .meta span + span::before { content: "·"; margin-right: 6px; color: var(--ink-3); }
+.c-match i { font-style: normal; font-weight: 400; color: var(--ink-3); font-size: .85em; margin-right: 2px; }
+/* 큰 숫자(%)는 줄이 바뀌지 않게 */
+.xo-bars b, .kpis dd, .tp-nums dd, .lg-nums dd, .combo-foot dd, .stat-row b, .k-ex dd, .vs-tbl td { white-space: nowrap; }
+.xo-bars b { font-size: clamp(18px, 5vw, 26px); }
+/* 전략 탭: 휴대폰에서 두 줄로 접히지 않고 옆으로 밀어서 보기 */
+@media (max-width: 640px) {
+  .tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; display: flex; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs button { flex: none; white-space: nowrap; padding: 9px 14px; }
+}
+.xo-bars li { grid-template-columns: 52px minmax(0, 1fr) auto; }
+@media (max-width: 640px) { .xo-bars li { grid-template-columns: 46px minmax(0, 1fr) auto; } }
+.xo-bars b { font-size: clamp(17px, 4.6vw, 22px); }
+.c-match .meta { gap: 0 4px; font-size: 12px; }
+.c-match .meta span + span::before { margin-right: 4px; }
+.c-match .meta { flex-wrap: nowrap; min-width: 0; }
+.c-match .meta span:first-child { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.c-match .meta span + span { flex: none; }
