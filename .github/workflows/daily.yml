@@ -1,16 +1,20 @@
 name: 매일 분석
 
+# 정기 실행은 Cloudflare Worker 의 예약 실행(cron/worker.js)이 정해진 시각에 이 워크플로를 시작한다(slot = 그 시각의 cron).
+# GitHub 자체 schedule 은 이 저장소에서 한 번도 실행되지 않았고 늦게 도는 일이 잦아서 쓰지 않는다(겹쳐 두 번 도는 것도 방지).
+#   23:05 "5 14 * * *"  다음 구매일 리포트      06:00 "0 21 * * *"  새 리포트 + 전날 채점(결과 API)
+#   07:00 "0 22 * * *"  재수집 + 쓰레드 아침    09:30 "30 0 * * *"  재수집
+#   13:00 "0 4 * * *"   재수집                  18:00 "0 9 * * *"   해외 배당 새로고침
+#   19:00 "0 10 * * *"  다음 구매일 분석 공개    22:00 "0 13 * * *"  다음 구매일 분석 + 쓰레드 밤
+run-name: ${{ inputs.slot && format('매일 분석 · {0}', inputs.slot) || (github.event_name == 'push' && '코드 반영 실행' || '매일 분석 (수동)') }}
+
 on:
-  schedule:
-    - cron: "5 14 * * *"   # 23:05 KST  구매일이 바뀌면(23시) 바로 다음 구매일 리포트
-    - cron: "0 21 * * *"   # 06:00 KST  새 날짜 리포트 + 전날 결과 채점(결과 API 호출)
-    - cron: "0 22 * * *"   # 07:00 KST  아침 재수집 + 쓰레드 아침 게시
-    - cron: "30 0 * * *"   # 09:30 KST  발매 경기 재수집
-    - cron: "0 4 * * *"    # 13:00 KST  재수집
-    - cron: "0 9 * * *"    # 18:00 KST  배당 갱신(해외 배당 새로고침)
-    - cron: "0 10 * * *"   # 19:00 KST  재수집 + 다음 구매일 분석 생성·공개
-    - cron: "0 13 * * *"   # 22:00 KST  다음 구매일 분석 미리 생성 + 쓰레드 밤 게시
   workflow_dispatch:
+    inputs:
+      slot:
+        description: "정기 실행 시각(cron 문자열). 비우면 일반 수동 실행"
+        required: false
+        default: ""
   push:
     branches: [main]
     paths: ["data/manual/**", "data/results/manual/**", "data/aliases.json", "engine/sources/**", "engine/analysis/**"]
@@ -27,6 +31,8 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
+    env:
+      SLOT: ${{ inputs.slot || github.event.schedule || '' }}
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
@@ -45,14 +51,14 @@ jobs:
         run: |
           ARGS=""
           # 해외 배당 새로고침: 18:00, 그리고 아침 쓰레드 게시 전 07:00(밤사이 바뀐 배당 반영, API 잔여량이 부족하면 엔진이 알아서 건너뜀)
-          [ "${{ github.event.schedule }}" = "0 9 * * *" ] && ARGS="$ARGS --refresh"
-          [ "${{ github.event.schedule }}" = "0 22 * * *" ] && ARGS="$ARGS --refresh"
-          [ "${{ github.event.schedule }}" != "0 21 * * *" ] && [ "${{ github.event_name }}" = "schedule" ] && ARGS="$ARGS --no-scores"
+          [ "$SLOT" = "0 9 * * *" ] && ARGS="$ARGS --refresh"
+          [ "$SLOT" = "0 22 * * *" ] && ARGS="$ARGS --refresh"
+          [ "$SLOT" != "0 21 * * *" ] && [ -n "$SLOT" ] && ARGS="$ARGS --no-scores"
           work() {
             python -m engine run $ARGS
             # 22:00: 23시 전환 전에 다음 구매일 분석을 미리 만들어 둔다(쓰레드 밤 게시용, 사이트 첫 화면은 23시까지 오늘 그대로)
             # 19:00·22:00: 다음 구매일 분석을 만든다(19시부터 사이트에 '내일 분석'으로 공개, 22시는 쓰레드용으로 다시 갱신)
-            if [ "${{ github.event.schedule }}" = "0 10 * * *" ] || [ "${{ github.event.schedule }}" = "0 13 * * *" ]; then
+            if [ "$SLOT" = "0 10 * * *" ] || [ "$SLOT" = "0 13 * * *" ]; then
               python -m engine collect --date "$(TZ=Asia/Seoul date -d tomorrow +%F)"
             fi
           }
@@ -67,7 +73,7 @@ jobs:
           done
       - name: 쓰레드 카드 준비(밤 22:00·아침 07:00, 토큰이 있을 때만)
         id: tprep
-        if: github.event.schedule == '0 13 * * *' || github.event.schedule == '0 22 * * *' || contains(github.event.head_commit.message, '[threads-now]')
+        if: env.SLOT == '0 13 * * *' || env.SLOT == '0 22 * * *' || contains(github.event.head_commit.message, '[threads-now]')
         continue-on-error: true
         env:
           THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
@@ -103,7 +109,7 @@ jobs:
           done
           exit 1
       - name: 쓰레드 게시(배포된 카드 이미지로 캐러셀)
-        if: steps.commit.outputs.pushed == '1' && (github.event.schedule == '0 13 * * *' || github.event.schedule == '0 22 * * *' || contains(github.event.head_commit.message, '[threads-now]'))
+        if: steps.commit.outputs.pushed == '1' && (env.SLOT == '0 13 * * *' || env.SLOT == '0 22 * * *' || contains(github.event.head_commit.message, '[threads-now]'))
         continue-on-error: true
         env:
           THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
