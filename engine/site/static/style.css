@@ -181,7 +181,7 @@ dd { margin: 3px 0 0; font: 600 21px/1.2 var(--en); letter-spacing: -0.03em; }
 .combo-legs { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .combo-legs li { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto 44px; gap: 8px; align-items: center; font-size: 13.5px; }
 .leg-no { font: 500 10.5px var(--en); color: var(--ink-3); }
-.leg-match { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.leg-match { font-weight: 600; }
 .leg-odds { text-align: right; font: 500 12.5px var(--en); }
 .combo-legs li.is-hit .bub { background: var(--hit); color: #fff; }
 .meter { height: 6px; border-radius: 6px; background: var(--card-2); margin: 14px 0 4px; overflow: hidden; }
@@ -234,7 +234,7 @@ dd { margin: 3px 0 0; font: 600 21px/1.2 var(--en); letter-spacing: -0.03em; }
 .opick:active { transform: scale(.96); }
 .opick.is-on { background: var(--on); color: var(--on-ink); border-color: var(--on); }
 .opick.is-on span { color: var(--on-ink); }
-.opick.mini { min-width: 0; padding: 4px 12px; }
+.opick.osm { min-width: 0; padding: 4px 12px; }
 .m-text { color: var(--ink-2); font-size: 14.5px; max-width: 72ch; margin: 8px 0; }
 .m-link { margin: 6px 0 0; font-size: 13.5px; }
 .m-link a { color: var(--hot); text-decoration: none; font-weight: 700; }
@@ -415,7 +415,8 @@ dd { margin: 3px 0 0; font: 600 21px/1.2 var(--en); letter-spacing: -0.03em; }
   .past a { grid-template-columns: minmax(0, 1fr) auto; }
   .past-h { display: none; }
   .foot-grid { grid-template-columns: 1fr; }
-  .tbl { font-size: 13px; display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+  .tbl { font-size: 13px; }
+  .tbl th, .tbl td { padding: 9px 8px; }
   .value-tbl th:nth-child(6), .value-tbl td:nth-child(6) { display: none; }
   .tool-manual { grid-template-columns: 1fr 1fr; }
   .tool-manual .btn { grid-column: span 2; }
@@ -636,7 +637,7 @@ html:not(.is-mobile):not(.is-pc) .mo-only { display: none; }
 .tool-list li.tl-game { padding: 0; }
 .tool-list .tl-head { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto 14px; grid-template-areas: "meta n caret" "name n caret"; gap: 2px 10px; align-items: center;
   background: none; border: 0; padding: 12px 2px; text-align: left; cursor: pointer; color: var(--ink); margin: 0; font: inherit; }
-.tl-meta { grid-area: meta; font-size: 11.5px; color: var(--ink-3); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tl-meta { grid-area: meta; font-size: 11.5px; color: var(--ink-3); font-weight: 600; }
 .tl-name { grid-area: name; font-size: 14.5px; font-weight: 700; word-break: keep-all; }
 .tl-n { grid-area: n; font-size: 11.5px; color: var(--ink-3); font-weight: 600; white-space: nowrap; }
 .tl-head.has-pick .tl-n { color: var(--hot); }
@@ -731,7 +732,7 @@ html:not(.is-mobile):not(.is-pc) .mo-only { display: none; }
 @media (min-width: 720px) { .lg.is-open { grid-column: 1 / -1; } }
 .lg-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 8px; width: 100%; text-align: left; background: none; border: 0; padding: 13px 14px 12px; cursor: pointer; border-radius: inherit; color: inherit; }
 .lg-top { grid-column: 1; font-size: 12px; color: var(--ink-3); }
-.lg-match { grid-column: 1; font-weight: 700; font-size: 15px; line-height: 1.35; min-width: 0; overflow-wrap: anywhere; }
+.lg-match { grid-column: 1; font-weight: 700; font-size: 15px; line-height: 1.35; min-width: 0; overflow-wrap: break-word; }
 .lg-match i { font-style: normal; font-weight: 400; color: var(--ink-3); font-size: 12px; margin: 0 3px; }
 .lg-caret { grid-column: 2; grid-row: 1 / 3; align-self: center; width: 9px; height: 9px; border-right: 2px solid var(--ink-3); border-bottom: 2px solid var(--ink-3); transform: rotate(45deg); margin: 0 4px 4px 0; transition: transform .2s; }
 .lg.is-open .lg-caret { transform: rotate(-135deg); margin: 6px 4px 0 0; }
@@ -747,7 +748,7 @@ html:not(.is-mobile):not(.is-pc) .mo-only { display: none; }
 .lg-dh small { color: var(--ink-3); font-size: 12px; }
 .lg-opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 6px; margin-bottom: 10px; }
 .lg-opts .opick { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--card-2); cursor: pointer; min-width: 0; text-align: left; color: inherit; }
-.lg-opts .opick span { font-size: 12.5px; color: var(--ink-2); overflow-wrap: anywhere; }
+.lg-opts .opick span { font-size: 12.5px; color: var(--ink-2); overflow-wrap: break-word; }
 .lg-opts .opick b { font-family: var(--en); font-size: 15px; }
 .lg-opts .opick.is-model { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
 .lg-nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px 12px; margin: 0; }
@@ -852,7 +853,7 @@ i.t-pos, i.t-neg, i.t-draw { font-style: normal; }
 @media (min-width: 1080px) { .rd-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .rd-list li { display: grid; gap: 6px; align-content: start; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; min-width: 0; }
 .rd-top { font-size: 12px; }
-.rd-match { font-size: 15px; overflow-wrap: anywhere; }
+.rd-match { font-size: 15px; overflow-wrap: break-word; }
 .rd-match a { text-decoration: none; }
 .rd-match i { font-style: normal; font-weight: 400; color: var(--ink-3); font-size: 12px; }
 .rd-picks > span { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
@@ -970,4 +971,24 @@ tr[aria-expanded="true"] .box-caret, details[open] > summary .box-caret { transf
   .daily-chart .axis { font-size: 19px; }
   .daily-chart .val { font-size: 20px; }
   .daily-chart { padding: 14px 10px; }
+}
+
+/* 표가 화면을 넘지 않게: 감싼 표는 안에서만 넘치고, 숫자 열은 한 줄 유지 */
+.tbl td.n, .tbl th.n { white-space: nowrap; }
+@media (max-width: 720px) {
+  .vs-tbl .fseq { flex-wrap: wrap; }
+  .vs-tbl td, .vs-tbl th { width: auto; }
+  .vs-tbl .vs-mid { white-space: normal; width: 22%; }
+}
+
+/* 한글은 단어 단위로 줄바꿈(단어 중간에서 끊기지 않게), 아주 긴 단어만 예외 */
+body { word-break: keep-all; overflow-wrap: break-word; }
+.opick { white-space: nowrap; }
+@media (max-width: 720px) {
+  .tbl th, .tbl td { overflow-wrap: break-word; }
+  .lg-only { display: none; }
+  .mk-tbl { font-size: 12.5px; }
+  .mk-tbl th, .mk-tbl td { padding: 9px 6px; }
+  .mk-tbl .hist-cell small { display: none; }
+  .mk-tbl .opick.osm { padding: 4px 8px; }
 }
