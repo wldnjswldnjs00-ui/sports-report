@@ -78,7 +78,7 @@
     {% endif %}{% endfor %}
     <div class="block-head"><h2>마켓별 배당과 확률</h2><p>배당은 베트맨 배당입니다. 확률은 해외 배당을 기준으로 계산합니다. 과거 기록 적중률은 배당이 이 경기와 비슷했던 지난 경기가 실제로 그렇게 끝난 비율입니다. 유럽 축구·NBA·MLB는 해외 배당 기록, 해외 배당이 없는 리그(KBL·WKBL·KOVO 등)는 베트맨 배당 기록으로 셉니다.</p></div>
     {% set has_res = g.markets|selectattr('id', 'in', outs)|list %}
-    <table class="tbl mk-tbl">
+    <div class="tblw"><table class="tbl mk-tbl">
       <thead><tr><th>마켓</th><th>선택</th><th class="n">배당</th><th class="n">추정 확률</th><th class="n"><span class="lg-only">과거 기록 </span>적중률</th>{% if has_res %}<th>결과</th>{% endif %}</tr></thead>
       <tbody>
       {% for m in g.markets %}{% set a = m.analysis %}{% set o = outs.get(m.id) %}
@@ -94,7 +94,7 @@
         {% endfor %}
       {% endfor %}
       </tbody>
-    </table>
+    </table></div>
   </section>
 
   {% set fms = g.markets|select('has_flow')|list %}

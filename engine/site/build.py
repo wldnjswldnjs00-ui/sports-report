@@ -542,15 +542,19 @@ def build() -> None:
     page("report.html", "/", og_image=home_og, r=latest, is_home=True, next_day=(next_rep or {}).get("date"), nxt=next_rep, next_guess=next_guess, lastmod=(latest or {}).get("date"),
          matches=_matches(latest) if latest else [], leagues_top=_leagues_of(latest) if latest else [],
          jsonld=_jsonld(site_ld) + report_ld(latest, "/"))
-    # 경기 분석: 오늘(아직 시작 안 한 경기) + 다음 구매일
+    # 경기 분석: 최근 리포트들에서 아직 시작하지 않은 경기 전부(같은 경기는 최신 리포트 것), 시작 날짜별로 묶는다
     an_secs = []
-    if latest:
-        nowk = config.now_kst().strftime("%Y-%m-%dT%H:%M")
-        ms_all = _matches(latest)
-        up = [g for g in ms_all if str(g["kickoff"])[:16] > nowk] or ms_all
-        an_secs.append({"title": f"오늘 · {_kdate(latest['date'])}", "games": up})
-    if next_rep and next_rep is not latest:
-        an_secs.append({"title": f"다음 구매일 · {_kdate(next_rep['date'])}", "games": _matches(next_rep)})
+    nowk = config.now_kst().strftime("%Y-%m-%dT%H:%M")
+    seen_g: dict = {}
+    for r in sorted([x for x in reports if x["date"] >= (today - timedelta(days=2)).isoformat()], key=lambda x: x["date"]):
+        for g in _matches(r):
+            if str(g["kickoff"])[:16] > nowk:
+                seen_g[(g["home"], g["away"], str(g["kickoff"])[:10])] = g
+    by_day: dict = {}
+    for g in sorted(seen_g.values(), key=lambda g: (g["kickoff"], g["no"] or 0)):
+        by_day.setdefault(str(g["kickoff"])[:10], []).append(g)
+    for d, gs in by_day.items():
+        an_secs.append({"title": _kdate(d), "games": gs})
     page("analysis.html", "/analysis/", sections=an_secs, lastmod=(latest or {}).get("date"))
     rss_items = []
     for i, r in enumerate(reports):

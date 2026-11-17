@@ -15,6 +15,11 @@
     catch (e) { return false; }
   }
   if (!webglOK()) return;
+  // 공이 위에서 떨어지며 등장하므로 정지 이미지는 처음부터 숨긴다. 4초 안에 3D가 안 뜨면(불러오기 실패) 다시 보인다.
+  if (!reduce) {
+    stage.classList.add("is-gl");
+    setTimeout(function () { if (!stage.classList.contains("is-live")) stage.classList.remove("is-gl"); }, 4000);
+  }
 
   function loadThree(cb) {
     if (window.THREE) return cb();
@@ -244,8 +249,21 @@
       mesh.position.set(s[0], s[1], s[2]); mesh.castShadow = true;
       mesh.rotation.set(Math.random() * 2, Math.random() * 6, 0);
       scene.add(mesh);
-      return { mesh: mesh, kind: kind, base: new T.Vector3(s[0], s[1], s[2]), phase: i * 1.7, spin: new T.Vector2(0.002 + i * 0.0006, 0.004 + i * 0.0008), y: 0, vy: 0, size: size };
+      return { mesh: mesh, kind: kind, base: new T.Vector3(s[0], s[1], s[2]), phase: i * 1.7, spin: new T.Vector2(0.002 + i * 0.0006, 0.004 + i * 0.0008), y: 0, vy: 0, size: size, sq: 0, sc: mesh.scale.clone() };
     });
+    // 첫 등장: 화면 위에서 하나씩, 순서·간격·높이는 매번 랜덤으로 떨어져 몇 번 통통 튀고 자리 잡는다.
+    // 움직임 줄이기 설정이면 바로 제자리에 둔다.
+    var t0 = 0;
+    if (!reduce) {
+      var order2 = balls.map(function (b, i) { return i; }).sort(function () { return Math.random() - .5; });
+      var at = 0.15;
+      order2.forEach(function (i) {
+        var b = balls[i];
+        b.drop = at; b.y = 7 + Math.random() * 1.5; b.vy = 0; b.mesh.visible = false;
+        b.spin.set((Math.random() - .5) * .06, (Math.random() - .5) * .09);
+        at += 0.22 + Math.random() * 0.35;
+      });
+    }
 
     function resize() {
       var w = stage.clientWidth, h = stage.clientHeight;
@@ -292,10 +310,26 @@
       if (!visible || document.hidden) { running = false; return; }
       var dt = lastT ? Math.min(0.033, (t - lastT) / 1000) : 0.016; lastT = t;
       var sec = t / 1000;
+      if (!t0) t0 = sec;
       balls.forEach(function (b) {
-        if (b.y > 0 || b.vy > 0) { b.vy -= 14 * dt; b.y = Math.max(0, b.y + b.vy * dt); if (b.y === 0 && b.vy < 0) b.vy = Math.abs(b.vy) > 1.5 ? -b.vy * 0.45 : 0; }
+        if (b.drop != null) {
+          if (sec - t0 < b.drop) return;   // 아직 차례가 아님(보이지 않게 위에서 대기)
+          b.drop = null; b.mesh.visible = true;
+        }
+        if (b.y > 0 || b.vy > 0) {
+          b.vy -= 14 * dt; b.y = Math.max(0, b.y + b.vy * dt);
+          if (b.y === 0 && b.vy < 0) {
+            var v = Math.abs(b.vy);
+            b.sq = Math.min(0.16, v * 0.011);          // 닿는 순간 살짝 눌렸다 돌아온다
+            b.vy = v > 1.5 ? v * 0.45 : 0;
+          }
+        }
+        if (b.sq > 0.001) {
+          b.sq *= Math.pow(0.0005, dt);
+          b.mesh.scale.set(b.sc.x * (1 + b.sq * 0.5), b.sc.y * (1 - b.sq), b.sc.z * (1 + b.sq * 0.5));
+        } else if (b.sq) { b.sq = 0; b.mesh.scale.copy(b.sc); }
         var bob = reduce ? 0 : Math.sin(sec * (0.8 + b.phase * 0.1) + b.phase) * 0.12;
-        b.mesh.position.set(b.base.x + mx * 0.25 * (1 + b.base.z * 0.1), b.base.y + bob + b.y, b.base.z);
+        b.mesh.position.set(b.base.x + mx * 0.25 * (1 + b.base.z * 0.1), b.base.y + bob + b.y - b.sq * b.size, b.base.z);
         if (!(drag && drag.b === b)) {
           b.mesh.rotation.x += b.spin.x; b.mesh.rotation.y += b.spin.y;
           b.spin.x += (0.002 - b.spin.x) * 0.02; b.spin.y += (0.004 * (b.phase % 2 ? -1 : 1) - b.spin.y) * 0.02;
@@ -306,7 +340,7 @@
       cam.lookAt(0, 0.1, 0);
       renderer.render(scene, cam);
       if (!stage.classList.contains("is-live")) stage.classList.add("is-live");
-      if (reduce && !drag && balls.every(function (b) { return b.y === 0; })) { running = false; return; }
+      if (reduce && !drag && balls.every(function (b) { return b.y === 0 && b.drop == null; })) { running = false; return; }
       requestAnimationFrame(tick);
     }
     wake();
