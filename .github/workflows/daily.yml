@@ -36,6 +36,14 @@ jobs:
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
+      # 예비 경로: Cloudflare 예약 실행이 안 될 때 '[slot:0 10 * * *]' 같은 커밋으로 그 시각의 작업을 그대로 돌린다
+      - name: 커밋 메시지의 시각 슬롯
+        if: github.event_name == 'push'
+        env:
+          MSG: ${{ github.event.head_commit.message }}
+        run: |
+          s=$(printf '%s' "$MSG" | grep -o '\[slot:[^]]*\]' | head -1 | sed 's/^\[slot:\(.*\)\]$/\1/')
+          if [ -n "$s" ]; then echo "SLOT=$s" >> "$GITHUB_ENV"; echo "슬롯: $s"; fi
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"

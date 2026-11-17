@@ -6,6 +6,8 @@
   "name": "sports-report",
   "main": "cron/worker.js",
   "compatibility_date": "2026-11-01",
+  // 예약 실행·알림 로그를 Cloudflare 대시보드(Workers → sports-report → Logs)에서 볼 수 있게
+  "observability": { "enabled": true },
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
