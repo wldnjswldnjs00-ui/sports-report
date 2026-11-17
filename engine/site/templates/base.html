@@ -16,13 +16,14 @@
 <meta property="og:description" content="{{ self.desc() }}">
 <meta property="og:url" content="{{ cfg.SITE_URL }}{{ path|urlencode }}">
 <meta property="og:locale" content="ko_KR">
-<meta property="og:image" content="{{ cfg.SITE_URL }}/static/og.png">
+<meta property="og:image" content="{{ cfg.SITE_URL }}{{ (og_image or '/og/default.jpg')|urlencode }}">
+<meta property="og:image:alt" content="{{ self.title() }}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ self.title() }}">
 <meta name="twitter:description" content="{{ self.desc() }}">
-<meta name="twitter:image" content="{{ cfg.SITE_URL }}/static/og.png">
+<meta name="twitter:image" content="{{ cfg.SITE_URL }}{{ (og_image or '/og/default.jpg')|urlencode }}">
 {% for ld in (jsonld or []) %}<script type="application/ld+json">{{ ld|safe }}</script>
 {% endfor %}
 <meta name="theme-color" content="#edf2ef" media="(prefers-color-scheme: light)">

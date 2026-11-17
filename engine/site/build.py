@@ -429,6 +429,13 @@ def build() -> None:
         if f.is_file():
             shutil.copy2(f, config.DIST / f.name)
 
+    from . import og as OG, og_pages as OGP
+    try:
+        OG.default(config.DIST / "og" / "default.jpg")
+        for name, size, mask in (("icon-192.png", 192, False), ("icon-512.png", 512, False), ("icon-maskable-512.png", 512, True), ("apple-touch-icon.png", 180, True)):
+            OG.icon(config.DIST / name, size, maskable=mask)
+    except Exception:  # noqa: BLE001
+        log.exception("기본 미리보기·아이콘 생성 실패(기존 파일 사용)")
     summaries = [_report_summary(r) for r in reports]
     leagues = _leagues(reports[:60])
     # 회차별·팀별 페이지 데이터, 경기 페이지 주소표(최근 45일분만 경기 페이지가 있다)
@@ -517,7 +524,9 @@ def build() -> None:
         today_rounds = {m.get("round") for m in latest.get("markets", []) if not m.get("preview")}
         guess_rounds = sorted({_round_label(m.get("round")) for m in latest.get("markets", []) if m.get("preview") and m.get("round") not in today_rounds} - {""})
     next_guess = {"date": tomorrow, "rounds": guess_rounds}
-    page("report.html", "/", r=latest, is_home=True, next_day=(next_rep or {}).get("date"), nxt=next_rep, next_guess=next_guess, lastmod=(latest or {}).get("date"),
+    home_og = OGP.report(config.DIST, "/", latest, f"{_kdate(latest['date'])} 프로토 분석",
+                         "TODAY · 프로토 승부식 " + " · ".join(_rounds(latest))) if latest and latest.get("markets") else None
+    page("report.html", "/", og_image=home_og, r=latest, is_home=True, next_day=(next_rep or {}).get("date"), nxt=next_rep, next_guess=next_guess, lastmod=(latest or {}).get("date"),
          matches=_matches(latest) if latest else [], leagues_top=_leagues_of(latest) if latest else [],
          jsonld=_jsonld(site_ld) + report_ld(latest, "/"))
     rss_items = []
@@ -526,7 +535,8 @@ def build() -> None:
         next_d = reports[i - 1]["date"] if i > 0 else None
         ms = _matches(r)
         url = f"/reports/{r['date']}/"
-        page("report.html", url, r=r, is_home=False, prev_d=prev_d, next_d=next_d, lastmod=r["date"],
+        rog = OGP.report(config.DIST, url, r, f"{_kdate(r['date'])} 프로토 분석", "프로토 승부식 " + " · ".join(_rounds(r))) if i < 14 and r.get("markets") else None
+        page("report.html", url, og_image=rog, r=r, is_home=False, prev_d=prev_d, next_d=next_d, lastmod=r["date"],
              matches=ms, leagues_top=_leagues_of(r), jsonld=report_ld(r, url))
         if i < 30:
             rss_items.append({"title": f"{_kdate(r['date'])} 프로토 승부식 분석 · {' · '.join(_leagues_of(r))}",
@@ -540,20 +550,21 @@ def build() -> None:
                 ld = _jsonld({"@context": "https://schema.org", **_event_ld(g)},
                              _article_ld(title, desc[:160], g["url"], r.get("generated_at") or r["date"], r.get("updated_at") or r["date"]),
                              _crumbs([("홈", "/"), (_kdate(r["date"]), url), (f"{g['home']} vs {g['away']}", g["url"])]))
-                page("match.html", g["url"], g=g, r=r, outs=outs, lastmod=r["date"], jsonld=ld, page_title=title, page_desc=desc[:155])
+                mog = OGP.match(config.DIST, g, _round_label((g.get("main") or g["markets"][0]).get("round"))) if i < 4 else None
+                page("match.html", g["url"], og_image=mog, g=g, r=r, outs=outs, lastmod=r["date"], jsonld=ld, page_title=title, page_desc=desc[:155])
     page("archive.html", "/reports/")
     # 회차별 분석
     page("rounds.html", "/rounds/", rounds=rds)
     rkeys = list(rds)
     for i, ts in enumerate(rkeys):
         ro = rds[ts]
-        page("round.html", f"/rounds/{ts}/", ro=ro, prev_ro=rkeys[i + 1] if i + 1 < len(rkeys) else None,
+        page("round.html", f"/rounds/{ts}/", og_image=OGP.round_(config.DIST, f"/rounds/{ts}/", ro), ro=ro, prev_ro=rkeys[i + 1] if i + 1 < len(rkeys) else None,
              next_ro=rkeys[i - 1] if i > 0 else None, lastmod=ro["dates"][-1] if ro["dates"] else None,
              jsonld=_jsonld(_crumbs([("홈", "/"), ("회차별 분석", "/rounds/"), (f"{ro['year']}년 {ro['label']}", f"/rounds/{ts}/")])))
     # 팀별 기록
     page("teams.html", "/teams/", groups=PX.team_groups(tms))
     for t in tms.values():
-        page("team.html", t["url"], t=t, lastmod=(t["games"][0]["date"] if t["games"] else None),
+        page("team.html", t["url"], og_image=OGP.team(config.DIST, t), t=t, lastmod=(t["games"][0]["date"] if t["games"] else None),
              jsonld=_jsonld({"@context": "https://schema.org", "@type": "SportsTeam", "name": t["name"], "sport": SPORT_LABEL.get(t["sport"], t["sport"]),
                              "url": config.SITE_URL + t["url"]},
                             _crumbs([("홈", "/"), ("팀별 기록", "/teams/"), (t["name"], t["url"])])))
@@ -569,7 +580,7 @@ def build() -> None:
         lg["games"] = lgames.get(PX.lkey(lg["name"]), [])
     page("leagues.html", "/leagues/")
     for lg in leagues.values():
-        page("league.html", f"/leagues/{lg['slug']}/", lg=lg,
+        page("league.html", f"/leagues/{lg['slug']}/", og_image=OGP.league(config.DIST, f"/leagues/{lg['slug']}/", lg), lg=lg,
              jsonld=_jsonld(_crumbs([("홈", "/"), ("리그별 기록", "/leagues/"), (lg["name"], f"/leagues/{lg['slug']}/")])))
     # 성과: 종목별·마켓별·확률 구간별(발행된 모든 픽, 적중특례 제외)
     brk = {"sport": defaultdict(lambda: [0, 0, 0.0]), "market": defaultdict(lambda: [0, 0, 0.0]), "band": defaultdict(lambda: [0, 0, 0.0])}
