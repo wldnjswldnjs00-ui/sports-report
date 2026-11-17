@@ -967,10 +967,12 @@ tr[aria-expanded="true"] .box-caret, details[open] > summary .box-caret { transf
 .daily-chart .val { fill: var(--ink); font: 700 12px var(--en); }
 .daily-table { margin-top: 10px; max-width: 760px; }
 .daily-table summary { cursor: pointer; font-size: 13.5px; color: var(--ink-2); padding: 6px 0; }
-@media (max-width: 480px) {
-  .daily-chart .axis { font-size: 19px; }
-  .daily-chart .val { font-size: 20px; }
-  .daily-chart { padding: 14px 10px; }
+/* 차트는 화면 폭별로 두 벌(좁은 화면은 좁은 좌표계라 글자가 작아지거나 넘치지 않음) */
+.chart .v-narrow { display: none; }
+@media (max-width: 560px) {
+  .chart .v-wide { display: none; }
+  .chart .v-narrow { display: block; }
+  .chart { padding: 14px 12px; }
 }
 
 /* 표가 화면을 넘지 않게: 감싼 표는 안에서만 넘치고, 숫자 열은 한 줄 유지 */
@@ -992,3 +994,7 @@ body { word-break: keep-all; overflow-wrap: break-word; }
   .mk-tbl .hist-cell small { display: none; }
   .mk-tbl .opick.osm { padding: 4px 8px; }
 }
+/* 표 한 줄 안의 글자·숫자 높이 맞추기 */
+.tbl td { vertical-align: middle; }
+.tbl td[rowspan] { vertical-align: top; }
+.tbl td.n { font-variant-numeric: tabular-nums; }

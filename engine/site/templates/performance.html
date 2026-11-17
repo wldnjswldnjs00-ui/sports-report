@@ -41,22 +41,24 @@
 <section class="wrap block" data-reveal>
   <h2 class="sub">확률 보정 곡선</h2>
   <p class="fine">가로축은 모델이 매긴 확률, 세로축은 실제로 맞은 비율입니다. 점이 대각선에 붙을수록 정직한 확률입니다. 점 크기는 표본 수.</p>
-  {% set W, H, P = 560, 360, 44 %}
-  <figure class="chart" data-reveal>
-    <svg viewBox="0 0 {{ W }} {{ H }}" role="img" aria-label="확률 보정 곡선">
+  {% macro cal_svg(W, H, P, cls) %}
+    <svg class="{{ cls }}" viewBox="0 0 {{ W }} {{ H }}" role="img" aria-label="확률 보정 곡선">
       {% for t in [0, 0.25, 0.5, 0.75, 1] %}
       <line class="grid" x1="{{ P }}" x2="{{ W - 12 }}" y1="{{ H - P - t * (H - P - 16) }}" y2="{{ H - P - t * (H - P - 16) }}"/>
       <text class="axis" x="{{ P - 8 }}" y="{{ H - P - t * (H - P - 16) + 4 }}" text-anchor="end">{{ (t * 100)|int }}%</text>
-      <text class="axis" x="{{ P + t * (W - P - 12) }}" y="{{ H - P + 18 }}" text-anchor="middle">{{ (t * 100)|int }}%</text>
+      {% if t != 0.25 and t != 0.75 or W > 400 %}<text class="axis" x="{{ P + t * (W - P - 12) }}" y="{{ H - P + 18 }}" text-anchor="{{ 'start' if t == 0 else ('end' if t == 1 else 'middle') }}">{{ (t * 100)|int }}%</text>{% endif %}
       {% endfor %}
       <line class="diag" x1="{{ P }}" y1="{{ H - P }}" x2="{{ W - 12 }}" y2="16"/>
       {% set pts = [] %}
       {% for b in perf.calibration %}{% set _ = pts.append(((P + b.expected * (W - P - 12))|round(1), (H - P - b.actual * (H - P - 16))|round(1))) %}{% endfor %}
       <polyline class="cal-line" points="{% for x, y in pts %}{{ x }},{{ y }} {% endfor %}"/>
       {% for b in perf.calibration %}
-      <circle class="cal-dot" cx="{{ P + b.expected * (W - P - 12) }}" cy="{{ H - P - b.actual * (H - P - 16) }}" r="{{ [3, (b.n ** 0.5) * 0.9]|max|round(1) }}"><title>{{ b.bucket }} 구간 · 예상 {{ b.expected|pct(1) }} · 실제 {{ b.actual|pct(1) }} · {{ b.n }}건</title></circle>
+      <circle class="cal-dot" cx="{{ P + b.expected * (W - P - 12) }}" cy="{{ H - P - b.actual * (H - P - 16) }}" r="{{ [3, (b.n ** 0.5) * 0.9 * W / 560]|max|round(1) }}"><title>{{ b.bucket }} 구간 · 예상 {{ b.expected|pct(1) }} · 실제 {{ b.actual|pct(1) }} · {{ b.n }}건</title></circle>
       {% endfor %}
     </svg>
+  {% endmacro %}
+  <figure class="chart" data-reveal>
+    {{ cal_svg(560, 360, 44, 'v-wide') }}{{ cal_svg(340, 300, 40, 'v-narrow') }}
   </figure>
 </section>
 
@@ -78,10 +80,11 @@
   <h2 class="sub">일별 픽 적중률</h2>
   {% set days = perf.daily[-30:] %}{% set n = days|length %}
   {% set th = days|sum(attribute='hit') %}{% set tn = days|sum(attribute='n') %}
-  {% set slots = [n, 10]|max %}{% set X0, W, Y0, H = 40, 510, 12, 120 %}{% set sw = W / slots %}{% set bw = [sw - 6, 34]|min %}
-  <p class="fine">최근 {{ n }}일 픽 {{ tn }}개 중 {{ th }}개 적중 · 평균 <b>{{ (th / tn * 100)|round|int }}%</b>. 막대에 손을 올리면 그날 숫자가 나옵니다.</p>
-  <figure class="chart daily-chart">
-    <svg viewBox="0 0 560 160" role="img" aria-label="일별 픽 적중률, 최근 {{ n }}일">
+  <p class="fine">최근 {{ n }}일 픽 {{ tn }}개 중 {{ th }}개 적중 · 평균 <b>{{ (th / tn * 100)|round|int }}%</b>. 막대를 누르거나 손을 올리면 그날 숫자가 나옵니다.</p>
+  {% macro daily_svg(VW, minslots, maxlabels, cls) %}
+  {% set X0, Y0, H = 38, 14, 120 %}{% set W = VW - X0 - 6 %}{% set slots = [n, minslots]|max %}{% set sw = W / slots %}{% set bw = [sw - 6, 34]|min %}
+  {% set step = ((n / maxlabels)|round(0, 'ceil')|int) or 1 %}
+    <svg class="{{ cls }}" viewBox="0 0 {{ VW }} 162" role="img" aria-label="일별 픽 적중률, 최근 {{ n }}일">
       {% for t in [0, 0.5, 1] %}
       <line class="{{ 'mid' if t == 0.5 else 'grid' }}" x1="{{ X0 }}" x2="{{ X0 + W }}" y1="{{ Y0 + H - t * H }}" y2="{{ Y0 + H - t * H }}"/>
       <text class="axis" x="{{ X0 - 6 }}" y="{{ Y0 + H - t * H + 4 }}" text-anchor="end">{{ (t * 100)|int }}%</text>
@@ -91,11 +94,14 @@
         <rect class="hit-area" x="{{ X0 + loop.index0 * sw }}" y="{{ Y0 }}" width="{{ sw }}" height="{{ H }}"/>
         <path class="bar" d="M{{ x }},{{ Y0 + H }}V{{ y + 4 }}Q{{ x }},{{ y }} {{ x + 4 }},{{ y }}H{{ x + bw - 4 }}Q{{ x + bw }},{{ y }} {{ x + bw }},{{ y + 4 }}V{{ Y0 + H }}Z"/>
         {% if loop.last %}<text class="val" x="{{ x + bw / 2 }}" y="{{ y - 6 }}" text-anchor="middle">{{ (v * 100)|round|int }}%</text>{% endif %}
-        {% if loop.first or loop.last or n <= 10 or loop.index0 % ((n / 6)|round(0, 'ceil')|int) == 0 %}<text class="axis" x="{{ x + bw / 2 }}" y="{{ Y0 + H + 18 }}" text-anchor="middle">{{ d.date[5:]|replace('-', '/') }}</text>{% endif %}
+        {% if loop.last or (loop.revindex0 % step == 0) %}<text class="axis" x="{{ x + bw / 2 }}" y="{{ Y0 + H + 18 }}" text-anchor="middle">{{ d.date[5:]|replace('-', '/') }}</text>{% endif %}
         <title>{{ d.date[5:]|replace('-', '/') }} · {{ d.n }}개 중 {{ d.hit }}개 적중 ({{ (v * 100)|round|int }}%)</title>
       </g>
       {% endfor %}
     </svg>
+  {% endmacro %}
+  <figure class="chart daily-chart">
+    {{ daily_svg(560, 10, 8, 'v-wide') }}{{ daily_svg(340, 7, 4, 'v-narrow') }}
     <figcaption class="fine">가운데 점선이 50%입니다.</figcaption>
   </figure>
   <details class="daily-table"><summary>일별 숫자 표로 보기</summary>
