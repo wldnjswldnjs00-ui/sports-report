@@ -151,6 +151,9 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
     for m in analyzed:
         if m.get("analysis") and not (datetime.fromisoformat(m["kickoff"]) <= now and m.get("oreo")):
             m["narrative"] = describe(m)
+    # 스스로 점검: 깨진 확률·배당이 있는 분석은 빼고 기록(조합에 들어가기 전에)
+    from . import selfcheck
+    status["selfcheck"] = selfcheck.sanitize(analyzed)
     # 오늘 구매일(당일 08:30~익일 08:30 킥오프) 경기만 조합·채점 대상. 그 뒤 경기는 미리보기로만 보여준다
     # (다음 날 리포트에서 본 경기로 다시 다뤄지므로 성과가 두 번 집계되지 않는다).
     # 전날 리포트에서 이미 본 경기로 다룬 것은 다시 세지 않는다(날짜 기준을 바꿔도 이중 집계 방지).
@@ -314,6 +317,12 @@ def grade(today: str, lookback: int = 7, fetch_scores: bool = True) -> dict:
     from .sources import betman_history
     elo = G.rebuild_elo(reports, results_by_date, betman_history.load_all())
     G.save_state(perf, cal, elo, G.learn(reports))
+    # 스스로 학습: 확률 소스 비중·과신 보정을 묶음별로 다시 맞춘다(검증에서 나아질 때만 바꿈, 나빠지면 되돌림)
+    try:
+        from .analysis import learner
+        learner.learn(reports, base_alpha=(cal or {}).get("alpha") or 0.0)
+    except Exception:  # noqa: BLE001
+        log.exception("스스로 학습 실패(분석은 기존 값으로 계속)")
     log.info("채점 완료: 픽 %s", perf["picks"]["all"])
     # 끝난 경기 점수판(쿼터·이닝·전후반·골 기록). 실패해도 채점에는 영향 없음
     if not config.DEMO:

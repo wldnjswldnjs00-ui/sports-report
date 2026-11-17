@@ -37,13 +37,18 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
     # (베트맨 배당은 구매 배당 표시용). 해외 배당이 없는 경기는 분석하지 않는다.
     intl = None
     cap = 100
+    from . import learner
     if ref:
-        sources = [(ref, 0.65 if p_hist else 0.85)]
+        lw = learner.params(m["sport"], m["market"], "x")  # 스스로 배운 비중(없으면 기본값)
+        if lw:
+            alpha = lw.get("alpha", alpha) if lw.get("alpha") is not None else alpha
+        W = (lw or {}).get("w") or {}
+        sources = [(ref, W.get("ref", 0.65 if p_hist else 0.85))]
         used = ["해외 배당(기준점 환산)" if m.get("ref_kind") == "환산" else "해외 배당"]
-        if p_hist:
-            sources.append((p_hist, 0.25)); used.append(f"해외 과거 기록({xstat['src']})")
-        if p_elo:
-            sources.append((p_elo, 0.10 if p_hist else 0.15)); used.append("Elo")
+        if p_hist and W.get("hist", 0.25) > 0:
+            sources.append((p_hist, W.get("hist", 0.25))); used.append(f"해외 과거 기록({xstat['src']})")
+        if p_elo and W.get("elo", 0.10 if p_hist else 0.15) > 0:
+            sources.append((p_elo, W.get("elo", 0.10 if p_hist else 0.15))); used.append("Elo")
     else:
         # 해외 배당을 받을 수 없는 경기: 베트맨 배당(발행처 몫을 걷어낸 확률)을 기준으로,
         # 국가대표 레이팅·A매치 기록이나 팀 레이팅이 있으면 보조로 섞는다. 모든 마켓을 분석한다(신뢰도 상한 55).
@@ -68,10 +73,14 @@ def analyze_market(m: dict[str, Any], elo: Elo, ref: dict[str, float] | None, al
                 p_r, r_lab = normal_market(m["sport"], {"h2h": {"H": ph, "A": 1 - ph}}, "HANDICAP", m.get("line"), set(odds)), "팀 레이팅"
         p_hist = None
         sources, used, cap = [], [], 55
+        lw = learner.params(m["sport"], m["market"], "b")
+        if lw and lw.get("alpha") is not None:
+            alpha = lw["alpha"]
+        W = (lw or {}).get("w") or {}
         if p_bet:
-            sources.append((p_bet, 0.7 if p_r else 1.0)); used.append("베트맨 배당(해외 배당 없음)")
-        if p_r:
-            sources.append((p_r, 0.3 if p_bet else 1.0)); used.append(r_lab)
+            sources.append((p_bet, W.get("bet", 0.7) if p_r else 1.0)); used.append("베트맨 배당(해외 배당 없음)")
+        if p_r and (W.get("r", 0.3) > 0 or not p_bet):
+            sources.append((p_r, W.get("r", 0.3) if p_bet else 1.0)); used.append(r_lab)
             if not p_bet:
                 cap = 40
         if not sources:

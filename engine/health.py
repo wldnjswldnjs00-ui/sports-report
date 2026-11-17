@@ -43,6 +43,11 @@ def problems() -> list[str]:
             out.append("오늘 구매일 리포트가 아직 만들어지지 않았습니다(3번 연속).")
     else:
         st["no_report"] = 0
+    # 실제 사이트: 지난 실행에서 만든 구매일이 지금 사이트에 보이는지(배포 실패 감지). 다음 실행을 위해 이번 구매일을 기록
+    from . import selfcheck
+    if st.get("site_expect"):
+        out += selfcheck.site_problems(st["site_expect"])
+    st["site_expect"] = config.today_kst()
     th = read_json(config.STATE / "threads.json", {}) or {}
     posted = th.get("posted") or []
     if posted:
