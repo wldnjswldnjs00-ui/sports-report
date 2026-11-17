@@ -956,3 +956,18 @@ tr[aria-expanded="true"] .box-caret, details[open] > summary .box-caret { transf
 /* 첫 화면 전략별 조합: 19시부터 다음 구매일 조합을 이어서 */
 .nd-combo-head { margin: 22px 0 10px; font-size: 15px; font-weight: 700; color: var(--ink-2); }
 .tab-panel > .nd-combo-head:first-of-type { margin-top: 6px; }
+
+/* 일별 픽 적중률 */
+.daily-chart .mid { stroke: var(--ink-3); stroke-width: 1; stroke-dasharray: 4 4; }
+.daily-chart .bar { fill: var(--cool); }
+.daily-chart .hit-area { fill: transparent; }
+.daily-chart .dbar:hover .bar, .daily-chart .dbar:focus .bar { fill: var(--sky); }
+.daily-chart .dbar { outline: none; cursor: default; }
+.daily-chart .val { fill: var(--ink); font: 700 12px var(--en); }
+.daily-table { margin-top: 10px; max-width: 760px; }
+.daily-table summary { cursor: pointer; font-size: 13.5px; color: var(--ink-2); padding: 6px 0; }
+@media (max-width: 480px) {
+  .daily-chart .axis { font-size: 19px; }
+  .daily-chart .val { font-size: 20px; }
+  .daily-chart { padding: 14px 10px; }
+}

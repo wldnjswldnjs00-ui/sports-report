@@ -76,15 +76,33 @@
 {% if perf.daily %}
 <section class="wrap block" data-reveal>
   <h2 class="sub">일별 픽 적중률</h2>
-  {% set n = perf.daily|length %}{% set bw = 560 / n %}
-  <figure class="chart">
-    <svg viewBox="0 0 560 140" role="img" aria-label="일별 적중률 막대">
-      <line class="grid" x1="0" x2="560" y1="70" y2="70"/>
-      {% for d in perf.daily %}{% set v = d.hit / d.n %}
-      <rect class="bar{% if v >= 0.5 %} up{% endif %}" x="{{ loop.index0 * bw + 1 }}" width="{{ [bw - 2, 1]|max }}" y="{{ 130 - v * 120 }}" height="{{ v * 120 }}"><title>{{ d.date }} · {{ d.hit }}/{{ d.n }}</title></rect>
+  {% set days = perf.daily[-30:] %}{% set n = days|length %}
+  {% set th = days|sum(attribute='hit') %}{% set tn = days|sum(attribute='n') %}
+  {% set slots = [n, 10]|max %}{% set X0, W, Y0, H = 40, 510, 12, 120 %}{% set sw = W / slots %}{% set bw = [sw - 6, 34]|min %}
+  <p class="fine">최근 {{ n }}일 픽 {{ tn }}개 중 {{ th }}개 적중 · 평균 <b>{{ (th / tn * 100)|round|int }}%</b>. 막대에 손을 올리면 그날 숫자가 나옵니다.</p>
+  <figure class="chart daily-chart">
+    <svg viewBox="0 0 560 160" role="img" aria-label="일별 픽 적중률, 최근 {{ n }}일">
+      {% for t in [0, 0.5, 1] %}
+      <line class="{{ 'mid' if t == 0.5 else 'grid' }}" x1="{{ X0 }}" x2="{{ X0 + W }}" y1="{{ Y0 + H - t * H }}" y2="{{ Y0 + H - t * H }}"/>
+      <text class="axis" x="{{ X0 - 6 }}" y="{{ Y0 + H - t * H + 4 }}" text-anchor="end">{{ (t * 100)|int }}%</text>
+      {% endfor %}
+      {% for d in days %}{% set v = d.hit / d.n %}{% set x = X0 + loop.index0 * sw + (sw - bw) / 2 %}{% set h = [v * H, 4]|max %}{% set y = Y0 + H - h %}
+      <g class="dbar" tabindex="0">
+        <rect class="hit-area" x="{{ X0 + loop.index0 * sw }}" y="{{ Y0 }}" width="{{ sw }}" height="{{ H }}"/>
+        <path class="bar" d="M{{ x }},{{ Y0 + H }}V{{ y + 4 }}Q{{ x }},{{ y }} {{ x + 4 }},{{ y }}H{{ x + bw - 4 }}Q{{ x + bw }},{{ y }} {{ x + bw }},{{ y + 4 }}V{{ Y0 + H }}Z"/>
+        {% if loop.last %}<text class="val" x="{{ x + bw / 2 }}" y="{{ y - 6 }}" text-anchor="middle">{{ (v * 100)|round|int }}%</text>{% endif %}
+        {% if loop.first or loop.last or n <= 10 or loop.index0 % ((n / 6)|round(0, 'ceil')|int) == 0 %}<text class="axis" x="{{ x + bw / 2 }}" y="{{ Y0 + H + 18 }}" text-anchor="middle">{{ d.date[5:]|replace('-', '/') }}</text>{% endif %}
+        <title>{{ d.date[5:]|replace('-', '/') }} · {{ d.n }}개 중 {{ d.hit }}개 적중 ({{ (v * 100)|round|int }}%)</title>
+      </g>
       {% endfor %}
     </svg>
+    <figcaption class="fine">가운데 점선이 50%입니다.</figcaption>
   </figure>
+  <details class="daily-table"><summary>일별 숫자 표로 보기</summary>
+    <div class="tblw"><table class="tbl"><thead><tr><th>날짜</th><th class="n">픽</th><th class="n">적중</th><th class="n">적중률</th></tr></thead><tbody>
+    {% for d in days|reverse %}<tr><td>{{ d.date[5:]|replace('-', '/') }}</td><td class="n">{{ d.n }}</td><td class="n">{{ d.hit }}</td><td class="n">{{ (d.hit / d.n * 100)|round|int }}%</td></tr>{% endfor %}
+    </tbody></table></div>
+  </details>
 </section>
 {% endif %}
 {% endif %}
