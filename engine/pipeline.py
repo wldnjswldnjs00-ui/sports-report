@@ -124,7 +124,23 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
                 a = m.get("analysis")
                 if not a or a.get("p_ref"):
                     continue
-                bh = bbook.lookup(book, m.get("sport"), m.get("league"), m.get("market"), m.get("odds") or {}, a.get("pick"))
+                odds = m.get("odds") or {}
+                # 선택마다 '베트맨 배당이 비슷했던 지난 경기의 실제 비율'을 구해 확률에 섞는다(표본이 클수록 비중↑, 최대 35%)
+                looks = {k: bbook.lookup(book, m.get("sport"), m.get("league"), m.get("market"), odds, k) for k in a["p"]}
+                if all(looks.values()):
+                    n = min(v["n"] for v in looks.values())
+                    tot = sum(v["hit"] for v in looks.values()) or 1
+                    hist = {k: v["hit"] / tot for k, v in looks.items()}
+                    w = min(0.35, n / (n + 150))
+                    newp = {k: (1 - w) * a["p"][k] + w * hist[k] for k in a["p"]}
+                    pick = max(newp, key=newp.get)
+                    a["p"] = {k: round(v, 4) for k, v in newp.items()}
+                    a["pick"], a["pick_prob"], a["pick_odds"] = pick, round(newp[pick], 4), odds.get(pick)
+                    if odds.get(pick):
+                        a["ev"] = round(newp[pick] * odds[pick] - 1, 4)
+                    if "베트맨 과거 기록" not in (a.get("sources") or []):
+                        a.setdefault("sources", []).append("베트맨 과거 기록")
+                bh = looks.get(a.get("pick")) or bbook.lookup(book, m.get("sport"), m.get("league"), m.get("market"), odds, a.get("pick"))
                 if bh:
                     a["bhist"] = bh
                     nb += 1

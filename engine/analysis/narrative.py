@@ -70,35 +70,35 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
     # O
     call = _call(m, pick)
     if strong:
-        o1 = f"{call} 예측. 추정 확률 {_pct(pp)}."
+        o1 = r.choice([f"{call} 예측. 확률은 {_pct(pp)}로 본다.", f"{call} 예측({_pct(pp)}).", f"{call} 예측. {_pct(pp)}로 한쪽에 무게가 실린다."])
     else:
-        o1 = f"{call} 예측. 추정 확률 {_pct(pp)}로 접전이다."
+        o1 = r.choice([f"{call} 예측. 다만 {_pct(pp)}라 거의 반반이다.", f"{call} 예측({_pct(pp)}). 박빙이다.", f"{call} 예측. {_pct(pp)}로 크게 앞서지는 않는다."])
 
     # R: 가장 강한 근거부터 최대 2개
     reasons: list[str] = []
     ref = a.get("p_ref") or {}
     if pick in ref and m.get("ref_kind") != "환산":
-        reasons.append(f"해외 시장은 이 결과를 {_pct(ref[pick])}로 본다")
+        reasons.append(r.choice([f"해외 시장도 {_pct(ref[pick])}로 같은 쪽을 본다", f"해외 배당 기준으로도 {_pct(ref[pick])}"]))
     x = m.get("x") or {}
     if m.get("ref_kind") == "환산" and pick in ref:
         if m["market"] == "OU" and x.get("total"):
             if abs(x["total"][0] - (m.get("line") or 0)) < 0.01:
                 reasons.append(f"해외 시장도 같은 기준점 {x['total'][0]:g}에서 이 결과를 {_pct(ref[pick])}로 본다")
             else:
-                reasons.append(f"해외 시장의 합계 기준점은 {x['total'][0]:g}이다. 이 경기 기준점 {m.get('line'):g}로 환산하면 이 결과가 {_pct(ref[pick])}")
+                reasons.append(f"해외 기준점 {x['total'][0]:g}에서 이 경기 {m.get('line'):g}로 맞춰 보면 {_pct(ref[pick])}")
         elif m["market"] == "HANDICAP" and x.get("spread"):
             if abs(x["spread"][0] - (m.get("line") or 0)) < 0.01:
                 reasons.append(f"해외 시장도 같은 핸디캡 {x['spread'][0]:+g}에서 이 결과를 {_pct(ref[pick])}로 본다")
             else:
-                reasons.append(f"해외 시장의 핸디캡 기준점은 홈 {x['spread'][0]:+g}이다. 이 경기 기준점 {m.get('line'):+g}로 환산하면 이 결과가 {_pct(ref[pick])}")
+                reasons.append(f"해외 핸디 {x['spread'][0]:+g}에서 이 경기 {m.get('line'):+g}로 맞춰 보면 {_pct(ref[pick])}")
         elif m["market"] == "HANDICAP":
-            reasons.append(f"해외 승무패 배당을 이 경기 핸디캡 {m.get('line'):+g}로 환산하면 이 결과가 {_pct(ref[pick])}")
+            reasons.append(f"해외 승무패 배당을 이 경기 핸디 {m.get('line'):+g}로 맞춰 보면 {_pct(ref[pick])}")
     F = m.get("form") or {}
     side_form = F.get("home") if pick == "H" else F.get("away") if pick == "A" else None
     opp_form = F.get("away") if pick == "H" else F.get("home") if pick == "A" else None
     if side_form and opp_form and m["market"] in ("1X2", "WL", "HANDICAP"):
-        reasons.append(f"최근 {side_form['n']}경기 {side_form['w']}승 {side_form['l']}패(평균 득실 {side_form['margin']:+.1f}), "
-                       f"상대는 {opp_form['w']}승 {opp_form['l']}패({opp_form['margin']:+.1f})")
+        me = name.replace(" 핸디", "")
+        reasons.append(f"{_josa(me, ('은', '는'))} 최근 {side_form['n']}경기 {side_form['w']}승 {side_form['l']}패, 상대는 {opp_form['w']}승 {opp_form['l']}패")
     if a.get("intl"):
         it = a["intl"]
         reasons.insert(0, f"해외 배당이 없는 경기다. 국가대표 레이팅(A매치 전 경기 기준)은 {m['home']} {it['rh']}, {m['away']} {it['ra']}로 {abs(it['rh'] - it['ra'])}점 차이다")
@@ -107,9 +107,10 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
     if a.get("elo") and m["market"] in ("1X2", "WL") and not a.get("intl"):
         d = a["elo"]["home"] - a["elo"]["away"]
         if abs(d) >= 40:
-            reasons.append(f"팀 레이팅은 {m['home']} {a['elo']['home']}, {m['away']} {a['elo']['away']}로 {abs(d)}점 차이다")
+            reasons.append(f"팀 레이팅도 {m['home'] if d > 0 else m['away']} 쪽이 {abs(d)}점 높다")
     if not reasons:
-        reasons.append("해외 배당에서 발행처 몫을 걷어낸 확률이 이쪽으로 기운다")
+        reasons.append("해외 배당에서 발행처 몫을 걷어낸 확률이 이쪽으로 기운다" if a.get("p_ref")
+                       else "해외 배당이 없어 베트맨 배당에서 발행처 몫을 걷어낸 확률로 봤다")
     r_txt = ". ".join(reasons[:2]) + "."
 
     # E: 숫자 증거
@@ -117,11 +118,16 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
     from .xbook import x_pair
     pr = x_pair(a)
     if pr:
-        parts = ", ".join(f"{_call(m, k)} {_pct(v)}" for k, v in pr["p"].items())
-        ev.append(f"{pr['basis']} {pr['src']} 경기 {pr['n']:,}개는 실제로 {parts}로 끝났다")
+        hit = pr["p"].get(pick)
+        if hit is not None:
+            ev.append(r.choice([f"배당이 비슷했던 {pr['src']} {pr['n']:,}경기 중 {_pct(hit)}가 이렇게 끝났다",
+                                f"비슷한 배당의 {pr['src']} {pr['n']:,}경기를 보면 {_pct(hit)}가 같은 결과였다"]))
+    bh = a.get("bhist")
+    if bh and not pr:
+        ev.append(f"베트맨 배당이 비슷했던 {bh['group']} {bh['n']:,}경기 중 {_pct(bh['hit'])}가 이렇게 끝났다")
     if F.get("h2h"):
         hh = F["h2h"]
-        ev.append(f"최근 맞대결 {hh['n']}경기는 {m['home']} 기준 {hh['w']}승 {hh['l']}패")
+        ev.append(f"최근 맞대결은 {m['home']} 기준 {hh['w']}승 {hh['l']}패")
     inj = {}  # 부상자 기능은 쓰지 않는다
     outs = {s: [x["name"] for x in inj.get(s, []) if x["out"]] for s in ("home", "away")}
     if outs["home"] or outs["away"]:
@@ -131,21 +137,21 @@ def oreo(m: dict[str, Any]) -> dict[str, str] | None:
         if outs["away"]:
             parts.append(f"{m['away']} {len(outs['away'])}명")
         ev.append("결장·결장 유력 " + ", ".join(parts))
-    if side_form and side_form.get("streak"):
+    if side_form and side_form.get("streak") and len(ev) < 2:
         ev.append(f"{name.replace(' 핸디', '')} {side_form['streak']} 중")
-    e_txt = (". ".join(ev[:3]) + ".") if ev else ""
+    e_txt = (". ".join(ev[:2]) + ".") if ev else ""
 
     # O: 쓰임새
     risk = a["upset_risk"]
     xo = (a.get("x_odds") or {}).get(pick)
     if xo and xo < 1.2:
-        o2 = "배당이 낮다. 단독보다는 조합의 축으로 쓴다."
+        o2 = r.choice(["배당이 낮아 단독보다는 조합의 축으로 쓸 만하다.", "혼자 사기엔 배당이 낮다. 조합에 한 장 끼우는 용도."])
     elif strong and risk < 30:
-        o2 = "안정형·밸런스형 조합의 기준 경기로 적합하다."
+        o2 = r.choice(["안정형 조합의 기준 경기로 무난하다.", "조합을 짤 때 먼저 깔고 가기 좋은 경기."])
     elif risk >= 45:
-        o2 = f"이변 위험 {risk}로 높다. 넣는다면 폴더 수를 줄이고 금액을 낮춘다."
+        o2 = r.choice(["뒤집힐 여지가 꽤 있다. 넣는다면 폴더 수와 금액을 줄인다.", "이변이 자주 나오는 구도라 무리하지 않는 게 좋다."])
     else:
-        o2 = "확률이 한쪽으로 크게 기울지 않아 밸런스형에 어울린다."
+        o2 = r.choice(["한쪽으로 크게 기울지 않아 밸런스형에 어울린다.", "확신보다는 비중을 나눠 담을 경기."])
     return {"o1": o1, "r": r_txt, "e": e_txt, "o2": o2}
 
 

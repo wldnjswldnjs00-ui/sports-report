@@ -22,7 +22,7 @@
     <ul class="stat-row" aria-label="분석 규모">
       <li><b data-count="{{ r.stats.matches }}">{{ r.stats.matches }}</b><span>오늘 경기</span></li>
       {% if is_home %}<li><b data-remain>{{ r.stats.matches }}</b><span>남은 경기</span></li>{% endif %}
-      <li><b data-count="{{ r.stats.combos }}">{{ r.stats.combos }}</b><span>추천 조합</span></li>
+      <li><b {% if is_home %}data-combos-left{% else %}data-count="{{ r.stats.combos }}"{% endif %}>{{ r.stats.combos }}</b><span>추천 조합</span></li>
     </ul>
     {% if is_home %}{% if nxt %}<a class="nd-pill is-ready" href="#next-day">다음 구매일 <b>{{ nxt.date|kdate }}</b> 분석 공개 →</a>{% elif next_guess %}<p class="nd-pill">다음 구매일 <b>{{ next_guess.date|kdate }}</b>{% if next_guess.rounds %} · {{ next_guess.rounds|join(' · ') }}{% endif %} · 오후 7시 공개</p>{% endif %}{% endif %}
     <p class="stamp">{{ r.updated_at|kdt }} KST 업데이트</p>

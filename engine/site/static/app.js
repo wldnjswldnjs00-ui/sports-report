@@ -280,6 +280,8 @@
       var left = $$("#matches li.match").filter(function (li) { return !td || li.dataset.day === td; }).length;
       var rem = $("[data-remain]");
       if (rem) rem.textContent = left;
+      var cl = $("[data-combos-left]");
+      if (cl) cl.textContent = $$(".combo").length;
       var nx = $("[data-next]"), hero = $(".hero");
       if (nx && hero && (left === 0 || nx.hasAttribute("data-ready")) && hero.nextElementSibling !== nx) {
         hero.parentNode.insertBefore(nx, hero.nextElementSibling);
