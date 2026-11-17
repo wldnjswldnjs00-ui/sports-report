@@ -192,22 +192,24 @@ def listing(path: Path, *, kicker: str, title: str, rows: list[tuple[str, str, s
     d.text((64, 140), _ellipsis(d, kicker, ko(28, "Bold"), 1072), font=ko(28, "Bold"), fill=HOT)
     f, _ = _fit(d, title, ko, 64, 1072, 40)
     d.text((64, 182), title, font=f, fill=INK)
-    y = 276
+    y, rh, gap = 280, 70, 82
     if sub:
-        d.text((64, 268), _ellipsis(d, sub, ko(26, "SemiBold"), 1072), font=ko(26, "SemiBold"), fill=INK2)
-        y = 318
+        d.text((64, 266), _ellipsis(d, sub, ko(26, "SemiBold"), 1072), font=ko(26, "SemiBold"), fill=INK2)
+        y, rh, gap = 314, 66, 76
     for left, mid, right in rows[:3]:
-        d.rounded_rectangle((64, y, W - 64, y + 70), radius=18, fill=CARD, outline=LINE, width=2)
-        rf = en(30)
+        d.rounded_rectangle((64, y, W - 64, y + rh), radius=18, fill=CARD, outline=LINE, width=2)
+        # 숫자·%만 있으면 영문 글꼴, 한글이 섞이면(77승 43패 등) 한글 글꼴
+        rf = en(30) if all(ord(ch) < 128 for ch in (right or "")) else ko(32)
         rw = d.textlength(right, font=rf) if right else 0
         mf = ko(28, "Bold")
         mw = d.textlength(mid, font=mf) if mid else 0
-        d.text((88, y + 18), _ellipsis(d, left, ko(28, "Bold"), 1072 - 80 - rw - mw - 60), font=ko(28, "Bold"), fill=INK)
+        ty = y + (rh - 34) // 2
+        d.text((88, ty), _ellipsis(d, left, ko(28, "Bold"), 1072 - 80 - rw - mw - 60), font=ko(28, "Bold"), fill=INK)
         if mid:
-            d.text((W - 88 - rw - 28 - mw, y + 18), mid, font=mf, fill=tone(mid))
+            d.text((W - 88 - rw - 28 - mw, ty), mid, font=mf, fill=tone(mid))
         if right:
-            d.text((W - 88 - rw, y + 16), right, font=rf, fill=INK)
-        y += 82
+            d.text((W - 88 - rw, ty - 2), right, font=rf, fill=INK)
+        y += gap
     _footer(d, foot)
     _save(im, path)
     return True
