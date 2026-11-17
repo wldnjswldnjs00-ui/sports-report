@@ -824,3 +824,6 @@ i.t-pos, i.t-neg, i.t-draw { font-style: normal; }
 .xo-lgs .chip small { font-size: 10.5px; color: var(--ink-3); margin-left: 3px; }
 .xo-lgs .chip[aria-pressed="true"] small { color: inherit; opacity: .8; }
 .xo-note { margin-top: 10px; }
+.kelly h3 { font: 700 17px/1.4 var(--sans); margin: 26px 0 8px; }
+.k-tbl { margin: 8px 0; }
+.k-tbl td, .k-tbl th { white-space: nowrap; }

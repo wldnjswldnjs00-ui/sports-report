@@ -502,8 +502,9 @@
     $("[data-t-stake]").textContent = won(s.stake);
     $("[data-t-pay]").textContent = won(pay);
     var fp = (s.f * 100).toFixed(s.f < 0.01 ? 2 : 1).replace(/\.?0+$/, "") + "%";
-    adv.textContent = "총 시드 " + won(B) + "의 " + fp + (s.capped ? "는 1회 한도를 넘어 " : "인 ") + won(s.stake) + "가 켈리 기준 베팅 금액입니다. 맞을 확률은 " + pct(c.p) +
-      "이고, 맞으면 " + won(pay) + "을 받습니다." + (legs.length === 1 ? " 한 경기 구매는 베트맨에서 '한경기구매' 표시가 있는 경기만 가능합니다." : "");
+    adv.textContent = "총 시드 " + won(B) + "의 " + fp + (s.capped ? "는 1회 한도를 넘어 " : "인 ") + won(s.stake) + "이 켈리 기준 베팅 금액입니다. 맞을 확률은 " + pct(c.p) +
+      "이고, 맞으면 " + won(pay) + "을 받습니다." +
+      (s.f > 0 && !s.capped && s.f * B < MAX_STAKE ? " 이 비율이면 시드가 " + won(Math.ceil(MAX_STAKE / s.f / 10000) * 10000) + "을 넘을 때부터 1회 한도 10만 원에 닿습니다." : "") + (legs.length === 1 ? " 한 경기 구매는 베트맨에서 '한경기구매' 표시가 있는 경기만 가능합니다." : "");
   }
   /* 경기 고르기: 경기 하나 = 한 줄. 누르면 승무패·핸디캡·언더오버가 펼쳐진다 */
   var toolOpen = {};
