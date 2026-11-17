@@ -27,7 +27,9 @@ def problems() -> list[str]:
     rep = read_json(config.REPORTS / f"{config.today_kst()}.json") or {}
     srcs = rep.get("sources") or {}
     betman_failed = str(srcs.get("betman", "")).startswith("실패") or (config.STATE / "betman_debug.json").exists()
-    fails = st.get("betman_fails", 0) + 1 if betman_failed else 0
+    # 베트맨은 자정~06시에 사이트를 닫는다. 그 시간대 접속 실패는 세지 않는다(연속 횟수는 유지).
+    closed = config.now_kst().hour < 6
+    fails = (st.get("betman_fails", 0) + (0 if closed else 1)) if betman_failed else 0
     st["betman_fails"] = fails
     if fails >= 2:
         out.append(f"베트맨 경기 수집이 {fails}번 연속 실패했습니다. 베트맨 사이트나 데이터 주소가 바뀌었을 수 있습니다. "
