@@ -15,8 +15,8 @@
     "not_found_handling": "404-page",
     "html_handling": "auto-trailing-slash"
   },
-  // 알림 구독 저장소(KV). Cloudflare 에서 KV 를 만든 뒤 아래 주석을 풀고 id 를 넣는다. 없으면 알림만 꺼진다.
-  // "kv_namespaces": [{ "binding": "PUSH", "id": "여기에-KV-ID" }],
+  // 비공개 저장소(KV sports-report-kv): 알림 구독, 서명 키, 쓰레드 토큰(7일마다 자동 연장)
+  "kv_namespaces": [{ "binding": "PUSH", "id": "cd2febbe3e794d71a7072a3fff0f693b" }],
   "triggers": {
     "crons": ["*/5 * * * *"]
   }
