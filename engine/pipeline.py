@@ -99,6 +99,14 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
             continue
         a = analyze_market(m, elo, ref.get(m["id"]), alpha, book)
         a["odds_open"] = (old or {}).get("odds_open") or m["odds"]
+        xh = list((old or {}).get("xh") or [])
+        xo = (a.get("analysis") or {}).get("x_odds")
+        if xo:
+            snap = {k: round(float(v), 2) for k, v in xo.items()}
+            if not xh or xh[-1][1] != snap:
+                xh.append([now.strftime("%Y%m%d%H%M"), snap])
+        if xh:
+            a["xh"] = xh[-30:]
         a["narrative"] = describe(a)
         analyzed.append(a)
     analyzed.sort(key=lambda m: (m["kickoff"], m.get("game_no") or 0))

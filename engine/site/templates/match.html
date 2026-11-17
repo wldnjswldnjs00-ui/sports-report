@@ -88,6 +88,22 @@
     </table>
   </section>
 
+  {% set fms = g.markets|select('has_flow')|list %}
+  {% if fms %}
+  <section class="block flow-block" data-reveal id="flow">
+    <div class="block-head"><h2>배당 흐름</h2><p>처음 발매 배당 대비 몇 % 움직였는지입니다. 선 끝 숫자가 지금 배당이고, 점선은 해외 배당입니다. 아래로 내려간 쪽이 구매가 몰린 쪽입니다.</p></div>
+    <div class="flow-grid">
+    {% for m in fms %}
+    <div class="flow-card">
+      <p class="flow-title"><b>{{ mk_short(m) }}</b>{% if m.flow and m.flow.changes %}<small class="muted">변동 {{ m.flow.changes }}번</small>{% endif %}</p>
+      {{ flow_svg(m) }}
+      {% set fs = flow_sum(m) %}{% if fs %}<p class="flow-sum">{{ fs }}</p>{% endif %}
+    </div>
+    {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
 
 
   <nav class="daynav"><a href="/reports/{{ r.date }}/">← {{ r.date|kdate }} 전체 경기</a><a href="/tool/">조합 계산기 →</a></nav>

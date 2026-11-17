@@ -1138,3 +1138,16 @@ h1, h2, h3, .block-head h2 { text-wrap: balance; }
 .mc-legend { margin: -4px 0 12px; }
 .mc-legend .lg-model { border: 1.5px solid var(--ink); border-radius: 4px; padding: 0 4px; }
 .mc-legend .lg-dog { border: 1.5px dashed var(--neg); border-radius: 4px; padding: 0 4px; }
+
+/* 배당 흐름 */
+.flow-block { margin-top: 8px; }
+.flow-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; margin-bottom: 10px; }
+.flow-title { display: flex; gap: 8px; align-items: baseline; margin: 0 0 6px; font-size: 14px; }
+.flow-title small { font-size: 12px; }
+.flow-svg { width: 100%; height: auto; display: block; }
+.flow-svg .g { stroke: var(--line); stroke-width: 1; }
+.flow-svg .ax { font: 500 10.5px var(--sans); fill: var(--ink-3); }
+.flow-svg .end { font: 700 11.5px var(--sans); }
+.flow-sum { margin: 8px 0 0; font-size: 13.5px; color: var(--ink-2); }
+.flow-svg .z { stroke: var(--ink-3); stroke-width: 1; stroke-dasharray: 2 3; }
+@media (min-width: 900px) { .flow-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .flow-grid .flow-card { margin-bottom: 0; } }

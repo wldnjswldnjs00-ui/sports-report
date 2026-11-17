@@ -107,15 +107,24 @@ def _flows(payload: dict) -> dict[int, dict]:
             no = int(t.get("GM_SEQ"))
         except (TypeError, ValueError):
             continue
-        f = out.setdefault(no, {"n": 0, "first": {}, "last": {}, "at": None})
+        f = out.setdefault(no, {"n": 0, "first": {}, "last": {}, "at": None, "pts": []})
+        at = str(t.get("LST_CHG_DTM") or t.get("CHG_DTM") or "")[:12]
+        before, after = {}, {}
         for side, b, a in (("W", "BCHG_W_ODDS", "ACHG_W_ODDS"), ("D", "BCHG_D_ODDS", "ACHG_D_ODDS"), ("L", "BCHG_L_ODDS", "ACHG_L_ODDS")):
             bv, av = _num(t.get(b)) / 100, _num(t.get(a)) / 100
-            if bv > 1 and side not in f["first"]:
-                f["first"][side] = bv
+            if bv > 1:
+                before[side] = bv
+                if side not in f["first"]:
+                    f["first"][side] = bv
             if av > 1:
                 f["last"][side] = av
+                after[side] = av
+        if not f["pts"] and before:
+            f["pts"].append(["", before])  # 처음 발매 배당(시각 모름)
+        if after:
+            f["pts"].append([at, after])
         f["n"] += 1
-        f["at"] = str(t.get("LST_CHG_DTM") or t.get("CHG_DTM") or "")[:12]
+        f["at"] = at
     return out
 
 
@@ -181,7 +190,9 @@ def parse_round(payload: dict, gm_ts: str) -> list[dict[str, Any]]:
                 side_map = {"W": "H", "D": "D", "L": "A"}
             flow = {"changes": fl["n"], "at": fl["at"],
                     "from": {side_map[k]: v for k, v in fl["first"].items() if k in side_map},
-                    "to": {side_map[k]: v for k, v in fl["last"].items() if k in side_map}}
+                    "to": {side_map[k]: v for k, v in fl["last"].items() if k in side_map},
+                    # 변동 시각별 배당 [시각(YYYYMMDDHHMM, 처음은 ""), {H/D/A 또는 U/O: 배당}] 최대 40개
+                    "pts": [[t, {side_map[k]: v for k, v in o.items() if k in side_map}] for t, o in fl.get("pts", [])][-40:]}
         out.append({
             "id": f"betman:{GM_ID}:{gm_ts}:{no}",
             "source": "betman", "pool": "proto", "round": str(gm_ts),
