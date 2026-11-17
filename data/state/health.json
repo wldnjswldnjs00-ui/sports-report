@@ -1,4 +1,5 @@
 {
- "betman_fails": 1,
- "threads_first": "2026-11-17"
+ "betman_fails": 2,
+ "threads_first": "2026-11-17",
+ "site_expect": "2026-11-18"
 }
