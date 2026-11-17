@@ -238,6 +238,41 @@ class Pipeline(unittest.TestCase):
             config.DEMO = False
 
 
+class BoxScore(unittest.TestCase):
+    def ev(self, date, hs, as_, hl=None, al=None, sport="basketball", details=None, hid="1"):
+        def comp(side, sc, ls, tid):
+            return {"homeAway": side, "score": str(sc), "team": {"id": tid, "displayName": side},
+                    "linescores": [{"value": v} for v in (ls or [])]}
+        return {"date": date, "competitions": [{"status": {"type": {"completed": True, "name": "STATUS_FINAL", "shortDetail": "Final"}},
+                "competitors": [comp("home", hs, hl, hid), comp("away", as_, al, "2")], "details": details or []}]}
+
+    def test_basketball_overtime(self):
+        from engine.sources import boxscore as BX
+        b = BX.parse_event(self.ev("2026-11-15T23:00Z", 108, 112, [17, 26, 31, 21, 13], [23, 24, 20, 28, 17]), "basketball/nba")
+        self.assertEqual(b["cols"], ["1Q", "2Q", "3Q", "4Q", "연장"])
+        b2 = BX.parse_event(self.ev("2026-11-15T23:00Z", 120, 118, [20, 20, 20, 20, 10, 30], [20, 20, 20, 20, 10, 28]), "basketball/nba")
+        self.assertEqual(b2["cols"][-2:], ["연장1", "연장2"])
+        # 쿼터 합이 최종 점수와 다르면 버린다
+        self.assertIsNone(BX.parse_event(self.ev("2026-11-15T23:00Z", 100, 90, [25, 25, 25, 24], [20, 20, 25, 25]), "basketball/nba"))
+
+    def test_soccer_halves_and_match(self):
+        from engine.sources import boxscore as BX
+        det = [{"scoringPlay": True, "type": {"text": "Goal"}, "clock": {"displayValue": "45'+2'"}, "team": {"id": "1"}, "athletesInvolved": [{"displayName": "A"}]},
+               {"scoringPlay": True, "type": {"text": "Penalty - Scored"}, "clock": {"displayValue": "60'"}, "team": {"id": "2"}, "athletesInvolved": [{"displayName": "B"}]}]
+        b = BX.parse_event(self.ev("2026-11-08T14:00Z", 1, 1, sport="soccer", details=det), "soccer/eng.1")
+        self.assertEqual((b["h"], b["a"]), ([1, 0], [0, 1]))
+        self.assertEqual(b["g"][1][3], "PK")
+        ko = int(datetime.fromisoformat("2026-11-08T14:00:00+00:00").timestamp() * 1000)
+        # 홈·원정이 뒤바뀐 경우도 맞춘다
+        other = BX.parse_event(self.ev("2026-11-08T14:00Z", 2, 0, [1, 1], [0, 0]), "basketball/nba")
+        m = BX.match({"ko": ko, "hs": 0, "as": 2}, [other])
+        self.assertTrue(m["flip"] and m["t"] == [0, 2] and m["h"] == [0, 0])
+        # 같은 시각·같은 점수 두 경기는 이름을 모르면 고르지 않고, 배운 이름이 있으면 고른다
+        x = dict(other, names=["X", "Y"]); y = dict(other, names=["Z", "W"])
+        self.assertIsNone(BX.match({"ko": ko, "hs": 2, "as": 0, "home": "가", "away": "나"}, [x, y]))
+        self.assertEqual(BX.match({"ko": ko, "hs": 2, "as": 0, "home": "가", "away": "나"}, [x, y], {"가": "Z"})["names"], ["Z", "W"])
+
+
 if __name__ == "__main__":
     unittest.main()
 

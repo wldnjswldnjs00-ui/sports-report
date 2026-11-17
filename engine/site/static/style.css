@@ -901,3 +901,45 @@ i.t-pos, i.t-neg, i.t-draw { font-style: normal; }
 .vs-tbl .fseq { flex-wrap: nowrap; gap: 3px; }
 .vs-tbl .fseq i { width: 20px; height: 20px; font-size: 10.5px; }
 .pf-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+
+/* 점수판(쿼터·이닝·세트·전후반, 골 기록) */
+tr.has-box { cursor: pointer; }
+tr.has-box:hover td, tr.has-box[aria-expanded="true"] td { background: var(--card-2); }
+.box-caret { display: inline-block; width: 7px; height: 7px; border-right: 2px solid var(--ink-3); border-bottom: 2px solid var(--ink-3); transform: rotate(45deg) translateY(-3px); margin-left: 6px; transition: transform .2s var(--ease); }
+tr[aria-expanded="true"] .box-caret, details[open] > summary .box-caret { transform: rotate(-135deg) translateY(-1px); }
+.box-row > td { background: var(--card-2); padding: 10px 8px 14px; }
+.sb { display: grid; gap: 8px; }
+.sb .tblw { margin: 0; }
+.sb-tbl { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+.sb-tbl th, .sb-tbl td { padding: 6px 7px; text-align: center; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.sb-tbl thead th { font-weight: 600; font-size: 11.5px; color: var(--ink-3); }
+.sb-tbl tbody th { text-align: left; font-weight: 600; white-space: normal; min-width: 88px; }
+.sb-tbl td.sb-hi { font-weight: 800; color: var(--ink); }
+.sb-tbl td { color: var(--ink-2); }
+.sb-tbl .sb-tot { border-left: 1px solid var(--line); }
+.sb-goals { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 13px; }
+.sb-goals li { display: flex; gap: 6px; align-items: baseline; flex-wrap: wrap; }
+.sb-goals li.sb-a { justify-content: flex-end; text-align: right; }
+.sb-min { font-weight: 700; font-variant-numeric: tabular-nums; min-width: 42px; }
+.sb-goals li.sb-a .sb-min { order: 3; text-align: right; }
+.sb-note { margin: 0; font-size: 13px; }
+.sb-src { margin: 0; font-size: 11px; color: var(--ink-3); }
+.g-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.g-box, .g-row { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-sm); }
+.g-box > summary, .g-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; font-size: 14px; }
+.g-box > summary { cursor: pointer; list-style: none; }
+.g-box > summary::-webkit-details-marker { display: none; }
+.g-box > .sb { padding: 0 12px 12px; }
+.g-d { font-size: 12.5px; min-width: 40px; }
+.g-t { flex: 1; }
+.g-t span:not(.ps-win) { color: var(--ink-2); }
+.g-t .ps-win { font-weight: 700; color: var(--ink); }
+.ps-series .g-box { border: 0; background: none; }
+.ps-series .g-box > summary { padding: 2px 0; font-size: 13.5px; }
+.ps-series .g-box > .sb { padding: 4px 0 8px; }
+@media (max-width: 480px) {
+  .sb-tbl { font-size: 12.5px; }
+  .sb-tbl th, .sb-tbl td { padding: 5px 3px; }
+  .sb-tbl tbody th { min-width: 70px; font-size: 12px; }
+  .box-row > td { padding: 8px 4px 12px; }
+}

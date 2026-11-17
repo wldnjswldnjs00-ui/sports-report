@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import result_tag %}
+{% from "_macros.html" import result_tag, scoreboard %}
 {% set tb = lg.table %}
 {% block title %}{{ lg.name }} 순위{% if tb %} ({{ tb.season }}){% endif %} · 팀별 기록과 경기 분석 | {{ cfg.SITE_NAME }}{% endblock %}
 {% block desc %}{{ lg.name }}{% if tb %} {{ tb.season }} 순위표: 1위 {{ tb.rows[0].team }}{% if tb.rows|length > 1 %}, 2위 {{ tb.rows[1].team }}{% endif %}.{% endif %} 팀별 최근 전적, 최근 분석 경기와 결과.{% endblock %}
@@ -51,7 +51,7 @@
           <span class="ps-teams">{% for t in [sr.a, sr.b] if t %}<span class="{{ 'ps-win' if t == sr.winner }}">{{ t }}</span>{{ ' vs ' if not loop.last }}{% endfor %}</span>
           <span class="ps-score">{% if sr.winner %}<b>{{ sr.winner }}</b> {{ sr.score }}{% endif %}</span>
         </summary>
-        <ul>{% for g in sr.games %}<li><span class="muted">{{ g.date[5:]|replace('-', '/') }}</span> {{ g.home }} <b>{{ g.hs|int }} : {{ g.as|int }}</b> {{ g.away }}</li>{% endfor %}</ul>
+        <ul>{% for g in sr.games %}{% set bx = box_of(date=g.date, home=g.home, away=g.away) %}<li>{% if bx %}<details class="g-box"><summary>{% endif %}<span class="muted">{{ g.date[5:]|replace('-', '/') }}</span> {{ g.home }} <b>{{ g.hs|int }} : {{ g.as|int }}</b> {{ g.away }}{% if bx %}</summary>{{ scoreboard(bx, g.home, g.away) }}</details>{% endif %}</li>{% endfor %}</ul>
       </details>
       {% endfor %}
     </li>
@@ -80,6 +80,22 @@
 <section class="wrap block">
   <h2 class="sub">참가 팀</h2>
   <p class="teams">{% for t, n in lg.teams[:40] %}{% set tu = team_link(lg.sport, t) %}{% if tu %}<a href="{{ tu }}">{{ t }} <small>{{ n }}</small></a>{% else %}<span>{{ t }} <small>{{ n }}</small></span>{% endif %}{% endfor %}</p>
+</section>
+{% endif %}
+
+{% if lg.games %}
+<section class="wrap block">
+  <h2 class="sub">최근 경기 결과</h2>
+  {% set ns = namespace(any=false) %}{% for g in lg.games %}{% if box_of(g.key) %}{% set ns.any = true %}{% endif %}{% endfor %}
+  {% if ns.any %}<p class="fine">▾ 표시가 있는 경기를 누르면 {{ {'baseball': '이닝별 점수', 'soccer': '전·후반 점수와 골 기록', 'basketball': '쿼터별 점수(연장 포함)'}.get(lg.sport, '구간별 점수') }}가 펼쳐집니다.</p>{% endif %}
+  <ul class="g-list">
+  {% for g in lg.games %}{% set bx = box_of(g.key) %}
+    <li>{% if bx %}<details class="g-box"><summary>{% else %}<div class="g-row">{% endif %}
+      <span class="muted g-d">{{ g.date[5:]|replace('-', '/') }}</span>
+      <span class="g-t"><span class="{{ 'ps-win' if g.hs > g.as }}">{{ g.home }}</span> <b>{{ g.hs|int }} : {{ g.as|int }}</b> <span class="{{ 'ps-win' if g.as > g.hs }}">{{ g.away }}</span></span>
+      {% if bx %}<i class="box-caret" aria-hidden="true"></i></summary>{{ scoreboard(bx, g.home, g.away) }}</details>{% else %}</div>{% endif %}</li>
+  {% endfor %}
+  </ul>
 </section>
 {% endif %}
 

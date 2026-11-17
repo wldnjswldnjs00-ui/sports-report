@@ -164,3 +164,34 @@
 </div>
 {% endif %}
 {% endmacro %}
+
+{# 끝난 경기 점수판: b = 점수판(engine/sources/boxscore.py), home·away = 베트맨 팀 이름 #}
+{% macro scoreboard(b, home, away) %}
+{% if b %}
+<div class="sb">
+  {% if b.cols %}
+  {% set bb = b.k == 'bb' %}
+  {% set rows = [(away, b.a, b.t[1], 1), (home, b.h, b.t[0], 0)] if bb else [(home, b.h, b.t[0], 0), (away, b.a, b.t[1], 1)] %}
+  <div class="tblw"><table class="sb-tbl">
+    <thead><tr><th scope="col"><span class="sr">팀</span></th>{% for c in b.cols %}<th scope="col">{{ c }}</th>{% endfor %}<th scope="col" class="sb-tot">{{ 'R' if bb else '합계' }}</th>{% if bb and b.x %}<th scope="col">H</th><th scope="col">E</th>{% endif %}</tr></thead>
+    <tbody>
+    {% for name, line, tot, i in rows %}
+      <tr><th scope="row">{{ name }}{% if bb %} <small class="muted">{{ '원정' if i else '홈' }}</small>{% endif %}</th>
+        {% for v in line %}{% set o = (b.a if i == 0 else b.h)[loop.index0] if (b.a if i == 0 else b.h)|length > loop.index0 else none %}<td class="{{ 'sb-hi' if v is not none and o is not none and v > o }}">{{ 'X' if v is none else v }}</td>{% endfor %}
+        <td class="sb-tot"><b>{{ tot }}</b></td>{% if bb and b.x %}<td>{{ b.x.H[i] if b.x.H[i] is not none else '-' }}</td><td>{{ b.x.E[i] if b.x.E[i] is not none else '-' }}</td>{% endif %}</tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% endif %}
+  {% if b.pen %}<p class="sb-note">승부차기 <b>{{ b.pen[0] }} : {{ b.pen[1] }}</b> ({{ home if b.pen[0] > b.pen[1] else away }} 승)</p>{% endif %}
+  {% if b.r90 %}<p class="sb-note">90분 {{ b.r90[0] }} : {{ b.r90[1] }} 후 연장. 프로토 승무패는 연장 전 점수로 정합니다.</p>{% endif %}
+  {% if b.so %}<p class="sb-note">승부치기로 승패가 갈렸습니다.</p>{% endif %}
+  {% if b.g %}
+  <ol class="sb-goals">
+    {% for g in b.g %}<li class="{{ 'sb-a' if g[1] == 'a' else 'sb-h' }}"><span class="sb-min">{{ g[0] }}</span> <span>⚽ {{ g[2] or '득점' }}{% if g[3] %} <small>({{ g[3] }})</small>{% endif %}</span> <small class="muted">{{ away if g[1] == 'a' else home }}</small></li>{% endfor %}
+  </ol>
+  {% elif b.k == 'sc' and b.t[0] + b.t[1] > 0 %}<p class="sb-note muted">골 기록은 아직 없습니다.</p>{% endif %}
+  <p class="sb-src">점수판 출처: ESPN · 선수 이름은 영문 표기</p>
+</div>
+{% endif %}
+{% endmacro %}

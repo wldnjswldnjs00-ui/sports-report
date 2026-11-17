@@ -446,9 +446,20 @@ def build() -> None:
         tms = PX.teams(hrows, reports, config.now_kst().isoformat())
         tables = PX.standings(hrows, config.now_kst())
         vns = PX.venues(reports)
+        lgames = PX.league_games(hrows)
     except Exception:  # noqa: BLE001
         log.exception("팀·순위 데이터 실패")
-        tms, tables, vns = {}, {}, {}
+        tms, tables, vns, lgames = {}, {}, {}, {}
+    # 끝난 경기 점수판(쿼터·이닝·전후반, 골 기록)
+    from ..sources import boxscore
+    try:
+        boxes = boxscore.load_all()
+    except Exception:  # noqa: BLE001
+        log.exception("점수판 읽기 실패")
+        boxes = {}
+
+    def box_of(key=None, date=None, home=None, away=None):
+        return boxes.get(key or f"{date}|{home}|{away}")
     for t in tms.values():
         tb = tables.get(PX.lkey(t["league"]))
         t["table_slug"] = slug(tb["name"]) if tb else None
@@ -477,7 +488,7 @@ def build() -> None:
         return murl.get((m.get("home"), m.get("away"), str(m.get("kickoff"))[:10])) if m else None
 
     ctx = dict(perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues,
-               team_link=team_link, match_url=match_url, team_info=team_info)
+               team_link=team_link, match_url=match_url, team_info=team_info, box_of=box_of)
     urls: list[tuple[str, str]] = []
 
     def page(tpl: str, out: str, **kw):
@@ -554,6 +565,8 @@ def build() -> None:
             lg = {"name": tb["name"], "slug": slug(tb["name"]), "sport": tb["sport"], "n": 0, "graded": 0, "hit": 0, "teams": [], "recent": []}
             leagues[tb["name"]] = lg
         lg["table"] = tb
+    for lg in leagues.values():
+        lg["games"] = lgames.get(PX.lkey(lg["name"]), [])
     page("leagues.html", "/leagues/")
     for lg in leagues.values():
         page("league.html", f"/leagues/{lg['slug']}/", lg=lg,

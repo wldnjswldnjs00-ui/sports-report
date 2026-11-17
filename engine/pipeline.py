@@ -299,6 +299,14 @@ def grade(today: str, lookback: int = 7, fetch_scores: bool = True) -> dict:
     elo = G.rebuild_elo(reports, results_by_date, betman_history.load_all())
     G.save_state(perf, cal, elo, G.learn(reports))
     log.info("채점 완료: 픽 %s", perf["picks"]["all"])
+    # 끝난 경기 점수판(쿼터·이닝·전후반·골 기록). 실패해도 채점에는 영향 없음
+    if not config.DEMO:
+        try:
+            from .site.pages_extra import rows_from_results
+            from .sources import boxscore
+            boxscore.collect(rows_from_results(reports, results_by_date) + betman_history.load_all())
+        except Exception:  # noqa: BLE001
+            log.exception("점수판 수집 실패")
     return perf
 
 

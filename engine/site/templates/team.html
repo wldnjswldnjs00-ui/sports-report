@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros.html" import scoreboard %}
 {% block title %}{{ t.name }} 경기 분석 · 최근 전적과 배당 기록 ({{ t.league }}) | {{ cfg.SITE_NAME }}{% endblock %}
 {% block desc %}{% if t.rank %}{{ t.rank[3] }} {{ t.rank[2] }} {{ t.rank[0] }}위. {% endif %}{{ t.name }}({{ t.league }}) 최근 {{ t.n }}경기 {{ t.w }}승{% if t.d %} {{ t.d }}무{% endif %} {{ t.l }}패. 홈·원정 성적, 정배·역배일 때 승률, 상대 전적, 다가오는 경기 분석.{% endblock %}
 {% block main %}
@@ -41,14 +42,17 @@
 
 <section class="wrap block">
   <h2 class="sub">최근 경기</h2>
+  {% set ns = namespace(any=false) %}{% for x in t.games[:20] %}{% if box_of(x.key) %}{% set ns.any = true %}{% endif %}{% endfor %}
+  {% if ns.any %}<p class="fine">▾ 표시가 있는 경기를 누르면 {{ {'baseball': '이닝별 점수', 'soccer': '전·후반 점수와 골 기록', 'basketball': '쿼터별 점수'}.get(t.sport, '구간별 점수') }}가 펼쳐집니다.</p>{% endif %}
   <div class="tblw"><table class="tbl">
     <thead><tr><th>날짜</th><th>상대</th><th class="n">결과</th></tr></thead>
     <tbody>
-    {% for x in t.games[:20] %}
-      <tr><td class="muted">{{ x.date[5:]|replace('-', '/') }}</td>
+    {% for x in t.games[:20] %}{% set bx = box_of(x.key) %}{% set kp = x.key.split('|') %}
+      <tr{% if bx %} class="has-box" data-box="bx{{ loop.index }}" tabindex="0" role="button" aria-expanded="false" aria-controls="bx{{ loop.index }}"{% endif %}><td class="muted">{{ x.date[5:]|replace('-', '/') }}</td>
         <td>{{ '' if x.home else '@ ' }}{% set ou = team_link(t.sport, x.opp) %}{% if ou %}<a href="{{ ou }}">{{ x.opp }}</a>{% else %}{{ x.opp }}{% endif %}<br><small class="muted">{% if x.league != t.league %}{{ x.league }} · {% endif %}배당 {{ x.odds|odds }}{% if x.fav %} 정배{% elif x.odds and x.opp_odds %} 역배{% endif %}</small></td>
-        <td class="n"><span class="{{ 't-pos' if x.res == 'W' else ('t-neg' if x.res == 'L' else 't-draw') }}">{{ WDL[x.res] }}</span> {{ x.me|int }}:{{ x.op|int }}</td>
+        <td class="n"><span class="{{ 't-pos' if x.res == 'W' else ('t-neg' if x.res == 'L' else 't-draw') }}">{{ WDL[x.res] }}</span> {{ x.me|int }}:{{ x.op|int }}{% if bx %} <i class="box-caret" aria-hidden="true"></i>{% endif %}</td>
       </tr>
+      {% if bx %}<tr class="box-row" id="bx{{ loop.index }}" hidden><td colspan="3">{{ scoreboard(bx, kp[1], kp[2]) }}</td></tr>{% endif %}
     {% endfor %}
     </tbody>
   </table></div>

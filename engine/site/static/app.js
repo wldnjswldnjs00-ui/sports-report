@@ -188,6 +188,19 @@
   });
   applyFilters();
 
+  /* 팀 페이지 최근 경기: 줄을 누르면 점수판(쿼터·이닝·전후반) 펼치기 */
+  doc.addEventListener("click", function (e) {
+    var tr = e.target.closest && e.target.closest("tr[data-box]");
+    if (!tr || e.target.closest("a")) return;
+    var row = doc.getElementById(tr.dataset.box);
+    if (!row) return;
+    row.hidden = !row.hidden;
+    tr.setAttribute("aria-expanded", String(!row.hidden));
+  });
+  doc.addEventListener("keydown", function (e) {
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("tr[data-box]")) { e.preventDefault(); e.target.click(); }
+  });
+
   /* 역배·핸디·언오버: 경기별 묶음, 종류 필터, 처음엔 6경기만, 눌러서 자세히 */
   var linesApply = function () {};
   $$("[data-lines]").forEach(function (sec) {

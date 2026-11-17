@@ -98,6 +98,7 @@ def teams(history_rows: list[list], reports: list[dict], now_iso: str) -> dict[t
             t = team(g["sport"], name)
             t["leagues"][g["league"]] += 1
             t["games"].append({"date": g["date"], "league": g["league"], "opp": g["away"] if side == "home" else g["home"],
+                               "key": f"{g['date']}|{g['home']}|{g['away']}",
                                "home": side == "home", "me": me, "op": op, "res": res, "odds": my_odds, "opp_odds": op_odds,
                                "fav": bool(my_odds and op_odds and my_odds < op_odds)})
     # 다가오는 경기(최근 리포트의 승패·승무패 마켓)
@@ -501,3 +502,24 @@ def division_of(lk: str, team: str) -> str | None:
             if kw in t and (best is None or len(kw) > best[1]):
                 best = (gname, len(kw))
     return best[0] if best else None
+
+
+def league_games(history_rows: list[list], n: int = 20) -> dict[str, list[dict]]:
+    """리그(띄어쓰기 뺀 이름) → 최근 끝난 경기(최신이 앞). 점수판을 붙여 보여 주는 용도."""
+    seen: set[tuple] = set()
+    out: dict[str, list[dict]] = defaultdict(list)
+    for r in history_rows:
+        try:
+            sport, league, mk, ko, home, away, hs, as_ = r[0], r[1], r[2], int(r[8]), r[10], r[11], r[12], r[13]
+        except (IndexError, TypeError, ValueError):
+            continue
+        if mk not in ("WL", "1X2") or hs is None or as_ is None or not home or not away:
+            continue
+        dt = datetime.fromtimestamp(ko / 1000, KST)
+        k = (sport, dt.date().isoformat(), home, away)
+        if k in seen:
+            continue
+        seen.add(k)
+        out[lkey(league)].append({"sport": sport, "date": k[1], "ko": dt.isoformat(timespec="minutes"), "home": home, "away": away,
+                                  "hs": hs, "as": as_, "key": f"{k[1]}|{home}|{away}"})
+    return {lk: sorted(v, key=lambda g: g["ko"], reverse=True)[:n] for lk, v in out.items()}
