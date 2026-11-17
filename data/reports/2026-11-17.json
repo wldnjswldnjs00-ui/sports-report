@@ -12475,6 +12475,13 @@
     "H": 1.78,
     "D": 3.2,
     "A": 3.65
+   },
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 중국, 결과는 무승부.",
+    "r": "발행 당시 이변 위험이 46로 이미 높았다. 추정 확률이 48%에 그친 박빙 경기였다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 53% 적중했다. 이번은 나머지 47%에 해당한다.",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
    }
   },
   {
@@ -12712,6 +12719,13 @@
     "H": 3.9,
     "D": 3.2,
     "A": 1.72
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 바레인 핸디 선택이 맞았다.",
+    "r": "추정 확률 58%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 47% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -12933,6 +12947,13 @@
    "odds_close": {
     "O": 2.09,
     "U": 1.49
+   },
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 언더, 결과는 오버.",
+    "r": "발행 당시 이변 위험이 44로 이미 높았다. 추정 확률이 54%에 그친 박빙 경기였다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 57% 적중했다. 이번은 나머지 43%에 해당한다.",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
    }
   },
   {
@@ -35959,7 +35980,7 @@
       "xo": 1.54,
       "upset_risk": 42,
       "dog": false,
-      "result": "miss"
+      "result": null
      }
     ],
     "size": 4,
@@ -36055,7 +36076,7 @@
       "xo": 1.54,
       "upset_risk": 42,
       "dog": false,
-      "result": "miss"
+      "result": null
      },
      {
       "market_id": "betman:G101:260136:4499",
@@ -36247,7 +36268,7 @@
       "xo": 1.54,
       "upset_risk": 42,
       "dog": false,
-      "result": "miss"
+      "result": null
      },
      {
       "market_id": "betman:G101:260136:4395",
@@ -36395,7 +36416,7 @@
       "xo": 1.54,
       "upset_risk": 42,
       "dog": false,
-      "result": "miss"
+      "result": null
      }
     ],
     "size": 4,
@@ -36465,7 +36486,7 @@
       "xo": 1.54,
       "upset_risk": 42,
       "dog": false,
-      "result": "miss"
+      "result": null
      },
      {
       "market_id": "betman:G101:260136:4395",
@@ -36613,7 +36634,7 @@
       "xo": 1.54,
       "upset_risk": 42,
       "dog": false,
-      "result": "miss"
+      "result": null
      }
     ],
     "size": 3,
@@ -40350,7 +40371,8 @@
    "xo": 4.6,
    "upset_risk": 40,
    "dog": false,
-   "kelly": 0.0122
+   "kelly": 0.0122,
+   "result": "miss"
   },
   {
    "market_id": "betman:G101:260136:4491",
@@ -40376,7 +40398,8 @@
    "xo": 2.13,
    "upset_risk": 47,
    "dog": false,
-   "kelly": 0.0121
+   "kelly": 0.0121,
+   "result": null
   },
   {
    "market_id": "betman:G101:260136:4448",
@@ -40402,7 +40425,8 @@
    "xo": 1.81,
    "upset_risk": 50,
    "dog": false,
-   "kelly": 0.014
+   "kelly": 0.014,
+   "result": "hit"
   },
   {
    "market_id": "betman:G101:260136:4431",
@@ -40428,7 +40452,8 @@
    "xo": 1.14,
    "upset_risk": 2,
    "dog": false,
-   "kelly": 0.0365
+   "kelly": 0.0365,
+   "result": "miss"
   },
   {
    "market_id": "betman:G101:260136:4469",
@@ -40454,7 +40479,8 @@
    "xo": 1.93,
    "upset_risk": 48,
    "dog": false,
-   "kelly": 0.0042
+   "kelly": 0.0042,
+   "result": null
   },
   {
    "market_id": "betman:G101:260136:4495",
@@ -40480,7 +40506,8 @@
    "xo": 2.19,
    "upset_risk": 45,
    "dog": false,
-   "kelly": 0.0025
+   "kelly": 0.0025,
+   "result": null
   },
   {
    "market_id": "betman:G101:260136:4465",
@@ -40506,7 +40533,8 @@
    "xo": 2.03,
    "upset_risk": 49,
    "dog": false,
-   "kelly": 0.0025
+   "kelly": 0.0025,
+   "result": null
   },
   {
    "market_id": "betman:G101:260136:4473",
@@ -40532,7 +40560,8 @@
    "xo": 2.08,
    "upset_risk": 48,
    "dog": false,
-   "kelly": 0.0005
+   "kelly": 0.0005,
+   "result": null
   }
  ],
  "upsets": [],
@@ -43122,10 +43151,10 @@
   "betman:G101:260136:4437": "U",
   "betman:G101:260136:4439": "H",
   "betman:G101:260136:4440": "A",
-  "betman:G101:260136:4441": "O",
   "betman:G101:260136:4443": "A",
-  "betman:G101:260136:4444": "A",
-  "betman:G101:260136:4445": "O"
+  "betman:G101:260136:4447": "D",
+  "betman:G101:260136:4448": "A",
+  "betman:G101:260136:4449": "O"
  },
  "headline": "오늘 26경기 분석 완료. 가장 단단한 선택은 포르투갈 원정승, 추정 68%. 이후 9경기도 미리 분석했습니다."
 }
