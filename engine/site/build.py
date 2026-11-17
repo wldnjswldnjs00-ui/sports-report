@@ -615,6 +615,22 @@ def build() -> None:
            '<body>스포츠분석.kr로 이동합니다…<script>addEventListener("load",function(){setTimeout(function(){location.replace("/")},500)})</script></body></html>')
     _write(config.DIST / "404.html", env.get_template("404.html").render(**ctx, path="/404"))
     write_json(config.DIST / "data" / "today.json", _slip_payload(latest))
+    # 알림 내용(서비스 워커가 알림 신호를 받으면 이 파일을 읽어 띄운다)
+    try:
+        nr = next_rep if (next_rep and next_rep.get("markets")) else None
+        src = nr or latest or {}
+        ms = [m for m in src.get("markets", []) if not m.get("preview")]
+        ngames = len({(m["home"], m["away"]) for m in ms})
+        first = min((m["kickoff"] for m in ms), default=None)
+        tp = (src.get("top_picks") or [None])[0]
+        body = f"{ngames}경기" + (f" · 첫 경기 {_kdt(first)}" if first else "")
+        if tp:
+            body += f" · {tp['home']} vs {tp['away']} {_outcome(tp, tp['outcome'])} {round(tp['p'] * 100)}%"
+        write_json(config.DIST / "data" / "push.json", {
+            "title": f"{_kdate(src['date'])} 프로토 분석 공개" if src.get("date") else "스포츠분석",
+            "body": body, "url": "/", "tag": f"day-{src.get('date', '')}"})
+    except Exception:  # noqa: BLE001
+        log.exception("알림 내용 생성 실패")
     write_json(config.DIST / "data" / "xbook.json", _xbook_payload(latest))
     # 쓰레드 카드 이미지(쓰레드가 공개 주소로 가져간다)
     tdir = config.DATA / "threads"

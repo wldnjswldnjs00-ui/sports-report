@@ -943,3 +943,12 @@ tr[aria-expanded="true"] .box-caret, details[open] > summary .box-caret { transf
   .sb-tbl tbody th { min-width: 70px; font-size: 12px; }
   .box-row > td { padding: 8px 4px 12px; }
 }
+
+/* 앱 설치·알림 막대 */
+.app-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 16px 18px; margin-bottom: 28px; }
+.app-bar[hidden] { display: none; }
+.app-bar-txt { display: grid; gap: 2px; min-width: 0; }
+.app-bar-txt b { font-size: 15px; }
+.app-bar-txt span { font-size: 13.5px; color: var(--ink-2); }
+.app-bar-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }

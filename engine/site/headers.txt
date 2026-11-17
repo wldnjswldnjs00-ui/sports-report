@@ -10,3 +10,13 @@
 
 /data/*
   Cache-Control: public, max-age=300
+
+/sw.js
+  Cache-Control: no-cache
+  Service-Worker-Allowed: /
+
+/site.webmanifest
+  Cache-Control: public, max-age=3600
+
+/og/*
+  Cache-Control: public, max-age=3600

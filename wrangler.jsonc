@@ -1,7 +1,7 @@
 // Cloudflare Workers 배포 설정.
 // - 사이트: dist/ 의 정적 파일(정적 자산 요청은 Worker 코드를 거치지 않아 CPU 를 쓰지 않음).
 // - cron/worker.js: 정해진 시각(KST 23:05, 06:00, 07:00, 09:30, 13:00, 18:00, 19:00, 22:00)에
-//   GitHub Actions '매일 분석'을 시작한다. 무료 플랜 예약 실행 한도(5개) 안에서 3개로 묶었다(UTC 기준).
+//   GitHub Actions '매일 분석'을 시작한다. 19:20 은 알림 보내기. 무료 플랜 예약 실행 한도(5개) 안에서 4개(UTC 기준).
 {
   "name": "sports-report",
   "main": "cron/worker.js",
@@ -12,7 +12,9 @@
     "not_found_handling": "404-page",
     "html_handling": "auto-trailing-slash"
   },
+  // 알림 구독 저장소(KV). Cloudflare 에서 KV 를 만든 뒤 아래 주석을 풀고 id 를 넣는다. 없으면 알림만 꺼진다.
+  // "kv_namespaces": [{ "binding": "PUSH", "id": "여기에-KV-ID" }],
   "triggers": {
-    "crons": ["5 14 * * *", "30 0 * * *", "0 4,9,10,13,21,22 * * *"]
+    "crons": ["5 14 * * *", "30 0 * * *", "0 4,9,10,13,21,22 * * *", "20 10 * * *"]
   }
 }

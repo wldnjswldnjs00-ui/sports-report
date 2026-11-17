@@ -30,8 +30,13 @@
 <meta name="theme-color" content="#0e0f10" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/favicon.ico?v=3" sizes="48x48">
 <link rel="icon" href="/static/favicon.svg?v=3" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=3">
-<link rel="manifest" href="/site.webmanifest?v=3">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=4">
+<link rel="manifest" href="/site.webmanifest?v=4">
+<meta name="application-name" content="스포츠분석">
+<meta name="apple-mobile-web-app-title" content="스포츠분석">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -75,6 +80,13 @@
 </main>
 
 <footer class="foot">
+  <div class="wrap app-bar" data-appbar hidden>
+    <div class="app-bar-txt"><b>스포츠분석 앱</b><span data-app-msg>홈 화면에 두고 매일 오후 7시 분석 공개 알림을 받아 보세요.</span></div>
+    <div class="app-bar-btns">
+      <button type="button" class="btn ghost" data-install hidden>앱으로 설치</button>
+      <button type="button" class="btn" data-push hidden>알림 받기</button>
+    </div>
+  </div>
   <div class="wrap foot-grid">
     <div>
       <p class="foot-brand">스포츠분석<span>.kr</span></p>
@@ -124,6 +136,7 @@
 <div class="toast" role="status" aria-live="polite" data-toast></div>
 
 <script src="/static/app.js?v={{ asset_v }}" defer></script>
+<script src="/static/pwa.js?v={{ asset_v }}" defer></script>
 {% block scripts %}{% endblock %}
 </body>
 </html>
