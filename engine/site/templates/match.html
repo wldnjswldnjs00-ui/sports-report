@@ -14,6 +14,27 @@
     {% set hu = team_link(g.sport, g.home) %}{% set au = team_link(g.sport, g.away) %}{% if hu or au %}<p class="tm-links">팀 기록 {% if hu %}<a class="chip" href="{{ hu }}">{{ g.home }}</a>{% endif %}{% if au %}<a class="chip" href="{{ au }}">{{ g.away }}</a>{% endif %}</p>{% endif %}
   </header>
 
+  {% set th = team_info(g.sport, g.home) %}{% set ta = team_info(g.sport, g.away) %}
+  {% if th and ta %}
+  <section class="vs-card" aria-label="두 팀 비교">
+    <h2 class="sub">두 팀 비교</h2>
+    <div class="tblw"><table class="tbl vs-tbl">
+      <thead><tr><th><a href="{{ th.url }}">{{ g.home }}</a><small class="muted"> 홈</small></th><th class="vs-mid"></th><th class="n"><a href="{{ ta.url }}">{{ g.away }}</a><small class="muted"> 원정</small></th></tr></thead>
+      <tbody>
+        {% if th.rank or ta.rank %}<tr><td>{% if th.rank_short %}<b>{{ th.rank_short }}</b>{% else %}–{% endif %}</td><td class="vs-mid">리그 순위</td><td class="n">{% if ta.rank_short %}<b>{{ ta.rank_short }}</b>{% else %}–{% endif %}</td></tr>{% endif %}
+        {% set rh = th.season_rec or th %}{% set ra = ta.season_rec or ta %}
+        <tr><td>{{ rh.w }}승{% if rh.d %} {{ rh.d }}무{% endif %} {{ rh.l }}패</td><td class="vs-mid">{{ '시즌 성적' if th.season_rec and ta.season_rec else '발매 경기 성적' }}</td><td class="n">{{ ra.w }}승{% if ra.d %} {{ ra.d }}무{% endif %} {{ ra.l }}패</td></tr>
+        <tr><td><span class="fseq">{% for c in th.form[:5] %}<i class="r{{ c }}">{{ {'W': '승', 'D': '무', 'L': '패'}[c] }}</i>{% endfor %}</span></td><td class="vs-mid">최근 5경기</td><td class="n"><span class="fseq">{% for c in ta.form[:5] %}<i class="r{{ c }}">{{ {'W': '승', 'D': '무', 'L': '패'}[c] }}</i>{% endfor %}</span></td></tr>
+        <tr><td>{{ th.home_rec.w }}승 {{ th.home_rec.l }}패</td><td class="vs-mid">홈 / 원정 성적</td><td class="n">{{ ta.away_rec.w }}승 {{ ta.away_rec.l }}패</td></tr>
+        {% if th.avg_for is not none and ta.avg_for is not none %}<tr><td>{{ th.avg_for }} / {{ th.avg_against }}</td><td class="vs-mid">평균 득점 / 실점</td><td class="n">{{ ta.avg_for }} / {{ ta.avg_against }}</td></tr>{% endif %}
+        <tr><td>{% if th.fav_n %}{{ (th.fav_w / th.fav_n)|pct }} <small class="muted">{{ th.fav_n }}</small>{% else %}–{% endif %}</td><td class="vs-mid">정배일 때 승률</td><td class="n">{% if ta.fav_n %}{{ (ta.fav_w / ta.fav_n)|pct }} <small class="muted">{{ ta.fav_n }}</small>{% else %}–{% endif %}</td></tr>
+        <tr><td>{% if th.dog_n %}{{ (th.dog_w / th.dog_n)|pct }} <small class="muted">{{ th.dog_n }}</small>{% else %}–{% endif %}</td><td class="vs-mid">역배일 때 승률</td><td class="n">{% if ta.dog_n %}{{ (ta.dog_w / ta.dog_n)|pct }} <small class="muted">{{ ta.dog_n }}</small>{% else %}–{% endif %}</td></tr>
+      </tbody>
+    </table></div>
+    <p class="fine">베트맨 발매 경기 결과 기준입니다. 팀 이름을 누르면 팀별 기록으로 이동합니다.</p>
+  </section>
+  {% endif %}
+
   {% if main %}
   <section class="block" data-reveal>
     <div class="block-head"><h2>모델 판단</h2></div>

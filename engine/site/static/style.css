@@ -890,3 +890,13 @@ i.t-pos, i.t-neg, i.t-draw { font-style: normal; }
 .ps-score { font-size: 13.5px; color: var(--ink-2); }
 .ps-series ul { list-style: none; margin: 0; padding: 0 14px 12px; display: grid; gap: 4px; font-size: 13.5px; }
 .lines .tabs, .block .tabs { margin-bottom: 12px; }
+
+/* 순위 표시·두 팀 비교 */
+.rk { font: 600 10.5px/1 var(--en); color: var(--ink-3); margin-left: 4px; letter-spacing: 0; }
+.vs-card { margin: 18px 0; }
+.vs-tbl th a { text-decoration: none; }
+.vs-tbl td, .vs-tbl th { width: 38%; }
+.vs-tbl .vs-mid { width: 24%; text-align: center; color: var(--ink-3); font-size: 12px; white-space: nowrap; }
+.vs-tbl td.n .fseq { justify-content: flex-end; }
+.vs-tbl .fseq { flex-wrap: nowrap; gap: 3px; }
+.vs-tbl .fseq i { width: 20px; height: 20px; font-size: 10.5px; }

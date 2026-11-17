@@ -455,17 +455,29 @@ def build() -> None:
         t["intro"] = PX.team_intro(t, tb, vns.get((t["sport"], PX.lkey(t["name"]))))
         me = next((r for r in tb["rows"] if PX.lkey(r["team"]) == PX.lkey(t["name"])), None) if tb else None
         t["rank"] = (me["rank"], len(tb["rows"]), tb["name"], tb["season"]) if me else None
+        t["season_rec"] = me
+        # 지구·콘퍼런스가 있는 리그(NBA·MLB 등)는 그 안의 순위를 짧은 표시로 쓴다(예: 서부 3위)
+        t["rank_short"] = f"{me['rank']}위" if me else None
+        for grp in (tb or {}).get("groups") or []:
+            gm = next((r for r in grp["rows"] if PX.lkey(r["team"]) == PX.lkey(t["name"])), None)
+            if gm:
+                t["rank_short"] = f"{grp['name'].replace(' 콘퍼런스', '')} {gm['rank']}위"
     turl = {(t["sport"], a): t["url"] for t in tms.values() for a in t["aliases"]}
     rds = PX.rounds(reports)
 
     def team_link(sport, name):
         return turl.get((sport, name))
 
+    tinfo = {(t["sport"], a): t for t in tms.values() for a in t["aliases"]}
+
+    def team_info(sport, name):
+        return tinfo.get((sport, name))
+
     def match_url(m):
         return murl.get((m.get("home"), m.get("away"), str(m.get("kickoff"))[:10])) if m else None
 
     ctx = dict(perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues,
-               team_link=team_link, match_url=match_url)
+               team_link=team_link, match_url=match_url, team_info=team_info)
     urls: list[tuple[str, str]] = []
 
     def page(tpl: str, out: str, **kw):
