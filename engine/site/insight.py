@@ -106,7 +106,7 @@ def build(g: dict, th: dict | None, ta: dict | None) -> dict | None:
     if not mh and not ma:
         return None
     u = UNIT.get(sp, "점")
-    notes: list[tuple[int, str]] = []   # (중요도, 문장)
+    notes: list[tuple[int, str, str]] = []   # (중요도, 종류, 문장)
     for name, m in ((g["home"], mh), (g["away"], ma)):
         if not m:
             continue
@@ -115,42 +115,44 @@ def build(g: dict, th: dict | None, ta: dict | None) -> dict | None:
             gap = m["wp"] - m["pyth"]
             exp_w = round(m["pyth"] * (m["w"] + m["l"]))
             if gap >= 0.10:
-                notes.append((3, f"{j(name, "은는")} 최근 {m['n']}경기 {m['w']}승 {m['l']}패지만 득실로 보면 {exp_w}승 수준입니다. 운이 따른 쪽이라 지금 성적보다 약할 수 있습니다."))
+                notes.append((3, "운", f"{j(name, "은는")} 최근 {m['n']}경기 {m['w']}승 {m['l']}패지만 득실로 보면 {exp_w}승 수준입니다. 운이 따른 쪽이라 지금 성적보다 약할 수 있습니다."))
             elif gap <= -0.10:
-                notes.append((3, f"{j(name, "은는")} 최근 {m['n']}경기 {m['w']}승 {m['l']}패지만 득실로 보면 {exp_w}승 수준입니다. 경기 내용에 비해 덜 이긴 팀이라 지금 성적보다 강할 수 있습니다."))
+                notes.append((3, "운", f"{j(name, "은는")} 최근 {m['n']}경기 {m['w']}승 {m['l']}패지만 득실로 보면 {exp_w}승 수준입니다. 경기 내용에 비해 덜 이긴 팀이라 지금 성적보다 강할 수 있습니다."))
         # 접전
         cn = m["close_w"] + m["close_l"]
         if cn >= 4 and (m["close_w"] / cn >= 0.8 or m["close_w"] / cn <= 0.2):
             lucky = m["close_w"] > m["close_l"]
-            notes.append((2, f"{j(name, "은는")} 근소한 차이 경기에서 {m['close_w']}승 {m['close_l']}패로 {'유난히 강했습니다. 접전 승률은 오래 유지되기 어렵습니다' if lucky else '유난히 약했습니다. 내용보다 결과가 나빴던 편입니다'}."))
+            notes.append((2, "접전", f"{j(name, "은는")} 근소한 차이 경기에서 {m['close_w']}승 {m['close_l']}패로 {'유난히 강했습니다. 접전 승률은 오래 유지되기 어렵습니다' if lucky else '유난히 약했습니다. 내용보다 결과가 나빴던 편입니다'}."))
         # 흐름
         if m["m5"] is not None and m["m20"] is not None:
             dlt = m["m5"] - m["m20"]
             if dlt >= FORM.get(sp, 1):
-                notes.append((2, f"{j(name, "은는")} 최근 5경기 평균 득실이 {j(_f(m['m5']) + u, '으로')}, {m['n']}경기 평균({_f(m['m20'])}{u})보다 좋아졌습니다. 상승세입니다."))
+                notes.append((2, "흐름", f"{j(name, "은는")} 최근 5경기 평균 득실이 {j(_f(m['m5']) + u, '으로')}, {m['n']}경기 평균({_f(m['m20'])}{u})보다 좋아졌습니다. 상승세입니다."))
             elif dlt <= -FORM.get(sp, 1):
-                notes.append((2, f"{j(name, "은는")} 최근 5경기 평균 득실이 {j(_f(m['m5']) + u, '으로')}, {m['n']}경기 평균({_f(m['m20'])}{u})보다 나빠졌습니다. 하락세입니다."))
+                notes.append((2, "흐름", f"{j(name, "은는")} 최근 5경기 평균 득실이 {j(_f(m['m5']) + u, '으로')}, {m['n']}경기 평균({_f(m['m20'])}{u})보다 나빠졌습니다. 하락세입니다."))
     # 휴식
     if mh and ma and mh["rest"] is not None and ma["rest"] is not None and sp in ("basketball", "volleyball"):
         rh, ra = mh["rest"], ma["rest"]
         if (rh == 0) != (ra == 0):
             tired = g["home"] if rh == 0 else g["away"]
-            notes.append((2, f"{j(tired, "은는")} 어제도 경기를 치르고 연속으로 나옵니다. 체력 면에서 불리합니다."))
+            notes.append((2, "연전", f"{j(tired, "은는")} 어제도 경기를 치르고 연속으로 나옵니다. 체력 면에서 불리합니다."))
     # 합계 vs 언더오버 기준점
     ou = _main_line(g, "OU")
     if ou and mh and ma and TOT.get(sp):
         exp_total = (mh["for"] + ma["against"] + ma["for"] + mh["against"]) / 2
         gap = exp_total - ou["line"]
         if abs(gap) >= TOT[sp]:
-            notes.append((2, f"두 팀 최근 득실로 본 예상 합계는 {j(f'{exp_total:.1f}{u}', '으로')}, 기준점 {ou['line']:g}보다 {'높습니다(오버 쪽 근거)' if gap > 0 else '낮습니다(언더 쪽 근거)'}."))
+            notes.append((2, "합계", f"두 팀 최근 득실로 본 예상 합계는 {j(f'{exp_total:.1f}{u}', '으로')}, 기준점 {ou['line']:g}보다 {'높습니다(오버 쪽 근거)' if gap > 0 else '낮습니다(언더 쪽 근거)'}."))
     # 기복 + 큰 핸디
     hc = _main_line(g, "HANDICAP")
     if hc and abs(hc["line"]) >= {"basketball": 7, "baseball": 2, "soccer": 2, "volleyball": 2}.get(sp, 99):
         fav, mf = (g["home"], mh) if hc["line"] < 0 else (g["away"], ma)
         if mf and mf["sd"] >= VOL.get(sp, 99):
-            notes.append((1, f"{j(fav, "은는")} 경기마다 득실 편차가 {j(f"{mf['sd']:.1f}{u}", '으로')} 기복이 큰 편입니다. 핸디 {hc['line']:+g}처럼 큰 기준점에서는 변수가 큽니다."))
+            notes.append((1, "기복", f"{j(fav, "은는")} 경기마다 득실 편차가 {j(f"{mf['sd']:.1f}{u}", '으로')} 기복이 큰 편입니다. 핸디 {hc['line']:+g}처럼 큰 기준점에서는 변수가 큽니다."))
     notes.sort(key=lambda x: -x[0])
-    lines = [s for _, s in notes[:3]]
+    top = notes[:3]
+    lines = [s for _, _, s in top]
+    items = [(k, s) for _, k, s in top]
     if not lines:
         lines = ["두 팀 경기 내용 지표에 눈에 띄는 차이는 없습니다."]
 
@@ -170,4 +172,4 @@ def build(g: dict, th: dict | None, ta: dict | None) -> dict | None:
         ("기복(편차)", cell(mh, "sd", lambda v: f"{v:.1f}"), cell(ma, "sd", lambda v: f"{v:.1f}")),
         ("직전 경기", cell(mh, "rest", _ago), cell(ma, "rest", _ago)),
     ]
-    return {"notes": lines, "rows": rows, "n": (mh or ma)["n"]}
+    return {"notes": lines, "items": items, "rows": rows, "n": (mh or ma)["n"]}

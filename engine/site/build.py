@@ -198,7 +198,7 @@ def _env() -> Environment:
     env.globals.update(is_pick=is_pick, PICK_MIN=config.PICK_MIN,
         cfg=config, STRATEGIES=STRATEGIES, MARKET_LABEL=MARKET_LABEL, SPORT_LABEL=SPORT_LABEL, XSRC=("유럽 축구", "NBA", "MLB", "A매치"), mk_short=_mk_short,
         outcome=_outcome, pick_label=_pick_label, line_groups=_line_groups, upset_map=_upset_map, flow_key=_flow_key, round_label=_round_label, rounds_of=_rounds, now=config.now_kst(), asset_v=config.now_kst().strftime("%Y%m%d%H%M"),
-        nav=[("/", "TODAY"), ("/leagues/", "리그·순위"), ("/odds/", "배당 분석"), ("/tool/", "금액 계산기"), ("/performance/", "성과"),
+        nav=[("/", "TODAY"), ("/analysis/", "경기 분석"), ("/leagues/", "리그·순위"), ("/odds/", "배당 분석"), ("/tool/", "금액 계산기"), ("/performance/", "성과"),
              ("/reports/", "지난 리포트"), ("/guide/", "가이드"), ("/support/", "후원")],
     )
     return env
@@ -542,6 +542,16 @@ def build() -> None:
     page("report.html", "/", og_image=home_og, r=latest, is_home=True, next_day=(next_rep or {}).get("date"), nxt=next_rep, next_guess=next_guess, lastmod=(latest or {}).get("date"),
          matches=_matches(latest) if latest else [], leagues_top=_leagues_of(latest) if latest else [],
          jsonld=_jsonld(site_ld) + report_ld(latest, "/"))
+    # 경기 분석: 오늘(아직 시작 안 한 경기) + 다음 구매일
+    an_secs = []
+    if latest:
+        nowk = config.now_kst().strftime("%Y-%m-%dT%H:%M")
+        ms_all = _matches(latest)
+        up = [g for g in ms_all if str(g["kickoff"])[:16] > nowk] or ms_all
+        an_secs.append({"title": f"오늘 · {_kdate(latest['date'])}", "games": up})
+    if next_rep and next_rep is not latest:
+        an_secs.append({"title": f"다음 구매일 · {_kdate(next_rep['date'])}", "games": _matches(next_rep)})
+    page("analysis.html", "/analysis/", sections=an_secs, lastmod=(latest or {}).get("date"))
     rss_items = []
     for i, r in enumerate(reports):
         prev_d = reports[i + 1]["date"] if i + 1 < len(reports) else None

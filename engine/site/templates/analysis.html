@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}경기 분석 · 배당 말고 경기 내용으로 본 오늘 경기 | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}오늘 프로토 승부식 경기마다 득실로 본 실제 전력, 접전 운, 최근 흐름, 연전, 예상 합계를 자동으로 정리합니다. 매 갱신마다 다시 계산합니다.{% endblock %}
+{% macro day(sec) %}
+{% set rows = [] %}{% set quiet = [] %}{% set nodata = [] %}
+{% for g in sec.games %}{% set ins = insights(g) %}
+  {% if not ins %}{% set _ = nodata.append(g) %}{% elif ins['items'] %}{% set _ = rows.append((g, ins)) %}{% else %}{% set _ = quiet.append(g) %}{% endif %}
+{% endfor %}
+<section class="wrap block">
+  <header class="block-head"><h2>{{ sec.title }}</h2><p>{{ rows|length }}경기에 눈에 띄는 숫자가 있습니다</p></header>
+  {% if rows %}
+  <div class="an-grid">
+    {% for g, ins in rows %}
+    <article class="an-card">
+      <a class="an-top" href="{{ g.url }}">
+        <span class="an-meta">{{ g.kickoff|kdt }} · {{ g.league }}</span>
+        <span class="an-teams">{{ g.home }} <i>vs</i> {{ g.away }}</span>
+      </a>
+      <ul class="an-notes">{% for k, t in ins['items'] %}<li><span class="an-tag">{{ k }}</span><span>{{ t }}</span></li>{% endfor %}</ul>
+      <a class="an-more" href="{{ g.url }}">경기 분석 보기 →</a>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}<p class="none">지금은 눈에 띄는 숫자가 있는 경기가 없습니다.</p>{% endif %}
+  {% if quiet %}
+  <details class="ins-more an-quiet"><summary>특이점 없는 경기 {{ quiet|length }}</summary>
+    <ul class="an-list">{% for g in quiet %}<li><a href="{{ g.url }}"><span class="an-meta">{{ g.kickoff|kdt }} · {{ g.league }}</span><span>{{ g.home }} vs {{ g.away }}</span></a></li>{% endfor %}</ul>
+  </details>
+  {% endif %}
+  {% if nodata %}<p class="fine">기록이 아직 적은 {{ nodata|length }}경기는 빠졌습니다(최근 8경기 미만).</p>{% endif %}
+</section>
+{% endmacro %}
+{% block main %}
+<section class="wrap page-head">
+  <p class="kicker">ANALYSIS</p><h1>경기 분석</h1>
+  <p class="lede">배당이 아니라 실제 점수 기록으로 두 팀을 비교해, 눈에 띄는 것만 골라 적었습니다. 매 갱신마다 자동으로 다시 계산합니다.</p>
+</section>
+{% for sec in sections %}{{ day(sec) }}{% else %}<section class="wrap block"><p class="none">분석할 경기가 아직 없습니다. 발매가 시작되면 바로 채워집니다.</p></section>{% endfor %}
+<section class="wrap block">
+  <details class="rule">
+    <summary>각 항목은 무엇을 보나요</summary>
+    <p class="fine"><b>운</b> 득점과 실점만으로 계산한 기대 승수와 실제 승수의 차이입니다. 실제가 크게 높으면 운이 따른 팀, 낮으면 내용보다 덜 이긴 팀입니다.</p>
+    <p class="fine"><b>접전</b> 근소한 차이로 끝난 경기의 승패입니다. 한쪽으로 크게 쏠린 접전 성적은 오래 이어지기 어렵습니다.</p>
+    <p class="fine"><b>흐름</b> 최근 5경기 평균 득실을 최근 최대 20경기 평균과 비교합니다.</p>
+    <p class="fine"><b>연전</b> 농구·배구에서 한 팀만 전날에도 경기를 치른 경우입니다.</p>
+    <p class="fine"><b>합계</b> 두 팀 최근 득실로 본 예상 합계와 언더오버 기준점의 차이입니다.</p>
+    <p class="fine"><b>기복</b> 큰 핸디 기준점에서 정배 팀의 경기별 득실 편차가 큰 경우입니다.</p>
+    <p class="fine">베트맨 발매 경기의 공식 결과만 씁니다. 최근 8경기 미만인 팀은 문장을 만들지 않습니다.</p>
+  </details>
+</section>
+{% endblock %}

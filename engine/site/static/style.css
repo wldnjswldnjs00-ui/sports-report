@@ -1166,3 +1166,20 @@ h1, h2, h3, .block-head h2 { text-wrap: balance; }
 .fseq .rW { background: color-mix(in srgb, var(--t-pos, var(--hit)) 16%, transparent); color: var(--t-pos, var(--hit)); }
 .fseq .rD { background: color-mix(in srgb, var(--t-draw, #d9a21b) 16%, transparent); color: var(--t-draw, #b8860b); }
 .fseq .rL { background: color-mix(in srgb, var(--t-neg, var(--neg)) 16%, transparent); color: var(--t-neg, var(--neg)); }
+/* 경기 분석 페이지 */
+.an-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 12px; }
+.an-card { display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 16px 18px 14px; min-width: 0; }
+.an-top { display: grid; gap: 4px; text-decoration: none; color: var(--ink); }
+.an-meta { font-size: 12px; color: var(--ink-3); font-weight: 600; }
+.an-teams { font-size: 17px; font-weight: 700; word-break: keep-all; }
+.an-teams i { font-style: normal; font-weight: 500; color: var(--ink-3); font-size: 13px; margin: 0 2px; }
+.an-notes { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 10px; flex: 1; }
+.an-notes li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: start; font-size: 14px; line-height: 1.6; color: var(--ink-2); word-break: keep-all; overflow-wrap: anywhere; }
+.an-tag { display: inline-grid; place-items: center; min-width: 40px; height: 22px; margin-top: 1px; padding: 0 8px; border-radius: 6px; background: var(--card-2); border: 1px solid var(--line); font-size: 11.5px; font-weight: 700; color: var(--ink-2); white-space: nowrap; }
+.an-more { align-self: flex-end; margin-top: 12px; font-size: 13px; font-weight: 600; color: var(--ink-3); text-decoration: none; }
+.an-more:hover, .an-top:hover .an-teams { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.an-quiet { margin-top: 14px; }
+.an-list { list-style: none; margin: 0; padding: 0; background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.an-list li + li { border-top: 1px solid var(--line); }
+.an-list a { display: grid; grid-template-columns: minmax(0, 150px) minmax(0, 1fr); gap: 10px; padding: 10px 14px; text-decoration: none; color: var(--ink); font-size: 14px; }
+@media (max-width: 560px) { .an-list a { grid-template-columns: 1fr; gap: 2px; } }
