@@ -6,13 +6,25 @@
 //    KV 가 연결되지 않았으면 알림 기능만 꺼지고 사이트·예약 실행은 그대로 동작한다.
 const REPO = "wldnjswldnjs00-ui/sports-report";
 const WORKFLOW = "daily.yml";
-const PUSH_CRON = "20 10 * * *"; // 19:20 KST
+// Cloudflare 무료 계정은 계정 전체에 예약 실행이 5개까지라(다른 Worker 와 나눠 씀) 이 Worker 는 하나만 쓴다:
+// 5분마다 깨어나 아래 표의 시각(UTC "HH:MM")일 때만 일을 한다. 그 밖의 시각에는 아무것도 하지 않는다.
+const SCHEDULE = {
+  "14:05": "5 14 * * *",  // 23:05 KST 다음 구매일 리포트
+  "21:00": "0 21 * * *",  // 06:00 새 리포트 + 전날 채점
+  "22:00": "0 22 * * *",  // 07:00 재수집 + 쓰레드 아침
+  "00:30": "30 0 * * *",  // 09:30 재수집
+  "04:00": "0 4 * * *",   // 13:00 재수집
+  "09:00": "0 9 * * *",   // 18:00 해외 배당 새로고침
+  "10:00": "0 10 * * *",  // 19:00 다음 구매일 분석 공개
+  "13:00": "0 13 * * *",  // 22:00 다음 구매일 분석 + 쓰레드 밤
+};
+const PUSH_AT = "10:20"; // 19:20 KST 알림
 const SITE = "https://xn--sr3bw9dq7a9xy85g.kr";
 
-function slotOf(event) {
-  if (event.cron === "5 14 * * *" || event.cron === "30 0 * * *") return event.cron;
-  const h = new Date(event.scheduledTime).getUTCHours();
-  return `0 ${h} * * *`;
+function hhmm(event) {
+  // 예정 시각을 5분 단위로 맞춰 읽는다(실행이 몇 초 늦어도 같은 칸)
+  const d = new Date(Math.round(event.scheduledTime / 300000) * 300000);
+  return String(d.getUTCHours()).padStart(2, "0") + ":" + String(d.getUTCMinutes()).padStart(2, "0");
 }
 
 async function dispatch(slot, env) {
@@ -119,7 +131,8 @@ export default {
     return env.ASSETS.fetch(request);
   },
   async scheduled(event, env, ctx) {
-    if (event.cron === PUSH_CRON) { ctx.waitUntil(sendAll(env)); return; }
-    ctx.waitUntil(dispatch(slotOf(event), env));
+    const t = hhmm(event);
+    if (t === PUSH_AT) { ctx.waitUntil(sendAll(env)); return; }
+    if (SCHEDULE[t]) ctx.waitUntil(dispatch(SCHEDULE[t], env));
   },
 };
