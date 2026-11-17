@@ -146,6 +146,16 @@ def _tone(label) -> str:
     return ""
 
 
+def _tone_html(label):
+    """팀 이름은 색 없이, 결과(승·패·+n·−n)만 색을 입힌다. '언더 2.5'처럼 팀 이름이 없으면 전체에 색."""
+    from markupsafe import Markup, escape
+    t = str(label or "")
+    head, _, last = t.rpartition(" ")
+    if head and not head.startswith(("오버", "언더", "핸디")):
+        return Markup(f'{escape(head)} <span class="{_tone(last)}">{escape(last)}</span>')
+    return Markup(f'<span class="{_tone(t)}">{escape(t)}</span>')
+
+
 def _flow_key(m: dict) -> str | None:
     """배당이 3% 이상 가장 많이 내려간 선택(=구매가 몰린 쪽)."""
     fl = m.get("flow") or {}
@@ -178,7 +188,7 @@ def _env() -> Environment:
         autoescape=select_autoescape(["html", "xml"]),
         trim_blocks=True, lstrip_blocks=True,
     )
-    env.filters.update(tone=_tone, sday=config.sales_day, match_groups=_match_groups, pct=_pct, signed=_signed, odds=_odds, won=_won, kdate=_kdate, ktime=_ktime, kdt=_kdt, slug=slug)
+    env.filters.update(tone=_tone, tone_html=_tone_html, sday=config.sales_day, match_groups=_match_groups, pct=_pct, signed=_signed, odds=_odds, won=_won, kdate=_kdate, ktime=_ktime, kdt=_kdt, slug=slug)
     env.globals.update(
         cfg=config, STRATEGIES=STRATEGIES, MARKET_LABEL=MARKET_LABEL, SPORT_LABEL=SPORT_LABEL, XSRC=("유럽 축구", "NBA", "MLB", "A매치"), mk_short=_mk_short,
         outcome=_outcome, pick_label=_pick_label, line_groups=_line_groups, upset_map=_upset_map, flow_key=_flow_key, round_label=_round_label, rounds_of=_rounds, now=config.now_kst(), asset_v=config.now_kst().strftime("%Y%m%d%H%M"),

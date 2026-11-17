@@ -110,14 +110,14 @@
       <button type="button" class="lg-row" aria-expanded="false" data-lg>
         <span class="lg-top">{{ g.kickoff|kdt }} · {{ g.league }}</span>
         <span class="lg-match">{{ g.home }} <i>vs</i> {{ g.away }}</span>
-        <span class="lg-chips">{% for p in g.picks %}<span class="kc k-{{ p.kind }}"><em>{{ p.label }}</em><span class="{{ pick_label(p.x)|tone }}">{{ pick_label(p.x) }}</span> <b>{{ p.x.odds|odds }}</b> <s>{{ p.x.p|pct }}</s></span>{% endfor %}</span>
+        <span class="lg-chips">{% for p in g.picks %}<span class="kc k-{{ p.kind }}"><em>{{ p.label }}</em><span>{{ pick_label(p.x)|tone_html }}</span> <b>{{ p.x.odds|odds }}</b> <s>{{ p.x.p|pct }}</s></span>{% endfor %}</span>
         <span class="lg-caret" aria-hidden="true"></span>
       </button>
       <div class="lg-more" hidden>
       {% for p in g.picks %}{% set x = p.x %}{% set m = mk.get(x.market_id) %}
         <div class="lg-d">
           <p class="lg-dh"><span class="kc k-{{ p.kind }}"><em>{{ p.label }}</em>{{ MARKET_LABEL.get(x.market, x.market) }}{% if x.line is not none %} {{ ('%+g'|format(x.line)) if x.market == 'HANDICAP' else ('%g'|format(x.line)) }}{% endif %}</span>{% if x.game_no %}<small>{{ round_label(x.round) }} {{ x.game_no }}번</small>{% endif %}</p>
-          {% if m %}<div class="lg-opts">{% for k, od in m.odds.items() %}<button type="button" class="opick{% if k == x.outcome %} is-model{% endif %}" data-leg="{{ m.id }}|{{ k }}"><span class="{{ pick_label(x, k)|tone }}">{{ pick_label(x, k) }}</span><b>{{ od|odds }}</b></button>{% endfor %}</div>{% endif %}
+          {% if m %}<div class="lg-opts">{% for k, od in m.odds.items() %}<button type="button" class="opick{% if k == x.outcome %} is-model{% endif %}" data-leg="{{ m.id }}|{{ k }}"><span>{{ pick_label(x, k)|tone_html }}</span><b>{{ od|odds }}</b></button>{% endfor %}</div>{% endif %}
           <dl class="lg-nums">
             <div><dt>추정 확률</dt><dd><span class="mini"><i style="width:{{ (x.p * 100)|round(0)|int }}%"></i></span>{{ x.p|pct }}</dd></div>
             {% if x.x_odds %}<div><dt>해외 배당</dt><dd>{{ x.x_odds|odds }}{% if x.x_kind == '환산' %} <small class="muted">환산</small>{% endif %}</dd></div>{% endif %}
