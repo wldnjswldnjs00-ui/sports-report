@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}{{ t.name }} 경기 분석 · 최근 전적과 배당 기록 ({{ t.league }}) | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}{{ t.name }}({{ t.league }}) 최근 {{ t.n }}경기 {{ t.w }}승{% if t.d %} {{ t.d }}무{% endif %} {{ t.l }}패. 홈·원정 성적, 정배·역배일 때 승률, 상대 전적, 다가오는 경기 분석.{% endblock %}
+{% block main %}
+{% set WDL = {'W': '승', 'D': '무', 'L': '패'} %}
+<section class="wrap page-head">
+  <p class="kicker"><a href="/teams/">팀</a> · {{ SPORT_LABEL[t.sport] }} · {{ t.league }}</p>
+  <h1>{{ t.name }}</h1>
+  <p class="lede">{% if t.n %}베트맨 발매 경기 기준 최근 {{ t.n }}경기 {{ t.w }}승{% if t.d %} {{ t.d }}무{% endif %} {{ t.l }}패{% if t.avg_for is not none %}, 평균 {{ t.avg_for }}득점 {{ t.avg_against }}실점{% endif %}.{% else %}아직 베트맨 발매 기록이 적은 팀입니다.{% endif %}</p>
+</section>
+
+{% if t.upcoming %}
+<section class="wrap block">
+  <h2 class="sub">다가오는 경기</h2>
+  <ul class="tm-up">
+  {% for u in t.upcoming %}{% set m = u.m %}{% set a = m.analysis %}
+    <li data-ko="{{ m.kickoff }}">
+      <span class="muted">{{ m.kickoff|kdt }} · {{ m.league }}{% if m.game_no %} · {{ round_label(m.round) }} {{ m.game_no }}번{% endif %}</span>
+      <b>{{ m.home }} <i>vs</i> {{ m.away }}</b>
+      {% if a %}<span><span class="bub on {{ outcome(m, a.pick)|tone }}">{{ outcome(m, a.pick) }}</span> {{ a.pick_prob|pct }} · 배당 {{ m.odds[a.pick]|odds }}</span>{% endif %}
+      {% set mu = match_url(m) %}{% if mu %}<a href="{{ mu }}">경기 분석 보기 →</a>{% else %}<a href="/reports/{{ u.date }}/">리포트 보기 →</a>{% endif %}
+    </li>
+  {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+{% if t.n %}
+<section class="wrap block">
+  <h2 class="sub">한눈에 보기</h2>
+  <dl class="kpis tm-kpis">
+    <div><dt>최근 {{ t.form|length }}경기</dt><dd><span class="fseq">{% for c in t.form %}<i class="r{{ c }}">{{ WDL[c] }}</i>{% endfor %}</span></dd></div>
+    <div><dt>홈</dt><dd>{{ t.home_rec.w }}승{% if t.home_rec.d %} {{ t.home_rec.d }}무{% endif %} {{ t.home_rec.l }}패</dd></div>
+    <div><dt>원정</dt><dd>{{ t.away_rec.w }}승{% if t.away_rec.d %} {{ t.away_rec.d }}무{% endif %} {{ t.away_rec.l }}패</dd></div>
+    {% if t.fav_n %}<div><dt>정배일 때 승률</dt><dd>{{ (t.fav_w / t.fav_n)|pct }} <small class="muted">{{ t.fav_n }}경기</small></dd></div>{% endif %}
+    {% if t.dog_n %}<div><dt>역배일 때 승률</dt><dd>{{ (t.dog_w / t.dog_n)|pct }} <small class="muted">{{ t.dog_n }}경기</small></dd></div>{% endif %}
+  </dl>
+  <p class="fine">정배·역배는 그 경기 베트맨 승패(승무패) 배당이 상대보다 낮았는지(정배) 높았는지(역배)로 나눕니다.</p>
+</section>
+
+<section class="wrap block">
+  <h2 class="sub">최근 경기</h2>
+  <div class="tblw"><table class="tbl">
+    <thead><tr><th>날짜</th><th>상대</th><th class="n">결과</th></tr></thead>
+    <tbody>
+    {% for x in t.games[:20] %}
+      <tr><td class="muted">{{ x.date[5:]|replace('-', '/') }}</td>
+        <td>{{ '' if x.home else '@ ' }}{% set ou = team_link(t.sport, x.opp) %}{% if ou %}<a href="{{ ou }}">{{ x.opp }}</a>{% else %}{{ x.opp }}{% endif %}<br><small class="muted">{% if x.league != t.league %}{{ x.league }} · {% endif %}배당 {{ x.odds|odds }}{% if x.fav %} 정배{% elif x.odds and x.opp_odds %} 역배{% endif %}</small></td>
+        <td class="n"><span class="{{ 't-pos' if x.res == 'W' else ('t-neg' if x.res == 'L' else 't-draw') }}">{{ WDL[x.res] }}</span> {{ x.me|int }}:{{ x.op|int }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</section>
+
+{% if t.h2h %}
+<section class="wrap block">
+  <h2 class="sub">자주 만난 상대</h2>
+  <div class="tblw"><table class="tbl">
+    <thead><tr><th>상대</th><th class="n">경기</th><th class="n">전적</th></tr></thead>
+    <tbody>
+    {% for h in t.h2h %}
+      <tr><td>{% set ou = team_link(t.sport, h.opp) %}{% if ou %}<a href="{{ ou }}">{{ h.opp }}</a>{% else %}{{ h.opp }}{% endif %}</td><td class="n">{{ h.n }}</td><td class="n">{{ h.w }}승{% if h.d %} {{ h.d }}무{% endif %} {{ h.l }}패</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</section>
+{% endif %}
+{% endif %}
+
+<section class="wrap block">
+  <p class="fine">기록은 베트맨(스포츠토토) 공식 발매 경기의 결과로 셉니다. 베트맨에 발매되지 않은 경기는 들어가지 않으므로 실제 시즌 전체 기록과 다를 수 있습니다. 자동 업데이트마다 새 결과가 더해집니다.</p>
+</section>
+{% endblock %}

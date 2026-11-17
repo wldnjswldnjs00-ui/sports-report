@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}프로토 승부식 회차별 분석 · 전체 회차 | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}베트맨 프로토 승부식 회차별 경기 분석 모음. 회차마다 경기별 추정 확률, 픽, 결과.{% endblock %}
+{% block main %}
+<section class="wrap page-head">
+  <p class="kicker">ROUNDS</p><h1>회차별 분석</h1>
+  <p class="lede">베트맨 프로토 승부식 회차마다 분석한 경기를 모았습니다.</p>
+</section>
+<section class="wrap block">
+  <div class="tblw"><table class="tbl">
+    <thead><tr><th>회차</th><th>경기 기간</th><th>주요 리그</th><th class="n">마켓</th></tr></thead>
+    <tbody>
+    {% for ts, ro in rounds.items() %}
+      <tr><td><a href="/rounds/{{ ts }}/"><b>{{ ro.year }}년 {{ ro.label }}</b></a></td><td class="muted">{{ ro.first_ko|kdt }} ~ {{ ro.last_ko|kdt }}</td><td>{{ ro.leagues|join(' · ') }}</td><td class="n">{{ ro.markets|length }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</section>
+{% endblock %}

@@ -431,7 +431,29 @@ def build() -> None:
 
     summaries = [_report_summary(r) for r in reports]
     leagues = _leagues(reports[:60])
-    ctx = dict(perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues)
+    # 회차별·팀별 페이지 데이터, 경기 페이지 주소표(최근 45일분만 경기 페이지가 있다)
+    from . import pages_extra as PX
+    from ..sources import betman_history
+    murl: dict[tuple, str] = {}
+    for r in reports[:45]:
+        for g in _matches(r):
+            murl.setdefault((g["home"], g["away"], g["kickoff"][:10]), g["url"])
+    try:
+        tms = PX.teams(betman_history.load_all(), reports, config.now_kst().isoformat())
+    except Exception:  # noqa: BLE001
+        log.exception("팀 페이지 데이터 실패")
+        tms = {}
+    turl = {(t["sport"], a): t["url"] for t in tms.values() for a in t["aliases"]}
+    rds = PX.rounds(reports)
+
+    def team_link(sport, name):
+        return turl.get((sport, name))
+
+    def match_url(m):
+        return murl.get((m.get("home"), m.get("away"), str(m.get("kickoff"))[:10])) if m else None
+
+    ctx = dict(perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues,
+               team_link=team_link, match_url=match_url)
     urls: list[tuple[str, str]] = []
 
     def page(tpl: str, out: str, **kw):
@@ -485,6 +507,21 @@ def build() -> None:
                              _crumbs([("홈", "/"), (_kdate(r["date"]), url), (f"{g['home']} vs {g['away']}", g["url"])]))
                 page("match.html", g["url"], g=g, r=r, outs=outs, lastmod=r["date"], jsonld=ld, page_title=title, page_desc=desc[:155])
     page("archive.html", "/reports/")
+    # 회차별 분석
+    page("rounds.html", "/rounds/", rounds=rds)
+    rkeys = list(rds)
+    for i, ts in enumerate(rkeys):
+        ro = rds[ts]
+        page("round.html", f"/rounds/{ts}/", ro=ro, prev_ro=rkeys[i + 1] if i + 1 < len(rkeys) else None,
+             next_ro=rkeys[i - 1] if i > 0 else None, lastmod=ro["dates"][-1] if ro["dates"] else None,
+             jsonld=_jsonld(_crumbs([("홈", "/"), ("회차별 분석", "/rounds/"), (f"{ro['year']}년 {ro['label']}", f"/rounds/{ts}/")])))
+    # 팀별 기록
+    page("teams.html", "/teams/", groups=PX.team_groups(tms))
+    for t in tms.values():
+        page("team.html", t["url"], t=t, lastmod=(t["games"][0]["date"] if t["games"] else None),
+             jsonld=_jsonld({"@context": "https://schema.org", "@type": "SportsTeam", "name": t["name"], "sport": SPORT_LABEL.get(t["sport"], t["sport"]),
+                             "url": config.SITE_URL + t["url"]},
+                            _crumbs([("홈", "/"), ("팀별 기록", "/teams/"), (t["name"], t["url"])])))
     page("leagues.html", "/leagues/")
     for lg in leagues.values():
         page("league.html", f"/leagues/{lg['slug']}/", lg=lg)

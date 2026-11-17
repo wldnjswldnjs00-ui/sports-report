@@ -17,7 +17,7 @@
   </div>
   <div class="wrap hero-copy">
     <p class="slogan">데이터와 수학으로, 분석을 <em>똑똑하게</em></p>
-    <p class="kicker">{% if is_home %}TODAY{% else %}REPORT{% endif %} · {{ r.date|kdate }}{% set rs = rounds_of(r) %}{% if rs %} · 프로토 승부식 {{ rs|join(' · ') }}{% endif %}</p>
+    <p class="kicker">{% if is_home %}TODAY{% else %}REPORT{% endif %} · {{ r.date|kdate }}{% set rts = r.markets|map(attribute='round')|select|unique|list %}{% if rts %} · 프로토 승부식 {% for ts in rts|sort %}<a href="/rounds/{{ ts }}/">{{ round_label(ts) }}</a>{{ ' · ' if not loop.last }}{% endfor %}{% endif %}</p>
     <h1 class="hero-title"><span class="hero-en">{% if is_home %}TODAY'S PICK{% else %}PROTO REPORT{% endif %}</span><span class="sr">{{ r.date|kdate }} 프로토 승부식 분석</span></h1>
     <ul class="stat-row" aria-label="분석 규모">
       <li><b data-count="{{ r.stats.matches }}">{{ r.stats.matches }}</b><span>오늘 경기</span></li>

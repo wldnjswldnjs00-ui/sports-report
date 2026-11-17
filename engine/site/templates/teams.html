@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}팀별 기록 · KBL·WKBL·KOVO·NBA·K리그·KBO 등 전체 팀 | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}베트맨 프로토 승부식에 나오는 리그별 전체 팀의 최근 전적, 홈·원정 성적, 정배·역배일 때 승률, 다가오는 경기 분석.{% endblock %}
+{% block main %}
+<section class="wrap page-head">
+  <p class="kicker">TEAMS</p><h1>팀별 기록</h1>
+  <p class="lede">베트맨에 발매된 경기의 결과로 팀마다 최근 전적과 배당 기록을 정리합니다. 새 팀이 발매되면 자동으로 추가됩니다.</p>
+</section>
+<section class="wrap block">
+  <div class="filters tm-jump">{% for g in groups %}<a class="chip" href="#sp-{{ g.sport }}">{{ SPORT_LABEL[g.sport] }}</a>{% endfor %}</div>
+  {% for g in groups %}
+  <h2 class="sub" id="sp-{{ g.sport }}">{{ SPORT_LABEL[g.sport] }}</h2>
+  {% for lg in g.leagues %}
+  <details class="tm-lg" {% if loop.index <= 3 %}open{% endif %}>
+    <summary>{{ lg.name or '기타' }} <small>{{ lg.teams|length }}팀</small></summary>
+    <p class="teams">{% for t in lg.teams %}<a href="{{ t.url }}">{{ t.name }} <small>{{ t.n }}</small></a>{% endfor %}</p>
+  </details>
+  {% endfor %}
+  {% endfor %}
+</section>
+{% endblock %}

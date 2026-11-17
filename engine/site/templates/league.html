@@ -20,6 +20,6 @@
     </tbody>
   </table>
   <h2 class="sub">자주 등장한 팀</h2>
-  <p class="teams">{% for t, n in lg.teams[:30] %}<span>{{ t }} <small>{{ n }}</small></span>{% endfor %}</p>
+  <p class="teams">{% for t, n in lg.teams[:30] %}{% set tu = team_link(lg.sport, t) %}{% if tu %}<a href="{{ tu }}">{{ t }} <small>{{ n }}</small></a>{% else %}<span>{{ t }} <small>{{ n }}</small></span>{% endif %}{% endfor %}</p>
 </section>
 {% endblock %}

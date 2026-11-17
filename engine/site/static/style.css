@@ -827,3 +827,33 @@ i.t-pos, i.t-neg, i.t-draw { font-style: normal; }
 .kelly h3 { font: 700 17px/1.4 var(--sans); margin: 26px 0 8px; }
 .k-tbl { margin: 8px 0; }
 .k-tbl td, .k-tbl th { white-space: nowrap; }
+
+/* 팀·회차 페이지 */
+.tm-up { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.tm-up li { display: grid; gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; }
+.tm-up li b i { font-style: normal; font-weight: 400; color: var(--ink-3); font-size: 12px; }
+.tm-up li a { font-size: 13.5px; font-weight: 600; }
+.tm-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+.teams a { display: inline-flex; gap: 4px; align-items: baseline; border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px; margin: 0 6px 6px 0; text-decoration: none; font-size: 13.5px; background: var(--card); }
+.teams a small { color: var(--ink-3); font-size: 11px; }
+.tm-lg { border-top: 1px solid var(--line); padding: 10px 0; }
+.tm-lg summary { cursor: pointer; font-weight: 700; }
+.tm-lg summary small { color: var(--ink-3); font-weight: 500; margin-left: 4px; }
+.tm-lg .teams { margin: 10px 0 0; }
+.tm-jump { margin-bottom: 8px; }
+.tm-jump .chip { text-decoration: none; }
+.tm-links { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-3); margin: 6px 0 0; }
+.tm-links .chip { text-decoration: none; }
+.rd-picks { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+.rd-tbl td { vertical-align: top; }
+.nav-inline { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 13.5px; }
+.rd-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; grid-template-columns: 1fr; }
+@media (min-width: 760px) { .rd-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1080px) { .rd-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.rd-list li { display: grid; gap: 6px; align-content: start; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; min-width: 0; }
+.rd-top { font-size: 12px; }
+.rd-match { font-size: 15px; overflow-wrap: anywhere; }
+.rd-match a { text-decoration: none; }
+.rd-match i { font-style: normal; font-weight: 400; color: var(--ink-3); font-size: 12px; }
+.rd-picks > span { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.rd-link { font-size: 13px; font-weight: 600; }

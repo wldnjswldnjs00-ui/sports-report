@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}프로토 승부식 {{ ro.label }} 분석 ({{ ro.year }}) · {{ ro.leagues|join(' · ') }} | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}베트맨 프로토 승부식 {{ ro.year }}년 {{ ro.label }} {{ ro.markets|length }}개 마켓 분석. {{ ro.leagues|join(', ') }}. 경기별 추정 확률, 해외 배당 기준 픽, 결과.{% endblock %}
+{% block main %}
+<section class="wrap page-head">
+  <p class="kicker"><a href="/rounds/">회차</a> · {{ ro.year }}년</p>
+  <h1>프로토 승부식 {{ ro.label }} 분석</h1>
+  <p class="lede">{{ ro.first_ko|kdt }} ~ {{ ro.last_ko|kdt }} 경기 · {% for sp, n in ro.sports.most_common() %}{{ SPORT_LABEL[sp] }} {{ n }}{{ ', ' if not loop.last }}{% endfor %} 마켓{% if ro.graded %} · 결과 나온 {{ ro.graded }}개 중 {{ ro.hit }}개 적중{% endif %}.</p>
+  <p class="nav-inline">{% if prev_ro %}<a href="/rounds/{{ prev_ro }}/">← {{ round_label(prev_ro) }}</a>{% endif %}{% for d in ro.dates %} <a href="/reports/{{ d }}/">{{ d|kdate }} 리포트</a>{% endfor %}{% if next_ro %} <a href="/rounds/{{ next_ro }}/">{{ round_label(next_ro) }} →</a>{% endif %}</p>
+</section>
+<section class="wrap block">
+  {% set groups = ro.markets|match_groups %}
+  <ul class="rd-list">
+  {% for g in groups %}
+    <li>
+      <span class="muted rd-top">{% if g.game_no %}{{ g.game_no }}번 · {% endif %}{{ g.kickoff|kdt }} · {{ g.league }}</span>
+      <b class="rd-match">{% set hu = team_link(g.sport, g.home) %}{% if hu %}<a href="{{ hu }}">{{ g.home }}</a>{% else %}{{ g.home }}{% endif %} <i>vs</i> {% set au = team_link(g.sport, g.away) %}{% if au %}<a href="{{ au }}">{{ g.away }}</a>{% else %}{{ g.away }}{% endif %}</b>
+      <span class="rd-picks">{% for m in g.markets if m.analysis %}{% set o = ro.outcomes.get(m.id) %}<span><small class="muted">{{ mk_short(m) }}</small> <span class="bub on {{ outcome(m, m.analysis.pick)|tone }}">{{ outcome(m, m.analysis.pick) }}</span> {{ m.analysis.pick_prob|pct }} <small class="muted">{{ m.odds[m.analysis.pick]|odds }}</small>{% if o and o != 'VOID' and o == m.analysis.pick %} <small class="tag hit">적중</small>{% endif %}</span>{% endfor %}</span>
+      {% set mu = match_url(g.main) %}{% if mu %}<a class="rd-link" href="{{ mu }}">경기 분석 보기 →</a>{% endif %}
+    </li>
+  {% endfor %}
+  </ul>
+  <p class="fine">배당은 베트맨 배당, 확률은 해외 배당 기준 추정 확률입니다(해외 배당이 없는 경기는 베트맨 배당과 지난 기록 기준). 발매 중 배당은 바뀔 수 있으니 구매 전 베트맨에서 다시 확인하세요.</p>
+</section>
+{% endblock %}
