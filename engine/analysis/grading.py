@@ -15,6 +15,12 @@ from ..util import read_json, write_json
 from .elo import Elo
 
 
+
+def is_pick(a) -> bool:
+    """확률이 기준(config.PICK_MIN) 이상인 분석만 픽으로 친다. 기준은 경기 전에 정해진 규칙이다."""
+    from .. import config as _cfg
+    return bool(a) and (a.get("pick_prob") or 0) >= _cfg.PICK_MIN
+
 def settle(market: dict[str, Any], res: dict[str, Any]) -> str | None:
     """마켓 결과 키 반환. 'VOID' 는 취소/적중특례. None 은 아직 결과 없음."""
     status = (res.get("status") or "FT").upper()
@@ -125,16 +131,18 @@ def aggregate(reports: list[dict[str, Any]], today: str) -> dict[str, Any]:
                 continue
             pp = a["pick_prob"]
             hit = int(o == a["pick"])
+            b = min(9, int(pp * 10))
+            buckets[b]["n"] += 1
+            buckets[b]["hit"] += hit
+            buckets[b]["p_sum"] += pp
+            if not is_pick(a):
+                continue
             for acc in ([picks_all, picks_30] if rep["date"] in last30 else [picks_all]):
                 acc["n"] += 1
                 acc["hit"] += hit
                 acc["p_sum"] += pp
                 acc["brier"] += (pp - hit) ** 2
                 acc["logloss"] += -math.log(max(1e-6, pp if hit else 1 - pp))
-            b = min(9, int(pp * 10))
-            buckets[b]["n"] += 1
-            buckets[b]["hit"] += hit
-            buckets[b]["p_sum"] += pp
             day["n"] += 1
             day["hit"] += hit
         if day["n"]:
@@ -184,7 +192,7 @@ def aggregate(reports: list[dict[str, Any]], today: str) -> dict[str, Any]:
              "expected": round(v["p_sum"] / v["n"], 4), "actual": round(v["hit"] / v["n"], 4)}
             for b, v in sorted(buckets.items()) if v["n"]
         ],
-        "strategies": {k: {"all": fin_s(strat[k]), "30d": fin_s(strat30[k])} for k in ("safe", "balanced", "aggressive", "upset", "lotto")},
+        "strategies": {k: {"all": fin_s(strat[k]), "30d": fin_s(strat30[k])} for k in ("safe", "single", "balanced", "aggressive", "upset", "lotto")},
         "value": {
             "n": value["n"],
             "hit_rate": round(value["hit"] / value["n"], 4) if value["n"] else None,

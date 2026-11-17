@@ -181,7 +181,7 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
     ou_picks = C.market_legs(upcoming, "OU")
 
     legs = C.legs_from(proto)
-    cands = sorted((l for l in legs if l["confidence"] >= 55 and (l.get("x_odds") or l["odds"]) >= 1.2 and datetime.fromisoformat(l["kickoff"]) > now),
+    cands = sorted((l for l in legs if l["p"] >= config.PICK_MIN and l["confidence"] >= 55 and (l.get("x_odds") or l["odds"]) >= 1.2 and datetime.fromisoformat(l["kickoff"]) > now),
                    key=lambda l: -(l["p"] * (1 + l["confidence"] / 200)))
     top_picks, seen_match = [], set()
     for l in cands:

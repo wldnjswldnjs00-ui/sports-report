@@ -19,7 +19,8 @@
     <li data-ko="{{ m.kickoff }}">
       <span class="muted">{{ m.kickoff|kdt }} · {{ m.league }}{% if m.game_no %} · {{ round_label(m.round) }} {{ m.game_no }}번{% endif %}</span>
       <b>{{ m.home }} <i>vs</i> {{ m.away }}</b>
-      {% if a %}<span><span class="bub on {{ outcome(m, a.pick)|tone }}">{{ outcome(m, a.pick) }}</span> {{ a.pick_prob|pct }} · 배당 {{ m.odds[a.pick]|odds }}</span>{% endif %}
+      {% if a and not is_pick(a) %}<span><span class="bub lean">박빙</span> <span class="muted">픽 없음</span></span>
+      {% elif a %}<span><span class="bub on {{ outcome(m, a.pick)|tone }}">{{ outcome(m, a.pick) }}</span> {{ a.pick_prob|pct }} · 배당 {{ m.odds[a.pick]|odds }}</span>{% endif %}
       {% set mu = match_url(m) %}{% if mu %}<a href="{{ mu }}">경기 분석 보기 →</a>{% else %}<a href="/reports/{{ u.date }}/">리포트 보기 →</a>{% endif %}
     </li>
   {% endfor %}

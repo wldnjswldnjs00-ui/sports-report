@@ -80,7 +80,7 @@
           <td class="n">{{ od|odds }}</td>
           <td class="n">{% if a %}{{ a.p.get(k)|pct(1) }}{% endif %}</td>
           <td class="n hist-cell">{% set h = (a.hist or {}).get(k) if a else none %}{% if h and h.bucket in XSRC %}{{ h.hit|pct(1) }}<small>{{ h.bucket }} · {{ '{:,}'.format(h.n) }}경기</small>{% elif a and a.bhist and k == a.pick %}{{ a.bhist.hit|pct(1) }}<small>베트맨 · {{ a.bhist.group }} · {{ '{:,}'.format(a.bhist.n) }}경기</small>{% else %}<span class="muted">–</span>{% endif %}</td>
-          {% if has_res %}<td>{% if o and loop.first %}{{ result_tag('void' if o == 'VOID' else ('hit' if a and o == a.pick else 'miss')) }}{% endif %}</td>{% endif %}
+          {% if has_res %}<td>{% if o and loop.first and is_pick(a) %}{{ result_tag('void' if o == 'VOID' else ('hit' if a and o == a.pick else 'miss')) }}{% endif %}</td>{% endif %}
         </tr>
         {% endfor %}
       {% endfor %}

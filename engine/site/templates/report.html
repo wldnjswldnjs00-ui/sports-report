@@ -86,7 +86,7 @@
     {% if live %}
     <div class="combo-grid">{% for c in live %}{{ combo_card(c, r) }}{% endfor %}</div>
     {% elif not nlive %}
-    <p class="none">지금 볼 수 있는 {{ s.label }} 조합이 없습니다. 다음 업데이트에서 새 조합이 올라옵니다.</p>
+    <p class="none">{% if key == 'single' %}지금은 조건(단폴 가능 · 확률 55% 이상 · 배당 1.5배 이상)에 맞는 경기가 없습니다. 발매 경기가 늘면 다음 업데이트에서 올라옵니다.{% else %}지금 볼 수 있는 {{ s.label }} 조합이 없습니다. 다음 업데이트에서 새 조합이 올라옵니다.{% endif %}</p>
     {% endif %}
     {% if nlive %}
     <h3 class="nd-combo-head">다음 구매일 {{ nxt.date|kdate }} 조합</h3>
@@ -180,7 +180,7 @@
   <ol class="matches">
   {% for g in groups %}
     {% set mm = g.main %}{% set a = mm.analysis %}{% set ux = ups.get(g.home ~ '|' ~ g.away ~ '|' ~ g.kickoff[:10]) %}
-    {% set graded = [] %}{% for m in g.markets %}{% set o = r.outcomes.get(m.id) %}{% if o and o != 'VOID' and m.analysis %}{% set _ = graded.append(o == m.analysis.pick) %}{% endif %}{% endfor %}
+    {% set graded = [] %}{% for m in g.markets %}{% set o = r.outcomes.get(m.id) %}{% if o and o != 'VOID' and is_pick(m.analysis) %}{% set _ = graded.append(o == m.analysis.pick) %}{% endif %}{% endfor %}
     <li class="match" data-sport="{{ g.sport }}" data-day="{{ g.kickoff|sday }}" data-ko="{{ g.kickoff }}" {% if g.markets|selectattr('id', 'in', r.caution)|list %}data-caution{% endif %}>
       <button type="button" class="match-row" aria-expanded="false" data-expand>
         <span class="m-no">{% if g.round %}<small>{{ round_label(g.round) }}</small>{% endif %}{{ g.game_no or '' }}{% if g.game_no %}번{% endif %}</span>
@@ -189,8 +189,11 @@
         {% set th = team_info(g.sport, g.home) %}{% set ta = team_info(g.sport, g.away) %}
         <span class="m-teams"><span class="tm">{{ g.home }}{% if th and th.rank_short %}<small class="rk">{{ th.rank_short }}</small>{% endif %}</span> <span class="tm"><i>vs</i> {{ g.away }}{% if ta and ta.rank_short %}<small class="rk">{{ ta.rank_short }}</small>{% endif %}</span></span>
         {% set others = g.markets|rejectattr('id', 'equalto', mm.id)|selectattr('analysis')|list %}
-        {% if others %}<span class="m-also">{% for m in others %}<span>{% set ol = outcome(m, m.analysis.pick) %}{% if m.market == 'HANDICAP' and m.line is not none and ol in ('핸디패', '핸디무') %}{% set ol = ol ~ ' ' ~ ('%+g'|format(m.line)) %}{% endif %}<i class="{{ ol|tone }}">{{ ol }}</i> <b>{{ m.analysis.pick_prob|pct }}</b></span>{% endfor %}</span>{% endif %}
-        {% if a %}
+        {% if others %}<span class="m-also">{% for m in others %}{% if not is_pick(m.analysis) %}<span><i class="muted">{{ mk_short(m) }} 박빙</i></span>{% else %}<span>{% set ol = outcome(m, m.analysis.pick) %}{% if m.market == 'HANDICAP' and m.line is not none and ol in ('핸디패', '핸디무') %}{% set ol = ol ~ ' ' ~ ('%+g'|format(m.line)) %}{% endif %}<i class="{{ ol|tone }}">{{ ol }}</i> <b>{{ m.analysis.pick_prob|pct }}</b></span>{% endif %}{% endfor %}</span>{% endif %}
+        {% if a and not is_pick(a) %}
+        <span class="m-pick"><span class="bub lean">박빙</span><b class="muted">{{ a.pick_prob|pct }}</b></span>
+        <span class="m-conf" style="--c:{{ a.confidence }}"><span></span>{{ a.confidence }}</span>
+        {% elif a %}
         <span class="m-pick"><span class="bub on {{ (outcome(mm, a.pick))|tone }}">{{ outcome(mm, a.pick) }}</span><b>{{ a.pick_prob|pct }}</b></span>
         <span class="m-conf" style="--c:{{ a.confidence }}"><span></span>{{ a.confidence }}</span>
         {% else %}<span class="m-pick muted">해외 배당 없음</span><span></span>{% endif %}
@@ -200,8 +203,9 @@
         {% for m in g.markets %}{% set ma = m.analysis %}
         <div class="mk">
           <div class="mk-head"><b>{{ mk_short(m) }}</b>{% if m.game_no %}<small>{{ m.game_no }}번</small>{% endif %}
-            {% if ma %}<span class="mk-pick"><i class="{{ outcome(m, ma.pick)|tone }}">{{ outcome(m, ma.pick) }}</i> {{ ma.pick_prob|pct }} · 신뢰도 {{ ma.confidence }}</span>{% endif %}
-            {% set o = r.outcomes.get(m.id) %}{% if o and ma %}{{ result_tag('void' if o == 'VOID' else ('hit' if o == ma.pick else 'miss')) }}{% endif %}
+            {% if ma and not is_pick(ma) %}<span class="mk-pick"><i class="muted">박빙</i> 한쪽이 {{ (PICK_MIN * 100)|int }}%를 넘지 않아 픽을 내지 않습니다</span>
+            {% elif ma %}<span class="mk-pick"><i class="{{ outcome(m, ma.pick)|tone }}">{{ outcome(m, ma.pick) }}</i> {{ ma.pick_prob|pct }} · 신뢰도 {{ ma.confidence }}</span>{% endif %}
+            {% set o = r.outcomes.get(m.id) %}{% if o and is_pick(ma) %}{{ result_tag('void' if o == 'VOID' else ('hit' if o == ma.pick else 'miss')) }}{% endif %}
           </div>
           {% if ma %}{{ prob_bar(m) }}{% endif %}
           <div class="odds-pick" role="group" aria-label="{{ mk_short(m) }} 결과 선택해서 내 조합에 담기">

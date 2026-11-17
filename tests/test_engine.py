@@ -273,6 +273,22 @@ class BoxScore(unittest.TestCase):
         self.assertEqual(BX.match({"ko": ko, "hs": 2, "as": 0, "home": "가", "away": "나"}, [x, y], {"가": "Z"})["names"], ["Z", "W"])
 
 
+class PickRule(unittest.TestCase):
+    def test_lean_not_pick_and_single(self):
+        from engine.analysis.grading import is_pick
+        from engine.analysis import combos as C
+        self.assertFalse(is_pick({"pick_prob": 0.52}))
+        self.assertTrue(is_pick({"pick_prob": 0.55}))
+
+        def mk(i, p, o, single):
+            return {"id": f"m{i}", "pool": "proto", "odds": {"H": o, "A": 2.0}, "kickoff": "2026-11-18T10:00+09:00", "home": f"h{i}", "away": f"a{i}",
+                    "league": "NBA", "sport": "basketball", "market": "WL", "line": None, "round": "260136", "single": single,
+                    "analysis": {"pick": "H", "p": {"H": p, "A": 1 - p}, "pick_prob": p, "confidence": 60, "upset_risk": 20, "x_odds": {"H": o}}}
+        res = C.all_combos([mk(1, 0.6, 1.7, True), mk(2, 0.6, 1.7, False), mk(3, 0.7, 1.2, True), mk(4, 0.52, 1.9, True)])
+        got = [c["legs"][0]["market_id"] for c in res["single"]]
+        self.assertEqual(got, ["m1"])  # 단폴 불가·똥배(1.2)·박빙(52%)은 빠진다
+
+
 if __name__ == "__main__":
     unittest.main()
 

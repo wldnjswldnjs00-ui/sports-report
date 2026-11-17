@@ -46,6 +46,8 @@ SLOGAN = "데이터와 수학으로, 분석을 똑똑하게"
 GOOGLE_SITE_VERIFICATION = os.getenv("GOOGLE_SITE_VERIFICATION", "iXRqVBnVwoPNywIn7DYmi6t38IMQlf6xogGn4SVxiuw").strip()
 NAVER_SITE_VERIFICATION = os.getenv("NAVER_SITE_VERIFICATION", "1ec76f6e2a7122fd85ae127eba6caca4a16db213").strip()
 # IndexNow 키: 공개되어도 되는 값(사이트 루트의 /<키>.txt 로 소유를 증명). 네이버·빙에 새 페이지를 즉시 알린다.
+# 이 확률 이상일 때만 '픽'으로 낸다(그 아래는 '박빙': 분석만 보여 주고 픽·적중률 집계에서 뺀다)
+PICK_MIN = float(os.getenv("PICK_MIN", "0.55"))
 INDEXNOW_KEY = os.getenv("INDEXNOW_KEY", "4dbd24d706c1c5983c3c93c5a0a18f2b").strip()
 
 # 데모 모드: 실데이터가 없을 때 로컬 미리보기용 샘플을 만든다. 운영에서는 끈다.

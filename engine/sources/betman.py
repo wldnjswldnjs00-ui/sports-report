@@ -192,6 +192,8 @@ def parse_round(payload: dict, gm_ts: str) -> list[dict[str, Any]]:
             "line": line, "odds": odds,
             "venue": (str(r.get("meetStadiumFullName")).strip() or None) if r.get("meetStadiumFullName") else None,
             "flow": flow,
+            # 베트맨 단일 경기 구매(단폴) 가능 표시. 응답의 sgl 값이 "1"인 경기만 한 경기로 살 수 있다
+            "single": str(r.get("sgl") or "").strip() == "1",
         })
     return out
 
@@ -295,12 +297,13 @@ def _schema_note(doc: dict) -> None:
         cs = doc.get("compSchedules") or {}
         sample = dict(zip(cs.get("keys") or [], (cs.get("datas") or [[]])[0]))
         from collections import Counter
-        kinds = Counter()
+        kinds, sgl = Counter(), Counter()
         for r in _rows(doc):
+            sgl[f"{r.get('betNm')}|sgl={r.get('sgl')}"] += 1
             kinds[f"{r.get('itemCode')}|{r.get('betNm')}|{'배당있음' if _num(r.get('winAllot')) > 1 else '배당없음'}|{'사용' if _market(r) else '제외'}"] += 1
         tips = doc.get("tooltipList") or []
         write_json(config.STATE / "betman_schema.json", {
-            "top_keys": sorted(doc.keys()), "row_keys": cs.get("keys"), "sample_row": sample, "kinds": dict(kinds),
+            "top_keys": sorted(doc.keys()), "row_keys": cs.get("keys"), "sample_row": sample, "kinds": dict(kinds), "sgl": dict(sgl),
             "tooltip_n": len(tips), "tooltip_sample": tips[:2],
             "at": config.now_kst().isoformat(timespec="seconds")})
     except Exception:  # noqa: BLE001

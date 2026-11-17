@@ -18,6 +18,7 @@ from jinja2 import Environment, FileSystemLoader, Undefined, select_autoescape
 
 from .. import config
 from ..analysis.combos import STRATEGIES
+from ..analysis.grading import is_pick
 from ..analysis.grading import load_perf
 from ..schema import MARKET_LABEL, OUTCOME_LABEL, SPORT_LABEL
 from ..util import read_json, slug, write_json
@@ -189,7 +190,7 @@ def _env() -> Environment:
         trim_blocks=True, lstrip_blocks=True,
     )
     env.filters.update(tone=_tone, tone_html=_tone_html, sday=config.sales_day, match_groups=_match_groups, pct=_pct, signed=_signed, odds=_odds, won=_won, kdate=_kdate, ktime=_ktime, kdt=_kdt, slug=slug)
-    env.globals.update(
+    env.globals.update(is_pick=is_pick, PICK_MIN=config.PICK_MIN,
         cfg=config, STRATEGIES=STRATEGIES, MARKET_LABEL=MARKET_LABEL, SPORT_LABEL=SPORT_LABEL, XSRC=("유럽 축구", "NBA", "MLB", "A매치"), mk_short=_mk_short,
         outcome=_outcome, pick_label=_pick_label, line_groups=_line_groups, upset_map=_upset_map, flow_key=_flow_key, round_label=_round_label, rounds_of=_rounds, now=config.now_kst(), asset_v=config.now_kst().strftime("%Y%m%d%H%M"),
         nav=[("/", "TODAY"), ("/leagues/", "리그·순위"), ("/odds/", "배당 분석"), ("/tool/", "금액 계산기"), ("/performance/", "성과"),
@@ -590,7 +591,7 @@ def build() -> None:
         outs = r.get("outcomes") or {}
         for m in r.get("markets", []):
             a, o = m.get("analysis"), outs.get(m["id"])
-            if not a or not o or o == "VOID" or m.get("preview"):
+            if not a or not o or o == "VOID" or m.get("preview") or not is_pick(a):
                 continue
             hit, pp = int(o == a["pick"]), a["pick_prob"]
             band = "70% 이상" if pp >= 0.7 else ("60~70%" if pp >= 0.6 else ("50~60%" if pp >= 0.5 else "50% 미만"))

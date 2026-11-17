@@ -1091,3 +1091,6 @@ h1, h2, h3, .block-head h2 { text-wrap: balance; }
 @media (min-width: 720px) { .lg.is-open { grid-column: auto; } }
 .lg-list { align-items: start; }
 .lg-more .lg-opts { grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); }
+
+/* 박빙(픽을 내지 않는 경기) */
+.bub.lean { background: var(--card-2); color: var(--ink-3); border: 1px dashed var(--line); }
