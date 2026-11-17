@@ -599,5 +599,102 @@
   }
   paintStakes();
 
-  loadData().then(function () { if (tool) renderToolList(""); render(); });
+  function toneC(t) {
+    var m = /([+\-−])\d/.exec(t);
+    if (m) return m[1] === "+" ? "#4ade80" : "#ff6b6b";
+    if (/오버/.test(t)) return "#4ade80";
+    if (/언더/.test(t)) return "#ff6b6b";
+    if (/무/.test(t)) return "#fbbf24";
+    if (/패/.test(t)) return "#ff6b6b";
+    return /승/.test(t) ? "#4ade80" : "#eef0f7";
+  }
+  /* ───── 내 조합 공유: 링크(받은 사람 화면에 그대로 담김) + 이미지 카드 ───── */
+  function shareCode(ids) {
+    return ids.map(function (id) {
+      var m = /^betman:G101:(\d+):(\d+)\|([A-Z])$/.exec(id);
+      return m ? m[1] + "." + m[2] + "." + m[3] : "";
+    }).filter(Boolean).join("~");
+  }
+  function fromCode(s) {
+    return String(s || "").split("~").map(function (x) {
+      var m = /^(\d{6})\.(\d{1,6})\.([A-Z])$/.exec(x);
+      return m ? "betman:G101:" + m[1] + ":" + m[2] + "|" + m[3] : null;
+    }).filter(Boolean).slice(0, MAX_LEGS);
+  }
+  function shareImage(legs, c) {
+    return new Promise(function (resolve) {
+      try {
+        var W = 1080, rowH = 104, H = 330 + legs.length * rowH + 250;
+        var cv = doc.createElement("canvas"); cv.width = W; cv.height = H;
+        var g = cv.getContext("2d");
+        var F = "'Pretendard Variable', Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif";
+        g.fillStyle = "#0f1117"; g.fillRect(0, 0, W, H);
+        var gr = g.createRadialGradient(80, 0, 0, 80, 0, 700); gr.addColorStop(0, "rgba(255,61,127,.20)"); gr.addColorStop(1, "rgba(255,61,127,0)");
+        g.fillStyle = gr; g.fillRect(0, 0, W, H);
+        // 로고(무지갯빛 원) + 이름
+        var cg = g.createConicGradient ? g.createConicGradient(-Math.PI / 2, 110, 110) : null;
+        if (cg) { ["#ff3d7f", "#ffd23d", "#18c4b0", "#6c7bff", "#ff3d7f"].forEach(function (col, i) { cg.addColorStop(i / 4, col); }); g.fillStyle = cg; }
+        else g.fillStyle = "#ff3d7f";
+        g.beginPath(); g.arc(110, 110, 34, 0, Math.PI * 2); g.fill();
+        g.strokeStyle = "rgba(255,255,255,.45)"; g.lineWidth = 7; g.beginPath(); g.arc(110, 110, 30, 0, Math.PI * 2); g.stroke();
+        g.fillStyle = "#eef0f7"; g.font = "800 46px " + F; g.textBaseline = "middle"; g.fillText("스포츠분석", 164, 110);
+        var w = g.measureText("스포츠분석").width; g.fillStyle = "#ff3d7f"; g.font = "800 26px " + F; g.fillText(".kr", 170 + w, 118);
+        g.fillStyle = "#eef0f7"; g.font = "800 60px " + F; g.fillText("내 조합 " + legs.length + "폴더", 76, 222);
+        var y = 300;
+        legs.forEach(function (l) {
+          g.fillStyle = "#1a1d27"; g.strokeStyle = "#2c3140"; g.lineWidth = 2;
+          if (g.roundRect) { g.beginPath(); g.roundRect(76, y, W - 152, rowH - 16, 20); g.fill(); g.stroke(); } else g.fillRect(76, y, W - 152, rowH - 16);
+          g.fillStyle = "#8a90a6"; g.font = "600 24px " + F; g.fillText((l.no ? l.no + "번 · " : "") + (l.league || ""), 104, y + 28);
+          g.fillStyle = "#eef0f7"; g.font = "700 32px " + F;
+          var label = l.label; while (g.measureText(label).width > 560 && label.length > 4) label = label.slice(0, -2) + "…";
+          g.fillText(label, 104, y + 64);
+          g.font = "800 34px " + F; var ot = l.odds.toFixed(2), ow = g.measureText(ot).width;
+          g.fillText(ot, W - 104 - ow, y + 46);
+          g.font = "700 30px " + F; var pk = l.pick, pw = g.measureText(pk).width;
+          g.fillStyle = toneC(pk);
+          g.fillText(pk, W - 104 - ow - 28 - pw, y + 46);
+          y += rowH;
+        });
+        y += 24;
+        g.fillStyle = "#8a90a6"; g.font = "600 28px " + F; g.fillText("종합배당", 76, y + 20); g.fillText("예상 적중률", 560, y + 20);
+        g.fillStyle = "#eef0f7"; g.font = "800 64px " + F; g.fillText("×" + c.odds.toFixed(2), 76, y + 84); g.fillText(pct(c.p), 560, y + 84);
+        g.fillStyle = "#2c3140"; g.fillRect(76, H - 92, W - 152, 2);
+        g.fillStyle = "#8a90a6"; g.font = "600 26px " + F; g.fillText("만 19세 이상 · 베트맨 공식 채널에서만 · 참고용 분석", 76, H - 50);
+        g.fillStyle = "#c2c7d6"; g.font = "700 26px " + F; var u = "스포츠분석.kr"; g.fillText(u, W - 76 - g.measureText(u).width, H - 50);
+        cv.toBlob(function (b) { resolve(b); }, "image/png");
+      } catch (e) { resolve(null); }
+    });
+  }
+  function shareSlip() {
+    var legs = legsOf(slip.ids), c = calc(legs);
+    if (!legs.length || !c) { toast("먼저 경기를 담아 주세요."); return; }
+    var url = location.origin + "/?s=" + shareCode(slip.ids) + "&utm_source=share";
+    var text = "내 조합 " + legs.length + "폴더 · 종합배당 " + c.odds.toFixed(2) + " (스포츠분석)";
+    shareImage(legs, c).then(function (blob) {
+      var file = blob && window.File ? new File([blob], "my-combo.png", { type: "image/png" }) : null;
+      if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+        return navigator.share({ files: [file], title: "내 조합", text: text + "\n" + url }).catch(function () {});
+      }
+      if (navigator.share) return navigator.share({ title: "내 조합", text: text, url: url }).catch(function () {});
+      // PC: 링크 복사 + 이미지 저장
+      try { navigator.clipboard.writeText(url); } catch (e) {}
+      if (blob) { var a = doc.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "내조합.png"; a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000); }
+      toast("링크를 복사하고 이미지를 저장했습니다.");
+    });
+  }
+  function importShared() {
+    var m = /[?&]s=([^&]+)/.exec(location.search);
+    if (!m) return;
+    var ids = fromCode(decodeURIComponent(m[1]));
+    try { history.replaceState(null, "", location.pathname + location.hash); } catch (e) {}
+    if (!ids.length || !data) return;
+    var live = ids.filter(function (id) { return byId[id]; });
+    if (!live.length) { toast("공유받은 조합의 경기가 이미 시작했거나 마감됐습니다."); return; }
+    slip.ids = [];
+    addIds(live, true);
+    toast("공유받은 조합 " + live.length + "경기를 담았습니다" + (live.length < ids.length ? " (시작한 경기 제외)" : "") + ".");
+    if (slipEl) slipEl.classList.add("is-open");
+  }
+  $$("[data-slip-share]").forEach(function (b) { b.addEventListener("click", shareSlip); });
+  loadData().then(function () { if (tool) renderToolList(""); render(); importShared(); });
 })();
