@@ -32,6 +32,22 @@ def problems() -> list[str]:
     if fails >= 2:
         out.append(f"베트맨 경기 수집이 {fails}번 연속 실패했습니다. 베트맨 사이트나 데이터 주소가 바뀌었을 수 있습니다. "
                    "진단 기록: `data/state/betman_debug.json`, `data/state/betman_schema.json`. 그동안 사이트는 마지막 리포트를 그대로 보여줍니다.")
+    # 베트맨 구조가 바뀌면 접속은 돼도 경기를 0개로 읽거나 배당을 못 읽을 수 있다(실패로 안 잡힘).
+    # 경기 수·분석된 비율이 평소보다 크게 줄어든 상태가 3번 이어지면 알린다.
+    ms = rep.get("markets") or []
+    analyzed = sum(1 for m in ms if m.get("analysis"))
+    recent = []
+    for pth in sorted(config.REPORTS.glob("*.json"))[-15:-1]:
+        try:
+            recent.append(len((read_json(pth) or {}).get("markets") or []))
+        except Exception:  # noqa: BLE001
+            pass
+    typical = sorted(recent)[len(recent) // 2] if recent else 0
+    weird = (not betman_failed) and typical >= 10 and (len(ms) == 0 or len(ms) < typical * 0.15 or (ms and analyzed / len(ms) < 0.3))
+    st["weird"] = st.get("weird", 0) + 1 if weird else 0
+    if st["weird"] >= 3:
+        out.append(f"베트맨에서 읽은 경기가 평소와 크게 다릅니다(지금 {len(ms)}개, 분석 {analyzed}개 / 평소 {typical}개 안팎, {st['weird']}번 연속). "
+                   "베트맨 사이트 구조가 바뀌었을 수 있습니다. 진단 기록: `data/state/betman_schema.json`.")
     upd = rep.get("updated_at") or rep.get("generated_at")
     if upd:
         age = config.now_kst() - datetime.fromisoformat(upd)
