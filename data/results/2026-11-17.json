@@ -1,3 +1,94 @@
 {
- "markets": {}
+ "markets": {
+  "betman:G101:260136:4390": {
+   "home_score": 105.0,
+   "away_score": 115.0,
+   "status": "FT",
+   "src": "odds_api"
+  },
+  "betman:G101:260136:4391": {
+   "home_score": 105.0,
+   "away_score": 115.0,
+   "status": "FT",
+   "src": "odds_api"
+  },
+  "betman:G101:260136:4392": {
+   "home_score": 105.0,
+   "away_score": 115.0,
+   "status": "FT",
+   "src": "odds_api"
+  },
+  "betman:G101:260136:4394": {
+   "home_score": 126.0,
+   "away_score": 115.0,
+   "status": "FT",
+   "src": "odds_api"
+  },
+  "betman:G101:260136:4395": {
+   "home_score": 126.0,
+   "away_score": 115.0,
+   "status": "FT",
+   "src": "odds_api"
+  },
+  "betman:G101:260136:4396": {
+   "home_score": 126.0,
+   "away_score": 115.0,
+   "status": "FT",
+   "src": "odds_api"
+  },
+  "betman:G101:260136:4398": {
+   "home_score": 120.0,
+   "away_score": 136.0,
+   "status": "FT",
+   "src": "odds_api"
+  },
+  "betman:G101:260136:4399": {
+   "home_score": 120.0,
+   "away_score": 136.0,
+   "status": "FT",
+   "src": "odds_api"
+  },
+  "betman:G101:260136:4400": {
+   "home_score": 120.0,
+   "away_score": 136.0,
+   "status": "FT",
+   "src": "odds_api"
+  },
+  "betman:G101:260136:4402": {
+   "home_score": 123.0,
+   "away_score": 135.0,
+   "status": "FT",
+   "src": "odds_api"
+  },
+  "betman:G101:260136:4403": {
+   "home_score": 123.0,
+   "away_score": 135.0,
+   "status": "FT",
+   "src": "odds_api"
+  },
+  "betman:G101:260136:4404": {
+   "home_score": 123.0,
+   "away_score": 135.0,
+   "status": "FT",
+   "src": "odds_api"
+  },
+  "betman:G101:260136:4406": {
+   "home_score": 128.0,
+   "away_score": 110.0,
+   "status": "FT",
+   "src": "odds_api"
+  },
+  "betman:G101:260136:4407": {
+   "home_score": 128.0,
+   "away_score": 110.0,
+   "status": "FT",
+   "src": "odds_api"
+  },
+  "betman:G101:260136:4408": {
+   "home_score": 128.0,
+   "away_score": 110.0,
+   "status": "FT",
+   "src": "odds_api"
+  }
+ }
 }
