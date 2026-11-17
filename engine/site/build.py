@@ -189,6 +189,7 @@ def _env() -> Environment:
         autoescape=select_autoescape(["html", "xml"]),
         trim_blocks=True, lstrip_blocks=True,
     )
+    env.tests["is_pick_m"] = lambda m: is_pick((m or {}).get("analysis"))
     env.filters.update(tone=_tone, tone_html=_tone_html, sday=config.sales_day, match_groups=_match_groups, pct=_pct, signed=_signed, odds=_odds, won=_won, kdate=_kdate, ktime=_ktime, kdt=_kdt, slug=slug)
     env.globals.update(is_pick=is_pick, PICK_MIN=config.PICK_MIN,
         cfg=config, STRATEGIES=STRATEGIES, MARKET_LABEL=MARKET_LABEL, SPORT_LABEL=SPORT_LABEL, XSRC=("유럽 축구", "NBA", "MLB", "A매치"), mk_short=_mk_short,

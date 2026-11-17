@@ -1094,3 +1094,39 @@ h1, h2, h3, .block-head h2 { text-wrap: balance; }
 
 /* 박빙(픽을 내지 않는 경기) */
 .bub.lean { background: var(--card-2); color: var(--ink-3); border: 1px dashed var(--line); }
+
+/* 경기 목록: 리그별 묶음(시안 C) */
+.f-sep { width: 1px; align-self: stretch; background: var(--line); margin: 2px 4px; }
+.mlg { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); margin-bottom: 12px; overflow: hidden; }
+.mlg[hidden] { display: none; }
+.mlg-head { width: 100%; display: flex; align-items: center; gap: 8px; padding: 13px 16px; background: var(--card-2); border: 0; border-bottom: 1px solid var(--line); cursor: pointer; color: var(--ink); text-align: left; font: inherit; }
+.mlg-head b { font-size: 15px; font-weight: 800; flex: 1; }
+.mlg-head small { color: var(--ink-3); font-weight: 600; font-size: 12.5px; }
+.mlg-caret, .mc-caret { width: 8px; height: 8px; border-right: 2px solid var(--ink-3); border-bottom: 2px solid var(--ink-3); transform: rotate(45deg) translateY(-2px); transition: transform .2s var(--ease); flex: none; }
+.mlg-head[aria-expanded="false"] .mlg-caret { transform: rotate(-45deg); }
+.mlg-head[aria-expanded="false"] { border-bottom: 0; }
+.mlg-body { list-style: none; margin: 0; padding: 0; }
+.mlg-body .match { border: 0; border-top: 1px solid var(--line); border-radius: 0; margin: 0; background: none; box-shadow: none; }
+.mlg-body .match:first-child { border-top: 0; }
+.mc-row { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) 128px 10px; gap: 12px; align-items: center; padding: 13px 16px; background: none; border: 0; cursor: pointer; text-align: left; color: inherit; font: inherit; }
+.mc-row:hover { background: var(--card-2); }
+.mc-main { display: grid; gap: 4px; min-width: 0; }
+.mc-teams { font-weight: 700; font-size: 15px; line-height: 1.35; }
+.mc-teams i { font-style: normal; color: var(--ink-3); font-weight: 500; font-size: 12px; margin: 0 3px; }
+.mc-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; font-size: 12px; color: var(--ink-3); }
+.mc-meta .tag { font-size: 10.5px; }
+.bd { font-size: 10.5px; font-weight: 800; border-radius: 5px; padding: 1px 6px; }
+.bd.warn { background: #fff4c2; color: #7a5b00; }
+.bd.dog { background: var(--hot-soft); color: var(--neg); }
+.mc-pick { display: grid; gap: 6px; }
+.mc-top { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+.mc-top b { font-family: var(--en); font-size: 15px; }
+.mc-bar { height: 6px; border-radius: 3px; background: var(--card-2); overflow: hidden; }
+.mc-bar i { display: block; height: 100%; background: var(--cool); border-radius: 3px; }
+.mc-bar i.lean { background: var(--line); }
+.mc-row[aria-expanded="true"] .mc-caret { transform: rotate(-135deg) translateY(-2px); }
+.mlg-body .match-more { padding: 4px 16px 16px; }
+@media (max-width: 560px) {
+  .mc-row { grid-template-columns: minmax(0, 1fr) 96px 8px; gap: 10px; padding: 12px 14px; }
+  .mc-teams { font-size: 14.5px; }
+}

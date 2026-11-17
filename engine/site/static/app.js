@@ -195,16 +195,30 @@
   });
 
   /* 날짜·종목 필터 */
-  var fDay = null, fSport = "all";
+  var fDay = null, fSport = "all", fKind = null;
   function applyFilters() {
     var shown = 0;
     $$(".match").forEach(function (m) {
-      m.hidden = !((fSport === "all" || m.dataset.sport === fSport) && (!fDay || m.dataset.day === fDay));
+      var kinds = " " + (m.dataset.kinds || "") + " ";
+      m.hidden = !((fSport === "all" || m.dataset.sport === fSport) && (!fDay || m.dataset.day === fDay) && (!fKind || kinds.indexOf(" " + fKind + " ") >= 0));
       if (!m.hidden) shown++;
+    });
+    // 리그 묶음: 보이는 경기 수, 다 숨으면 묶음도 숨김
+    $$("[data-mlg]").forEach(function (g) {
+      var n = $$("li.match", g).filter(function (li) { return !li.hidden; }).length;
+      g.hidden = n === 0;
+      var c = $("[data-mlg-n]", g); if (c) c.textContent = n;
     });
     var em = $("[data-empty]");
     if (em) em.hidden = shown > 0;
   }
+  $$("[data-mlg-toggle]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var open = b.getAttribute("aria-expanded") !== "true", body = b.nextElementSibling;
+      b.setAttribute("aria-expanded", String(open));
+      if (body) body.hidden = !open;
+    });
+  });
   $$("[data-days]").forEach(function (box) {
     var chips = $$(".chip", box);
     if (chips[0]) fDay = chips[0].dataset.d;
@@ -216,13 +230,23 @@
     });
   });
   $$("[data-filters]").forEach(function (box) {
-    var chips = $$(".chip", box);
-    chips.forEach(function (c) {
+    var sp = $$(".chip[data-f]", box), kd = $$(".chip[data-k]", box);
+    sp.forEach(function (c) {
       c.addEventListener("click", function () {
-        chips.forEach(function (x) { x.setAttribute("aria-pressed", String(x === c)); });
+        sp.forEach(function (x) { x.setAttribute("aria-pressed", String(x === c)); });
         fSport = c.dataset.f; applyFilters();
       });
     });
+    // 역배·핸디·언오버·주의: 누르면 켜고, 다시 누르면 끈다(종목 필터와 함께 적용)
+    kd.forEach(function (c) {
+      c.addEventListener("click", function () {
+        var on = c.getAttribute("aria-pressed") !== "true";
+        kd.forEach(function (x) { x.setAttribute("aria-pressed", String(on && x === c)); });
+        fKind = on ? c.dataset.k : null; applyFilters();
+      });
+    });
+    // 해당 경기가 없는 종류 버튼은 숨긴다
+    kd.forEach(function (c) { c.hidden = !$$("li.match").some(function (li) { return (" " + (li.dataset.kinds || "") + " ").indexOf(" " + c.dataset.k + " ") >= 0; }); });
   });
   applyFilters();
 
