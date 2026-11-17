@@ -1,0 +1,77 @@
+name: 정기 실행 지킴이
+
+# Cloudflare 예약 실행이 빠졌을 때 GitHub 가 스스로 대신 돌린다(사람 손 없이).
+#  - 누락 경고 이슈가 열리면(Worker 가 40분 동안 실행이 안 생겼을 때 엶) 바로 그 시각의 작업을 시작하고 이슈를 닫는다.
+#  - GitHub 자체 예약으로도 30분마다 확인한다(Cloudflare 와 독립된 두 번째 시계).
+#  - 이미 실행됐으면 아무것도 하지 않는다 → 여러 경로가 겹쳐도 한 번만 돈다.
+# GITHUB_TOKEN 만 쓴다(Cloudflare 의 GH_TOKEN 이 만료돼도 이 경로는 동작). workflow_dispatch 는 GITHUB_TOKEN 으로도 새 실행이 생긴다.
+on:
+  issues:
+    types: [opened]
+  schedule:
+    - cron: "17,47 * * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  issues: write
+  contents: read
+
+concurrency:
+  group: watchdog
+  cancel-in-progress: false
+
+jobs:
+  guard:
+    if: github.event_name != 'issues' || startsWith(github.event.issue.title, '⚠️ 정기 실행 누락')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 빠진 정기 실행 대신 시작
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // UTC 시각 → 슬롯(워크플로 입력). cron/worker.js 의 SCHEDULE 과 같아야 한다.
+            const SCHEDULE = {
+              "14:05": "5 14 * * *", "21:00": "0 21 * * *", "22:00": "0 22 * * *", "00:30": "30 0 * * *",
+              "04:00": "0 4 * * *", "09:00": "0 9 * * *", "10:00": "0 10 * * *", "13:00": "0 13 * * *",
+            };
+            // 슬롯마다 '이 시간 안에 시작하면 아직 의미가 있다'(분). 다음 슬롯과 겹치지 않게.
+            const LATE = { "5 14 * * *": 400, "0 21 * * *": 55, "0 22 * * *": 140, "30 0 * * *": 200,
+                           "0 4 * * *": 290, "0 9 * * *": 55, "0 10 * * *": 170, "0 13 * * *": 60 };
+            const { owner, repo } = context.repo;
+            const now = Date.now();
+            const runs = (await github.rest.actions.listWorkflowRuns({ owner, repo, workflow_id: "daily.yml", per_page: 60 })).data.workflow_runs;
+            const ranSince = (slot, t) => runs.some(r => new Date(r.created_at).getTime() >= t - 10 * 60000 &&
+              (r.display_title === `매일 분석 · ${slot}` || String((r.head_commit || {}).message || "").includes(`[slot:${slot}]`)));
+
+            let targets = [];
+            if (context.eventName === "issues") {
+              const m = /정기 실행 누락: ([0-9*\/ ,]+?) \(/.exec(context.payload.issue.title);
+              if (m) targets.push(m[1].trim());
+            } else {
+              for (const [hm, slot] of Object.entries(SCHEDULE)) {
+                const [h, mi] = hm.split(":").map(Number);
+                for (const shift of [0, -1]) {
+                  const d = new Date(now); d.setUTCDate(d.getUTCDate() + shift); d.setUTCHours(h, mi, 0, 0);
+                  const age = (now - d.getTime()) / 60000;
+                  // Cloudflare 의 자가 복구(40분)에 먼저 맡기고, 그 뒤에도 없으면 지킴이가 시작
+                  if (age >= 42 && age <= LATE[slot] && !ranSince(slot, d.getTime())) targets.push(slot);
+                }
+              }
+            }
+            targets = [...new Set(targets)];
+            for (const slot of targets) {
+              const [mi, h] = slot.split(" ");
+              const d = new Date(now); d.setUTCHours(Number(h), Number(mi), 0, 0);
+              if (d.getTime() > now) d.setUTCDate(d.getUTCDate() - 1);
+              if (ranSince(slot, d.getTime())) { core.info(`이미 실행됨: ${slot}`); continue; }
+              await github.rest.actions.createWorkflowDispatch({ owner, repo, workflow_id: "daily.yml", ref: "main", inputs: { slot } });
+              core.info(`대신 시작: ${slot}`);
+            }
+            if (context.eventName === "issues") {
+              const n = context.payload.issue.number;
+              await github.rest.issues.createComment({ owner, repo, issue_number: n,
+                body: targets.length ? `지킴이가 자동으로 대신 실행했습니다: \`${targets.join("`, `")}\`. 확인 후 이 이슈를 닫습니다.` : "이미 실행돼 있어 따로 할 일이 없습니다." });
+              await github.rest.issues.update({ owner, repo, issue_number: n, state: "closed" });
+            }
