@@ -353,3 +353,34 @@ class FreeTier(unittest.TestCase):
         from engine.sources import betman as B
         with mock.patch.object(B, "read_json", lambda *a, **k: {"rounds": ["260136"]}):
             self.assertEqual([g["gmTs"] for g in B._guess_rounds()], [260136, 260137, 260138])
+
+
+class InsightTest(__import__("unittest").TestCase):
+    def test_josa(self):
+        from engine.site.insight import j
+        self.assertEqual(j("보스턴 셀틱스", "은는"), "보스턴 셀틱스는")
+        self.assertEqual(j("미국", "은는"), "미국은")
+        self.assertEqual(j("+2.0점", "으로"), "+2.0점으로")
+        self.assertEqual(j("3.8골", "으로"), "3.8골로")
+        self.assertEqual(j("", "은는"), "는")
+
+    def test_small_sample_and_bad_data(self):
+        from engine.site.insight import build
+        g = {"sport": "basketball", "kickoff": "2026-11-18T10:00+09:00", "home": "A", "away": "B", "markets": []}
+        few = {"games": [{"date": "2026-11-10", "me": 100, "op": 90, "res": "W"}] * 3}
+        self.assertIsNone(build(g, few, few))
+        self.assertIsNone(build(g, None, None))
+        zero = {"games": [{"date": f"2026-11-{d:02d}", "me": 0, "op": 0, "res": "D"} for d in range(1, 12)]}
+        out = build(g, zero, zero)
+        self.assertTrue(out and out["notes"])
+
+    def test_future_games_ignored(self):
+        from engine.site.insight import metrics
+        t = {"games": [{"date": "2026-11-20", "me": 1, "op": 0, "res": "W"}] * 10}
+        self.assertIsNone(metrics(t, "soccer", "2026-11-18T10:00+09:00"))
+
+
+class BetmanNoSaleTest(__import__("unittest").TestCase):
+    def test_nosale_is_runtimeerror(self):
+        from engine.sources.betman import NoSale
+        self.assertTrue(issubclass(NoSale, RuntimeError))

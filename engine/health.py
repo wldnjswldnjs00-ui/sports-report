@@ -31,6 +31,14 @@ def problems() -> list[str]:
     closed = config.now_kst().hour < 6
     fails = (st.get("betman_fails", 0) + (0 if closed else 1)) if betman_failed else 0
     st["betman_fails"] = fails
+    # 발매 대기(회차 사이)는 고장이 아니다. 다만 36시간 넘게 이어지면 이상으로 본다.
+    idle = str(srcs.get("betman", "")) == "발매 대기"
+    if idle:
+        st.setdefault("idle_since", config.now_kst().isoformat(timespec="minutes"))
+        if config.now_kst() - datetime.fromisoformat(st["idle_since"]) > timedelta(hours=36):
+            out.append("베트맨에 발매 중인 프로토 승부식 회차가 36시간 넘게 없습니다. 휴장이 아니라면 베트맨 사이트 구조가 바뀌었을 수 있습니다.")
+    else:
+        st.pop("idle_since", None)
     if fails >= 2:
         out.append(f"베트맨 경기 수집이 {fails}번 연속 실패했습니다. 베트맨 사이트나 데이터 주소가 바뀌었을 수 있습니다. "
                    "진단 기록: `data/state/betman_debug.json`, `data/state/betman_schema.json`. 그동안 사이트는 마지막 리포트를 그대로 보여줍니다.")
@@ -45,7 +53,7 @@ def problems() -> list[str]:
         except Exception:  # noqa: BLE001
             pass
     typical = sorted(recent)[len(recent) // 2] if recent else 0
-    weird = (not betman_failed) and typical >= 10 and (len(ms) == 0 or len(ms) < typical * 0.15 or (ms and analyzed / len(ms) < 0.3))
+    weird = (not betman_failed) and (not idle) and typical >= 10 and (len(ms) == 0 or len(ms) < typical * 0.15 or (ms and analyzed / len(ms) < 0.3))
     st["weird"] = st.get("weird", 0) + 1 if weird else 0
     if st["weird"] >= 3:
         out.append(f"베트맨에서 읽은 경기가 평소와 크게 다릅니다(지금 {len(ms)}개, 분석 {analyzed}개 / 평소 {typical}개 안팎, {st['weird']}번 연속). "
@@ -67,12 +75,17 @@ def problems() -> list[str]:
         out += selfcheck.site_problems(st["site_expect"])
     st["site_expect"] = config.today_kst()
     th = read_json(config.STATE / "threads.json", {}) or {}
+    tk = read_json(config.STATE / "threads_token.json", {}) or {}
     posted = th.get("posted") or []
     if posted:
         first = st.setdefault("threads_first", posted[0][:10])
-        if (date.fromisoformat(config.today_kst()) - date.fromisoformat(first)).days >= 53:
-            out.append("쓰레드 토큰이 곧(60일) 만료됩니다. Meta 개발자 화면에서 '액세스 토큰 생성'으로 새 토큰을 만들어 "
-                       "GitHub Secrets 의 `THREADS_TOKEN` 값을 바꾼 뒤, 이 이슈에 '토큰 갱신' 이라고 댓글을 남기고 닫아 주세요.")
+        days = (date.fromisoformat(config.today_kst()) - date.fromisoformat(first)).days
+        if tk.get("src") == "worker" and tk.get("err"):
+            out.append(f"쓰레드 토큰 자동 연장에 오류가 있습니다: {tk['err'][:120]}. 토큰이 만료되기 전에 Meta 개발자 화면에서 새 토큰을 만들어 "
+                       "GitHub Secrets 의 `THREADS_TOKEN` 값을 바꿔 주세요.")
+        elif tk.get("src") != "worker" and days >= 53:
+            out.append("쓰레드 토큰 자동 연장(Cloudflare Worker)을 쓰지 못하고 있어, 첫 토큰이 곧(60일) 만료됩니다. "
+                       "Meta 개발자 화면에서 새 토큰을 만들어 GitHub Secrets 의 `THREADS_TOKEN` 값을 바꿔 주세요.")
     from .sources import odds_api
     rem = odds_api._remaining()
     if rem is not None and rem < odds_api._days_left() * odds_api.DAILY_NEED * 0.5:

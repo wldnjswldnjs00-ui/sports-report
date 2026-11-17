@@ -209,10 +209,19 @@ def parse_round(payload: dict, gm_ts: str) -> list[dict[str, Any]]:
     return out
 
 
+class NoSale(RuntimeError):
+    """베트맨은 정상 응답했지만 지금 발매 중인 회차·공개된 배당이 없다(회차 사이·발매 시작 전). 고장이 아니다."""
+
+
 def fetch(day: str) -> list[dict[str, Any]]:
     _debug.clear()
     try:
         out = _fetch(day)
+    except NoSale:
+        dbg = config.STATE / "betman_debug.json"
+        if dbg.exists():
+            dbg.unlink()
+        raise
     except Exception as e:
         _debug["error"] = f"{type(e).__name__}: {e}"
         _debug["at"] = config.now_kst().isoformat(timespec="seconds")
@@ -351,7 +360,8 @@ def _fetch(day: str) -> list[dict[str, Any]]:
         if rounds:
             write_json(ROUNDS_STATE, {"rounds": sorted({str(g["gmTs"]) for g in rounds}), "at": config.now_kst().isoformat(timespec="seconds")})
     if not rounds:
-        raise RuntimeError("발매 중인 프로토 승부식 회차 없음")
+        ok = bool(listing) and str(((listing.get("rsMsg") or {}).get("statusCode")) or "S") == "S"
+        raise (NoSale if ok else RuntimeError)("발매 중인 프로토 승부식 회차 없음")
 
     out: list[dict[str, Any]] = []
     PENDING.clear()
@@ -370,7 +380,7 @@ def _fetch(day: str) -> list[dict[str, Any]]:
         out.extend(parse_round(doc, ts))
         PENDING.extend(parse_pending(doc))
     if not out:
-        raise RuntimeError("발매 회차는 있으나 배당이 공개된 경기가 없음(발매 시작 전일 수 있음)")
+        raise NoSale("발매 회차는 있으나 배당이 공개된 경기가 없음(발매 시작 전)")
     return [m for m in out if in_horizon(m["kickoff"], day)]
 
 

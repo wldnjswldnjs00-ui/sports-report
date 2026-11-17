@@ -55,6 +55,9 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
         try:
             markets = betman.fetch(day)
             status["betman"] = f"{len(markets)}개 수집"
+        except betman.NoSale as e:
+            log.info("베트맨 발매 대기: %s", e)
+            status["betman"] = "발매 대기"
         except Exception as e:  # noqa: BLE001
             log.warning("베트맨 수집 실패: %s", e)
             status["betman"] = f"실패: {type(e).__name__}"

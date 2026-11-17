@@ -10,7 +10,7 @@ import logging
 import os
 
 from . import config
-from .util import http
+from .util import http, write_json
 
 log = logging.getLogger("engine.threads_token")
 AUD = "sports-report-worker"
@@ -29,6 +29,14 @@ def _oidc() -> str | None:
     return (r.json() or {}).get("value")
 
 
+def _note(src: str, err: str = "") -> None:
+    """어디서 토큰을 받았는지만 기록(값은 저장하지 않음). 자동 점검이 연장 실패를 알아챌 때 쓴다."""
+    try:
+        write_json(config.STATE / "threads_token.json", {"src": src, "err": err[:200], "at": config.now_kst().isoformat(timespec="minutes")})
+    except Exception:  # noqa: BLE001
+        pass
+
+
 def current() -> str:
     global _cached
     if _cached:
@@ -45,10 +53,12 @@ def current() -> str:
             if d.get("token"):
                 if d.get("error"):
                     log.warning("Worker 토큰 연장 오류 기록 있음: %s", str(d["error"])[:160])
+                _note("worker", str(d.get("error") or ""))
                 _cached = d["token"]
                 return _cached
             log.info("Worker 토큰 응답 %s: Secrets 토큰 사용", r.status_code)
     except Exception as e:  # noqa: BLE001
         log.info("Worker 토큰 확인 실패(%s): Secrets 토큰 사용", type(e).__name__)
+    _note("seed")
     _cached = seed
     return seed
