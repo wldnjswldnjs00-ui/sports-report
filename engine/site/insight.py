@@ -50,6 +50,14 @@ def _avg(xs):
     return sum(xs) / len(xs) if xs else None
 
 
+def recent5(t: dict | None, kickoff: str) -> str | None:
+    """최근 5경기 평균 득실(경기 시작 전 경기만). 5경기 미만이면 None."""
+    gs = [x for x in (t or {}).get("games") or [] if x["date"] < str(kickoff)[:10]][:5]
+    if len(gs) < 5:
+        return None
+    return _f(sum(x["me"] - x["op"] for x in gs) / 5)
+
+
 def metrics(t: dict, sport: str, kickoff: str) -> dict | None:
     gs = [x for x in (t or {}).get("games") or [] if x["date"] < kickoff[:10]][:20]
     if len(gs) < MIN_N:
@@ -96,7 +104,7 @@ def _ago(v: int) -> str:
 
 
 def _f(x, d=1):
-    return f"{x:+.{d}f}"
+    return f"{0:.{d}f}" if abs(x) < 0.5 * 10 ** -d else f"{x:+.{d}f}"
 
 
 def build(g: dict, th: dict | None, ta: dict | None) -> dict | None:

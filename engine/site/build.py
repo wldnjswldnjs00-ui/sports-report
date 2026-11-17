@@ -504,11 +504,14 @@ def build() -> None:
             log.exception("숫자 비교 실패")
             return None
 
+    def recent5(g, side):
+        return INS.recent5(team_info(g["sport"], g[side]), g["kickoff"])
+
     def match_url(m):
         return murl.get((m.get("home"), m.get("away"), str(m.get("kickoff"))[:10])) if m else None
 
     ctx = dict(perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues,
-               team_link=team_link, match_url=match_url, team_info=team_info, box_of=box_of, insights=insights)
+               team_link=team_link, match_url=match_url, team_info=team_info, box_of=box_of, insights=insights, recent5=recent5)
     urls: list[tuple[str, str]] = []
 
     def page(tpl: str, out: str, **kw):
