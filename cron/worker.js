@@ -294,7 +294,7 @@ export default {
       // 예약 실행이 살아 있는지 확인용(비밀 값 없음): 마지막 깨어남 시각과 마지막 시작 기록
       const hb = env.PUSH ? await env.PUSH.get("hb") : null;
       const log = env.PUSH ? await env.PUSH.get("cronlog", "json") : null;
-      return json({ ok: true, cron_last: hb, last: log, kv: !!env.PUSH, gh: !!env.GH_TOKEN });
+      return json({ ok: true, cron_last: hb, last: log, kv: !!env.PUSH, gh: !!env.GH_TOKEN, names: Object.keys(env).sort() }); // 이름만(값 없음)
     }
     if (path === "/api/tt") {
       try { return await ttApi(request, env); } catch (e) { return json({ ok: false }, 500); }
