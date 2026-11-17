@@ -558,7 +558,27 @@ def build() -> None:
     for lg in leagues.values():
         page("league.html", f"/leagues/{lg['slug']}/", lg=lg,
              jsonld=_jsonld(_crumbs([("홈", "/"), ("리그별 기록", "/leagues/"), (lg["name"], f"/leagues/{lg['slug']}/")])))
-    page("performance.html", "/performance/")
+    # 성과: 종목별·마켓별·확률 구간별(발행된 모든 픽, 적중특례 제외)
+    brk = {"sport": defaultdict(lambda: [0, 0, 0.0]), "market": defaultdict(lambda: [0, 0, 0.0]), "band": defaultdict(lambda: [0, 0, 0.0])}
+    for r in reports:
+        outs = r.get("outcomes") or {}
+        for m in r.get("markets", []):
+            a, o = m.get("analysis"), outs.get(m["id"])
+            if not a or not o or o == "VOID" or m.get("preview"):
+                continue
+            hit, pp = int(o == a["pick"]), a["pick_prob"]
+            band = "70% 이상" if pp >= 0.7 else ("60~70%" if pp >= 0.6 else ("50~60%" if pp >= 0.5 else "50% 미만"))
+            mk = MARKET_LABEL.get("WL" if m["market"] == "1X2" else m["market"], m["market"])
+            for k, v in (("sport", SPORT_LABEL.get(m["sport"], m["sport"])), ("market", mk), ("band", band)):
+                c = brk[k][v]
+                c[0] += 1
+                c[1] += hit
+                c[2] += pp
+    perf_brk = {k: [{"name": n, "n": c[0], "hit": c[1] / c[0], "exp": c[2] / c[0]} for n, c in sorted(v.items(), key=lambda kv: -kv[1][0])]
+                for k, v in brk.items()}
+    order = ["70% 이상", "60~70%", "50~60%", "50% 미만"]
+    perf_brk["band"].sort(key=lambda x: order.index(x["name"]) if x["name"] in order else 9)
+    page("performance.html", "/performance/", brk=perf_brk)
     page("tool.html", "/tool/", jsonld=_jsonld({'@context': 'https://schema.org', '@type': 'FAQPage', 'mainEntity': [{'@type': 'Question', 'name': '켈리 기준(Kelly Criterion)이란 무엇인가요?', 'acceptedAnswer': {'@type': 'Answer', 'text': '가진 자금 중 몇 %를 걸어야 장기적으로 자금이 가장 빨리 불어나는지 알려주는 공식입니다. 1956년 벨 연구소의 존 L. 켈리 주니어가 발표했습니다. 베팅 비율 = (적중 확률 × 배당 − 1) ÷ (배당 − 1).'}}, {'@type': 'Question', 'name': '왜 켈리 금액의 1/4만 거나요?', 'acceptedAnswer': {'@type': 'Answer', 'text': '스포츠 경기의 적중 확률은 추정값이라 오차가 있습니다. 1/4 켈리는 성장 속도를 약 44%로 낮추는 대신 자금 변동을 1/4로 줄여 안전합니다. 이 계산기는 1/4 켈리에 시드의 10%와 1회 100,000원 상한을 둡니다.'}}, {'@type': 'Question', 'name': '켈리 기준으로 시드를 키우면 어디까지 커지나요?', 'acceptedAnswer': {'@type': 'Answer', 'text': '시드 × 베팅 비율이 베트맨 1회차 구매 한도 100,000원에 닿을 때까지는 거는 금액이 시드와 함께 커져 복리로 불어납니다(예: 비율 5%면 시드 200만 원까지). 그 뒤로는 한 회차 금액이 10만 원에서 멈추므로 기대 수익은 회차 수(1주일 약 3회차)만큼만 늘어납니다.'}}, {'@type': 'Question', 'name': '켈리 크리테온과 켈리 기준은 같은 말인가요?', 'acceptedAnswer': {'@type': 'Answer', 'text': "네, 모두 Kelly Criterion을 가리킵니다. 영어 발음은 '크라이테리언'에 가깝고, 우리말로는 '켈리 기준'이 가장 많이 쓰입니다."}}]}))
     for name in ("method", "guide", "about", "privacy", "terms", "contact", "responsible", "odds", "support"):
         page(f"{name}.html", f"/{name}/")

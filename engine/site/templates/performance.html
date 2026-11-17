@@ -23,6 +23,21 @@
   <p class="fine">브라이어 점수는 낮을수록 좋습니다. 매번 반반으로 찍으면 0.25가 나옵니다.</p>
 </section>
 
+{% if brk and brk.sport %}
+<section class="wrap block" data-reveal>
+  <h2 class="sub">종목·마켓·확률 구간별</h2>
+  <div class="pf-grid">
+  {% for key, label in [('sport', '종목'), ('market', '마켓'), ('band', '추정 확률 구간')] %}{% if brk[key] %}
+    <div class="tblw"><table class="tbl">
+      <thead><tr><th>{{ label }}</th><th class="n">픽</th><th class="n">예상</th><th class="n">실제</th></tr></thead>
+      <tbody>{% for x in brk[key] %}<tr><td>{{ x.name }}</td><td class="n">{{ x.n }}</td><td class="n muted">{{ x.exp|pct(0) }}</td><td class="n"><b>{{ x.hit|pct(0) }}</b></td></tr>{% endfor %}</tbody>
+    </table></div>
+  {% endif %}{% endfor %}
+  </div>
+  <p class="fine">예상은 모델이 매긴 확률의 평균, 실제는 실제로 맞은 비율입니다. 두 숫자가 가까울수록 확률이 정직하다는 뜻입니다. 표본이 적은 칸은 크게 흔들릴 수 있습니다.</p>
+</section>
+{% endif %}
+
 <section class="wrap block" data-reveal>
   <h2 class="sub">확률 보정 곡선</h2>
   <p class="fine">가로축은 모델이 매긴 확률, 세로축은 실제로 맞은 비율입니다. 점이 대각선에 붙을수록 정직한 확률입니다. 점 크기는 표본 수.</p>

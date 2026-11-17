@@ -900,3 +900,4 @@ i.t-pos, i.t-neg, i.t-draw { font-style: normal; }
 .vs-tbl td.n .fseq { justify-content: flex-end; }
 .vs-tbl .fseq { flex-wrap: nowrap; gap: 3px; }
 .vs-tbl .fseq i { width: 20px; height: 20px; font-size: 10.5px; }
+.pf-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
