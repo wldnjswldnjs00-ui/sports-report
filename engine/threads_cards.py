@@ -195,6 +195,7 @@ def card_cta(d: str) -> str:
     return ('<div class="card cta"><p class="slogan">데이터와 수학으로, 분석을 똑똑하게</p><h2>숨긴 경기와<br>전체 조합은 여기서</h2>'
             '<div class="url"><span class="lockic">🔗</span>스포츠분석<b>.kr</b></div>'
             '<p class="free">모든 분석과 조합은 <b>무료</b> · 회원가입 없이 바로</p>'
+            '<p>프로필 링크를 누르면 바로 이동합니다</p>'
             '<p>매일 밤 10시 · 아침 7시 업데이트</p>'
             '<div class="care"><b>잃어도 괜찮은 소액으로, 재미로만 즐기세요.</b><br>분석은 참고용이며 적중을 보장하지 않습니다. 만 19세 이상 · 베트맨 공식 채널에서만<br>도박 문제 상담 1336 (24시간 무료)</div></div>')
 

@@ -530,6 +530,12 @@ def build() -> None:
     for name in ("method", "guide", "about", "privacy", "terms", "contact", "responsible", "odds", "support"):
         page(f"{name}.html", f"/{name}/")
 
+    # 쓰레드 프로필 링크 전용 주소: 방문 통계에서 /t/ 조회수 = 쓰레드에서 넘어온 수. 바로 첫 화면으로 보낸다(검색 제외)
+    _write(config.DIST / "t" / "index.html",
+           '<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="robots" content="noindex">'
+           f'<link rel="canonical" href="{config.SITE_URL}/"><meta http-equiv="refresh" content="2;url=/">'
+           '<title>스포츠분석.kr</title><style>body{margin:0;background:#0f1117;color:#8a90a6;font:14px sans-serif;display:grid;place-items:center;height:100vh}</style></head>'
+           '<body>스포츠분석.kr로 이동합니다…<script>addEventListener("load",function(){setTimeout(function(){location.replace("/")},500)})</script></body></html>')
     _write(config.DIST / "404.html", env.get_template("404.html").render(**ctx, path="/404"))
     write_json(config.DIST / "data" / "today.json", _slip_payload(latest))
     write_json(config.DIST / "data" / "xbook.json", _xbook_payload(latest))
