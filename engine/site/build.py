@@ -682,11 +682,4 @@ def build() -> None:
         pub = config.ADSENSE_CLIENT.replace("ca-", "")
         _write(config.DIST / "ads.txt", f"google.com, {pub}, DIRECT, f08c47fec0942fa0\n")
     _write(config.DIST / "_headers", (HERE / "headers.txt").read_text(encoding="utf-8"))
-    # 배포 환경 점검(값은 절대 기록하지 않고 '있음/없음'만): Cloudflare 빌드에 어떤 설정이 들어오는지 확인용
-    import os as _os
-    write_json(config.DIST / "data" / "buildenv.json", {
-        "at": config.now_kst().isoformat(timespec="minutes"),
-        "cf_build": bool(_os.getenv("WORKERS_CI") or _os.getenv("CF_PAGES") or _os.getenv("CLOUDFLARE_ACCOUNT_ID")),
-        "GH_TOKEN": bool(_os.getenv("GH_TOKEN")), "CLOUDFLARE_API_TOKEN": bool(_os.getenv("CLOUDFLARE_API_TOKEN")),
-        "names": sorted(k for k in _os.environ if k.startswith(("GH_", "CF_", "CLOUDFLARE_", "WORKERS_")))})
     log.info("빌드 완료: %d 페이지 → %s", len(urls), config.DIST)
