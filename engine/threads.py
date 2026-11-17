@@ -1,7 +1,7 @@
 """Threads 자동 게시(선택). THREADS_TOKEN 이 있을 때만 올린다(THREADS_USER_ID 는 없으면 토큰으로 알아낸다).
 
 하루 두 번, 카드 이미지 묶음(캐러셀)으로:
-  - 밤 22:00 (night)   : 다음 구매일 — 적중 확률 높은 경기 · 역배 후보 · 공격형 · 로또폴더 · 사이트 주소
+  - 저녁 19:00 (night)  : 다음 구매일 — 적중 확률 높은 경기 · 역배 후보 · 공격형 · 로또폴더 · 사이트 주소
   - 아침 07:00 (morning): 같은 구매일, 밤 글에 없던 다른 경기·조합으로
 카드마다 일부 경기를 가린다(적중·역배·공격형 2개, 로또폴더 4개). 가린 경기는 사이트에서만 보인다. 배당은 베트맨(구매) 배당.
 
@@ -29,18 +29,19 @@ KEEP_DAYS = 3
 
 
 def slot_now() -> str | None:
+    """저녁 글(19:00, 늦으면 새벽 3시까지)·아침 글(07:00, 늦으면 정오까지). 예비 실행이 늦게 돌아도 그 시간대 글로 올라간다."""
     h = config.now_kst().hour
-    if h >= 21 or h < 3:
+    if h >= 17 or h < 3:
         return "night"
-    if 5 <= h < 11:
+    if 6 <= h < 12:
         return "morning"
     return None
 
 
 def day_for(slot: str) -> str:
-    """밤 게시는 다음 구매일(22시 기준 내일, 실행이 늦어 23시를 넘겨도 같은 날), 아침 게시는 오늘 구매일."""
+    """저녁 게시는 다음 구매일(17시~새벽 3시 어느 때 돌아도 같은 날), 아침 게시는 오늘 구매일."""
     if slot == "night":
-        return (config.now_kst() + timedelta(hours=3)).strftime("%Y-%m-%d")
+        return (config.now_kst() + timedelta(hours=7)).strftime("%Y-%m-%d")
     return config.today_kst()
 
 
