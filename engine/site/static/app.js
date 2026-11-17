@@ -76,22 +76,60 @@
   }
   tiltCards(doc);
 
-  /* 레일: 10초마다 자동으로 다음 카드, 손대면 멈춤 */
+  /* 레일: 10초마다 자동으로 다음 카드, 손대면 멈춤. 아래 점·화살표로 몇 장인지와 위치를 보여 준다 */
   $$("[data-rail]").forEach(function (rail) {
-    var n = rail.children.length, hold = false, timer;
-    if (n < 2 || reduce) return;
-    function next() {
-      if (hold || doc.hidden) return;
-      var w = rail.clientWidth + 16, i = Math.round(rail.scrollLeft / w);
-      rail.scrollTo({ left: ((i + 1) % n) * w, behavior: "smooth" });
+    var hold = false, timer;
+    var nav = doc.createElement("div"); nav.className = "rail-nav";
+    var prev = doc.createElement("button"), dots = doc.createElement("div"), nxt = doc.createElement("button");
+    prev.type = nxt.type = "button"; prev.className = "rail-btn"; nxt.className = "rail-btn";
+    prev.setAttribute("aria-label", "이전 경기"); nxt.setAttribute("aria-label", "다음 경기");
+    prev.innerHTML = "&#8249;"; nxt.innerHTML = "&#8250;"; dots.className = "rail-dots";
+    nav.appendChild(prev); nav.appendChild(dots); nav.appendChild(nxt);
+    rail.parentNode.insertBefore(nav, rail.nextSibling);
+    function cards() { return Array.prototype.slice.call(rail.children); }
+    function cur() {
+      var c = cards(), mid = rail.scrollLeft + rail.clientWidth / 2, best = 0, bd = 1e9;
+      c.forEach(function (el, i) { var d = Math.abs(el.offsetLeft - rail.offsetLeft + el.offsetWidth / 2 - mid); if (d < bd) { bd = d; best = i; } });
+      return best;
     }
+    function go(i) {
+      var c = cards(); if (!c.length) return;
+      i = (i + c.length) % c.length;
+      var el = c[i];
+      rail.scrollTo({ left: el.offsetLeft - rail.offsetLeft - (rail.clientWidth - el.offsetWidth) / 2, behavior: reduce ? "auto" : "smooth" });
+    }
+    function paint() {
+      var c = cards(), i = cur();
+      nav.hidden = c.length < 2;
+      if (dots.children.length !== c.length) {
+        dots.innerHTML = "";
+        c.forEach(function (_, k) {
+          var d = doc.createElement("button"); d.type = "button"; d.className = "rail-dot";
+          d.setAttribute("aria-label", (k + 1) + "번째 경기");
+          d.addEventListener("click", function () { go(k); });
+          dots.appendChild(d);
+        });
+      }
+      Array.prototype.forEach.call(dots.children, function (d, k) { d.classList.toggle("is-on", k === i); d.setAttribute("aria-current", k === i ? "true" : "false"); });
+      var cnt = $("[data-rail-count]"); if (cnt) cnt.textContent = c.length;
+    }
+    var st;
+    rail.addEventListener("scroll", function () { clearTimeout(st); st = setTimeout(paint, 60); }, { passive: true });
+    prev.addEventListener("click", function () { go(cur() - 1); });
+    nxt.addEventListener("click", function () { go(cur() + 1); });
+    paint();
+    setInterval(paint, 60000); // 시작한 경기가 빠지면 점 수도 맞춘다
+    if (reduce) return;
+    function next() { if (hold || doc.hidden || cards().length < 2) return; go(cur() + 1); }
     var inside = false, touching = false, wheelT;
     function sync() {
       var was = hold; hold = inside || touching;
       if (was && !hold) { clearInterval(timer); timer = setInterval(next, 10000); } // 손을 뗀 뒤 10초를 처음부터 다시 센다
     }
-    rail.addEventListener("mouseenter", function () { inside = true; sync(); });
-    rail.addEventListener("mouseleave", function () { inside = false; sync(); });
+    [rail, nav].forEach(function (el) {
+      el.addEventListener("mouseenter", function () { inside = true; sync(); });
+      el.addEventListener("mouseleave", function () { inside = false; sync(); });
+    });
     rail.addEventListener("focusin", function () { inside = true; sync(); });
     rail.addEventListener("focusout", function () { inside = false; sync(); });
     rail.addEventListener("touchstart", function () { touching = true; sync(); }, { passive: true });

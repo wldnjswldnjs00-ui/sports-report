@@ -998,3 +998,17 @@ body { word-break: keep-all; overflow-wrap: break-word; }
 .tbl td { vertical-align: middle; }
 .tbl td[rowspan] { vertical-align: top; }
 .tbl td.n { font-variant-numeric: tabular-nums; }
+
+/* 적중 확률 높은 경기 슬라이드: 다음 카드가 살짝 보이게, 점·화살표 */
+@media (max-width: 720px) {
+  .tp-rail { gap: 12px; }
+  .tp-rail .top-pick { flex: 0 0 88%; width: 88%; }
+}
+.tp-rail { padding-bottom: 12px; }
+.rail-nav { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 4px; }
+.rail-nav[hidden] { display: none; }
+.rail-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); color: var(--ink); font-size: 22px; line-height: 1; cursor: pointer; display: grid; place-items: center; padding-bottom: 3px; }
+.rail-btn:hover { border-color: var(--ink-3); }
+.rail-dots { display: flex; gap: 8px; align-items: center; }
+.rail-dot { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 4px; background: var(--line); cursor: pointer; transition: width .25s var(--ease), background .25s; }
+.rail-dot.is-on { width: 22px; background: var(--ink); }

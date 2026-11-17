@@ -43,7 +43,7 @@
 {% set tps = r.top_picks or ([r.top_pick] if r.top_pick else []) %}
 {% if tps %}
 <section class="wrap block tp-wrap" data-reveal>
-  <header class="block-head"><h2>적중 확률이 높아 보이는 경기</h2></header>
+  <header class="block-head"><h2>적중 확률이 높아 보이는 경기</h2><p><span data-rail-count>{{ tps|length }}</span>경기 · 옆으로 넘겨 보세요</p></header>
   <div class="tp-rail" data-rail tabindex="0" aria-label="적중 확률이 높아 보이는 경기">
   {% for t in tps %}{% set tm = mk.get(t.market_id) %}{% if tm %}
     <article class="top-pick" data-ko="{{ t.kickoff }}">
