@@ -133,10 +133,12 @@ def post() -> bool:
         except Exception as e:  # noqa: BLE001
             r = getattr(e, "response", None)
             errs.append(f"{getattr(r, 'status_code', '?')} {(r.text if r is not None else str(e))[:200]}".replace(tk, "***"))
+    uid = os.getenv("THREADS_USER_ID", "").strip()
     if not me:
         log.warning("Threads 토큰 확인 실패(토큰 만료·권한 문제일 수 있음): %s", " | ".join(errs))
-        return False
-    uid = os.getenv("THREADS_USER_ID", "").strip()
+        if not uid.isdigit():
+            return False
+        token = cands[0]  # 확인만 막혔을 수 있으니 사용자 ID 로 게시는 시도한다
     if not uid.isdigit():
         uid = me
     urls = [f"{config.SITE_URL}/threads/{f}" for f in pend["files"]]
