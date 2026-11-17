@@ -297,7 +297,7 @@ export default {
       return json({ ok: true, cron_last: hb, last: log, kv: !!env.PUSH, gh: !!env.GH_TOKEN, names: Object.keys(env).sort() }); // 이름만(값 없음)
     }
     if (path === "/api/tt") {
-      try { return await ttApi(request, env); } catch (e) { return json({ ok: false }, 500); }
+      try { return await ttApi(request, env); } catch (e) { return json({ ok: false, err: String(e && e.message || e).slice(0, 160) }, 500); } // 원인 확인용(비밀 값 없음)
     }
     if (path.startsWith("/api/push/")) {
       try { return await api(request, env, path); } catch (e) { return json({ ok: false }, 500); }
