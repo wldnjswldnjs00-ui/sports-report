@@ -18068,5 +18068,489 @@
    "Indiana Pacers"
   ],
   "src": "ESPN"
+ },
+ "2026-11-17|그리스|세르비아": {
+  "k": "sc",
+  "t": [
+   1,
+   0
+  ],
+  "g": [
+   [
+    "69'",
+    "h",
+    "Georgios Masouras",
+    ""
+   ]
+  ],
+  "cols": [
+   "전반",
+   "후반"
+  ],
+  "h": [
+   0,
+   1
+  ],
+  "a": [
+   0,
+   0
+  ],
+  "names": [
+   "Greece",
+   "Serbia"
+  ],
+  "src": "ESPN"
+ },
+ "2026-11-17|독일|네덜란드": {
+  "k": "sc",
+  "t": [
+   5,
+   0
+  ],
+  "g": [
+   [
+    "41'",
+    "h",
+    "Derry Scherhant",
+    ""
+   ],
+   [
+    "60'",
+    "h",
+    "Florian Wirtz",
+    ""
+   ],
+   [
+    "65'",
+    "h",
+    "Nico Schlotterbeck",
+    ""
+   ],
+   [
+    "71'",
+    "h",
+    "Florian Wirtz",
+    ""
+   ],
+   [
+    "77'",
+    "h",
+    "Brajan Gruda",
+    ""
+   ]
+  ],
+  "cols": [
+   "전반",
+   "후반"
+  ],
+  "h": [
+   1,
+   4
+  ],
+  "a": [
+   0,
+   0
+  ],
+  "names": [
+   "Germany",
+   "Netherlands"
+  ],
+  "src": "ESPN"
+ },
+ "2026-11-17|리투아니아|리히텐슈타인": {
+  "k": "sc",
+  "t": [
+   2,
+   1
+  ],
+  "g": [
+   [
+    "16'",
+    "h",
+    "Eligijus Jankauskas",
+    ""
+   ],
+   [
+    "50'",
+    "h",
+    "Manfredas Ruzgis",
+    "PK"
+   ],
+   [
+    "60'",
+    "a",
+    "Aron Sele",
+    ""
+   ]
+  ],
+  "cols": [
+   "전반",
+   "후반"
+  ],
+  "h": [
+   1,
+   1
+  ],
+  "a": [
+   0,
+   1
+  ],
+  "names": [
+   "Lithuania",
+   "Liechtenstein"
+  ],
+  "src": "ESPN"
+ },
+ "2026-11-17|북마케도니아|슬로베니아": {
+  "k": "sc",
+  "t": [
+   0,
+   3
+  ],
+  "g": [
+   [
+    "29'",
+    "a",
+    "Danijel Sturm",
+    ""
+   ],
+   [
+    "66'",
+    "a",
+    "David Zec",
+    ""
+   ],
+   [
+    "90'+1'",
+    "a",
+    "Danijel Sturm",
+    ""
+   ]
+  ],
+  "cols": [
+   "전반",
+   "후반"
+  ],
+  "h": [
+   0,
+   0
+  ],
+  "a": [
+   1,
+   2
+  ],
+  "names": [
+   "North Macedonia",
+   "Slovenia"
+  ],
+  "src": "ESPN"
+ },
+ "2026-11-17|스위스|스코틀랜드": {
+  "k": "sc",
+  "t": [
+   4,
+   0
+  ],
+  "g": [
+   [
+    "22'",
+    "h",
+    "Lewis Ferguson",
+    "자책"
+   ],
+   [
+    "47'",
+    "h",
+    "Winsley Boteli",
+    ""
+   ],
+   [
+    "51'",
+    "h",
+    "Alvyn Sanches",
+    ""
+   ],
+   [
+    "89'",
+    "h",
+    "Zeki Amdouni",
+    ""
+   ]
+  ],
+  "cols": [
+   "전반",
+   "후반"
+  ],
+  "h": [
+   1,
+   3
+  ],
+  "a": [
+   0,
+   0
+  ],
+  "names": [
+   "Switzerland",
+   "Scotland"
+  ],
+  "src": "ESPN"
+ },
+ "2026-11-17|아이슬란드|룩셈부르크": {
+  "k": "sc",
+  "t": [
+   3,
+   0
+  ],
+  "g": [
+   [
+    "25'",
+    "h",
+    "Brynjólfur Willumsson",
+    ""
+   ],
+   [
+    "37'",
+    "h",
+    "Andri Gudjohnsen",
+    "PK"
+   ],
+   [
+    "50'",
+    "h",
+    "Mikael Ellertsson",
+    ""
+   ]
+  ],
+  "cols": [
+   "전반",
+   "후반"
+  ],
+  "h": [
+   2,
+   1
+  ],
+  "a": [
+   0,
+   0
+  ],
+  "names": [
+   "Iceland",
+   "Luxembourg"
+  ],
+  "src": "ESPN"
+ },
+ "2026-11-17|안도라|아제르바이잔": {
+  "k": "sc",
+  "t": [
+   1,
+   3
+  ],
+  "g": [
+   [
+    "2'",
+    "a",
+    "Esqin Ahmadov",
+    ""
+   ],
+   [
+    "47'",
+    "a",
+    "Musa Qurbanly",
+    ""
+   ],
+   [
+    "55'",
+    "h",
+    "Ricard Fernández",
+    ""
+   ],
+   [
+    "70'",
+    "a",
+    "Toral Bayramov",
+    "PK"
+   ]
+  ],
+  "cols": [
+   "전반",
+   "후반"
+  ],
+  "h": [
+   0,
+   1
+  ],
+  "a": [
+   1,
+   2
+  ],
+  "names": [
+   "Andorra",
+   "Azerbaijan"
+  ],
+  "src": "ESPN"
+ },
+ "2026-11-17|에스토니아|불가리아": {
+  "k": "sc",
+  "t": [
+   2,
+   1
+  ],
+  "g": [
+   [
+    "8'",
+    "h",
+    "Patrik Kristal",
+    ""
+   ],
+   [
+    "45'+1'",
+    "a",
+    "Svetoslav Kovachev",
+    ""
+   ],
+   [
+    "60'",
+    "h",
+    "Kevor Palumets",
+    ""
+   ]
+  ],
+  "cols": [
+   "전반",
+   "후반"
+  ],
+  "h": [
+   1,
+   1
+  ],
+  "a": [
+   1,
+   0
+  ],
+  "names": [
+   "Estonia",
+   "Bulgaria"
+  ],
+  "src": "ESPN"
+ },
+ "2026-11-17|지브롤터|몰타": {
+  "k": "sc",
+  "t": [
+   1,
+   1
+  ],
+  "g": [
+   [
+    "19'",
+    "a",
+    "Kurt Shaw",
+    ""
+   ],
+   [
+    "81'",
+    "h",
+    "Carlos Peliza Richards",
+    ""
+   ]
+  ],
+  "cols": [
+   "전반",
+   "후반"
+  ],
+  "h": [
+   0,
+   1
+  ],
+  "a": [
+   1,
+   0
+  ],
+  "names": [
+   "Gibraltar",
+   "Malta"
+  ],
+  "src": "ESPN"
+ },
+ "2026-11-17|카자흐스탄|슬로바키아": {
+  "k": "sc",
+  "t": [
+   2,
+   2
+  ],
+  "g": [
+   [
+    "29'",
+    "h",
+    "Islam Chesnokov",
+    ""
+   ],
+   [
+    "56'",
+    "a",
+    "Róbert Bozeník",
+    ""
+   ],
+   [
+    "65'",
+    "h",
+    "Yan Vorogovskiy",
+    ""
+   ],
+   [
+    "90'+5'",
+    "a",
+    "Adrian Kapralik",
+    ""
+   ]
+  ],
+  "cols": [
+   "전반",
+   "후반"
+  ],
+  "h": [
+   1,
+   1
+  ],
+  "a": [
+   0,
+   2
+  ],
+  "names": [
+   "Kazakhstan",
+   "Slovakia"
+  ],
+  "src": "ESPN"
+ },
+ "2026-11-17|페로제도|몰도바": {
+  "k": "sc",
+  "t": [
+   1,
+   0
+  ],
+  "g": [
+   [
+    "24'",
+    "h",
+    "Áki Debes Samuelsen",
+    ""
+   ]
+  ],
+  "cols": [
+   "전반",
+   "후반"
+  ],
+  "h": [
+   1,
+   0
+  ],
+  "a": [
+   0,
+   0
+  ],
+  "names": [
+   "Faroe Islands",
+   "Moldova"
+  ],
+  "src": "ESPN"
  }
 }
