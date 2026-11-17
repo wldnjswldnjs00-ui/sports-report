@@ -49,6 +49,79 @@ async function dispatch(slot, env) {
   }
 }
 
+// ───────── 빠짐 없이 실행하기(자가 복구) ─────────
+// 정해진 시각부터 WINDOW 분 동안, 깨어날 때마다 "그 시각의 실행이 GitHub 에 이미 있는지" 확인하고 없을 때만 시작한다.
+// - 한 번 깨어남이 빠지거나 GitHub 요청이 실패해도 5분 뒤 다시 시도 → 40분 안에 저절로 복구
+// - 이미 있으면 아무것도 안 함 → 여러 경로(Cloudflare 예약, 외부 호출 /api/tick, 예비 커밋)가 겹쳐도 한 번만 실행
+// - 끝까지 실행이 안 생기면 GitHub 이슈로 알린다(토큰에 Issues 권한이 있을 때, 이메일 알림)
+const WINDOW = 40; // 분
+const GH = (env) => ({
+  Authorization: `Bearer ${env.GH_TOKEN}`,
+  Accept: "application/vnd.github+json",
+  "X-GitHub-Api-Version": "2022-11-28",
+  "User-Agent": "sports-report-cron",
+});
+
+function dueSlots(now) {
+  // 지금 기준으로 창(시작~+WINDOW분) 안에 있는 시각들: [{slot, start(ms), age(분)}]
+  const out = [];
+  for (const [t, slot] of Object.entries(SCHEDULE)) {
+    const [h, m] = t.split(":").map(Number);
+    for (const dayShift of [0, -1]) {
+      const d = new Date(now);
+      d.setUTCDate(d.getUTCDate() + dayShift);
+      d.setUTCHours(h, m, 0, 0);
+      const age = (now - d.getTime()) / 60000;
+      if (age >= 0 && age < WINDOW) out.push({ slot, start: d.getTime(), age });
+    }
+  }
+  return out;
+}
+
+async function alreadyRan(slot, start, env) {
+  const since = new Date(start - 10 * 60000).toISOString().slice(0, 19) + "Z";
+  const url = `https://api.github.com/repos/${REPO}/actions/workflows/${WORKFLOW}/runs?per_page=30&created=%3E%3D${since}`;
+  const r = await fetch(url, { headers: GH(env) });
+  if (!r.ok) throw new Error(`실행 목록 ${r.status}`);
+  const runs = (await r.json()).workflow_runs || [];
+  return runs.some((x) => x.display_title === `매일 분석 · ${slot}` || x.name === `매일 분석 · ${slot}` ||
+    String((x.head_commit || {}).message || "").includes(`[slot:${slot}]`));
+}
+
+async function alert(slot, env) {
+  // 같은 날 같은 시각 경고는 한 번만(제목으로 중복 확인)
+  const title = `⚠️ 정기 실행 누락: ${slot} (${new Date().toISOString().slice(0, 10)})`;
+  const q = await fetch(`https://api.github.com/repos/${REPO}/issues?state=open&per_page=50`, { headers: GH(env) });
+  if (q.ok && (await q.json()).some((i) => i.title === title)) return;
+  const r = await fetch(`https://api.github.com/repos/${REPO}/issues`, {
+    method: "POST", headers: GH(env),
+    body: JSON.stringify({ title, body: `정해진 시각(${slot}, UTC)부터 ${WINDOW}분 동안 실행이 생기지 않았습니다.\n\nActions 탭에서 '매일 분석'을 직접 실행(Run workflow, slot 에 \`${slot}\`)하면 됩니다.\n원인 후보: GitHub 토큰 만료·권한, GitHub Actions 장애.` }),
+  });
+  console.log(`누락 경고 이슈 ${r.status}`);
+}
+
+async function ensure(now, env) {
+  if (!env.GH_TOKEN) { console.log("GH_TOKEN 없음"); return; }
+  for (const { slot, start, age } of dueSlots(now)) {
+    try {
+      if (await alreadyRan(slot, start, env)) continue;
+      if (age >= WINDOW - 5) { await alert(slot, env); continue; }
+      await dispatch(slot, env);
+    } catch (e) {
+      console.log(`확인 실패 ${slot}: ${e}`); // 다음 깨어남(5분 뒤)에 다시
+    }
+  }
+}
+
+// 외부 호출(/api/tick)이 너무 잦으면 무시(1분에 한 번만 처리)
+async function throttled() {
+  const key = new Request("https://tick.internal/last");
+  const c = caches.default;
+  if (await c.match(key)) return true;
+  await c.put(key, new Response("1", { headers: { "Cache-Control": "max-age=60" } }));
+  return false;
+}
+
 // ───────── 웹 푸시 ─────────
 const b64u = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 const enc = (s) => new TextEncoder().encode(s);
@@ -125,6 +198,12 @@ async function api(request, env, path) {
 export default {
   async fetch(request, env) {
     const path = new URL(request.url).pathname;
+    if (path === "/api/tick") {
+      // 예비 깨우기 주소: 외부 무료 예약 서비스가 5분마다 부르면, Cloudflare 예약이 멈춰도 같은 확인-후-실행이 돈다
+      if (await throttled()) return json({ ok: true, skipped: "too soon" });
+      await ensure(Date.now(), env);
+      return json({ ok: true });
+    }
     if (path.startsWith("/api/push/")) {
       try { return await api(request, env, path); } catch (e) { return json({ ok: false }, 500); }
     }
@@ -132,7 +211,7 @@ export default {
   },
   async scheduled(event, env, ctx) {
     const t = hhmm(event);
-    if (t === PUSH_AT) { ctx.waitUntil(sendAll(env)); return; }
-    if (SCHEDULE[t]) ctx.waitUntil(dispatch(SCHEDULE[t], env));
+    if (t === PUSH_AT) ctx.waitUntil(sendAll(env));
+    ctx.waitUntil(ensure(event.scheduledTime, env));
   },
 };
