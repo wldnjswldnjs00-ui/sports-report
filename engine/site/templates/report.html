@@ -11,6 +11,20 @@
 {% set mk = {} %}{% for m in r.markets %}{% set _ = mk.update({m.id: m}) %}{% endfor %}
 {% set ups = upset_map(r) %}
 
+{% if not is_home %}
+{% set ns_g = namespace(pn=0, ph=0) %}{% for m in r.markets %}{% set o = (r.outcomes or {}).get(m.id) %}{% if o and o != 'VOID' and is_pick(m.analysis) %}{% set ns_g.pn = ns_g.pn + 1 %}{% if o == m.analysis.pick %}{% set ns_g.ph = ns_g.ph + 1 %}{% endif %}{% endif %}{% endfor %}
+{% set rts = r.markets|map(attribute='round')|select|unique|list %}
+<section class="wrap page-head past-head">
+  <p class="kicker"><a href="/reports/">지난 리포트</a>{% if rts %} · 프로토 승부식 {% for ts in rts|sort %}<a href="/rounds/{{ ts }}/">{{ round_label(ts) }}</a>{{ ' · ' if not loop.last }}{% endfor %}{% endif %}</p>
+  <h1>{{ r.date|kdate }} 분석</h1>
+  <ul class="past-stats">
+    <li><b>{{ r.stats.matches }}</b><span>경기</span></li>
+    <li><b>{{ r.stats.combos }}</b><span>조합</span></li>
+    {% if ns_g.pn %}<li><b>{{ ns_g.ph }}/{{ ns_g.pn }}</b><span>픽 적중</span></li>{% else %}<li><b>채점 전</b><span>결과</span></li>{% endif %}
+  </ul>
+  <p class="stamp">{{ r.updated_at|kdt }} KST 기준 · 경기 시작 전 분석을 그대로 보관합니다</p>
+</section>
+{% else %}
 <section class="hero">
   <div class="hero-stage" data-stage data-balls='{{ balls|tojson }}' aria-hidden="true">
     <canvas class="stage-canvas"></canvas>
@@ -28,6 +42,7 @@
     <p class="stamp">{{ r.updated_at|kdt }} KST 업데이트</p>
   </div>
 </section>
+{% endif %}
 
 {% if not is_home %}
 <nav class="wrap daynav" aria-label="날짜 이동">

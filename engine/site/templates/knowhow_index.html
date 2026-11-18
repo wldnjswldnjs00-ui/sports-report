@@ -36,7 +36,6 @@
           <span class="kh-eye">{{ c.name }}{% if a.league %} · {{ a.league }}{% elif a.sport %} · {{ SPORT_LABEL.get(a.sport, '') }}{% endif %}</span>
           <span class="kh-title">{{ a.title }}</span>
           <span class="kh-sum">{{ a.lead }}</span>
-          <span class="kh-pill">읽기</span>
         </a>
         {% endfor %}
       </div>
@@ -70,7 +69,7 @@
     });
     head.textContent = (lg || (sp ? LB[sp] : "")) + (term ? (lg || sp ? " · " : "") + "'" + q.value.trim() + "'" : "") + " " + hit.length + "편";
     grid.innerHTML = hit.length ? hit.map(function (a, i) {
-      return '<a class="kh-card kh-sq tone-' + ((i + 1) % 6) + '" href="/knowhow/' + encodeURI(a.s) + '/"><span class="kh-eye">' + esc(a.g || LB[a.p] || a.c) + '</span><span class="kh-title">' + esc(a.t) + '</span><span class="kh-pill">읽기</span></a>';
+      return '<a class="kh-card kh-sq tone-' + ((i + 1) % 6) + '" href="/knowhow/' + encodeURI(a.s) + '/"><span class="kh-eye">' + esc(a.g || LB[a.p] || a.c) + '</span><span class="kh-title">' + esc(a.t) + '</span><span class="kh-sum">' + esc(a.l) + '</span></a>';
     }).join("") : '<p class="none">찾는 글이 없습니다. 리그 이름이나 정배·역배·언더오버 같은 주제로 찾아보세요.</p>';
   }
   document.querySelector(".kh-sports").addEventListener("click", function (e) {

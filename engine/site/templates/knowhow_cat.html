@@ -12,7 +12,7 @@
     <a class="kh-card kh-sq tone-{{ loop.index % 6 }}" href="/knowhow/{{ a.slug }}/">
       <span class="kh-eye">{% if a.league %}{{ a.league }}{% elif a.sport %}{{ SPORT_LABEL.get(a.sport, '') }}{% else %}{{ c.name }}{% endif %}</span>
       <span class="kh-title">{{ a.title }}</span>
-      <span class="kh-pill">읽기</span>
+      <span class="kh-sum">{{ a.lead }}</span>
     </a>
     {% endfor %}
   </div>
