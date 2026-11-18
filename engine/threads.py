@@ -701,6 +701,31 @@ def prepare_knowhow(force: bool = False) -> bool:
     return True
 
 
+def due(kind: str) -> bool:
+    """이 글이 지금 올라가 있어야 하는데 아직 안 올라갔는가(바로 다시 올릴지 판단).
+    kind: analysis(아침·저녁 분석) · result(전날 결과) · kh(노하우). 토큰이 없으면 언제나 False."""
+    if not os.getenv("THREADS_TOKEN", "").strip():
+        return False
+    st = read_json(STATE, {}) or {}
+    posted = st.get("posted") or []
+    today = config.today_kst()
+    if kind == "analysis":
+        slot = slot_now()
+        if not slot:
+            return False
+        day = day_for(slot)
+        rep = read_json(config.REPORTS / f"{day}.json") or {}
+        return f"{day}:{slot}" not in posted and bool(rep.get("stats", {}).get("matches"))
+    if kind == "result":
+        day = (date.fromisoformat(today) - timedelta(days=1)).isoformat()
+        if f"{day}:result" in posted:
+            return False
+        return bool(st.get("pending_result")) or result_stats(day) is not None  # 결과가 덜 나온 날은 13·18시가 이어받음
+    if kind == "kh":
+        return st.get("kh_day") != today and config.now_kst().hour >= 15
+    return False
+
+
 def post_daily() -> bool:
     """준비 + 게시를 한 번에(이미지가 이미 배포돼 있을 때만 게시됨)."""
     return prepare() and post()

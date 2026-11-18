@@ -88,7 +88,7 @@ jobs:
           fi
       - name: 쓰레드 카드 준비(저녁 19:00·아침 07:00, 빠지면 22:00·09:30 실행이 대신. 같은 글은 한 번만)
         id: tprep
-        if: env.SLOT == '0 10 * * *' || env.SLOT == '0 13 * * *' || env.SLOT == '0 22 * * *' || env.SLOT == '30 0 * * *' || contains(github.event.head_commit.message, '[threads-now]')
+        if: always() && (env.SLOT == '0 10 * * *' || env.SLOT == '0 13 * * *' || env.SLOT == '0 22 * * *' || env.SLOT == '30 0 * * *' || contains(github.event.head_commit.message, '[threads-now]'))
         continue-on-error: true
         env:
           THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
@@ -98,7 +98,7 @@ jobs:
           pip install -q playwright==1.47.0 && python -m playwright install --with-deps chromium >/dev/null
           python -m engine threads --prepare
       - name: 쓰레드 노하우 카드 묶음 준비(15:00, 빠지면 22:00)
-        if: env.SLOT == '0 6 * * *' || env.SLOT == '0 13 * * *' || contains(github.event.head_commit.message, '[threads-kh]')
+        if: always() && (env.SLOT == '0 6 * * *' || env.SLOT == '0 13 * * *' || contains(github.event.head_commit.message, '[threads-kh]'))
         continue-on-error: true
         env:
           THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
@@ -107,7 +107,7 @@ jobs:
           python -c "import playwright" 2>/dev/null || { pip install -q playwright==1.47.0 && python -m playwright install --with-deps chromium >/dev/null; }
           python -m engine threads --knowhow-prepare
       - name: 쓰레드 전날 결과 카드 준비(11:00, 결과가 덜 나왔으면 13:00·18:00 실행이 대신. 하루 한 번)
-        if: env.SLOT == '0 2 * * *' || env.SLOT == '0 4 * * *' || env.SLOT == '0 9 * * *' || contains(github.event.head_commit.message, '[threads-result]')
+        if: always() && (env.SLOT == '0 2 * * *' || env.SLOT == '0 4 * * *' || env.SLOT == '0 9 * * *' || contains(github.event.head_commit.message, '[threads-result]'))
         continue-on-error: true
         env:
           THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
@@ -203,3 +203,25 @@ jobs:
             if (await live("in_progress") || await live("queued")) return core.info("시계 동작 중");
             await github.rest.actions.createWorkflowDispatch({ owner, repo, workflow_id: "clock.yml", ref: "main" });
             core.info("시계 다시 켬");
+      - name: 쓰레드가 안 올라갔으면 바로 다시(쓰레드 다시 올리기 시작)
+        if: always() && (env.SLOT == '0 22 * * *' || env.SLOT == '30 0 * * *' || env.SLOT == '0 10 * * *' || env.SLOT == '0 13 * * *' || env.SLOT == '0 2 * * *' || env.SLOT == '0 4 * * *' || env.SLOT == '0 9 * * *' || env.SLOT == '0 6 * * *')
+        continue-on-error: true
+        env:
+          THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git pull -q --rebase -X theirs origin "${GITHUB_REF_NAME}" || true
+          case "$SLOT" in
+            "0 22 * * *"|"30 0 * * *"|"0 10 * * *") kinds="analysis" ;;
+            "0 13 * * *") kinds="analysis kh" ;;
+            "0 2 * * *"|"0 4 * * *"|"0 9 * * *") kinds="result" ;;
+            "0 6 * * *") kinds="kh" ;;
+          esac
+          for k in $kinds; do
+            if [ "$(python -m engine threads --due "$k")" = "yes" ]; then
+              echo "$k 아직 안 올라감 → 다시 올리기 시작"
+              curl -sf -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+                "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/threads.yml/dispatches" \
+                -d "{\"ref\":\"main\",\"inputs\":{\"kind\":\"$k\",\"attempt\":\"1\"}}" || echo "시작 요청 실패"
+            fi
+          done
