@@ -172,6 +172,8 @@
             <span class="mc-meta">{{ g.kickoff|kdt }}{% if g.game_no %} · {{ g.game_no }}번{% endif %} · 마켓 {{ g.markets|length }}개
               {% if graded %}{% set hits = graded|select|list|length %}<span class="tag {{ 'hit' if hits == graded|length else ('miss' if hits == 0 else 'part') }}">적중 {{ hits }}/{{ graded|length }}</span>{% endif %}
               {% if warn and not graded %}<span class="bd warn">주의</span>{% endif %}{% if dogpick and not graded %}<span class="bd dog">역배</span>{% endif %}</span>
+            {% set others = g.markets|rejectattr('id', 'equalto', mm.id)|select('is_pick_m')|list %}
+            {% if others %}<span class="mc-also">{% for m in others %}{% set ol = outcome(m, m.analysis.pick) %}{% if m.market == 'HANDICAP' and m.line is not none and ol in ('핸디패', '핸디무') %}{% set ol = ol ~ ' ' ~ ('%+g'|format(m.line)) %}{% endif %}<span><i class="{{ ol|tone }}">{{ ol }}</i> <b>{{ m.analysis.pick_prob|pct }}</b> <small>{{ m.odds[m.analysis.pick]|odds }}</small></span>{% endfor %}</span>{% endif %}
           </span>
           <span class="mc-pick">
             {% if a and not is_pick(a) %}
@@ -179,6 +181,7 @@
             <span class="mc-bar"><i style="width:{{ (a.pick_prob * 100)|round|int }}%" class="lean"></i></span>
             {% elif a %}
             <span class="mc-top"><span class="bub on {{ (outcome(mm, a.pick))|tone }}">{{ outcome(mm, a.pick) }}</span><b>{{ a.pick_prob|pct }}</b></span>
+            <span class="mc-odds">배당 {{ mm.odds[a.pick]|odds }}</span>
             <span class="mc-bar"><i style="width:{{ (a.pick_prob * 100)|round|int }}%"></i></span>
             {% else %}<span class="mc-top muted">해외 배당 없음</span>{% endif %}
           </span>
