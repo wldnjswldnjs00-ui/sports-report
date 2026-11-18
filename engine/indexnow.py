@@ -15,11 +15,17 @@ log = logging.getLogger("engine.indexnow")
 ENDPOINTS = ("https://searchadvisor.naver.com/indexnow", "https://api.indexnow.org/indexnow")
 
 
+FIXED = ("/", "/reports/", "/performance/", "/analysis/", "/knowhow/", "/leagues/", "/rounds/", "/facts/", "/stories/today/")
+
+
 def recent_urls() -> list[str]:
+    """빅매치 → 고정 페이지 → 어제·오늘·내일(19시에 공개되는 다음 구매일) 페이지 순."""
     urls = read_json(config.DIST / "data" / "urls.json", []) or []
+    hot = read_json(config.DIST / "data" / "hot.json", []) or []
     today = config.now_kst()
-    days = {(today - timedelta(days=i)).strftime("%Y-%m-%d") for i in range(2)}
-    pick = [u for u in urls if u in ("/", "/reports/", "/performance/") or any(d in u for d in days)]
+    days = {(today + timedelta(days=i)).strftime("%Y-%m-%d") for i in (-1, 0, 1)}
+    pick = list(dict.fromkeys([u for u in hot if u in urls] + [u for u in FIXED if u in urls]
+                              + [u for u in urls if any(d in u for d in days)]))
     return [config.SITE_URL + quote(u) for u in pick][:500]
 
 

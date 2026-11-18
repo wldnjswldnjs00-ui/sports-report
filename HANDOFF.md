@@ -42,3 +42,10 @@
 
 ### 다음에 할 일
 위 진행 상황에서 첫 번째 [ ] 부터. 글은 knowhow.py 의 art_* 함수 하나 = 글 하나. EXTRA·EXTRA2·EXTRA3 는 공통 글 덧붙임 설명.
+
+## 홍보 자동화 (2026-11-18 완료)
+- [x] 빅매치 우선 검색엔진 알림: `build._is_hot`(한국 대표팀·국내 리그·빅리그·배당 8%+ 변동) → `dist/data/hot.json` → `indexnow.recent_urls` 가 먼저 보냄. 다음 구매일(내일) 페이지도 보냄(전에는 빠졌음)
+- [x] 경기 페이지 제목·설명에 예상 스코어·추천 확률(검색 결과 클릭률)
+- [x] `/facts/` 숫자로 보는 리그(질문·답 + FAQ 구조화 데이터) + `/llms.txt`(AI 도구용 안내) — `engine/site/facts.py`
+- [x] 구글 웹스토리 `/stories/today/`(오늘의 핵심 경기, AMP 검사 통과) — `engine/site/stories.py`, 표지 `dist/stories/poster.jpg`
+- 남은 후보(주인 승인 전): 쓰레드 투표·결과 답글·주제 태그, 캘린더 구독, 퍼가는 위젯

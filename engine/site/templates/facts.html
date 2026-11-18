@@ -1,0 +1,17 @@
+{% extends "_page.html" %}
+{% block title %}숫자로 보는 리그 · 홈 승률·정배 적중률·평균 합계 | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}KBO·MLB·NPB·NBA·K리그·J리그·유럽 축구 등 베트맨 발매 리그의 홈 승률, 정배 적중률, 역배 적중률, 평균 합계, 언더오버 결과를 기록으로 계산해 매일 갱신합니다.{% endblock %}
+{% block kicker %}FACTS{% endblock %}
+{% block h1 %}숫자로 보는 리그{% endblock %}
+{% block body %}
+<p class="lede">베트맨 발매 경기 기록으로 계산한 리그별 핵심 숫자입니다. 매일 자동으로 다시 계산합니다.</p>
+<section class="facts">
+  <h2>사이트에 대해</h2>
+  <dl class="facts-qa">{% for q, a in facts.site %}<div><dt>{{ q }}</dt><dd>{{ a }}</dd></div>{% endfor %}</dl>
+  {% for L in facts.leagues %}
+  <h2 id="{{ L.league|slug }}">{{ L.league }} <small class="muted">{{ '{:,}'.format(L.n) }}경기</small></h2>
+  <dl class="facts-qa">{% for q, a in L.qa %}<div><dt>{{ q }}</dt><dd>{{ a }}</dd></div>{% endfor %}</dl>
+  {% endfor %}
+</section>
+<p class="fine">베트맨 지난 회차 공식 결과와 베트맨 배당 기준입니다. 경기 수가 {{ min_n }}경기 미만인 리그는 넣지 않습니다. 참고용 분석이며 적중을 보장하지 않습니다.</p>
+{% endblock %}

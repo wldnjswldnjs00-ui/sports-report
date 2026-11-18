@@ -77,8 +77,16 @@ def _outcome(m: dict, key: str) -> str:
 
 
 def _short(team: str) -> str:
+    """짧은 팀 이름(첫 단어). 첫 단어가 여러 팀에 겹치는 도시 이름이면 다음 단어까지(LA 레이커스 / LA 클리퍼스, 맨체스터 시티)."""
     t = str(team or "").split()
-    return t[0] if t and len(t[0]) >= 2 else str(team or "")
+    if not t:
+        return str(team or "")
+    if t[0] in AMBIG and len(t) > 1:
+        return f"{t[0]} {t[1]}"
+    return t[0] if len(t[0]) >= 2 else str(team or "")
+
+
+AMBIG = {"LA", "뉴욕", "맨체스터", "레알", "서울", "인천", "부산", "대구", "AC", "FC", "로스앤젤레스", "시카고", "셰필드", "브리스톨", "노팅엄"}
 
 
 def _pick_label(x: dict, key: str | None = None) -> str:
@@ -393,6 +401,25 @@ def _matches(r: dict) -> list[dict]:
     return out
 
 
+HOT_LEAGUES = ("KBO", "K리그1", "K리그2", "KBL", "WKBL", "KOVO 남자", "KOVO 여자", "NBA", "MLB", "잉글랜드 프리미어리그",
+               "UEFA 챔피언스리그", "스페인 라리가", "축구 월드컵", "UEFA 네이션스리그")
+
+
+def _is_hot(g: dict) -> bool:
+    """사람들이 많이 찾을 경기: 한국 대표팀·국내 리그·빅리그, 또는 배당이 크게 움직인 경기."""
+    names = f"{g.get('home', '')} {g.get('away', '')}"
+    if "한국" in names or "대한민국" in names:
+        return True
+    if g.get("league") in HOT_LEAGUES:
+        return True
+    for m in g.get("markets") or []:
+        fl = m.get("flow") or {}
+        a, b = fl.get("from") or {}, fl.get("to") or {}
+        if any(k in b and a[k] > 1 and abs(b[k] / a[k] - 1) >= 0.08 for k in a):
+            return True
+    return False
+
+
 def _event_ld(g: dict) -> dict:
     ev = {"@type": "SportsEvent", "name": f"{g['home']} vs {g['away']}", "startDate": g["kickoff"],
           "sport": SPORT_LABEL.get(g["sport"], ""), "eventStatus": "https://schema.org/EventScheduled",
@@ -584,6 +611,7 @@ def build() -> None:
         an_secs.append({"title": _kdate(d), "games": gs})
     page("analysis.html", "/analysis/", sections=an_secs, lastmod=(latest or {}).get("date"))
     rss_items = []
+    hot: list[str] = []
     for i, r in enumerate(reports):
         prev_d = reports[i + 1]["date"] if i + 1 < len(reports) else None
         next_d = reports[i - 1]["date"] if i > 0 else None
@@ -598,14 +626,23 @@ def build() -> None:
         if i < 45:  # 경기 페이지는 최근 45일분만 생성(빌드 시간·저장소 크기 보호)
             outs = r.get("outcomes") or {}
             for g in ms:
-                title = f"{g['home']} vs {g['away']} 분석 · {g['league']} {_kdt(g['kickoff'])}"
                 main = g.get("main")
+                # 검색 결과에서 눈에 띄게: 제목·설명 앞에 예상 스코어와 추천 확률(사람들이 실제로 찾는 정보)
+                pd = predict(g) if i < 4 else None
+                pdt = f" 예상 {pd['h']}:{pd['a']}" if pd else ""
+                title = f"{g['home']} vs {g['away']} 분석{pdt} · {g['league']} {_kdt(g['kickoff'])}"
                 desc = (main or {}).get("narrative") or f"{g['league']} {g['home']} 대 {g['away']} 경기 분석"
+                a0 = (main or {}).get("analysis") or {}
+                if pd and is_pick(a0):
+                    desc = f"예상 스코어 {pd['h']}:{pd['a']} · {_pick_label(main, a0.get('pick'))} {a0.get('pick_prob', 0) * 100:.0f}%. " + desc
+                if i < 4 and _is_hot(g):
+                    hot.append(g["url"])
                 ld = _jsonld({"@context": "https://schema.org", **_event_ld(g)},
                              _article_ld(title, desc[:160], g["url"], r.get("generated_at") or r["date"], r.get("updated_at") or r["date"]),
                              _crumbs([("홈", "/"), (_kdate(r["date"]), url), (f"{g['home']} vs {g['away']}", g["url"])]))
                 mog = OGP.match(config.DIST, g, _round_label((g.get("main") or g["markets"][0]).get("round"))) if i < 4 else None
                 page("match.html", g["url"], og_image=mog, g=g, r=r, outs=outs, lastmod=r["date"], jsonld=ld, page_title=title, page_desc=desc[:155])
+    write_json(config.DIST / "data" / "hot.json", hot)  # 검색엔진 알림(IndexNow)에서 먼저 보낼 빅매치
     page("archive.html", "/reports/")
     # 회차별 분석
     page("rounds.html", "/rounds/", rounds=rds)
@@ -679,6 +716,38 @@ def build() -> None:
             rel = (same[:4] + other[:2])[:6]
             page("knowhow.html", f"/knowhow/{a['slug']}/", a=a, rel=rel, lg_url=lg_by_name.get(PX.lkey(a["league"] or "")),
                  jsonld=_jsonld(_crumbs([("홈", "/"), ("노하우", "/knowhow/"), (a["title"], f"/knowhow/{a['slug']}/")])))
+    # 구글 웹스토리: 오늘의 핵심 경기(빅매치 우선) — 매 빌드 자동
+    try:
+        from . import stories as ST
+        src_ms = []
+        seen_st = set()
+        for r0 in [x for x in reports if x["date"] >= (today - timedelta(days=1)).isoformat()][:3]:
+            for g0 in _matches(r0):
+                k0 = (g0["home"], g0["away"], g0["kickoff"][:10])
+                if k0 not in seen_st:
+                    seen_st.add(k0)
+                    src_ms.append(g0)
+        items = ST.pick_games(src_ms, _is_hot, predict, is_pick, _pick_label, config.now_kst().isoformat())
+        if len(items) >= 3:
+            ST.poster(config.DIST / "stories" / "poster.jpg", "오늘의 프로토", f"핵심 경기 {len(items)}")
+            surl = config.SITE_URL + "/stories/today/"
+            htm = ST.render(config.SITE_URL, config.SITE_NAME, items, _kdt, _kdate(config.today_kst()),
+                            config.SITE_URL + "/stories/poster.jpg", config.SITE_URL + "/icon-192.png", surl)
+            _write(config.DIST / "stories" / "today" / "index.html", htm)
+            urls.append(("/stories/today/", today.isoformat()))
+    except Exception:  # noqa: BLE001
+        log.exception("웹스토리 실패(다른 페이지는 계속)")
+    # AI 검색·검색엔진용: 리그별 짧은 질문과 답(/facts/) + llms.txt (매 빌드 기록으로 다시 계산)
+    try:
+        from . import facts as FA
+        from ..sources import betman_history as _bh
+        fx = FA.build(_bh.load_all(), perf)
+        page("facts.html", "/facts/", facts=fx, min_n=FA.MIN_GAMES,
+             jsonld=_jsonld(fx["faq_ld"], _crumbs([("홈", "/"), ("숫자로 보는 리그", "/facts/")])))
+        khl = [{"title": x["title"], "url": f"/knowhow/{x['slug']}/"} for x in (kh or [])]
+        (config.DIST / "llms.txt").write_text(FA.llms_txt(config.SITE_URL, config.SITE_NAME, fx, khl), encoding="utf-8")
+    except Exception:  # noqa: BLE001
+        log.exception("숫자로 보는 리그·llms.txt 실패(다른 페이지는 계속)")
     for lg in leagues.values():
         page("league.html", f"/leagues/{lg['slug']}/", og_image=OGP.league(config.DIST, f"/leagues/{lg['slug']}/", lg), lg=lg,
              jsonld=_jsonld(_crumbs([("홈", "/"), ("리그별 기록", "/leagues/"), (lg["name"], f"/leagues/{lg['slug']}/")])))

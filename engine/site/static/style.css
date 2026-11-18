@@ -1305,3 +1305,10 @@ h1, h2, h3, .block-head h2 { text-wrap: balance; }
 .share-card-tip { margin: 10px 2px 0; font-size: 12.5px; color: var(--ink-3); }
 .share-card-act { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-top: 12px; }
 .share-card-act .btn { width: 100%; justify-content: center; }
+/* 숫자로 보는 리그 */
+.facts h2 { margin-top: 28px; }
+.facts h2 small { font-size: 13px; font-weight: 600; }
+.facts-qa { margin: 10px 0 0; display: grid; gap: 8px; }
+.facts-qa > div { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.facts-qa dt { font-weight: 700; font-size: 14.5px; margin-bottom: 4px; }
+.facts-qa dd { margin: 0; color: var(--ink-2); font-size: 14px; line-height: 1.6; }
