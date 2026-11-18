@@ -1,3 +1,208 @@
 {
- "markets": {}
+ "markets": {
+  "betman:G101:260137:4501": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "2:0",
+   "code": "0",
+   "market": "1X2",
+   "home_score": 2.0,
+   "away_score": 0.0
+  },
+  "betman:G101:260137:4502": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "1:0",
+   "code": "0",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260137:4503": {
+   "status": "FT",
+   "outcome": "D",
+   "src": "betman",
+   "raw": "0:0",
+   "code": "1",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260137:4504": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "-1.5:0",
+   "code": "2",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260137:4505": {
+   "status": "FT",
+   "outcome": "U",
+   "src": "betman",
+   "raw": "2:0",
+   "code": "0",
+   "market": "OU"
+  },
+  "betman:G101:260137:4507": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "5:0",
+   "code": "0",
+   "market": "1X2",
+   "home_score": 5.0,
+   "away_score": 0.0
+  },
+  "betman:G101:260137:4508": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "3:0",
+   "code": "0",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260137:4509": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "2:0",
+   "code": "0",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260137:4510": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "0.5:0",
+   "code": "0",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260137:4511": {
+   "status": "FT",
+   "outcome": "O",
+   "src": "betman",
+   "raw": "5:0",
+   "code": "2",
+   "market": "OU"
+  },
+  "betman:G101:260137:4513": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "2:0",
+   "code": "0",
+   "market": "1X2",
+   "home_score": 2.0,
+   "away_score": 0.0
+  },
+  "betman:G101:260137:4514": {
+   "status": "FT",
+   "outcome": "D",
+   "src": "betman",
+   "raw": "0:0",
+   "code": "1",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260137:4515": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "-1:0",
+   "code": "2",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260137:4516": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "-2.5:0",
+   "code": "2",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260137:4517": {
+   "status": "FT",
+   "outcome": "U",
+   "src": "betman",
+   "raw": "2:0",
+   "code": "0",
+   "market": "OU"
+  },
+  "betman:G101:260137:4519": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "102:111",
+   "code": "2",
+   "market": "WL",
+   "home_score": 102.0,
+   "away_score": 111.0
+  },
+  "betman:G101:260137:4520": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "104.5:111",
+   "code": "2",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260137:4521": {
+   "status": "FT",
+   "outcome": "U",
+   "src": "betman",
+   "raw": "213:0",
+   "code": "0",
+   "market": "OU"
+  },
+  "betman:G101:260137:4523": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "106:105",
+   "code": "0",
+   "market": "WL",
+   "home_score": 106.0,
+   "away_score": 105.0
+  },
+  "betman:G101:260137:4524": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "101.5:105",
+   "code": "2",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260137:4525": {
+   "status": "FT",
+   "outcome": "U",
+   "src": "betman",
+   "raw": "211:0",
+   "code": "0",
+   "market": "OU"
+  },
+  "betman:G101:260137:4527": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "93:105",
+   "code": "2",
+   "market": "WL",
+   "home_score": 93.0,
+   "away_score": 105.0
+  },
+  "betman:G101:260137:4528": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "83.5:105",
+   "code": "2",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260137:4529": {
+   "status": "FT",
+   "outcome": "U",
+   "src": "betman",
+   "raw": "198:0",
+   "code": "0",
+   "market": "OU"
+  }
+ }
 }

@@ -1,4 +1,0 @@
-{
- "error": "ConnectTimeout: HTTPSConnectionPool(host='www.betman.co.kr', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.betman.co.kr', port=443) at 0x79fe12afa3c0>, 'Connection to www.betman.co.kr timed out. (connect timeout=15)'))",
- "at": "2026-11-18T10:49:47+09:00"
-}

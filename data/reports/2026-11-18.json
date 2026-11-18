@@ -1,13 +1,13 @@
 {
  "date": "2026-11-18",
  "generated_at": "2026-11-17T19:09:55+09:00",
- "updated_at": "2026-11-18T10:51:46+09:00",
+ "updated_at": "2026-11-18T13:01:37+09:00",
  "model_version": "aurora-1.0.0",
  "calibration_alpha": 0.03,
  "demo": false,
  "sources": {
-  "betman": "실패: ConnectTimeout",
-  "odds_api": "0개 매칭",
+  "betman": "68개 수집",
+  "odds_api": "15개 매칭, 제공 안 됨 2",
   "form": "68개 마켓",
   "bbook": "53개 마켓",
   "selfcheck": {
@@ -39,9 +39,9 @@
    "single": true,
    "analysis": {
     "p": {
-     "H": 0.8729,
-     "D": 0.107,
-     "A": 0.0201
+     "H": 0.8772,
+     "D": 0.1057,
+     "A": 0.0171
     },
     "p_betman": {
      "H": 0.887,
@@ -51,9 +51,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "H",
-    "pick_prob": 0.8729,
+    "pick_prob": 0.8772,
     "pick_odds": 1.09,
-    "ev": -0.0485,
+    "ev": -0.0439,
     "value_key": "H",
     "value_ev": -0.0836,
     "confidence": 55,
@@ -272,6 +272,13 @@
     "H": 1.09,
     "D": 5.7,
     "A": 14.5
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 에콰도르 선택이 맞았다.",
+    "r": "추정 확률 87%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 76% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -297,9 +304,9 @@
    "single": true,
    "analysis": {
     "p": {
-     "H": 0.6277,
-     "D": 0.22,
-     "A": 0.1522
+     "H": 0.6346,
+     "D": 0.2188,
+     "A": 0.1466
     },
     "p_betman": {
      "H": 0.6222,
@@ -309,9 +316,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "H",
-    "pick_prob": 0.6277,
+    "pick_prob": 0.6346,
     "pick_odds": 1.49,
-    "ev": -0.0647,
+    "ev": -0.0544,
     "value_key": "A",
     "value_ev": -0.1357,
     "confidence": 55,
@@ -530,6 +537,13 @@
     "H": 1.49,
     "D": 3.7,
     "A": 4.5
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 에콰도르 핸디 선택이 맞았다.",
+    "r": "추정 확률 63%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 50% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -555,9 +569,9 @@
    "single": true,
    "analysis": {
     "p": {
-     "H": 0.371,
-     "D": 0.2829,
-     "A": 0.346
+     "H": 0.372,
+     "D": 0.2899,
+     "A": 0.338
     },
     "p_betman": {
      "H": 0.3879,
@@ -567,9 +581,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "H",
-    "pick_prob": 0.371,
+    "pick_prob": 0.372,
     "pick_odds": 2.26,
-    "ev": -0.1614,
+    "ev": -0.1594,
     "value_key": "A",
     "value_ev": -0.0455,
     "confidence": 55,
@@ -790,6 +804,13 @@
     "H": 2.26,
     "D": 3.4,
     "A": 2.35
+   },
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 에콰도르 핸디, 결과는 핸디 무.",
+    "r": "발행 당시 이변 위험이 59로 이미 높았다. 추정 확률이 37%에 그친 박빙 경기였다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 31% 적중했다. 이번은 나머지 69%에 해당한다.",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
    }
   },
   {
@@ -814,8 +835,8 @@
    "single": true,
    "analysis": {
     "p": {
-     "H": 0.2083,
-     "A": 0.7917
+     "H": 0.2143,
+     "A": 0.7857
     },
     "p_betman": {
      "H": 0.1474,
@@ -824,9 +845,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "A",
-    "pick_prob": 0.7917,
+    "pick_prob": 0.7857,
     "pick_odds": 1.12,
-    "ev": -0.1133,
+    "ev": -0.12,
     "value_key": "A",
     "value_ev": -0.0625,
     "confidence": 55,
@@ -1036,6 +1057,13 @@
    "odds_close": {
     "H": 3.9,
     "A": 1.12
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 볼리비아 핸디 선택이 맞았다.",
+    "r": "추정 확률 79%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 84% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -1060,8 +1088,8 @@
    "single": true,
    "analysis": {
     "p": {
-     "O": 0.4155,
-     "U": 0.5845
+     "O": 0.4226,
+     "U": 0.5774
     },
     "p_betman": {
      "O": 0.3692,
@@ -1070,9 +1098,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "U",
-    "pick_prob": 0.5845,
+    "pick_prob": 0.5774,
     "pick_odds": 1.44,
-    "ev": -0.1583,
+    "ev": -0.1686,
     "value_key": "U",
     "value_ev": -0.0806,
     "confidence": 55,
@@ -1282,6 +1310,13 @@
    "odds_close": {
     "O": 2.2,
     "U": 1.44
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 언더 선택이 맞았다.",
+    "r": "추정 확률 58%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 67% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -1307,9 +1342,9 @@
    "single": true,
    "analysis": {
     "p": {
-     "H": 0.9133,
-     "D": 0.0818,
-     "A": 0.0047
+     "H": 0.9082,
+     "D": 0.0884,
+     "A": 0.0032
     },
     "p_betman": {
      "H": 0.9806,
@@ -1319,9 +1354,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "H",
-    "pick_prob": 0.9133,
+    "pick_prob": 0.9082,
     "pick_odds": 1.01,
-    "ev": -0.0775,
+    "ev": -0.0827,
     "value_key": "H",
     "value_ev": -0.0435,
     "confidence": 55,
@@ -1519,6 +1554,13 @@
     "H": 1.01,
     "D": 8.0,
     "A": 21.0
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 우루과이 선택이 맞았다.",
+    "r": "추정 확률 91%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 88% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -1575,9 +1617,9 @@
    "single": true,
    "analysis": {
     "p": {
-     "H": 0.5543,
-     "D": 0.2544,
-     "A": 0.1912
+     "H": 0.5552,
+     "D": 0.2598,
+     "A": 0.1849
     },
     "p_betman": {
      "H": 0.5788,
@@ -1587,9 +1629,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "H",
-    "pick_prob": 0.5543,
+    "pick_prob": 0.5552,
     "pick_odds": 1.59,
-    "ev": -0.1186,
+    "ev": -0.1172,
     "value_key": "A",
     "value_ev": -0.0995,
     "confidence": 55,
@@ -1787,6 +1829,13 @@
     "H": 1.59,
     "D": 3.65,
     "A": 3.85
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 우루과이 핸디 선택이 맞았다.",
+    "r": "추정 확률 55%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 49% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -1843,9 +1892,9 @@
    "single": true,
    "analysis": {
     "p": {
-     "H": 0.3664,
-     "D": 0.2747,
-     "A": 0.3588
+     "H": 0.369,
+     "D": 0.2846,
+     "A": 0.3464
     },
     "p_betman": {
      "H": 0.3602,
@@ -1855,9 +1904,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "H",
-    "pick_prob": 0.3664,
+    "pick_prob": 0.369,
     "pick_odds": 2.4,
-    "ev": -0.1206,
+    "ev": -0.1145,
     "value_key": "A",
     "value_ev": -0.0762,
     "confidence": 55,
@@ -2057,6 +2106,13 @@
     "H": 2.4,
     "D": 3.9,
     "A": 2.04
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 우루과이 핸디 선택이 맞았다.",
+    "r": "추정 확률 37%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 32% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -2108,8 +2164,8 @@
    "single": true,
    "analysis": {
     "p": {
-     "H": 0.2146,
-     "A": 0.7854
+     "H": 0.2184,
+     "A": 0.7816
     },
     "p_betman": {
      "H": 0.1745,
@@ -2118,9 +2174,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "A",
-    "pick_prob": 0.7854,
+    "pick_prob": 0.7816,
     "pick_odds": 1.15,
-    "ev": -0.0968,
+    "ev": -0.1012,
     "value_key": "A",
     "value_ev": -0.0637,
     "confidence": 55,
@@ -2309,6 +2365,13 @@
    "odds_close": {
     "H": 3.57,
     "A": 1.15
+   },
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 도미니카공화국 핸디, 결과는 우루과이 핸디.",
+    "r": "추정 확률 79%는 21%의 빗나갈 몫을 포함한다. 이번이 그 경우였다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 82% 적중했다. 이번은 나머지 18%에 해당한다.",
+    "o2": "판단 과정에 오류는 없었다. 확률이 허용한 범위의 결과로 기록한다."
    }
   },
   {
@@ -2333,8 +2396,8 @@
    "single": true,
    "analysis": {
     "p": {
-     "O": 0.5338,
-     "U": 0.4662
+     "O": 0.5359,
+     "U": 0.4641
     },
     "p_betman": {
      "O": 0.5501,
@@ -2343,9 +2406,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "O",
-    "pick_prob": 0.5338,
+    "pick_prob": 0.5359,
     "pick_odds": 1.61,
-    "ev": -0.1406,
+    "ev": -0.1373,
     "value_key": "U",
     "value_ev": -0.0893,
     "confidence": 55,
@@ -2535,6 +2598,13 @@
    "odds_close": {
     "O": 1.61,
     "U": 1.89
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 오버 선택이 맞았다.",
+    "r": "추정 확률 53%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 45% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -2560,9 +2630,9 @@
    "single": false,
    "analysis": {
     "p": {
-     "H": 0.9089,
-     "D": 0.0852,
-     "A": 0.0059
+     "H": 0.9052,
+     "D": 0.0907,
+     "A": 0.0041
     },
     "p_betman": {
      "H": 0.9806,
@@ -2576,9 +2646,9 @@
      "A": 0.2417
     },
     "pick": "H",
-    "pick_prob": 0.9089,
+    "pick_prob": 0.9052,
     "pick_odds": 1.01,
-    "ev": -0.082,
+    "ev": -0.0857,
     "value_key": "H",
     "value_ev": -0.0574,
     "confidence": 55,
@@ -2860,6 +2930,13 @@
     "H": 1.01,
     "D": 8.0,
     "A": 21.0
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 미국 선택이 맞았다.",
+    "r": "추정 확률 91%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 67% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -2916,9 +2993,9 @@
    "single": false,
    "analysis": {
     "p": {
-     "H": 0.6008,
-     "D": 0.2144,
-     "A": 0.1849
+     "H": 0.6166,
+     "D": 0.215,
+     "A": 0.1685
     },
     "p_betman": {
      "H": 0.6042,
@@ -2928,9 +3005,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "H",
-    "pick_prob": 0.6008,
+    "pick_prob": 0.6166,
     "pick_odds": 1.53,
-    "ev": -0.0808,
+    "ev": -0.0566,
     "value_key": "A",
     "value_ev": 0.1878,
     "confidence": 55,
@@ -3211,6 +3288,13 @@
     "H": 1.49,
     "D": 4.2,
     "A": 3.95
+   },
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 미국 핸디, 결과는 핸디 무.",
+    "r": "발행 당시 이변 위험이 50로 이미 높았다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 23% 적중했다. 이번은 나머지 77%에 해당한다.",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
    }
   },
   {
@@ -3267,9 +3351,9 @@
    "single": false,
    "analysis": {
     "p": {
-     "H": 0.3501,
-     "D": 0.269,
-     "A": 0.3809
+     "H": 0.3584,
+     "D": 0.2809,
+     "A": 0.3607
     },
     "p_betman": {
      "H": 0.3786,
@@ -3279,9 +3363,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "A",
-    "pick_prob": 0.3809,
+    "pick_prob": 0.3607,
     "pick_odds": 2.08,
-    "ev": -0.2077,
+    "ev": -0.2497,
     "value_key": "A",
     "value_ev": 0.1092,
     "confidence": 55,
@@ -3561,6 +3645,13 @@
     "H": 2.2,
     "D": 4.0,
     "A": 2.18
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 아이티 핸디 선택이 맞았다.",
+    "r": "추정 확률 38%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 77% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -3612,8 +3703,8 @@
    "single": false,
    "analysis": {
     "p": {
-     "H": 0.2427,
-     "A": 0.7573
+     "H": 0.2557,
+     "A": 0.7443
     },
     "p_betman": {
      "H": 0.1997,
@@ -3622,9 +3713,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "A",
-    "pick_prob": 0.7573,
+    "pick_prob": 0.7443,
     "pick_odds": 1.18,
-    "ev": -0.1064,
+    "ev": -0.1218,
     "value_key": "A",
     "value_ev": 0.0096,
     "confidence": 55,
@@ -3894,6 +3985,13 @@
    "odds_close": {
     "H": 3.03,
     "A": 1.22
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 아이티 핸디 선택이 맞았다.",
+    "r": "추정 확률 76%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 95% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -3918,8 +4016,8 @@
    "single": false,
    "analysis": {
     "p": {
-     "O": 0.4322,
-     "U": 0.5678
+     "O": 0.4456,
+     "U": 0.5544
     },
     "p_betman": {
      "O": 0.4236,
@@ -3928,9 +4026,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "U",
-    "pick_prob": 0.5678,
+    "pick_prob": 0.5544,
     "pick_odds": 1.55,
-    "ev": -0.1199,
+    "ev": -0.1407,
     "value_key": "U",
     "value_ev": 0.0375,
     "confidence": 55,
@@ -4200,6 +4298,13 @@
    "odds_close": {
     "O": 1.98,
     "U": 1.55
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 언더 선택이 맞았다.",
+    "r": "추정 확률 57%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 85% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -4556,6 +4661,13 @@
    "odds_close": {
     "H": 2.05,
     "A": 1.51
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 뉴욕 닉스 선택이 맞았다.",
+    "r": "추정 확률 58%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 NBA 경기에서는 60% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -4900,6 +5012,13 @@
    "odds_close": {
     "H": 1.78,
     "A": 1.7
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 뉴욕 닉스 핸디 선택이 맞았다.",
+    "r": "추정 확률 51%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 NBA 경기에서는 53% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -5244,6 +5363,13 @@
    "odds_close": {
     "O": 1.76,
     "U": 1.72
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 언더 선택이 맞았다.",
+    "r": "추정 확률 52%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 NBA 경기에서는 53% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -5627,6 +5753,13 @@
    "odds_close": {
     "H": 1.4,
     "A": 2.3
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 미네소타 팀버울브스 선택이 맞았다.",
+    "r": "추정 확률 57%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 NBA 경기에서는 55% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -6005,6 +6138,13 @@
    "odds_close": {
     "H": 1.74,
     "A": 1.74
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 포틀랜드 트레일블레이저스 핸디 선택이 맞았다.",
+    "r": "추정 확률 55%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 NBA 경기에서는 55% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -6349,6 +6489,13 @@
    "odds_close": {
     "O": 1.71,
     "U": 1.77
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 언더 선택이 맞았다.",
+    "r": "추정 확률 52%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 NBA 경기에서는 53% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -6680,6 +6827,13 @@
    "odds_close": {
     "H": 1.12,
     "A": 3.9
+   },
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 샌안토니오 스퍼스, 결과는 디트로이트 피스톤스.",
+    "r": "추정 확률 77%는 23%의 빗나갈 몫을 포함한다. 이번이 그 경우였다.",
+    "e": "해외 배당이 비슷했던 NBA 경기에서는 79% 적중했다. 이번은 나머지 21%에 해당한다.",
+    "o2": "판단 과정에 오류는 없었다. 확률이 허용한 범위의 결과로 기록한다."
    }
   },
   {
@@ -7006,6 +7160,13 @@
    "odds_close": {
     "H": 1.74,
     "A": 1.74
+   },
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 샌안토니오 스퍼스 핸디, 결과는 디트로이트 피스톤스 핸디.",
+    "r": "발행 당시 이변 위험이 50로 이미 높았다. 추정 확률이 50%에 그친 박빙 경기였다.",
+    "e": "해외 배당이 비슷했던 NBA 경기에서는 49% 적중했다. 이번은 나머지 51%에 해당한다.",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
    }
   },
   {
@@ -7359,6 +7520,13 @@
    "odds_close": {
     "O": 1.72,
     "U": 1.76
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 언더 선택이 맞았다.",
+    "r": "추정 확률 51%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 NBA 경기에서는 51% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -7415,9 +7583,9 @@
    "single": false,
    "analysis": {
     "p": {
-     "H": 0.855,
-     "D": 0.099,
-     "A": 0.046
+     "H": 0.8655,
+     "D": 0.1005,
+     "A": 0.0339
     },
     "p_betman": {
      "H": 0.8787,
@@ -7427,9 +7595,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "H",
-    "pick_prob": 0.855,
+    "pick_prob": 0.8655,
     "pick_odds": 1.1,
-    "ev": -0.0595,
+    "ev": -0.0479,
     "value_key": "H",
     "value_ev": -0.0773,
     "confidence": 55,
@@ -7668,7 +7836,12 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "odds_close": {
+    "H": 1.1,
+    "D": 7.3,
+    "A": 8.6
+   }
   },
   {
    "id": "betman:G101:260137:4532",
@@ -7724,9 +7897,9 @@
    "single": false,
    "analysis": {
     "p": {
-     "H": 0.6149,
-     "D": 0.1839,
-     "A": 0.2012
+     "H": 0.6023,
+     "D": 0.174,
+     "A": 0.2237
     },
     "p_betman": {
      "H": 0.6787,
@@ -7736,9 +7909,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "H",
-    "pick_prob": 0.6149,
+    "pick_prob": 0.6023,
     "pick_odds": 1.38,
-    "ev": -0.1514,
+    "ev": -0.1689,
     "value_key": "H",
     "value_ev": -0.129,
     "confidence": 55,
@@ -7977,7 +8150,12 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "odds_close": {
+    "H": 1.38,
+    "D": 4.25,
+    "A": 4.95
+   }
   },
   {
    "id": "betman:G101:260137:4533",
@@ -8033,9 +8211,9 @@
    "single": false,
    "analysis": {
     "p": {
-     "H": 0.4215,
-     "D": 0.2354,
-     "A": 0.3431
+     "H": 0.4258,
+     "D": 0.2416,
+     "A": 0.3327
     },
     "p_betman": {
      "H": 0.4461,
@@ -8045,9 +8223,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "H",
-    "pick_prob": 0.4215,
+    "pick_prob": 0.4258,
     "pick_odds": 2.0,
-    "ev": -0.1569,
+    "ev": -0.1485,
     "value_key": "A",
     "value_ev": -0.0485,
     "confidence": 55,
@@ -8288,7 +8466,12 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "odds_close": {
+    "H": 2.0,
+    "D": 3.5,
+    "A": 2.65
+   }
   },
   {
    "id": "betman:G101:260137:4534",
@@ -8312,8 +8495,8 @@
    "single": false,
    "analysis": {
     "p": {
-     "H": 0.2496,
-     "A": 0.7504
+     "H": 0.2602,
+     "A": 0.7398
     },
     "p_betman": {
      "H": 0.2386,
@@ -8322,9 +8505,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "A",
-    "pick_prob": 0.7504,
+    "pick_prob": 0.7398,
     "pick_odds": 1.23,
-    "ev": -0.0771,
+    "ev": -0.0901,
     "value_key": "A",
     "value_ev": -0.057,
     "confidence": 55,
@@ -8555,7 +8738,11 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "odds_close": {
+    "H": 2.97,
+    "A": 1.23
+   }
   },
   {
    "id": "betman:G101:260137:4535",
@@ -8579,8 +8766,8 @@
    "single": false,
    "analysis": {
     "p": {
-     "O": 0.4917,
-     "U": 0.5083
+     "O": 0.5085,
+     "U": 0.4915
     },
     "p_betman": {
      "O": 0.5108,
@@ -8588,10 +8775,10 @@
     },
     "p_ref": null,
     "p_elo": null,
-    "pick": "U",
-    "pick_prob": 0.5083,
-    "pick_odds": 1.77,
-    "ev": -0.1004,
+    "pick": "O",
+    "pick_prob": 0.5085,
+    "pick_odds": 1.71,
+    "ev": -0.1305,
     "value_key": "U",
     "value_ev": -0.0547,
     "confidence": 55,
@@ -8640,9 +8827,9 @@
     "x_kind": null,
     "elo": null,
     "bhist": {
-     "hit": 0.4603,
+     "hit": 0.5397,
      "n": 126,
-     "imp": 0.4914,
+     "imp": 0.5086,
      "group": "A매치·국제 대회"
     }
    },
@@ -8823,7 +9010,11 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "odds_close": {
+    "O": 1.71,
+    "U": 1.77
+   }
   },
   {
    "id": "betman:G101:260137:4537",
@@ -9177,7 +9368,11 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "odds_close": {
+    "H": 1.29,
+    "A": 2.67
+   }
   },
   {
    "id": "betman:G101:260137:4538",
@@ -9512,7 +9707,11 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "odds_close": {
+    "H": 1.66,
+    "A": 1.83
+   }
   },
   {
    "id": "betman:G101:260137:4539",
@@ -9532,7 +9731,34 @@
     "U": 1.76
    },
    "venue": "인튜이트돔",
-   "flow": null,
+   "flow": {
+    "changes": 1,
+    "at": "202611181212",
+    "from": {
+     "U": 1.76,
+     "O": 1.72
+    },
+    "to": {
+     "U": 1.76,
+     "O": 1.72
+    },
+    "pts": [
+     [
+      "",
+      {
+       "U": 1.76,
+       "O": 1.72
+      }
+     ],
+     [
+      "202611181212",
+      {
+       "U": 1.76,
+       "O": 1.72
+      }
+     ]
+    ]
+   },
    "single": true,
    "x": {
     "h2h": {
@@ -9820,7 +10046,11 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "odds_close": {
+    "O": 1.72,
+    "U": 1.76
+   }
   },
   {
    "id": "betman:G101:260137:4541",
@@ -9840,7 +10070,34 @@
     "A": 3.39
    },
    "venue": "크립토닷컴아레나",
-   "flow": null,
+   "flow": {
+    "changes": 1,
+    "at": "202611181253",
+    "from": {
+     "H": 1.17,
+     "A": 3.39
+    },
+    "to": {
+     "H": 1.2,
+     "A": 3.16
+    },
+    "pts": [
+     [
+      "",
+      {
+       "H": 1.17,
+       "A": 3.39
+      }
+     ],
+     [
+      "202611181253",
+      {
+       "H": 1.2,
+       "A": 3.16
+      }
+     ]
+    ]
+   },
    "single": true,
    "x": {
     "h2h": {
@@ -10154,7 +10411,11 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "odds_close": {
+    "H": 1.2,
+    "A": 3.16
+   }
   },
   {
    "id": "betman:G101:260137:4542",
@@ -10494,7 +10755,11 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "odds_close": {
+    "H": 1.74,
+    "A": 1.74
+   }
   },
   {
    "id": "betman:G101:260137:4543",
@@ -10515,8 +10780,8 @@
    },
    "venue": "크립토닷컴아레나",
    "flow": {
-    "changes": 1,
-    "at": "202611181009",
+    "changes": 2,
+    "at": "202611181239",
     "from": {
      "U": 1.77,
      "O": 1.71
@@ -10535,6 +10800,13 @@
      ],
      [
       "202611181009",
+      {
+       "U": 1.77,
+       "O": 1.71
+      }
+     ],
+     [
+      "202611181239",
       {
        "U": 1.77,
        "O": 1.71
@@ -10843,7 +11115,11 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "odds_close": {
+    "O": 1.71,
+    "U": 1.77
+   }
   },
   {
    "id": "betman:G101:260137:4545",
@@ -12979,31 +13255,58 @@
    "market": "OU",
    "line": 183.5,
    "odds": {
-    "O": 1.74,
-    "U": 1.74
+    "O": 1.69,
+    "U": 1.79
    },
    "venue": "대전충무체육관",
-   "flow": null,
+   "flow": {
+    "changes": 1,
+    "at": "202611181138",
+    "from": {
+     "U": 1.74,
+     "O": 1.74
+    },
+    "to": {
+     "U": 1.79,
+     "O": 1.69
+    },
+    "pts": [
+     [
+      "",
+      {
+       "U": 1.74,
+       "O": 1.74
+      }
+     ],
+     [
+      "202611181138",
+      {
+       "U": 1.79,
+       "O": 1.69
+      }
+     ]
+    ]
+   },
    "single": true,
    "analysis": {
     "p": {
-     "O": 0.5105,
-     "U": 0.4895
+     "O": 0.5219,
+     "U": 0.4781
     },
     "p_betman": {
-     "O": 0.5,
-     "U": 0.5
+     "O": 0.518,
+     "U": 0.482
     },
     "p_ref": null,
     "p_elo": null,
     "pick": "O",
-    "pick_prob": 0.5105,
-    "pick_odds": 1.74,
-    "ev": -0.1117,
+    "pick_prob": 0.5219,
+    "pick_odds": 1.69,
+    "ev": -0.118,
     "value_key": "O",
-    "value_ev": -0.13,
-    "confidence": 53,
-    "upset_risk": 50,
+    "value_ev": -0.1255,
+    "confidence": 54,
+    "upset_risk": 48,
     "data_score": 35,
     "sources": [
      "베트맨 배당(해외 배당 없음)",
@@ -13013,7 +13316,7 @@
      "해외 배당 없음",
      "이변 주의"
     ],
-    "payout_rate": 0.87,
+    "payout_rate": 0.8693,
     "hist": null,
     "pair": null,
     "intl": null,
@@ -13024,7 +13327,7 @@
     "bhist": {
      "hit": 0.5301,
      "n": 349,
-     "imp": 0.5,
+     "imp": 0.5144,
      "group": "배구 전체"
     }
    },
@@ -13033,12 +13336,12 @@
     "U": 1.74
    },
    "oreo": {
-    "o1": "기준점 183.5 오버 예측. 51%로 크게 앞서지는 않는다.",
+    "o1": "기준점 183.5 오버 예측. 52%로 크게 앞서지는 않는다.",
     "r": "해외 배당이 없어 베트맨 배당에서 발행처 몫을 걷어낸 확률로 봤다.",
     "e": "베트맨 배당이 비슷했던 배구 전체 349경기 중 53%가 이렇게 끝났다.",
     "o2": "이변이 자주 나오는 구도라 무리하지 않는 게 좋다."
    },
-   "narrative": "기준점 183.5 오버 예측. 51%로 크게 앞서지는 않는다. 해외 배당이 없어 베트맨 배당에서 발행처 몫을 걷어낸 확률로 봤다. 베트맨 배당이 비슷했던 배구 전체 349경기 중 53%가 이렇게 끝났다. 이변이 자주 나오는 구도라 무리하지 않는 게 좋다.",
+   "narrative": "기준점 183.5 오버 예측. 52%로 크게 앞서지는 않는다. 해외 배당이 없어 베트맨 배당에서 발행처 몫을 걷어낸 확률로 봤다. 베트맨 배당이 비슷했던 배구 전체 349경기 중 53%가 이렇게 끝났다. 이변이 자주 나오는 구도라 무리하지 않는 게 좋다.",
    "form": {
     "home": {
      "games": [
@@ -13626,31 +13929,58 @@
    "market": "OU",
    "line": 179.5,
    "odds": {
-    "O": 1.74,
-    "U": 1.74
+    "O": 1.69,
+    "U": 1.79
    },
    "venue": "SOOP스타디움",
-   "flow": null,
+   "flow": {
+    "changes": 1,
+    "at": "202611181229",
+    "from": {
+     "U": 1.74,
+     "O": 1.74
+    },
+    "to": {
+     "U": 1.79,
+     "O": 1.69
+    },
+    "pts": [
+     [
+      "",
+      {
+       "U": 1.74,
+       "O": 1.74
+      }
+     ],
+     [
+      "202611181229",
+      {
+       "U": 1.79,
+       "O": 1.69
+      }
+     ]
+    ]
+   },
    "single": true,
    "analysis": {
     "p": {
-     "O": 0.5105,
-     "U": 0.4895
+     "O": 0.5219,
+     "U": 0.4781
     },
     "p_betman": {
-     "O": 0.5,
-     "U": 0.5
+     "O": 0.518,
+     "U": 0.482
     },
     "p_ref": null,
     "p_elo": null,
     "pick": "O",
-    "pick_prob": 0.5105,
-    "pick_odds": 1.74,
-    "ev": -0.1117,
+    "pick_prob": 0.5219,
+    "pick_odds": 1.69,
+    "ev": -0.118,
     "value_key": "O",
-    "value_ev": -0.13,
-    "confidence": 53,
-    "upset_risk": 50,
+    "value_ev": -0.1255,
+    "confidence": 54,
+    "upset_risk": 48,
     "data_score": 35,
     "sources": [
      "베트맨 배당(해외 배당 없음)",
@@ -13660,7 +13990,7 @@
      "해외 배당 없음",
      "이변 주의"
     ],
-    "payout_rate": 0.87,
+    "payout_rate": 0.8693,
     "hist": null,
     "pair": null,
     "intl": null,
@@ -13671,7 +14001,7 @@
     "bhist": {
      "hit": 0.5301,
      "n": 349,
-     "imp": 0.5,
+     "imp": 0.5144,
      "group": "배구 전체"
     }
    },
@@ -13680,12 +14010,12 @@
     "U": 1.74
    },
    "oreo": {
-    "o1": "기준점 179.5 오버 예측. 51%로 크게 앞서지는 않는다.",
+    "o1": "기준점 179.5 오버 예측. 52%로 크게 앞서지는 않는다.",
     "r": "해외 배당이 없어 베트맨 배당에서 발행처 몫을 걷어낸 확률로 봤다.",
     "e": "베트맨 배당이 비슷했던 배구 전체 349경기 중 53%가 이렇게 끝났다.",
     "o2": "이변이 자주 나오는 구도라 무리하지 않는 게 좋다."
    },
-   "narrative": "기준점 179.5 오버 예측. 51%로 크게 앞서지는 않는다. 해외 배당이 없어 베트맨 배당에서 발행처 몫을 걷어낸 확률로 봤다. 베트맨 배당이 비슷했던 배구 전체 349경기 중 53%가 이렇게 끝났다. 이변이 자주 나오는 구도라 무리하지 않는 게 좋다.",
+   "narrative": "기준점 179.5 오버 예측. 52%로 크게 앞서지는 않는다. 해외 배당이 없어 베트맨 배당에서 발행처 몫을 걷어낸 확률로 봤다. 베트맨 배당이 비슷했던 배구 전체 349경기 중 53%가 이렇게 끝났다. 이변이 자주 나오는 구도라 무리하지 않는 게 좋다.",
    "form": {
     "home": {
      "games": [
@@ -19270,7 +19600,7 @@
       "upset_risk": 12,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 2,
@@ -19315,7 +19645,7 @@
       "upset_risk": 13,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4510",
@@ -19342,7 +19672,7 @@
       "upset_risk": 16,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 2,
@@ -19357,8 +19687,8 @@
     "key": "betman:G101:260137:4501:H+betman:G101:260137:4510:A",
     "strategy": "safe",
     "rank": 2,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -19387,7 +19717,7 @@
       "upset_risk": 14,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4559",
@@ -19459,7 +19789,7 @@
       "upset_risk": 12,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4537",
@@ -19531,7 +19861,7 @@
       "upset_risk": 16,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260137:4534",
@@ -19600,8 +19930,8 @@
     "key": "betman:G101:260137:4510:A+betman:G101:260137:4534:A+betman:G101:260137:4541:H",
     "strategy": "safe",
     "rank": 7,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -19630,7 +19960,7 @@
       "upset_risk": 13,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4534",
@@ -19729,7 +20059,7 @@
       "upset_risk": 16,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260137:4559",
@@ -19798,8 +20128,8 @@
     "key": "betman:G101:260137:4510:A+betman:G101:260137:4537:H+betman:G101:260137:4559:A",
     "strategy": "safe",
     "rank": 9,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -19828,7 +20158,7 @@
       "upset_risk": 4,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4559",
@@ -19900,7 +20230,7 @@
       "upset_risk": 14,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4516",
@@ -19927,7 +20257,7 @@
       "upset_risk": 12,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 2,
@@ -19942,8 +20272,8 @@
     "key": "betman:G101:260137:4504:A+betman:G101:260137:4516:A",
     "strategy": "safe",
     "rank": 3,
-    "result": "pending",
-    "return": null
+    "result": "win",
+    "return": 13200
    },
    {
     "legs": [
@@ -20013,7 +20343,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4534:A+betman:G101:260137:4563:H",
     "strategy": "safe",
-    "rank": 2
+    "rank": 2,
+    "result": "pending",
+    "return": null
    }
   ],
   "single": [
@@ -20043,8 +20375,7 @@
       "xo": 1.64,
       "upset_risk": 40,
       "single": true,
-      "dog": false,
-      "result": null
+      "dog": false
      }
     ],
     "size": 1,
@@ -20058,9 +20389,7 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4545:H",
     "strategy": "single",
-    "rank": 1,
-    "result": "pending",
-    "return": null
+    "rank": 1
    },
    {
     "legs": [
@@ -20088,8 +20417,7 @@
       "xo": 1.74,
       "upset_risk": 41,
       "single": true,
-      "dog": false,
-      "result": null
+      "dog": false
      }
     ],
     "size": 1,
@@ -20103,9 +20431,7 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4552:H",
     "strategy": "single",
-    "rank": 2,
-    "result": "pending",
-    "return": null
+    "rank": 2
    }
   ],
   "balanced": [
@@ -20136,7 +20462,7 @@
       "upset_risk": 20,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260137:4519",
@@ -20163,7 +20489,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4556",
@@ -20205,8 +20531,8 @@
     "key": "betman:G101:260137:4519:A+betman:G101:260137:4527:H+betman:G101:260137:4556:A",
     "strategy": "balanced",
     "rank": 2,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -20262,7 +20588,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4545",
@@ -20334,7 +20660,7 @@
       "upset_risk": 12,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4519",
@@ -20361,7 +20687,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4537",
@@ -20460,7 +20786,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4545",
@@ -20559,7 +20885,7 @@
       "upset_risk": 12,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4534",
@@ -20712,7 +21038,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4537",
@@ -20810,7 +21136,8 @@
       "xo": 1.27,
       "upset_risk": 20,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260137:4537",
@@ -20836,7 +21163,8 @@
       "xo": 1.46,
       "upset_risk": 31,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4542",
@@ -20862,7 +21190,8 @@
       "xo": 1.84,
       "upset_risk": 44,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 3,
@@ -20876,7 +21205,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4527:H+betman:G101:260137:4537:H+betman:G101:260137:4542:A",
     "strategy": "balanced",
-    "rank": 1
+    "rank": 1,
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -20904,7 +21235,8 @@
       "xo": 1.78,
       "upset_risk": 42,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4542",
@@ -20930,7 +21262,8 @@
       "xo": 1.84,
       "upset_risk": 44,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 2,
@@ -20944,7 +21277,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4519:A+betman:G101:260137:4542:A",
     "strategy": "balanced",
-    "rank": 2
+    "rank": 2,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -20972,7 +21307,8 @@
       "xo": 1.27,
       "upset_risk": 20,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260137:4560",
@@ -20998,7 +21334,8 @@
       "xo": 1.51,
       "upset_risk": 40,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4545",
@@ -21039,7 +21376,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4527:H+betman:G101:260137:4545:H+betman:G101:260137:4560:A",
     "strategy": "balanced",
-    "rank": 3
+    "rank": 3,
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -21067,7 +21406,8 @@
       "xo": 1.15,
       "upset_risk": 16,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260137:4534",
@@ -21163,8 +21503,8 @@
     "key": "betman:G101:260137:4510:A+betman:G101:260137:4534:A+betman:G101:260137:4555:H+betman:G101:260137:4560:A",
     "strategy": "balanced",
     "rank": 4,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -21192,7 +21532,8 @@
       "xo": 1.09,
       "upset_risk": 13,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4534",
@@ -21218,7 +21559,8 @@
       "xo": 1.23,
       "upset_risk": 21,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4519",
@@ -21244,7 +21586,8 @@
       "xo": 1.78,
       "upset_risk": 42,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4560",
@@ -21316,7 +21659,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4537",
@@ -21384,7 +21727,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4519:A+betman:G101:260137:4537:H+betman:G101:260137:4545:H",
     "strategy": "balanced",
-    "rank": 6
+    "rank": 6,
+    "result": "pending",
+    "return": null
    }
   ],
   "aggressive": [
@@ -21415,7 +21760,7 @@
       "upset_risk": 32,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4502",
@@ -21442,7 +21787,7 @@
       "upset_risk": 40,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4535",
@@ -21541,7 +21886,7 @@
       "upset_risk": 40,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4528",
@@ -21568,7 +21913,7 @@
       "upset_risk": 50,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4545",
@@ -21667,7 +22012,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4542",
@@ -21721,7 +22066,7 @@
       "upset_risk": 50,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4545",
@@ -21847,7 +22192,7 @@
       "upset_risk": 40,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4556",
@@ -21973,7 +22318,7 @@
       "upset_risk": 32,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4556",
@@ -22054,7 +22399,7 @@
       "upset_risk": 44,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 5,
@@ -22126,7 +22471,7 @@
       "upset_risk": 40,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4556",
@@ -22207,7 +22552,7 @@
       "upset_risk": 44,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 5,
@@ -22252,7 +22597,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4517",
@@ -22279,7 +22624,7 @@
       "upset_risk": 32,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4545",
@@ -22333,7 +22678,7 @@
       "upset_risk": 48,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4552",
@@ -22432,7 +22777,7 @@
       "upset_risk": 32,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4560",
@@ -22513,7 +22858,7 @@
       "upset_risk": 48,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 5,
@@ -22558,7 +22903,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4542",
@@ -22639,7 +22984,7 @@
       "upset_risk": 48,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4535",
@@ -22711,7 +23056,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4528",
@@ -22738,7 +23083,7 @@
       "upset_risk": 50,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4535",
@@ -22864,7 +23209,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4517",
@@ -22891,7 +23236,7 @@
       "upset_risk": 32,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4524",
@@ -22918,7 +23263,7 @@
       "upset_risk": 45,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4552",
@@ -22989,7 +23334,8 @@
       "xo": 1.53,
       "upset_risk": 50,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260137:4535",
@@ -23042,7 +23388,8 @@
       "xo": 1.66,
       "upset_risk": 47,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4508",
@@ -23068,7 +23415,8 @@
       "xo": 1.59,
       "upset_risk": 44,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": "hit"
      }
     ],
     "size": 4,
@@ -23082,7 +23430,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4508:H+betman:G101:260137:4514:H+betman:G101:260137:4535:U+betman:G101:260137:4556:A",
     "strategy": "aggressive",
-    "rank": 1
+    "rank": 1,
+    "result": "lose",
+    "return": 0
    }
   ],
   "upset": [
@@ -23113,7 +23463,7 @@
       "upset_risk": 43,
       "single": false,
       "dog": true,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260137:4519",
@@ -23140,7 +23490,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": true,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 2,
@@ -23155,8 +23505,8 @@
     "key": "betman:G101:260137:4519:H+betman:G101:260137:4523:A",
     "strategy": "upset",
     "rank": 1,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -23239,7 +23589,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": true,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 3,
@@ -23254,8 +23604,8 @@
     "key": "betman:G101:260137:4519:H+betman:G101:260137:4541:A+betman:G101:260137:4555:A",
     "strategy": "upset",
     "rank": 8,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -23284,7 +23634,7 @@
       "upset_risk": 20,
       "single": true,
       "dog": true,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4537",
@@ -23338,7 +23688,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": true,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 3,
@@ -23353,8 +23703,8 @@
     "key": "betman:G101:260137:4519:H+betman:G101:260137:4527:A+betman:G101:260137:4537:A",
     "strategy": "upset",
     "rank": 10,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -23410,7 +23760,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": true,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 2,
@@ -23425,8 +23775,8 @@
     "key": "betman:G101:260137:4519:H+betman:G101:260137:4550:H",
     "strategy": "upset",
     "rank": 2,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -23482,7 +23832,7 @@
       "upset_risk": 43,
       "single": false,
       "dog": true,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 2,
@@ -23497,8 +23847,8 @@
     "key": "betman:G101:260137:4523:A+betman:G101:260137:4550:H",
     "strategy": "upset",
     "rank": 3,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -23527,7 +23877,7 @@
       "upset_risk": 43,
       "single": false,
       "dog": true,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260137:4537",
@@ -23569,8 +23919,8 @@
     "key": "betman:G101:260137:4523:A+betman:G101:260137:4537:A",
     "strategy": "upset",
     "rank": 4,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -23599,7 +23949,7 @@
       "upset_risk": 43,
       "single": false,
       "dog": true,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260137:4541",
@@ -23641,8 +23991,8 @@
     "key": "betman:G101:260137:4523:A+betman:G101:260137:4541:A",
     "strategy": "upset",
     "rank": 5,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -23698,7 +24048,7 @@
       "upset_risk": 20,
       "single": true,
       "dog": true,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 2,
@@ -23743,7 +24093,7 @@
       "upset_risk": 20,
       "single": true,
       "dog": true,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4537",
@@ -23814,7 +24164,8 @@
       "xo": 2.41,
       "upset_risk": 32,
       "single": true,
-      "dog": true
+      "dog": true,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4519",
@@ -23841,7 +24192,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": true,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 2,
@@ -23855,7 +24206,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4519:H+betman:G101:260137:4555:A",
     "strategy": "upset",
-    "rank": 2
+    "rank": 2,
+    "result": "lose",
+    "return": 0
    }
   ],
   "lotto": [
@@ -23886,7 +24239,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4542",
@@ -23940,7 +24293,7 @@
       "upset_risk": 50,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4545",
@@ -23994,7 +24347,7 @@
       "upset_risk": 48,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4552",
@@ -24093,7 +24446,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4542",
@@ -24174,7 +24527,7 @@
       "upset_risk": 32,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4560",
@@ -24228,7 +24581,7 @@
       "upset_risk": 50,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4545",
@@ -24327,7 +24680,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4560",
@@ -24381,7 +24734,7 @@
       "upset_risk": 40,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4528",
@@ -24408,7 +24761,7 @@
       "upset_risk": 50,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4535",
@@ -24516,7 +24869,7 @@
       "upset_risk": 44,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 8,
@@ -24561,7 +24914,7 @@
       "upset_risk": 42,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4542",
@@ -24615,7 +24968,7 @@
       "upset_risk": 32,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4560",
@@ -24696,7 +25049,7 @@
       "upset_risk": 48,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4552",
@@ -24795,7 +25148,7 @@
       "upset_risk": 32,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4502",
@@ -24822,7 +25175,7 @@
       "upset_risk": 40,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4545",
@@ -24876,7 +25229,7 @@
       "upset_risk": 48,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4535",
@@ -25056,7 +25409,7 @@
       "upset_risk": 32,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4560",
@@ -25110,7 +25463,7 @@
       "upset_risk": 50,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4525",
@@ -25137,7 +25490,7 @@
       "upset_risk": 48,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260137:4535",
@@ -25264,8 +25617,7 @@
    "upset_risk": 45,
    "single": true,
    "dog": true,
-   "kelly": 0.0004,
-   "result": null
+   "kelly": 0.0004
   }
  ],
  "upsets": [
@@ -25356,258 +25708,37 @@
    "reasons": [
     "팀 레이팅은 32%로 해외 시장보다 높게 봄"
    ]
-  },
-  {
-   "market_id": "betman:G101:260137:4541",
-   "match": "2026-11-18|LA 레이커스|샬럿 호네츠",
-   "league": "NBA",
-   "sport": "basketball",
-   "date": "2026-11-18",
-   "home": "LA 레이커스",
-   "away": "샬럿 호네츠",
-   "market": "WL",
-   "line": null,
-   "game_no": 4541,
-   "round": "260137",
-   "kickoff": "2026-11-18T13:00+09:00",
-   "outcome": "A",
-   "p": 0.2769,
-   "odds": 3.39,
-   "x_odds": 3.55,
-   "x_kind": "직접",
-   "ev": -0.06130900000000006,
-   "confidence": 64,
-   "xev": -0.01700500000000016,
-   "xo": 3.55,
-   "upset_risk": 26,
-   "single": true,
-   "score": 0.1762,
-   "reasons": [
-    "해외 배당이 비슷했던 NBA 663경기에서 실제 29% 적중(해외 배당 확률 28%)"
-   ]
   }
  ],
- "handi_picks": [
-  {
-   "market_id": "betman:G101:260137:4542",
-   "match": "2026-11-18|LA 레이커스|샬럿 호네츠",
-   "league": "NBA",
-   "sport": "basketball",
-   "date": "2026-11-18",
-   "home": "LA 레이커스",
-   "away": "샬럿 호네츠",
-   "market": "HANDICAP",
-   "line": -8.5,
-   "game_no": 4542,
-   "round": "260137",
-   "kickoff": "2026-11-18T13:00+09:00",
-   "outcome": "A",
-   "p": 0.558,
-   "odds": 1.74,
-   "x_odds": 1.84,
-   "x_kind": "환산",
-   "ev": -0.029079999999999884,
-   "confidence": 55,
-   "xev": 0.026720000000000077,
-   "xo": 1.84,
-   "upset_risk": 44,
-   "single": true,
-   "hist_hit": 0.6018,
-   "hist_n": 663,
-   "score": 0.5872
-  },
-  {
-   "market_id": "betman:G101:260137:4538",
-   "match": "2026-11-18|LA 클리퍼스|유타 재즈",
-   "league": "NBA",
-   "sport": "basketball",
-   "date": "2026-11-18",
-   "home": "LA 클리퍼스",
-   "away": "유타 재즈",
-   "market": "HANDICAP",
-   "line": -5.5,
-   "game_no": 4538,
-   "round": "260137",
-   "kickoff": "2026-11-18T12:30+09:00",
-   "outcome": "H",
-   "p": 0.5203,
-   "odds": 1.66,
-   "x_odds": 1.91,
-   "x_kind": "환산",
-   "ev": -0.13630200000000003,
-   "confidence": 61,
-   "xev": -0.006227000000000094,
-   "xo": 1.91,
-   "upset_risk": 48,
-   "single": true,
-   "hist_hit": 0.5138,
-   "hist_n": 617,
-   "score": 0.5154
-  }
- ],
- "ou_picks": [
-  {
-   "market_id": "betman:G101:260137:4539",
-   "match": "2026-11-18|LA 클리퍼스|유타 재즈",
-   "league": "NBA",
-   "sport": "basketball",
-   "date": "2026-11-18",
-   "home": "LA 클리퍼스",
-   "away": "유타 재즈",
-   "market": "OU",
-   "line": 225.5,
-   "game_no": 4539,
-   "round": "260137",
-   "kickoff": "2026-11-18T12:30+09:00",
-   "outcome": "O",
-   "p": 0.5063,
-   "odds": 1.72,
-   "x_odds": 1.98,
-   "x_kind": "환산",
-   "ev": -0.12916400000000006,
-   "confidence": 61,
-   "xev": 0.002473999999999865,
-   "xo": 1.98,
-   "upset_risk": 49,
-   "single": true,
-   "hist_hit": 0.5113,
-   "hist_n": 12952,
-   "score": 0.5096
-  },
-  {
-   "market_id": "betman:G101:260137:4543",
-   "match": "2026-11-18|LA 레이커스|샬럿 호네츠",
-   "league": "NBA",
-   "sport": "basketball",
-   "date": "2026-11-18",
-   "home": "LA 레이커스",
-   "away": "샬럿 호네츠",
-   "market": "OU",
-   "line": 222.5,
-   "game_no": 4543,
-   "round": "260137",
-   "kickoff": "2026-11-18T13:00+09:00",
-   "outcome": "U",
-   "p": 0.5019,
-   "odds": 1.77,
-   "x_odds": 1.99,
-   "x_kind": "환산",
-   "ev": -0.11163699999999999,
-   "confidence": 62,
-   "xev": -0.00121899999999997,
-   "xo": 1.99,
-   "upset_risk": 50,
-   "single": true,
-   "hist_hit": 0.5015,
-   "hist_n": 12952,
-   "score": 0.5016
-  }
- ],
+ "handi_picks": [],
+ "ou_picks": [],
  "top_pick": {
-  "market_id": "betman:G101:260137:4534",
-  "match": "2026-11-18|멕시코|자메이카",
-  "league": "CONCACAF 네이션스리그",
-  "sport": "soccer",
+  "market_id": "betman:G101:260137:4555",
+  "match": "2026-11-18|삼성화재 블루팡스|우리카드 우리WON",
+  "league": "KOVO 남자",
+  "sport": "volleyball",
   "date": "2026-11-18",
-  "home": "멕시코",
-  "away": "자메이카",
-  "market": "HANDICAP",
-  "line": -3.5,
-  "game_no": 4534,
+  "home": "삼성화재 블루팡스",
+  "away": "우리카드 우리WON",
+  "market": "WL",
+  "line": null,
+  "game_no": 4555,
   "round": "260137",
-  "kickoff": "2026-11-18T11:30+09:00",
-  "outcome": "A",
-  "p": 0.7504,
-  "odds": 1.23,
+  "kickoff": "2026-11-18T19:00+09:00",
+  "outcome": "H",
+  "p": 0.6576,
+  "odds": 1.36,
   "x_odds": null,
   "x_kind": null,
-  "ev": -0.07700800000000008,
+  "ev": -0.10566399999999998,
   "confidence": 55,
   "xev": 0.0,
-  "xo": 1.23,
-  "upset_risk": 21,
-  "single": false,
+  "xo": 1.36,
+  "upset_risk": 32,
+  "single": true,
   "dog": false
  },
  "top_picks": [
-  {
-   "market_id": "betman:G101:260137:4534",
-   "match": "2026-11-18|멕시코|자메이카",
-   "league": "CONCACAF 네이션스리그",
-   "sport": "soccer",
-   "date": "2026-11-18",
-   "home": "멕시코",
-   "away": "자메이카",
-   "market": "HANDICAP",
-   "line": -3.5,
-   "game_no": 4534,
-   "round": "260137",
-   "kickoff": "2026-11-18T11:30+09:00",
-   "outcome": "A",
-   "p": 0.7504,
-   "odds": 1.23,
-   "x_odds": null,
-   "x_kind": null,
-   "ev": -0.07700800000000008,
-   "confidence": 55,
-   "xev": 0.0,
-   "xo": 1.23,
-   "upset_risk": 21,
-   "single": false,
-   "dog": false
-  },
-  {
-   "market_id": "betman:G101:260137:4541",
-   "match": "2026-11-18|LA 레이커스|샬럿 호네츠",
-   "league": "NBA",
-   "sport": "basketball",
-   "date": "2026-11-18",
-   "home": "LA 레이커스",
-   "away": "샬럿 호네츠",
-   "market": "WL",
-   "line": null,
-   "game_no": 4541,
-   "round": "260137",
-   "kickoff": "2026-11-18T13:00+09:00",
-   "outcome": "H",
-   "p": 0.7231,
-   "odds": 1.17,
-   "x_odds": 1.37,
-   "x_kind": "직접",
-   "ev": -0.15397300000000014,
-   "confidence": 64,
-   "xev": -0.009352999999999945,
-   "xo": 1.37,
-   "upset_risk": 26,
-   "single": true,
-   "dog": false
-  },
-  {
-   "market_id": "betman:G101:260137:4537",
-   "match": "2026-11-18|LA 클리퍼스|유타 재즈",
-   "league": "NBA",
-   "sport": "basketball",
-   "date": "2026-11-18",
-   "home": "LA 클리퍼스",
-   "away": "유타 재즈",
-   "market": "WL",
-   "line": null,
-   "game_no": 4537,
-   "round": "260137",
-   "kickoff": "2026-11-18T12:30+09:00",
-   "outcome": "H",
-   "p": 0.6792,
-   "odds": 1.29,
-   "x_odds": 1.46,
-   "x_kind": "직접",
-   "ev": -0.12383199999999994,
-   "confidence": 74,
-   "xev": -0.008367999999999931,
-   "xo": 1.46,
-   "upset_risk": 31,
-   "single": true,
-   "dog": false
-  },
   {
    "market_id": "betman:G101:260137:4555",
    "match": "2026-11-18|삼성화재 블루팡스|우리카드 우리WON",
@@ -25685,6 +25816,32 @@
    "upset_risk": 40,
    "single": true,
    "dog": false
+  },
+  {
+   "market_id": "betman:G101:260137:4552",
+   "match": "2026-11-18|신한은행 에스버드|KB 스타즈",
+   "league": "WKBL",
+   "sport": "basketball",
+   "date": "2026-11-18",
+   "home": "신한은행 에스버드",
+   "away": "KB 스타즈",
+   "market": "HANDICAP",
+   "line": 3.5,
+   "game_no": 4552,
+   "round": "260137",
+   "kickoff": "2026-11-18T19:00+09:00",
+   "outcome": "H",
+   "p": 0.5633,
+   "odds": 1.74,
+   "x_odds": null,
+   "x_kind": null,
+   "ev": -0.01985799999999993,
+   "confidence": 55,
+   "xev": 0.0,
+   "xo": 1.74,
+   "upset_risk": 41,
+   "single": true,
+   "dog": false
   }
  ],
  "caution": [
@@ -25758,6 +25915,19 @@
    "from": 3.31,
    "to": 3.03,
    "chg": -0.0846,
+   "n": 1
+  },
+  {
+   "market_id": "betman:G101:260137:4541",
+   "home": "LA 레이커스",
+   "away": "샬럿 호네츠",
+   "market": "WL",
+   "line": null,
+   "kickoff": "2026-11-18T13:00+09:00",
+   "outcome": "A",
+   "from": 3.39,
+   "to": 3.16,
+   "chg": -0.0678,
    "n": 1
   },
   {
@@ -25891,6 +26061,32 @@
    "n": 1
   },
   {
+   "market_id": "betman:G101:260137:4557",
+   "home": "삼성화재 블루팡스",
+   "away": "우리카드 우리WON",
+   "market": "OU",
+   "line": 183.5,
+   "kickoff": "2026-11-18T19:00+09:00",
+   "outcome": "O",
+   "from": 1.74,
+   "to": 1.69,
+   "chg": -0.0287,
+   "n": 1
+  },
+  {
+   "market_id": "betman:G101:260137:4561",
+   "home": "SOOP 수퍼스",
+   "away": "현대건설 힐스테이트",
+   "market": "OU",
+   "line": 179.5,
+   "kickoff": "2026-11-18T19:00+09:00",
+   "outcome": "O",
+   "from": 1.74,
+   "to": 1.69,
+   "chg": -0.0287,
+   "n": 1
+  },
+  {
    "market_id": "betman:G101:260137:4555",
    "home": "삼성화재 블루팡스",
    "away": "우리카드 우리WON",
@@ -25969,6 +26165,19 @@
    "n": 1
   },
   {
+   "market_id": "betman:G101:260137:4541",
+   "home": "LA 레이커스",
+   "away": "샬럿 호네츠",
+   "market": "WL",
+   "line": null,
+   "kickoff": "2026-11-18T13:00+09:00",
+   "outcome": "H",
+   "from": 1.17,
+   "to": 1.2,
+   "chg": 0.0256,
+   "n": 1
+  },
+  {
    "market_id": "betman:G101:260137:4531",
    "home": "멕시코",
    "away": "자메이카",
@@ -25979,6 +26188,32 @@
    "from": 1.07,
    "to": 1.1,
    "chg": 0.028,
+   "n": 1
+  },
+  {
+   "market_id": "betman:G101:260137:4557",
+   "home": "삼성화재 블루팡스",
+   "away": "우리카드 우리WON",
+   "market": "OU",
+   "line": 183.5,
+   "kickoff": "2026-11-18T19:00+09:00",
+   "outcome": "U",
+   "from": 1.74,
+   "to": 1.79,
+   "chg": 0.0287,
+   "n": 1
+  },
+  {
+   "market_id": "betman:G101:260137:4561",
+   "home": "SOOP 수퍼스",
+   "away": "현대건설 힐스테이트",
+   "market": "OU",
+   "line": 179.5,
+   "kickoff": "2026-11-18T19:00+09:00",
+   "outcome": "U",
+   "from": 1.74,
+   "to": 1.79,
+   "chg": 0.0287,
    "n": 1
   },
   {
@@ -26360,6 +26595,31 @@
   "legs": 50,
   "combos": 52
  },
- "outcomes": {},
- "headline": "오늘 14경기 분석 완료. 가장 단단한 선택은 자메이카 원정승, 추정 75%. 이후 6경기도 미리 분석했습니다."
+ "outcomes": {
+  "betman:G101:260137:4501": "H",
+  "betman:G101:260137:4502": "H",
+  "betman:G101:260137:4503": "D",
+  "betman:G101:260137:4504": "A",
+  "betman:G101:260137:4505": "U",
+  "betman:G101:260137:4507": "H",
+  "betman:G101:260137:4508": "H",
+  "betman:G101:260137:4509": "H",
+  "betman:G101:260137:4510": "H",
+  "betman:G101:260137:4511": "O",
+  "betman:G101:260137:4513": "H",
+  "betman:G101:260137:4514": "D",
+  "betman:G101:260137:4515": "A",
+  "betman:G101:260137:4516": "A",
+  "betman:G101:260137:4517": "U",
+  "betman:G101:260137:4519": "A",
+  "betman:G101:260137:4520": "A",
+  "betman:G101:260137:4521": "U",
+  "betman:G101:260137:4523": "H",
+  "betman:G101:260137:4524": "A",
+  "betman:G101:260137:4525": "U",
+  "betman:G101:260137:4527": "A",
+  "betman:G101:260137:4528": "A",
+  "betman:G101:260137:4529": "U"
+ },
+ "headline": "오늘 14경기 분석 완료. 가장 단단한 선택은 삼성화재 블루팡스 홈승, 추정 66%. 이후 6경기도 미리 분석했습니다."
 }
