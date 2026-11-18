@@ -24,7 +24,7 @@ from datetime import datetime, timedelta, timezone
 from .. import config
 
 KST = timezone(timedelta(hours=9))
-MIN_CHARS = 1000
+MIN_CHARS = 150
 SPORT_KO = {"soccer": "축구", "basketball": "농구", "baseball": "야구", "volleyball": "배구"}
 FD_NAME = {"E0": "잉글랜드 프리미어리그", "E1": "잉글랜드 챔피언십", "SP1": "스페인 라리가", "SP2": "스페인 라리가2",
            "I1": "이탈리아 세리에A", "I2": "이탈리아 세리에B", "D1": "독일 분데스리가", "D2": "독일 분데스리가2",
@@ -905,7 +905,7 @@ def art_fd_league(code, rows, allst=None):
                "정배가 배당만큼 버티지 못하는 편이라 이변을 한 번 더 의심해 볼 만합니다." if st["fav16"] < st["fav16e"] - 0.015 else
                "정배가 배당과 거의 같은 비율로 이겨 배당을 그대로 믿어도 크게 어긋나지 않습니다."),
         ]))
-    return A(f"fd-{code.lower()}", f"{name}{josa(name)} 어떤 리그일까: 골·무승부·정배 기록", "리그별",
+    return A(f"fd-{code.lower()}", f"{name}{josa(name)} 어떤 리그일까: 골·무승부·정배 기록", "유럽 축구",
              f"{name} 여러 시즌의 결과와 배당 기록으로 이 리그만의 특징을 정리했습니다. 숫자는 새 시즌 기록이 들어올 때마다 자동으로 다시 계산됩니다.",
              secs, league=name, sport="soccer", tags=[name, "축구"])
 
@@ -1026,6 +1026,240 @@ EXTRA3 = {
         "금액 계산기는 예산, 확률, 배당을 넣으면 켈리 기준 금액을 보여 줍니다. 계산 결과가 0원이면 그 선택은 확률에 비해 배당이 낮다는 뜻이니 건너뛰는 것이 맞습니다."])],
 }
 
+
+# ───────────────────────── 주제별 짧은 글(종목·리그마다) ─────────────────────────
+def _pick(key, *variants):
+    """같은 뜻의 여러 문장 중 하나를 글마다 다르게(같은 글은 항상 같은 문장)."""
+    h = sum(ord(c) * (i + 1) for i, c in enumerate(key))
+    return variants[h % len(variants)]
+
+
+def _slug(x):
+    return re.sub(r"[^0-9a-z가-힣]+", "-", str(x).lower()).strip("-")
+
+
+def t_fav(key, name, gs, cat, sport, league=None):
+    bands = fav_by_band(gs, min_n=20)
+    if len(bands) < 2:
+        return None
+    n = sum(b["n"] for b in bands)
+    hit = sum(b["hit"] * b["n"] for b in bands) / n
+    exp = sum(b["exp"] * b["n"] for b in bands) / n
+    top = max(bands, key=lambda b: b["hit"] - b["exp"])
+    low = bands[0]
+    gap = hit - exp
+    v = (_pick(key, "배당이 말한 것보다 정배가 더 단단했습니다.", "정배가 배당 이상으로 버틴 편입니다.", "정배를 믿어도 배당보다 더 맞아 준 기록입니다.") if gap > 0.015 else
+         _pick(key, "정배가 배당만큼 이기지 못했습니다.", "배당이 말한 것보다 정배가 자주 미끄러졌습니다.", "정배를 그대로 믿기엔 아쉬운 기록입니다.") if gap < -0.015 else
+         _pick(key, "배당과 실제가 거의 같습니다.", "배당이 결과를 정직하게 짚은 편입니다.", "정배가 딱 배당만큼 이겼습니다."))
+    return A(f"fav-{_slug(key)}", f"{name} 정배, 배당만큼 이길까", cat,
+             f"{name} 정배 {n:,}경기를 배당 구간별로 나눠 실제로 이긴 비율을 셌습니다.",
+             [(None, [
+                 f"{name}에서 배당이 낮은 쪽은 {pct(hit)} 이겼고 배당 기준 확률은 {pct(exp)}였습니다({pp(gap)}). {v}",
+                 ("table", ["정배 배당", "경기 수", "실제 적중", "배당 기준", "차이"], [[b["band"], f"{b['n']:,}", pct(b["hit"]), pct(b["exp"]), pp(b["hit"] - b["exp"])] for b in bands]),
+                 f"가장 낮은 배당대({low['band']})는 {pct(low['hit'])}, 배당보다 가장 잘 버틴 구간은 {top['band']}({pp(top['hit'] - top['exp'])})입니다. "
+                 + _pick(key + "b", "조합의 기둥은 이 구간에서 고르는 편이 무난합니다.", "여러 경기를 묶을 때 이 구간 숫자를 기준으로 삼으면 됩니다.", "정배를 고를 때 먼저 이 구간을 찾아보면 좋습니다."),
+             ])], league=league, sport=sport, tags=[name, "정배"])
+
+
+def t_home(key, name, gs, cat, sport, league=None):
+    if len(gs) < 100:
+        return None
+    n = len(gs)
+    hw = sum(1 for g in gs if g["res"] == 0) / n
+    dr = sum(1 for g in gs if g["res"] == 1) / n
+    he = sum(fair(g["o"])[0] for g in gs) / n
+    favs = [(g, _fav(g)) for g in gs if _fav(g)]
+    hf = [g for g, f in favs if f[0] == 0]
+    af = [g for g, f in favs if f[0] == 2]
+    hfr = sum(1 for g in hf if g["res"] == 0) / len(hf) if len(hf) >= 30 else None
+    afr = sum(1 for g in af if g["res"] == 2) / len(af) if len(af) >= 30 else None
+    gap = hw - he
+    rows = [["홈 승", pct(hw)]] + ([["무승부", pct(dr)]] if dr > 0.001 else []) + [["원정 승", pct(1 - hw - dr)], ["배당 기준 홈 확률", pct(he)]]
+    if hfr is not None and afr is not None:
+        rows += [["홈팀이 정배일 때", f"{pct(hfr)} ({len(hf):,})"], ["원정팀이 정배일 때", f"{pct(afr)} ({len(af):,})"]]
+    return A(f"home-{_slug(key)}", f"{name} 홈 이점은 얼마나 될까", cat,
+             f"{name} {n:,}경기의 홈·원정 결과를 배당 기준 확률과 비교했습니다.",
+             [(None, [
+                 f"{name} 홈팀은 {pct(hw)} 이겼습니다. 배당 기준 홈 확률 {pct(he)}보다 {pp(gap)} " + ("더 이겼습니다." if gap > 0 else "덜 이겼습니다." if gap < 0 else "같습니다.")
+                 + " " + (_pick(key, "홈 경기의 무게를 배당보다 조금 더 실어도 되는 리그입니다.", "홈팀 쪽 선택이 배당 이상으로 맞아 준 기록입니다.") if gap > 0.02 else
+                          _pick(key, "원정팀이 생각보다 잘 버티는 리그입니다.", "홈이라는 이유만으로 무게를 싣기엔 근거가 약합니다.") if gap < -0.02 else
+                          _pick(key, "홈 이점은 배당에 거의 그대로 들어가 있습니다.", "홈·원정 자체보다 그날 전력 차를 보는 편이 맞습니다.")),
+                 ("table", ["항목", "값"], rows),
+                 (f"홈 정배와 원정 정배의 차이는 {pp(hfr - afr)}입니다. " + ("원정 정배는 한 번 더 확인하고 고르는 편이 좋습니다." if hfr - afr > 0.05 else "원정 정배가 오히려 잘 버텼습니다." if afr - hfr > 0.05 else "정배라면 홈·원정을 크게 가리지 않아도 됩니다.")) if hfr is not None and afr is not None else "",
+             ])], league=league, sport=sport, tags=[name, "홈"])
+
+
+def t_ou(key, name, lst, cat, sport, league=None):
+    if len(lst) < 60:
+        return None
+    n = len(lst)
+    ov = sum(1 for x in lst if x["res"] == (2 if x["uf"] else 0)) / n
+    by = defaultdict(lambda: [0, 0])
+    for x in lst:
+        a = by[x["line"]]
+        a[0] += 1
+        a[1] += int(x["res"] == (2 if x["uf"] else 0))
+    rows = [[f"{k:g}", f"{v[0]:,}", pct(v[1] / v[0])] for k, v in sorted(by.items(), key=lambda kv: -kv[1][0])[:8] if v[0] >= 10]
+    rows.sort(key=lambda r: float(r[0]))
+    lean = ("오버" if ov > 0.53 else "언더" if ov < 0.47 else None)
+    return A(f"ou-{_slug(key)}", f"{name} 언더오버, 어느 쪽으로 기울까", cat,
+             f"{name} 언더오버 {n:,}경기에서 오버와 언더가 어떻게 나뉘었는지 기준점별로 정리했습니다.",
+             [(None, [
+                 f"{name} 언더오버는 오버 {pct(ov)}, 언더 {pct(1 - ov)}로 끝났습니다. "
+                 + (_pick(key, f"{lean} 쪽으로 기운 기록입니다.", f"기준점보다 {lean}로 끝난 경기가 더 많았습니다.", f"꾸준히 {lean} 쪽이 우세했습니다.") if lean else
+                    _pick(key, "어느 한쪽으로 기울지 않았습니다.", "거의 반반으로 갈렸습니다.", "기준점이 양쪽을 잘 맞춘 편입니다.")),
+                 ("table", ["기준점", "경기 수", "오버"], rows) if len(rows) >= 2 else "",
+                 _pick(key + "u", "기준점별로 보면 같은 리그 안에서도 오버가 잘 나오는 숫자와 언더가 잘 나오는 숫자가 갈립니다.",
+                       "자주 나오는 기준점일수록 표본이 많아 숫자를 믿을 만합니다.",
+                       "그날 기준점이 표의 어디에 해당하는지 찾아보면 출발점이 잡힙니다."),
+             ])], league=league, sport=sport, tags=[name, "언더오버"])
+
+
+def t_hc(key, name, lst, cat, sport, league=None):
+    lst = [x for x in lst if x["line"]]
+    if len(lst) < 60:
+        return None
+    n = len(lst)
+    plus = sum(1 for x in lst if x["res"] == (0 if x["line"] > 0 else 2)) / n
+    draw = sum(1 for x in lst if x["res"] == 1) / n
+    by = defaultdict(lambda: [0, 0])
+    for x in lst:
+        k = abs(x["line"])
+        a = by[k]
+        a[0] += 1
+        a[1] += int(x["res"] == (0 if x["line"] > 0 else 2))
+    rows = [[f"{k:g}", f"{v[0]:,}", pct(v[1] / v[0])] for k, v in sorted(by.items()) if v[0] >= 10][:10]
+    return A(f"hc-{_slug(key)}", f"{name} 핸디캡, 받은 쪽은 얼마나 버틸까", cat,
+             f"{name} 핸디캡 {n:,}경기에서 기준점을 받은 쪽(약팀)이 얼마나 버텼는지 기준점 크기별로 셌습니다.",
+             [(None, [
+                 f"기준점을 받은 쪽은 {pct(plus)} 버텼습니다" + (f"(핸디무 {pct(draw)})" if draw > 0.01 else "") + ". "
+                 + (_pick(key, "강팀이 기준점만큼 벌리지 못한 경기가 많았습니다.", "받은 쪽이 꾸준히 버틴 기록입니다.") if plus > 0.52 else
+                    _pick(key, "강팀이 기준점 이상으로 벌린 경기가 많았습니다.", "주는 쪽이 꾸준히 넘어선 기록입니다.") if plus < 0.48 else
+                    _pick(key, "기준점이 점수 차를 잘 맞힌 편입니다.", "받는 쪽과 주는 쪽이 거의 반반입니다.")),
+                 ("table", ["기준점 크기", "경기 수", "받은 쪽 적중"], rows) if len(rows) >= 2 else "",
+                 _pick(key + "h", "기준점이 커질수록 받은 쪽 숫자가 어떻게 바뀌는지 보면, 이 리그에서 강팀이 몇 점 차까지 벌리는지 감이 옵니다.",
+                       "작은 기준점은 승패와 비슷하게, 큰 기준점은 경기 막판 운영에 따라 갈립니다.",
+                       "같은 기준점이라도 리그에 따라 숫자가 다르니 이 표를 그 리그의 기준으로 삼으면 됩니다."),
+             ])], league=league, sport=sport, tags=[name, "핸디캡"])
+
+
+def t_upset(key, name, gs, cat, sport, league=None):
+    favs = [(g, _fav(g)) for g in gs if _fav(g)]
+    if len(favs) < 100:
+        return None
+    acc = defaultdict(lambda: [0, 0])
+    for g, f in favs:
+        b = _band(f[2], DOG_EDGES)
+        if b:
+            acc[b][0] += 1
+            acc[b][1] += int(g["res"] == 2 - f[0])
+    rows = [[b, f"{v[0]:,}", pct(v[1] / v[0]), f"{max(1, round(v[0] / max(1, v[1])))}경기에 한 번"] for lo, hi in DOG_EDGES for b in [_band(lo, [(lo, hi)])] for v in [acc.get(b)] if v and v[0] >= 15]
+    if len(rows) < 2:
+        return None
+    up = sum(1 for g, f in favs if g["res"] == 2 - f[0]) / len(favs)
+    return A(f"upset-{_slug(key)}", f"{name} 역배는 몇 경기에 한 번 터질까", cat,
+             f"{name}에서 배당이 높은 쪽이 이긴 경기를 배당 구간별로 셌습니다.",
+             [(None, [
+                 f"{name} 역배는 {len(favs):,}경기 중 {pct(up)} 이겼습니다. " + _pick(key, "구간별로 보면 기다리는 간격이 보입니다.", "배당이 높아질수록 간격이 어떻게 벌어지는지 표로 정리했습니다.", "아래 표의 간격을 알고 있으면 역배를 고를 때 기대치를 정하기 쉽습니다."),
+                 ("table", ["역배 배당", "경기 수", "역배 적중", "대략"], rows),
+             ])], league=league, sport=sport, tags=[name, "역배"])
+
+
+def f_topic_articles(code, rows):
+    """유럽 리그 하나를 주제별 짧은 글로."""
+    name = FD_NAME.get(code, code)
+    n = len(rows)
+    if n < 600:
+        return []
+    out = []
+    key = code
+    # 골 분포
+    gd = Counter(min(r[6], 6) for r in rows)
+    avg = sum(r[6] for r in rows) / n
+    out.append(A(f"goals-{code.lower()}", f"{name} 한 경기에 골은 몇 개 나올까", "유럽 축구",
+                 f"{name} {n:,}경기의 골 수 분포와 기준점별 오버 비율입니다.",
+                 [(None, [f"{name} 경기당 평균은 {avg:.2f}골입니다. 가장 흔한 결과는 {max(gd, key=gd.get)}골({pct(max(gd.values()) / n)})입니다.",
+                          ("table", ["총 골", "비율"], [[("6골 이상" if k == 6 else f"{k}골"), pct(v / n)] for k, v in sorted(gd.items())]),
+                          ("table", ["기준점", "오버"], [[f"{x - 0.5:g}", pct(sum(1 for r in rows if r[6] >= x) / n)] for x in (1, 2, 3, 4)]),
+                          _pick(key, "2.5가 애매한 경기는 한 칸 위아래 기준점의 비율을 같이 보면 됩니다.", "기준점 1.5와 3.5의 비율 차이가 이 리그 득점의 폭을 보여 줍니다.")])],
+                 league=name, sport="soccer", tags=[name, "골"]))
+    # 무승부
+    gaps = defaultdict(lambda: [0, 0])
+    for r in rows:
+        if r[0] and r[2]:
+            g = abs(r[0] - r[2])
+            k = "0.5 미만" if g < 0.5 else "0.5~1.5" if g < 1.5 else "1.5~3" if g < 3 else "3 이상"
+            gaps[k][0] += 1
+            gaps[k][1] += int(r[3] == 1)
+    dr = sum(1 for r in rows if r[3] == 1) / n
+    out.append(A(f"draws-{code.lower()}", f"{name} 무승부는 언제 나올까", "유럽 축구",
+                 f"{name} {n:,}경기의 무승부를 두 팀 배당 차이별로 나눠 봤습니다.",
+                 [(None, [f"{name} 무승부는 {pct(dr)}, 대략 {round(1 / max(dr, 0.01))}경기에 한 번입니다. " + _pick(key, "두 팀 배당이 붙을수록 무승부가 늘어납니다.", "배당 차이가 작은 경기에서 무승부 몫이 커집니다."),
+                          ("table", ["홈·원정 배당 차이", "경기 수", "무승부"], [[k, f"{gaps[k][0]:,}", pct(gaps[k][1] / gaps[k][0])] for k in ("0.5 미만", "0.5~1.5", "1.5~3", "3 이상") if gaps[k][0] >= 30]),
+                          _pick(key + "d", "배당 차이 0.5 미만 경기의 무승부 비율과 무승부 배당을 곱해 보면 무승부 선택의 기대치를 가늠할 수 있습니다.", "승무패에서 이런 경기를 한쪽 승으로 묶기 전에 무승부 몫을 먼저 떠올리면 좋습니다.")])],
+                 league=name, sport="soccer", tags=[name, "무승부"]))
+    # 정배
+    edges = [(1.0, 1.4), (1.4, 1.8), (1.8, 2.3), (2.3, 99)]
+    acc = defaultdict(lambda: [0, 0, 0.0, 0])
+    for r in rows:
+        if not r[0] or not r[2] or r[0] == r[2]:
+            continue
+        side = 0 if r[0] < r[2] else 2
+        b = _band(min(r[0], r[2]), edges)
+        a = acc[b]
+        a[0] += 1; a[1] += int(r[3] == side); a[2] += fair(r[:3])[side]; a[3] += int(r[3] == 1)
+    brow = [[b, f"{v[0]:,}", pct(v[1] / v[0]), pct(v[2] / v[0]), pct(v[3] / v[0])] for lo, hi in edges for b in [_band(lo, [(lo, hi)])] for v in [acc.get(b)] if v and v[0] >= 40]
+    if len(brow) >= 2:
+        tot = sum(v[0] for v in acc.values())
+        h = sum(v[1] for v in acc.values()) / tot
+        e = sum(v[2] for v in acc.values()) / tot
+        out.append(A(f"fav-fd-{code.lower()}", f"{name} 정배는 배당보다 잘 버틸까", "유럽 축구",
+                     f"{name} 정배를 배당 구간별로 나눠 실제 적중, 배당 기준 확률, 무승부 비율을 같이 봤습니다.",
+                     [(None, [f"{name} 정배 전체 적중은 {pct(h)}, 배당 기준 확률은 {pct(e)}입니다({pp(h - e)}). "
+                              + ("배당보다 단단한 리그입니다." if h > e + 0.015 else "배당보다 덜 버티는 리그입니다." if h < e - 0.015 else "배당과 거의 같습니다."),
+                              ("table", ["정배 배당", "경기 수", "실제 적중", "배당 기준", "무승부"], brow),
+                              _pick(key + "f", "정배가 이기지 못할 때 무승부가 차지하는 몫을 보면, '지지 않는 쪽' 선택이 얼마나 단단한지 알 수 있습니다.", "같은 배당대라도 무승부 비율이 높으면 승무패보다 핸디캡 플러스 쪽이 편할 때가 있습니다.")])],
+                     league=name, sport="soccer", tags=[name, "정배"]))
+    # 오버 2.5 시장 대비
+    pairs = [(fair([r[4], r[5]])[0], int(r[6] >= 3)) for r in rows if r[4] and r[5]]
+    if len(pairs) >= 300:
+        edges2 = [(0, 0.45), (0.45, 0.55), (0.55, 0.65), (0.65, 1.01)]
+        rr = []
+        for lo, hi in edges2:
+            xs = [y for x, y in pairs if lo <= x < hi]
+            ex = [x for x, y in pairs if lo <= x < hi]
+            if len(xs) >= 40:
+                rr.append([f"{lo * 100:.0f}~{min(hi, 1) * 100:.0f}%", f"{len(xs):,}", pct(sum(xs) / len(xs)), pct(sum(ex) / len(ex))])
+        if len(rr) >= 2:
+            out.append(A(f"o25-{code.lower()}", f"{name} 오버 2.5, 배당이 맞았을까", "유럽 축구",
+                         f"{name} 오버 2.5 배당이 말한 확률과 실제 3골 이상 비율을 구간별로 비교했습니다.",
+                         [(None, [_pick(key + "o", "시장이 오버를 높게 본 경기일수록 실제로 골이 많이 나왔는지, 그 정도가 배당과 맞았는지 봅니다.", "오버 배당이 낮은 경기와 높은 경기에서 실제 결과를 나눠 봤습니다."),
+                                  ("table", ["오버 배당 기준 확률", "경기 수", "실제 오버", "배당 기준"], rr),
+                                  "실제가 배당 기준보다 높은 구간은 시장이 골을 적게 본 구간이고, 낮은 구간은 많이 본 구간입니다. 그 경기의 오버 배당이 어느 구간인지 찾아보면 됩니다."])],
+                         league=name, sport="soccer", tags=[name, "언더오버"]))
+    return out
+
+
+def scoped_articles(games, ou, hc):
+    out = []
+    for sp, ko in SPORT_KO.items():
+        gs = [g for g in games if g["sport"] == sp]
+        out += [t_fav(f"s-{sp}", ko, gs, "종목별", sp), t_home(f"s-{sp}", ko, gs, "종목별", sp),
+                t_ou(f"s-{sp}", ko, [x for x in ou if x["sport"] == sp], "종목별", sp),
+                t_hc(f"s-{sp}", ko, [x for x in hc if x["sport"] == sp], "종목별", sp), t_upset(f"s-{sp}", ko, gs, "종목별", sp)]
+    names = Counter((g["lk"], g["league"], g["sport"]) for g in games)
+    disp = {}
+    for (lk, nm, sp), c in names.most_common():
+        disp.setdefault(lk, (nm, sp))
+    for lk, (nm, sp) in disp.items():
+        gs = [g for g in games if g["lk"] == lk]
+        if len(gs) < 80:
+            continue
+        out += [t_fav(lk, nm, gs, "리그별", sp, nm), t_home(lk, nm, gs, "리그별", sp, nm),
+                t_ou(lk, nm, [x for x in ou if x["lk"] == lk], "리그별", sp, nm),
+                t_hc(lk, nm, [x for x in hc if x["lk"] == lk], "리그별", sp, nm), t_upset(lk, nm, gs, "리그별", sp, nm)]
+    return out
+
 # ───────────────────────── 전체 ─────────────────────────
 def _load_fd():
     out = defaultdict(list)
@@ -1132,6 +1366,8 @@ def build_all() -> list[dict]:
     allst = _fd_stats(fd)
     for code, rws in fd.items():
         arts.append(art_fd_league(code, rws, allst))
+        arts += f_topic_articles(code, rws)
+    arts += scoped_articles(games, ou, hc)
     sport_avg = _sport_avgs(games, ou)
     out, seen = [], set()
     for a in arts:
@@ -1147,4 +1383,11 @@ def build_all() -> list[dict]:
             continue
         seen.add(d["slug"])
         out.append(d)
+    # 리그별·유럽 축구는 같은 리그 글끼리 붙여서(경기가 많은 리그부터), 리그 안에서는 개요 → 정배 → 홈 → 언더오버 → 핸디캡 → 역배 순
+    order = ["league-", "fd-", "fav-", "home-", "ou-", "hc-", "upset-", "goals-", "draws-", "o25-"]
+    lg_n = Counter(a["league"] for a in out if a["league"])
+    def k(a):
+        t = next((i for i, p in enumerate(order) if a["slug"].startswith(p)), 99)
+        return (-lg_n.get(a["league"], 0), a["league"] or "", t) if a["cat"] in ("리그별", "유럽 축구") else (0, "", 0)
+    out.sort(key=k)
     return out

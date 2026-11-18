@@ -1210,15 +1210,45 @@ h1, h2, h3, .block-head h2 { text-wrap: balance; }
 .mc-also small { color: var(--ink-3); font-family: var(--en); font-size: 11px; }
 .mc-odds { font-size: 11.5px; color: var(--ink-3); text-align: right; font-family: var(--en); margin-top: -2px; }
 
-/* 노하우 */
-.kh-filter { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
-.kh-group[hidden] { display: none; }
-.kh-list { list-style: none; margin: 0 0 22px; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); }
-.kh-list a { display: grid; gap: 6px; height: 100%; padding: 16px 18px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); text-decoration: none; }
-.kh-list a:hover { border-color: var(--ink-3); }
-.kh-list b { font-size: 16px; line-height: 1.4; }
-.kh-list span { font-size: 13.5px; color: var(--ink-2); line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.kh-list small { font-size: 12px; color: var(--ink-3); font-weight: 600; }
+/* 노하우: 세븐 블로그 홈처럼 분류별 파스텔 카드, 한 번에 3장씩 */
+.kh-head { padding-bottom: 6px; }
+.kh-sec { margin-top: 34px; }
+.kh-sec-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+.kh-sec-head h2 { font-size: 13px; font-weight: 700; letter-spacing: .12em; color: var(--ink-3); margin: 0; }
+.kh-sec-head h2 small { font-weight: 600; letter-spacing: 0; margin-left: 4px; }
+.kh-sec-head a { font-size: 14px; color: var(--ink-3); text-decoration: none; }
+.kh-sec-head a:hover { color: var(--ink); }
+.kh-car { overflow: hidden; border-radius: 22px; }
+.kh-track { display: flex; transition: transform .9s cubic-bezier(.65, 0, .35, 1); touch-action: pan-y; }
+.kh-page { flex: 0 0 100%; min-width: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.kh-card { --kh-ink: #161616; display: flex; flex-direction: column; min-height: 250px; padding: 24px 24px 20px; border-radius: 22px; background: var(--tone); color: var(--kh-ink); text-decoration: none; transition: transform .35s var(--ease), box-shadow .35s; }
+.kh-card:hover { transform: translateY(-4px); box-shadow: 0 24px 48px -26px rgb(0 0 0 / .45); }
+.kh-eye { font-size: 11.5px; font-weight: 600; letter-spacing: .06em; color: rgb(22 22 22 / .62); }
+.kh-title { margin-top: 12px; font-size: 21px; line-height: 1.3; font-weight: 600; letter-spacing: -.015em; }
+.kh-sum { margin-top: 10px; font-size: 14px; line-height: 1.55; color: rgb(22 22 22 / .7); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.kh-pill { margin-top: auto; align-self: flex-start; padding: 8px 15px; border-radius: 999px; background: var(--tone-btn); font-size: 13.5px; transition: transform .25s; }
+.kh-card:hover .kh-pill { transform: translateX(3px); }
+.kh-dots { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+.kh-dot { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 999px; background: var(--line); cursor: pointer; transition: width .3s, background .3s; }
+.kh-dot[aria-current="true"] { width: 22px; background: var(--ink); }
+.kh-card.tone-0 { --tone: #c4a8ff; --tone-btn: #e9deff; } .kh-card.tone-1 { --tone: #fdee93; --tone-btn: #fff6c6; }
+.kh-card.tone-2 { --tone: #a9ebc8; --tone-btn: #d8f7e6; } .kh-card.tone-3 { --tone: #ffc7ad; --tone-btn: #ffe6da; }
+.kh-card.tone-4 { --tone: #aed6ff; --tone-btn: #dcedff; } .kh-card.tone-5 { --tone: #ffbedd; --tone-btn: #ffe2f0; }
+.kh-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.kh-sq { aspect-ratio: 1 / 1; min-height: 0; padding: 20px 20px 18px; }
+.kh-sq .kh-title { font-size: 18px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+@media (max-width: 720px) {
+  .kh-page { grid-template-columns: 1fr; gap: 10px; }
+  .kh-card { min-height: 0; padding: 18px 18px 16px; }
+  .kh-title { font-size: 18px; margin-top: 8px; }
+  .kh-sum { -webkit-line-clamp: 2; font-size: 13.5px; }
+  .kh-pill { display: none; }
+  .kh-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .kh-sq { padding: 14px; }
+  .kh-sq .kh-title { font-size: 15px; }
+}
+@media (prefers-reduced-motion: reduce) { .kh-track, .kh-card { transition: none; } }
+/* 노하우 글 */
 .kh-article { max-width: 760px; }
 .kh-body h2 { font-size: 21px; margin: 34px 0 10px; }
 .kh-body p { font-size: 16px; line-height: 1.85; margin: 0 0 14px; color: var(--ink); }
@@ -1227,3 +1257,7 @@ h1, h2, h3, .block-head h2 { text-wrap: balance; }
 .kh-tbl td:first-child { white-space: normal; }
 .kh-more { margin: 22px 0 8px; font-weight: 700; }
 .kh-note { margin-top: 18px; }
+.kh-list { list-style: none; margin: 0 0 22px; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+.kh-list a { display: grid; gap: 6px; height: 100%; padding: 16px 18px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); text-decoration: none; }
+.kh-list b { font-size: 15.5px; line-height: 1.4; }
+.kh-list span { font-size: 13.5px; color: var(--ink-2); line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }

@@ -643,8 +643,15 @@ def build() -> None:
         log.exception("노하우 글 생성 실패(다른 페이지는 계속)")
         kh = []
     if kh:
-        page("knowhow_index.html", "/knowhow/", arts=kh,
+        cats = [{"name": "공통", "slug": "common"}, {"name": "종목별", "slug": "sports"}, {"name": "리그 비교", "slug": "compare"},
+                {"name": "리그별", "slug": "leagues"}, {"name": "유럽 축구", "slug": "europe"}]
+        page("knowhow_index.html", "/knowhow/", arts=kh, cats=cats,
              jsonld=_jsonld(_crumbs([("홈", "/"), ("노하우", "/knowhow/")])))
+        for c in cats:
+            lst = [x for x in kh if x["cat"] == c["name"]]
+            if lst:
+                page("knowhow_cat.html", f"/knowhow/c/{c['slug']}/", c=c, lst=lst,
+                     jsonld=_jsonld(_crumbs([("홈", "/"), ("노하우", "/knowhow/"), (c["name"], f"/knowhow/c/{c['slug']}/")])))
         lg_by_name = {PX.lkey(lg["name"]): f"/leagues/{lg['slug']}/" for lg in leagues.values()}
         for a in kh:
             same = [x for x in kh if x is not a and (x["cat"] == a["cat"] or (a["sport"] and x["sport"] == a["sport"]))]

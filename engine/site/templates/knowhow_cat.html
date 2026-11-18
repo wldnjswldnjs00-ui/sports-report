@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}노하우 · {{ c.name }} {{ lst|length }}편 | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}{{ c.name }} 노하우 {{ lst|length }}편. 쌓인 경기 기록으로 자동 계산한 분석 기준.{% endblock %}
+{% block main %}
+<section class="wrap page-head kh-head">
+  <p class="kicker"><a href="/knowhow/">노하우</a></p><h1>{{ c.name }}</h1>
+  <p class="lede">{{ lst|length }}편. 숫자는 경기가 쌓일 때마다 자동으로 다시 계산됩니다.</p>
+</section>
+<section class="wrap kh-sec">
+  <div class="kh-grid">
+    {% for a in lst %}
+    <a class="kh-card kh-sq tone-{{ loop.index % 6 }}" href="/knowhow/{{ a.slug }}/">
+      <span class="kh-eye">{% if a.league %}{{ a.league }}{% elif a.sport %}{{ SPORT_LABEL.get(a.sport, '') }}{% else %}{{ c.name }}{% endif %}</span>
+      <span class="kh-title">{{ a.title }}</span>
+      <span class="kh-pill">읽기</span>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
