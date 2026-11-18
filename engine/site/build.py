@@ -476,12 +476,8 @@ def build() -> None:
         log.exception("팀·순위 데이터 실패")
         tms, tables, vns, lgames = {}, {}, {}, {}
     # 끝난 경기 점수판(쿼터·이닝·전후반, 골 기록)
-    from ..sources import boxscore
-    try:
-        boxes = boxscore.load_all()
-    except Exception:  # noqa: BLE001
-        log.exception("점수판 읽기 실패")
-        boxes = {}
+    # 점수판 데이터는 ESPN 출처라 표시하지 않는다(주인 요청: ESPN 사용 금지). 템플릿은 데이터가 없으면 점수판을 숨긴다.
+    boxes: dict = {}
 
     def box_of(key=None, date=None, home=None, away=None):
         return boxes.get(key or f"{date}|{home}|{away}")

@@ -335,8 +335,8 @@ def grade(today: str, lookback: int = 7, fetch_scores: bool = True) -> dict:
     except Exception:  # noqa: BLE001
         log.exception("스스로 학습 실패(분석은 기존 값으로 계속)")
     log.info("채점 완료: 픽 %s", perf["picks"]["all"])
-    # 끝난 경기 점수판(쿼터·이닝·전후반·골 기록). 실패해도 채점에는 영향 없음
-    if not config.DEMO:
+    # 끝난 경기 점수판: 출처가 ESPN 이라 주인 요청(ESPN 사용 금지)으로 수집을 멈춤. ESPN 이 아닌 출처로 바꿀 때까지 꺼 둔다.
+    if False:  # noqa: SIM108
         try:
             from .site.pages_extra import rows_from_results
             from .sources import boxscore
