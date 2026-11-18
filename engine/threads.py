@@ -268,6 +268,116 @@ def post_knowhow() -> bool:
     return True
 
 
+# ───────────── 전날 결과(하루 한 번, 13:00 · 빠지면 18:00) ─────────────
+def result_stats(day: str) -> dict | None:
+    """전날(구매일) 픽 결과. 박빙(확률 55% 미만)은 픽이 아니라 세지 않는다. 결과가 덜 나왔으면 None."""
+    from .analysis.grading import is_pick
+    from .analysis.combos import STRATEGIES
+    rep = read_json(config.REPORTS / f"{day}.json")
+    if not rep:
+        return None
+    outs = rep.get("outcomes") or {}
+    picks = [m for m in rep.get("markets") or [] if is_pick(m.get("analysis")) and not m.get("preview")]
+    done = [m for m in picks if outs.get(m["id"]) not in (None, "VOID")]
+    if not picks or len(done) < max(3, int(len(picks) * 0.9)):
+        return None  # 아직 끝나지 않은 경기가 많다
+    hits = [m for m in done if outs[m["id"]] == m["analysis"]["pick"]]
+    hi = [m for m in done if m["analysis"]["pick_prob"] >= 0.65]
+    # 최근 30일(이 날 포함)
+    n30 = h30 = 0
+    cut = (date.fromisoformat(day) - timedelta(days=29)).isoformat()
+    for f in sorted(config.REPORTS.glob("*.json")):
+        if not (cut <= f.stem <= day):
+            continue
+        r = read_json(f) or {}
+        o = r.get("outcomes") or {}
+        for m in r.get("markets") or []:
+            if is_pick(m.get("analysis")) and not m.get("preview") and o.get(m["id"]) not in (None, "VOID"):
+                n30 += 1
+                h30 += int(o[m["id"]] == m["analysis"]["pick"])
+    # 어제의 한 장면: 적중한 조합 중 배당이 가장 큰 것, 없으면 적중한 픽 중 배당이 가장 큰 것
+    hl = None
+    best = None
+    for key, cs in (rep.get("combos") or {}).items():
+        for c in cs or []:
+            if c.get("result") == "win" and (best is None or c["total_odds"] > best[1]["total_odds"]):
+                best = (key, c)
+    if best and best[1]["total_odds"] >= 2:
+        k, c = best
+        hl = f"{STRATEGIES.get(k, {}).get('label', '조합')} {c['size']}폴더 ×{c['total_odds']:.2f} 적중"
+    elif hits:
+        m = max(hits, key=lambda m: m["odds"].get(m["analysis"]["pick"], 0))
+        k = m["analysis"]["pick"]
+        lab = {"H": "승", "D": "무", "A": "패", "O": "오버", "U": "언더"}.get(k, k)
+        team = m["away"] if k == "A" else m["home"]
+        if m["market"] == "HANDICAP":
+            lab = "핸디" + lab
+        hl = f"{team} {lab} {m['odds'][k]:.2f} 적중" if m["market"] != "OU" else f"{m['home']} vs {m['away']} {lab} {m['odds'][k]:.2f} 적중"
+    return {"day": day, "n": len(done), "hit": len(hits), "rate": len(hits) / len(done),
+            "hi_n": len(hi), "hi_hit": sum(1 for m in hi if outs[m["id"]] == m["analysis"]["pick"]),
+            "n30": n30, "r30": (h30 / n30) if n30 else 0, "highlight": hl}
+
+
+def prepare_result(force: bool = False) -> bool:
+    if not (os.getenv("THREADS_TOKEN", "").strip() or force):
+        return False
+    day = (date.fromisoformat(config.today_kst()) - timedelta(days=1)).isoformat()
+    st = read_json(STATE, {}) or {}
+    if f"{day}:result" in (st.get("posted") or []):
+        return False
+    res = result_stats(day)
+    if not res:
+        log.info("Threads 결과: %s 결과가 아직 덜 나와 다음 실행에 맡김", day)
+        return False
+    from . import threads_cards as TC
+    _prune()
+    paths = TC.render([TC.card_result(day, res)], IMG_DIR, f"{day}-result")
+    st["pending_result"] = {"day": day, "files": [p.name for p in paths],
+                            "text": "어제 결과 · 매일 같은 기준으로 모든 픽을 기록합니다\n#프로토 #승부식 #프로토분석 #스포츠토토 #베트맨 #스포츠분석 #만19세이상"}
+    write_json(STATE, st)
+    log.info("Threads 결과 카드 준비(%s): %d/%d, 30일 %.0f%%", day, res["hit"], res["n"], res["r30"] * 100)
+    return True
+
+
+def post_result() -> bool:
+    st = read_json(STATE, {}) or {}
+    pend = st.get("pending_result")
+    if not pend:
+        return False
+    key = f"{pend['day']}:result"
+    if key in (st.get("posted") or []):
+        return False
+    au = _auth()
+    if not au:
+        log.warning("Threads 결과: 토큰 확인 실패")
+        return False
+    uid, token = au
+    url = f"{config.SITE_URL}/threads/{pend['files'][0]}"
+    if not _wait_live([url]):
+        log.warning("Threads 결과: 카드 이미지가 사이트에 아직 없음 — 다음 실행에 맡김")
+        return False
+    try:
+        r = http("POST", f"{API}/{uid}/threads", params={"media_type": "IMAGE", "image_url": url, "text": pend["text"], "access_token": token}, retries=2)
+        cid = r.json()["id"]
+        end = time.time() + 120
+        while time.time() < end:
+            s_ = http("GET", f"{API}/{cid}", params={"fields": "status", "access_token": token}, retries=1).json()
+            if s_.get("status") in ("FINISHED", "ERROR", "EXPIRED"):
+                break
+            time.sleep(5)
+        http("POST", f"{API}/{uid}/threads_publish", params={"creation_id": cid, "access_token": token}, retries=3)
+    except Exception as e:  # noqa: BLE001
+        rr = getattr(e, "response", None)
+        log.warning("Threads 결과 게시 실패: %s", ((rr.text if rr is not None else str(e))[:300]).replace(token, "***"))
+        return False
+    st = read_json(STATE, {}) or {}
+    st["posted"] = (st.get("posted") or [])[-30:] + [key]
+    st.pop("pending_result", None)
+    write_json(STATE, st)
+    log.info("Threads 결과 게시 완료(%s)", pend["day"])
+    return True
+
+
 def post_daily() -> bool:
     """준비 + 게시를 한 번에(이미지가 이미 배포돼 있을 때만 게시됨)."""
     return prepare() and post()

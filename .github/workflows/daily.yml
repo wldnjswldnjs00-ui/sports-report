@@ -95,6 +95,15 @@ jobs:
           if [ -z "$THREADS_TOKEN" ]; then echo "토큰 없음"; exit 0; fi
           pip install -q playwright==1.47.0 && python -m playwright install --with-deps chromium >/dev/null
           python -m engine threads --prepare
+      - name: 쓰레드 전날 결과 카드 준비(13:00, 결과가 덜 나왔으면 18:00 실행이 대신. 하루 한 번)
+        if: env.SLOT == '0 4 * * *' || env.SLOT == '0 9 * * *' || contains(github.event.head_commit.message, '[threads-result]')
+        continue-on-error: true
+        env:
+          THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
+        run: |
+          if [ -z "$THREADS_TOKEN" ]; then echo "토큰 없음"; exit 0; fi
+          python -c "import playwright" 2>/dev/null || { pip install -q playwright==1.47.0 && python -m playwright install --with-deps chromium >/dev/null; }
+          python -m engine threads --result-prepare
       - name: 자동 점검(커밋 전에 실행해 연속 실패 기록을 남김, 문제가 이어지면 GitHub 이슈로 알림 → 이메일)
         if: always()
         continue-on-error: true
@@ -147,6 +156,21 @@ jobs:
           git add data/state
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "data: 쓰레드 노하우 게시 기록"
+          for i in 1 2 3 4; do
+            if git pull --rebase -X theirs origin "${GITHUB_REF_NAME}" && git push; then exit 0; fi
+            sleep $((i * 5))
+          done
+      - name: 쓰레드 전날 결과 게시(13:00 · 빠지면 18:00)
+        if: steps.commit.outputs.pushed == '1' && (env.SLOT == '0 4 * * *' || env.SLOT == '0 9 * * *' || contains(github.event.head_commit.message, '[threads-result]'))
+        continue-on-error: true
+        env:
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+          THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
+        run: |
+          python -m engine threads --result-post
+          git add data/state
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "data: 쓰레드 결과 게시 기록"
           for i in 1 2 3 4; do
             if git pull --rebase -X theirs origin "${GITHUB_REF_NAME}" && git push; then exit 0; fi
             sleep $((i * 5))

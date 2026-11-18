@@ -247,6 +247,37 @@ def build(rep: dict, slot: str = "night", exclude: set[str] | None = None) -> tu
     return out, shown
 
 
+def card_result(d: str, res: dict) -> str:
+    """전날 결과 카드 한 장. 숫자만, 부정적인 말 없이(규칙을 정해 매일 같은 모양)."""
+    def blk(label, big, small=""):
+        return (f'<div class="rs-b"><p class="rs-l">{_e(label)}</p><p class="rs-n">{big}</p>'
+                + (f'<p class="rs-s">{_e(small)}</p>' if small else "") + "</div>")
+    parts = [f'<h1>어제의 결과</h1><p class="sub">{_e(_day(d))} 프로토 승부식</p>', '<div class="rs-grid">']
+    if res.get("hi_n"):
+        parts.append(blk("확률 65% 이상 픽", f'{res["hi_hit"]}<i>/</i>{res["hi_n"]}', "적중"))
+    parts.append(blk("전체 픽", f'{res["hit"]}<i>/</i>{res["n"]}', f"적중 {res['rate'] * 100:.0f}%"))
+    parts.append(blk("최근 30일 적중률", f'{res["r30"] * 100:.0f}<i>%</i>', f"픽 {res['n30']:,}개 기준"))
+    parts.append("</div>")
+    if res.get("highlight"):
+        parts.append(f'<div class="rs-hi"><p class="rs-l">어제의 한 장면</p><p class="rs-h">{_e(res["highlight"])}</p></div>')
+    parts.append('<p class="note">모든 픽 기록은 스포츠분석.kr 성과 페이지에 그대로 남아 있습니다</p>')
+    return f'<div class="card">{_top(d)}<div class="body">{"".join(parts)}</div></div>'
+
+
+RESULT_CSS = """
+.rs-grid{display:grid;grid-template-columns:1fr;gap:18px;margin-top:6px}
+.rs-b{background:#fff;border:2px solid #d9e2de;border-radius:28px;padding:26px 34px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 20px}
+.rs-l{font:600 30px PT;color:#5c6662;margin:0}
+.rs-n{grid-row:1/3;grid-column:2;font:700 92px/1 JO;letter-spacing:-3px;margin:0;color:#121414}
+.rs-n i{font-style:normal;color:#9aa3a0;font-size:64px;margin:0 6px}
+.rs-s{font:500 26px PT;color:#0b9a7e;margin:0}
+.rs-hi{margin-top:22px;background:#121414;color:#fff;border-radius:28px;padding:28px 34px}
+.rs-hi .rs-l{color:#bfc1c4}
+.rs-h{font:700 44px/1.3 PT;margin:8px 0 0;word-break:keep-all}
+"""
+CSS += RESULT_CSS
+
+
 def render(cards: list[str], out_dir: Path, prefix: str) -> list[Path]:
     from playwright.sync_api import sync_playwright
     out_dir.mkdir(parents=True, exist_ok=True)
