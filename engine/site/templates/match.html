@@ -57,7 +57,7 @@
         <div><dt>추정 확률</dt><dd>{{ main.analysis.pick_prob|pct(1) }}</dd></div>
         <div><dt>신뢰도</dt><dd>{{ main.analysis.confidence }}</dd></div>
         <div><dt>이변 위험</dt><dd>{{ main.analysis.upset_risk }}</dd></div>
-        <div><dt>배당</dt><dd>{{ main.analysis.pick_odds|odds }}</dd></div>
+        {% set pd = predict(g) %}<div><dt>예상 스코어</dt><dd>{% if pd %}{{ pd.h }} : {{ pd.a }}{% else %}–{% endif %}</dd></div>
       </dl>
     </div>
   </section>

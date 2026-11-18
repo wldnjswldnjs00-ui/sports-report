@@ -1197,3 +1197,7 @@ h1, h2, h3, .block-head h2 { text-wrap: balance; }
 .hero-stage.is-gl .stage-fallback { opacity: 0; transition: none; }
 .hero-stage.is-gl .stage-canvas { transition: opacity .25s; }
 .sb-bar .sb-na { font: 600 11.5px var(--sans); color: var(--ink-3); }
+.sb-pred { display: grid; justify-items: center; gap: 2px; padding-top: 0; }
+.sb-pred small { font-size: 10.5px; font-weight: 600; color: var(--ink-3); }
+.sb-pred b { font: 800 17px var(--en); color: var(--ink); white-space: nowrap; }
+.sb-pred b i { font-style: normal; color: var(--ink-3); margin: 0 3px; font-weight: 600; }

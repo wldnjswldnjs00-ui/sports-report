@@ -15,7 +15,7 @@
       <span class="sb-meta">{{ g.kickoff|kdt }} · {{ g.league }}</span>
       <div class="sb-vs">
         <div class="sb-t"><b>{{ g.home }}</b>{{ fseq(th) }}</div>
-        <span class="sb-x">vs</span>
+        {% set pd = predict(g) %}{% if pd %}<span class="sb-x sb-pred"><small>예상</small><b>{{ pd.h }}<i>:</i>{{ pd.a }}</b></span>{% else %}<span class="sb-x">vs</span>{% endif %}
         <div class="sb-t r"><b>{{ g.away }}</b>{{ fseq(ta) }}</div>
       </div>
       {% set h5 = recent5(g, 'home') %}{% set a5 = recent5(g, 'away') %}

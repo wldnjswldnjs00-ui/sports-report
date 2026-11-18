@@ -58,6 +58,30 @@ def recent5(t: dict | None, kickoff: str) -> str | None:
     return _f(sum(x["me"] - x["op"] for x in gs) / 5)
 
 
+def line_hits(t: dict | None, kickoff: str, kind: str, line: float, n: int = 10) -> tuple[int, int] | None:
+    """팀 최근 n경기에 기준점 대입: kind=margin(내 점수차+기준점>0) / total(합계>기준점). 딱 맞은 경기는 뺀다. (넘김, 셈한 경기)"""
+    gs = [x for x in (t or {}).get("games") or [] if x["date"] < str(kickoff)[:10]][:n]
+    hit = cnt = 0
+    for x in gs:
+        v = (x["me"] - x["op"] + line) if kind == "margin" else (x["me"] + x["op"] - line)
+        if v == 0:
+            continue
+        cnt += 1
+        hit += v > 0
+    return (hit, cnt) if cnt >= 5 else None
+
+
+def head_to_head(t: dict | None, opp: str, kickoff: str, n: int = 5) -> dict | None:
+    gs = [x for x in (t or {}).get("games") or [] if x["date"] < str(kickoff)[:10] and x.get("opp") == opp][:n]
+    if not gs:
+        return None
+    w = sum(1 for x in gs if x["res"] == "W")
+    l = sum(1 for x in gs if x["res"] == "L")
+    return {"n": len(gs), "w": w, "l": l, "d": len(gs) - w - l,
+            "margin": sum(x["me"] - x["op"] for x in gs) / len(gs), "total": sum(x["me"] + x["op"] for x in gs) / len(gs),
+            "games": [{"date": x["date"], "me": x["me"], "op": x["op"]} for x in gs]}
+
+
 def metrics(t: dict, sport: str, kickoff: str) -> dict | None:
     gs = [x for x in (t or {}).get("games") or [] if x["date"] < kickoff[:10]][:20]
     if len(gs) < MIN_N:
@@ -144,13 +168,47 @@ def build(g: dict, th: dict | None, ta: dict | None) -> dict | None:
         if (rh == 0) != (ra == 0):
             tired = g["home"] if rh == 0 else g["away"]
             notes.append((2, "연전", f"{j(tired, "은는")} 어제도 경기를 치르고 연속으로 나옵니다. 체력 면에서 불리합니다."))
-    # 합계 vs 언더오버 기준점
+    # 합계 vs 언더오버 기준점: 최근 득실로 본 예상 합계 + 두 팀 최근 경기에 오늘 기준점을 대입한 결과
     ou = _main_line(g, "OU")
+    ovr = None
+    if ou:
+        oh, oa = line_hits(th, g["kickoff"], "total", ou["line"]), line_hits(ta, g["kickoff"], "total", ou["line"])
+        if oh and oa:
+            ovr = (oh[0] + oa[0], oh[1] + oa[1])
     if ou and mh and ma and TOT.get(sp):
         exp_total = (mh["for"] + ma["against"] + ma["for"] + mh["against"]) / 2
         gap = exp_total - ou["line"]
-        if abs(gap) >= TOT[sp]:
-            notes.append((2, "합계", f"두 팀 최근 득실로 본 예상 합계는 {j(f'{exp_total:.1f}{u}', '으로')}, 기준점 {ou['line']:g}보다 {'높습니다(오버 쪽 근거)' if gap > 0 else '낮습니다(언더 쪽 근거)'}."))
+        rate = ovr[0] / ovr[1] if ovr and ovr[1] >= 12 else None
+        by_avg = 1 if gap >= TOT[sp] else -1 if gap <= -TOT[sp] else 0
+        by_cnt = 1 if rate is not None and rate >= 0.75 else -1 if rate is not None and rate <= 0.25 else 0
+        side = by_avg or by_cnt
+        if side and not (by_avg and by_cnt and by_avg != by_cnt):
+            ol = j(f"{ou['line']:g}", "을를")
+            cnt = f" 두 팀 최근 {ovr[1]}경기 중 {ovr[0]}경기가 {ol} 넘었습니다." if ovr and by_cnt == side else ""
+            notes.append((3 if by_avg and by_cnt else 2, "합계",
+                          f"두 팀 최근 득실로 본 예상 합계는 {j(f'{exp_total:.1f}{u}', '으로')} 기준점 {ou['line']:g}보다 "
+                          f"{'높습니다' if gap > 0 else '낮습니다'}.{cnt} {'오버' if side > 0 else '언더'} 쪽 근거입니다."))
+    # 핸디 기준점 대입: 각 팀 최근 10경기에 오늘 핸디를 적용했을 때 넘긴 경기 수
+    hc0 = _main_line(g, "HANDICAP")
+    cov = {}
+    if hc0:
+        for side, t, ln in (("home", th, hc0["line"]), ("away", ta, -hc0["line"])):
+            r = line_hits(t, g["kickoff"], "margin", ln)
+            if r:
+                cov[side] = (r[0], r[1], ln)
+        for side, name in (("home", g["home"]), ("away", g["away"])):
+            if side in cov:
+                c, n, ln = cov[side]
+                if n >= 8 and (c / n >= 0.8 or c / n <= 0.2):
+                    lt = j(f"{ln:+g}", "을를")
+                    notes.append((2, "핸디", f"{j(name, '은는')} 최근 {n}경기에 오늘 기준점 {lt} 대입하면 {c}경기에서 넘겼습니다."
+                                         + (" 이 기준점을 꾸준히 넘긴 팀입니다." if c / n >= 0.8 else " 이 기준점은 넘기기 어려웠던 팀입니다.")))
+    # 맞대결: 두 팀이 최근 만난 경기의 승패·점수 차·합계
+    vs = head_to_head(th, g["away"], g["kickoff"])
+    if vs and vs["n"] >= 3:
+        if vs["w"] == vs["n"] or vs["l"] == vs["n"]:
+            who = g["home"] if vs["w"] == vs["n"] else g["away"]
+            notes.append((2, "맞대결", f"최근 맞대결 {vs['n']}번은 {who}이(가) 모두 이겼습니다(평균 {abs(vs['margin']):.1f}{u} 차)."))
     # 기복 + 큰 핸디
     hc = _main_line(g, "HANDICAP")
     if hc and abs(hc["line"]) >= {"basketball": 7, "baseball": 2, "soccer": 2, "volleyball": 2}.get(sp, 99):
@@ -180,4 +238,89 @@ def build(g: dict, th: dict | None, ta: dict | None) -> dict | None:
         ("기복(편차)", cell(mh, "sd", lambda v: f"{v:.1f}"), cell(ma, "sd", lambda v: f"{v:.1f}")),
         ("직전 경기", cell(mh, "rest", _ago), cell(ma, "rest", _ago)),
     ]
-    return {"notes": lines, "items": items, "rows": rows, "n": (mh or ma)["n"]}
+    if hc0 and cov:
+        def cv(sd):
+            return f"{cov[sd][0]}/{cov[sd][1]}" if sd in cov else "–"
+        rows.append((f"핸디 {hc0['line']:+g} 대입", cv("home"), cv("away")))
+    if ou:
+        def ov(t):
+            r = line_hits(t, g["kickoff"], "total", ou["line"])
+            return f"{r[0]}/{r[1]}" if r else "–"
+        rows.append((f"합계 {ou['line']:g} 넘김", ov(th), ov(ta)))
+    if vs:
+        rows.append((f"맞대결 최근 {vs['n']}", f"{vs['w']}승{(' ' + str(vs['d']) + '무') if vs['d'] else ''} {vs['l']}패 · {_f(vs['margin'])}",
+                     f"{vs['l']}승{(' ' + str(vs['d']) + '무') if vs['d'] else ''} {vs['w']}패 · {_f(-vs['margin'])}"))
+    return {"notes": lines, "items": items, "rows": rows, "n": (mh or ma)["n"], "vs": vs}
+
+
+# ── 예상 스코어 ────────────────────────────────────────────
+# 분석 확률(해외 배당 기준으로 결합한 최종 확률)에서 역산한다. 매 갱신마다 확률이 바뀌면 같이 바뀐다.
+# - 축구: 승무패(+언더오버) 확률에 맞는 양 팀 기대 득점(포아송) → 가장 나올 법한 스코어
+# - 농구·야구: 핸디(없으면 승패) 확률 → 예상 점수 차, 언더오버 확률 → 예상 합계(정규분포). 언더오버가 없으면 두 팀 최근 득실로 합계
+# - 배구: 승리 확률 → 세트당 이길 확률 → 가장 나올 법한 세트 스코어
+def _p2(m: dict | None, a: str, b: str) -> float | None:
+    p = ((m or {}).get("analysis") or {}).get("p") or {}
+    if p.get(a) is None or p.get(b) is None or p[a] + p[b] <= 0:
+        return None
+    return min(max(p[a] / (p[a] + p[b]), 0.02), 0.98)
+
+
+def predict(g: dict, th: dict | None = None, ta: dict | None = None) -> dict | None:
+    from statistics import NormalDist
+    from ..analysis import derive as D
+    sp = g["sport"]
+    mk = g.get("markets") or []
+    main = next((m for m in mk if m.get("market") in ("1X2", "WL") and (m.get("analysis") or {}).get("p")), None)
+    ou, hc = _main_line(g, "OU"), _main_line(g, "HANDICAP")
+    try:
+        if sp == "soccer":
+            p = (main or {}).get("analysis", {}).get("p") or {}
+            if not {"H", "D", "A"} <= set(p):
+                return None
+            po = _p2(ou, "O", "U")
+            lams = D.fit_soccer(p, (ou["line"], po) if ou and po is not None else None)
+            if not lams:
+                return None
+            a, b = D._pois(lams[0], 8), D._pois(lams[1], 8)
+            i, k = max(((i, k) for i in range(9) for k in range(9)), key=lambda t: a[t[0]] * b[t[1]])
+            return {"h": i, "a": k, "xh": round(lams[0], 1), "xa": round(lams[1], 1)}
+        if sp == "volleyball":
+            pw = _p2(main, "H", "A")
+            if pw is None:
+                return None
+            lo, hi = 0.01, 0.99
+            for _ in range(40):           # 세트당 확률 q: 5세트 3선승 승리 확률이 pw 가 되게
+                q = (lo + hi) / 2
+                win = q ** 3 * (1 + 3 * (1 - q) + 6 * (1 - q) ** 2)
+                lo, hi = (q, hi) if win < pw else (lo, q)
+            r = 1 - q
+            dist = {(3, 0): q ** 3, (3, 1): 3 * q ** 3 * r, (3, 2): 6 * q ** 3 * r ** 2,
+                    (0, 3): r ** 3, (1, 3): 3 * r ** 3 * q, (2, 3): 6 * r ** 3 * q ** 2}
+            h, a = max(dist, key=dist.get)
+            return {"h": h, "a": a}
+        if sp not in D.SD:
+            return None
+        sdm, sdt = D.SD[sp]
+        z = NormalDist().inv_cdf
+        pc = _p2(hc, "H", "A")
+        if pc is not None:
+            mu = -hc["line"] + sdm * z(pc)
+        else:
+            pw = _p2(main, "H", "A")
+            if pw is None:
+                return None
+            mu = sdm * z(pw)
+        po = _p2(ou, "O", "U")
+        if po is not None:
+            tot = ou["line"] + sdt * z(po)
+        else:
+            mh, ma = metrics(th, sp, g["kickoff"]) if th else None, metrics(ta, sp, g["kickoff"]) if ta else None
+            if not (mh and ma):
+                return None
+            tot = (mh["for"] + ma["against"] + ma["for"] + mh["against"]) / 2
+        h, a = round((tot + mu) / 2), round((tot - mu) / 2)
+        if h == a:                        # 농구·야구는 무승부가 없다
+            h, a = (h + 1, a) if mu >= 0 else (h, a + 1)
+        return {"h": max(h, 0), "a": max(a, 0)}
+    except Exception:  # noqa: BLE001
+        return None
