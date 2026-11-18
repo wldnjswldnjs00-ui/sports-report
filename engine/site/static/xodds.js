@@ -11,9 +11,9 @@
   var D = null;
   var st = { sport: "soccer", mk: "main", grp: "x" };
   var DEF = {
-    soccer: { h: "2.10", d: "3.30", a: "3.40", hl: "-0.5", ho: "1.95", ao: "1.95", ol: "2.5", o: "1.90", u: "1.90" },
-    basketball: { h: "1.60", a: "2.35", hl: "-5.5", ho: "1.91", ao: "1.91", ol: "220.5", o: "1.91", u: "1.91" },
-    baseball: { h: "1.75", a: "2.10", hl: "-1.5", ho: "2.10", ao: "1.75", ol: "8.5", o: "1.91", u: "1.91" }
+    soccer: { h: "1.95", d: "3.10", a: "3.20", hl: "-0.5", ho: "1.80", ao: "1.80", ol: "2.5", o: "1.75", u: "1.75" },
+    basketball: { h: "1.50", a: "2.25", hl: "-5.5", ho: "1.75", ao: "1.75", ol: "220.5", o: "1.75", u: "1.75" },
+    baseball: { h: "1.65", a: "1.95", hl: "-1.5", ho: "1.95", ao: "1.60", ol: "8.5", o: "1.75", u: "1.75" }
   };
   /* 베트맨 배당 기준(해외 기록이 없는 리그) 기본값 */
   DEF.soccer_b = { h: "2.10", d: "3.10", a: "3.20", hl: "-1", ho: "3.40", hd: "3.40", ao: "1.75", ol: "2.5", o: "1.85", u: "1.65" };
@@ -92,13 +92,14 @@
   }
 
   /* ───── 입력칸 ───── */
+  /* 입력은 모두 베트맨 배당(사람들이 보고 사는 배당). 해외 기록 리그는 발행처 몫을 걷어낸 확률로 바꿔 해외 기록과 맞춰 본다 */
   var FIELDS = {
-    soccer: { main: [["h", "홈"], ["d", "무"], ["a", "원정"]],
-      hcp: [["hl", "해외 핸디 (홈)"], ["ho", "홈 배당"], ["ao", "원정 배당"]],
-      ou: [["ol", "해외 기준점"], ["o", "오버 배당"], ["u", "언더 배당"]] },
-    us: { main: [["h", "홈"], ["a", "원정"]],
-      hcp: [["hl", "해외 핸디 (홈)"], ["ho", "홈 배당"], ["ao", "원정 배당"]],
-      ou: [["ol", "해외 기준점"], ["o", "오버 배당"], ["u", "언더 배당"]] }
+    soccer: { main: [["h", "승"], ["d", "무"], ["a", "패"]],
+      hcp: [["hl", "핸디 기준점 (홈)"], ["ho", "핸디승"], ["hd", "핸디무"], ["ao", "핸디패"]],
+      ou: [["ol", "기준점"], ["o", "오버"], ["u", "언더"]] },
+    us: { main: [["h", "승"], ["a", "패"]],
+      hcp: [["hl", "핸디 기준점 (홈)"], ["ho", "핸디승"], ["ao", "핸디패"]],
+      ou: [["ol", "기준점"], ["o", "오버"], ["u", "언더"]] }
   };
   FIELDS.bsoc = { main: [["h", "승"], ["d", "무"], ["a", "패"]],
     hcp: [["hl", "핸디 기준점 (홈)"], ["ho", "핸디승"], ["hd", "핸디무"], ["ao", "핸디패"]],
@@ -126,8 +127,8 @@
     $("[data-xo-main]").textContent = st.sport === "soccer" ? "승무패" : "승패";
     var hint = $(".xo-hint");
     if (hint) hint.textContent = bm()
-      ? gLabel(st.grp) + "은(는) 해외 배당 기록이 없어 베트맨 배당 기록으로 셉니다. 베트맨 배당을 그대로 넣으세요. 핸디캡·언더오버는 기준점과 상관없이 배당 확률이 비슷했던 지난 경기로 셉니다."
-      : "해외 배당을 넣으세요. 핸디캡·언더오버는 해외 기준점과 그 기준점의 해외 배당을 넣습니다. '오늘 경기에서 불러오기'를 쓰면 자동으로 채워집니다.";
+      ? "이 리그는 해외 배당 기록이 없어 베트맨 배당 기록으로 셉니다. 베트맨 배당을 그대로 넣으세요. 핸디캡·언더오버는 기준점과 상관없이 배당 확률이 비슷했던 지난 경기로 셉니다."
+      : "베트맨 배당을 그대로 넣으세요. 발행처 몫을 걷어낸 확률로 바꿔, 해외 배당 기록에서 확률이 비슷했던 경기와 맞춰 봅니다. 핸디캡·언더오버는 베트맨 기준점을 넣습니다. '오늘 경기에서 불러오기'를 쓰면 자동으로 채워집니다.";
   }
 
   /* ───── 결과 그리기 ───── */
@@ -152,7 +153,7 @@
     return '<div class="tblw"><table class="tbl xo-tbl"><thead><tr><th>기준점</th>' + cols.map(function (c) { return '<th class="n">' + c + "</th>"; }).join("") +
       "</tr></thead><tbody>" + rows.map(function (r) {
         var best = Math.max.apply(null, r.v);
-        return "<tr" + (r.hl ? ' class="is-hl"' : "") + "><td>" + r.line + (r.hl ? ' <small class="xo-tag">해외 기준점</small>' : "") + "</td>" + r.v.map(function (v) {
+        return "<tr" + (r.hl ? ' class="is-hl"' : "") + "><td>" + r.line + (r.hl ? ' <small class="xo-tag">입력 기준점</small>' : "") + "</td>" + r.v.map(function (v) {
           return '<td class="n"><span class="xo-cell' + (v === best ? " is-top" : "") + '"><i style="width:' + (v * 100).toFixed(1) + '%"></i><b>' + pct(v) + "</b></span></td>";
         }).join("") + "</tr>";
       }).join("") + "</tbody></table></div>";
@@ -212,28 +213,38 @@
     if (!S) return need("축구 기록을 모으는 중입니다.");
     if (st.mk === "main") {
       var f = fair([num(v.h), num(v.d), num(v.a)]);
-      if (!f) return need("해외 승무패 배당(홈·무·원정)을 1보다 큰 숫자로 넣으세요.");
+      if (!f) return need("베트맨 승무패 배당(승·무·패)을 1보다 큰 숫자로 넣으세요.");
       var bi = bin(f[0], S.w), bj = bin(f[2], S.w);
       var acc = gather(S.pair, function (r) { var o = []; for (var a = -r; a <= r; a++) for (var b = -r; b <= r; b++) o.push((bi + a) + "|" + (bj + b)); return o; });
       if (!acc) return need("이 배당 구도는 과거 기록이 부족합니다.");
       var n = acc[0], rows = [{ k: "홈승", real: acc[1] / n, imp: f[0] }, { k: "무", real: acc[2] / n, imp: f[1] }, { k: "원정승", real: acc[3] / n, imp: f[2] }];
-      return out(head(n, "유럽 축구 · 해외 승무패 확률 " + pct(f[0], 0) + "·" + pct(f[1], 0) + "·" + pct(f[2], 0)) + bars(rows) + say(rows));
+      return out(head(n, "유럽 축구 · 베트맨 배당 확률(몫 제외) " + pct(f[0], 0) + "·" + pct(f[1], 0) + "·" + pct(f[2], 0)) + bars(rows) + say(rows));
     }
     var M = S.dm;
     if (st.mk === "hcp") {
-      var L = num(v.hl), fh = fair([num(v.ho), num(v.ao)]);
-      if (!isFinite(L) || !fh) return need("해외 핸디 기준점(홈 기준, 예: -0.5)과 홈·원정 배당을 넣으세요.");
+      var L = num(v.hl), hd3 = num(v.hd), three = isFinite(hd3) && hd3 > 1 && Math.abs(L % 1) < 1e-9;
+      var fh = three ? fair([num(v.ho), hd3, num(v.ao)]) : fair([num(v.ho), num(v.ao)]);
+      if (!isFinite(L) || !fh) return need("베트맨 핸디 기준점(홈 기준, 예: -1)과 핸디승·핸디패 배당(정수 기준점이면 핸디무까지)을 넣으세요.");
       var cells = Object.keys(S.pair).map(function (k) { var r = S.pair[k]; return { row: [r[4]].concat(r.slice(5)) }; }).filter(function (c) { return c.row[0] >= 40; });
       if (!cells.length) return need("축구 핸디캡은 득점 차 기록을 받는 중입니다. 자동 업데이트로 하루 안에 채워집니다.");
       var dv = function (i) { return i - M; };
+      if (three) {
+        // 베트맨 축구 정수 핸디는 승·무·패 3갈래: 무(점수 차가 기준점과 같음)를 따로 센다
+        var r3 = function (h, x) { var w = 0, p = 0, n = 0; h.forEach(function (c, i) { var y = dv(i) + x; n += c; if (y > 1e-9) w += c; else if (Math.abs(y) < 1e-9) p += c; }); return n ? [w / n, p / n, (n - w - p) / n] : null; };
+        var h3 = similar(cells, function (c) { var q = r3(c.row.slice(1), L); return q ? q[0] : NaN; }, fh[0]);
+        if (!h3) return need("이 핸디 구도는 과거 기록이 부족합니다.");
+        var q3 = r3(h3.slice(1), L), rr3 = [{ k: "핸디승", real: q3[0], imp: fh[0] }, { k: "핸디무", real: q3[1], imp: fh[1] }, { k: "핸디패", real: q3[2], imp: fh[2] }];
+        var rows3h = lineSet(L, 1, 2).map(function (x) { var q = r3(h3.slice(1), x); return { line: "홈 " + sgn(x), v: q, hl: near(x, L) }; });
+        return out(head(h3[0], "유럽 축구 · 베트맨 핸디 홈 " + sgn(L) + " · 핸디승 확률(몫 제외) " + pct(fh[0], 0)) + bars(rr3) + say(rr3) + table(["핸디승", "핸디무", "핸디패"], rows3h));
+      }
       var hist = similar(cells, function (c) { return rate(c.row.slice(1), dv, L); }, fh[0]);
       if (!hist) return need("이 핸디 구도는 과거 기록이 부족합니다.");
       var hd = hist.slice(1), rows2 = lineSet(L, 1, 2).map(function (x) { var p = rate(hd, dv, x); return { line: "홈 " + sgn(x), v: [p, 1 - p], hl: near(x, L) }; });
-      var pr = rate(hd, dv, L), rr = [{ k: "홈", real: pr, imp: fh[0] }, { k: "원정", real: 1 - pr, imp: fh[1] }];
-      return out(head(hist[0], "유럽 축구 · 해외 핸디 홈 " + sgn(L) + " 홈 확률 " + pct(fh[0], 0)) + bars(rr) + say(rr) + table(["홈", "원정"], rows2));
+      var pr = rate(hd, dv, L), rr = [{ k: "핸디승", real: pr, imp: fh[0] }, { k: "핸디패", real: 1 - pr, imp: fh[1] }];
+      return out(head(hist[0], "유럽 축구 · 베트맨 핸디 홈 " + sgn(L) + " · 핸디승 확률(몫 제외) " + pct(fh[0], 0)) + bars(rr) + say(rr) + table(["핸디승", "핸디패"], rows2));
     }
     var OL = num(v.ol), fo = fair([num(v.o), num(v.u)]);
-    if (!(OL > 0) || !fo) return need("해외 언더오버 기준점(예: 2.5)과 오버·언더 배당을 넣으세요.");
+    if (!(OL > 0) || !fo) return need("베트맨 언더오버 기준점(예: 2.5)과 오버·언더 배당을 넣으세요.");
     var gcells = Object.keys(S.goals).map(function (k) { return { row: S.goals[k] }; }).filter(function (c) { return c.row[0] >= 40; });
     var gv = function (i) { return i; };
     var over = function (h, x) { return rate(h, function (i) { return i; }, -x); };
@@ -246,7 +257,7 @@
     var rows3 = lines.map(function (x) { var p = over(g, x); return { line: x, v: [p, 1 - p], hl: near(x, OL) }; });
     var po = over(g, OL), ro = [{ k: "오버", real: po, imp: fo[0] }, { k: "언더", real: 1 - po, imp: fo[1] }];
     void gv;
-    return out(head(gh[0], "유럽 축구 · 해외 " + OL + " 오버 확률 " + pct(fo[0], 0) + " · 평균 " + (avg / gh[0]).toFixed(2) + "골") + bars(ro) + say(ro) + table(["오버", "언더"], rows3));
+    return out(head(gh[0], "유럽 축구 · 베트맨 " + OL + " 오버 확률(몫 제외) " + pct(fo[0], 0) + " · 평균 " + (avg / gh[0]).toFixed(2) + "골") + bars(ro) + say(ro) + table(["오버", "언더"], rows3));
   }
 
   function calcUS(v) {
@@ -255,25 +266,25 @@
     var M = B.m, mv = function (i) { return i - M; };
     if (st.mk === "main") {
       var f = fair([num(v.h), num(v.a)]);
-      if (!f) return need("해외 승패 배당(홈·원정)을 1보다 큰 숫자로 넣으세요.");
+      if (!f) return need("베트맨 승패 배당(승·패)을 1보다 큰 숫자로 넣으세요.");
       var i0 = bin(f[0], B.w), h = gather(B.wl, function (r) { return ring(i0, r); });
       if (!h) return need("이 배당 구도는 과거 기록이 부족합니다.");
       var pw = rate(h.slice(1), mv, 0), rws = [{ k: "홈승", real: pw, imp: f[0] }, { k: "원정승", real: 1 - pw, imp: f[1] }];
-      return out(head(h[0], LABEL[st.sport] + " · 해외 승패 확률 " + pct(f[0], 0) + " 대 " + pct(f[1], 0)) + bars(rws) + say(rws));
+      return out(head(h[0], LABEL[st.sport] + " · 베트맨 배당 확률(몫 제외) " + pct(f[0], 0) + " 대 " + pct(f[1], 0)) + bars(rws) + say(rws));
     }
     if (st.mk === "hcp") {
       var L = num(v.hl), fh = fair([num(v.ho), num(v.ao)]);
-      if (!isFinite(L) || !fh) return need("해외 핸디 기준점(홈 기준, 예: -5.5)과 홈·원정 배당을 넣으세요.");
+      if (!isFinite(L) || !fh) return need("베트맨 핸디 기준점(홈 기준, 예: -5.5)과 핸디승·핸디패 배당을 넣으세요.");
       var cells = Object.keys(B.wl).map(function (k) { return { row: B.wl[k] }; }).filter(function (c) { return c.row[0] >= 40; });
       var hist = similar(cells, function (c) { return rate(c.row.slice(1), mv, L); }, fh[0]);
       if (!hist) return need("이 핸디 구도는 과거 기록이 부족합니다.");
       var hd = hist.slice(1), step = st.sport === "basketball" ? 2 : 1, k = st.sport === "basketball" ? 4 : 2;
       var rows2 = lineSet(L, step, k).map(function (x) { var p = rate(hd, mv, x); return { line: "홈 " + sgn(x), v: [p, 1 - p], hl: near(x, L) }; });
-      var pr = rate(hd, mv, L), rr = [{ k: "홈", real: pr, imp: fh[0] }, { k: "원정", real: 1 - pr, imp: fh[1] }];
-      return out(head(hist[0], LABEL[st.sport] + " · 해외 핸디 홈 " + sgn(L) + " 홈 확률 " + pct(fh[0], 0)) + bars(rr) + say(rr) + table(["홈", "원정"], rows2));
+      var pr = rate(hd, mv, L), rr = [{ k: "핸디승", real: pr, imp: fh[0] }, { k: "핸디패", real: 1 - pr, imp: fh[1] }];
+      return out(head(hist[0], LABEL[st.sport] + " · 베트맨 핸디 홈 " + sgn(L) + " · 핸디승 확률(몫 제외) " + pct(fh[0], 0)) + bars(rr) + say(rr) + table(["핸디승", "핸디패"], rows2));
     }
     var lx = num(v.ol), fo = fair([num(v.o), num(v.u)]);
-    if (!(lx > 0) || !fo) return need("해외 언더오버 기준점과 오버·언더 배당을 넣으세요.");
+    if (!(lx > 0) || !fo) return need("베트맨 언더오버 기준점과 오버·언더 배당을 넣으세요.");
     var tot = B.tot, R = B.r, n = tot.reduce(function (a, b) { return a + b; }, 0);
     if (!n) return need("합계 기록이 없습니다.");
     // 총점 = 해외 기준점 + δ + e (e: 실제 총점 − 마감 기준점 분포). 해외 오버 확률에 맞게 δ 를 정한다
@@ -283,7 +294,7 @@
     var overAt = function (x) { return rate(tot, ev, -(x - lx + qq)); };
     var rows = lineSet(lx, st.sport === "basketball" ? 2 : 0.5, 4).map(function (x) { var p = overAt(x); return { line: x, v: [p, 1 - p], hl: near(x, lx) }; });
     var po = overAt(lx), ro = [{ k: "오버", real: po, imp: fo[0] }, { k: "언더", real: 1 - po, imp: fo[1] }];
-    return out(head(B.tn || n, LABEL[st.sport] + " · 해외 " + lx + " 오버 확률 " + pct(fo[0], 0)) + bars(ro) + say(ro) + table(["오버", "언더"], rows));
+    return out(head(B.tn || n, LABEL[st.sport] + " · 베트맨 " + lx + " 오버 확률(몫 제외) " + pct(fo[0], 0)) + bars(ro) + say(ro) + table(["오버", "언더"], rows));
   }
 
   /* ───── 조작 ───── */
@@ -321,14 +332,10 @@
         if (m.OU) { b.ol = String(m.OU.line); b.o = String(m.OU.O || ""); b.u = String(m.OU.U || ""); }
       } else {
         st.grp = "x";
-        var v = V[st.sport], h = g.h2h || {};
-        if (h.H) v.h = String(h.H);
-        if (h.A) v.a = String(h.A);
-        if (h.D) v.d = String(h.D);
-        var sp = g.spread && two(g.spread[1]);
-        if (sp) { v.hl = String(g.spread[0]); v.ho = sp[0]; v.ao = sp[1]; }
-        var tt = g.total && two(g.total[1]);
-        if (tt) { v.ol = String(g.total[0]); v.o = tt[0]; v.u = tt[1]; }
+        var v = V[st.sport], m2 = g.bm || {};
+        if (m2.WL) { v.h = String(m2.WL.H || ""); v.a = String(m2.WL.A || ""); v.d = m2.WL.D ? String(m2.WL.D) : ""; }
+        if (m2.HANDICAP) { v.hl = String(m2.HANDICAP.line); v.ho = String(m2.HANDICAP.H || ""); v.ao = String(m2.HANDICAP.A || ""); v.hd = m2.HANDICAP.D ? String(m2.HANDICAP.D) : ""; }
+        if (m2.OU) { v.ol = String(m2.OU.line); v.o = String(m2.OU.O || ""); v.u = String(m2.OU.U || ""); }
       }
       drawLgs(); drawInputs(); calc();
     });

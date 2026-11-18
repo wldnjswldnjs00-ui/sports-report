@@ -332,6 +332,18 @@ def _xbook_payload(r: dict | None) -> dict:
             "sport": m["sport"], "label": f"{m['home']} vs {m['away']}", "league": m["league"], "ko": m["kickoff"],
             "h2h": x.get("h2h_odds") or {k: round(1 / v, 2) for k, v in x["h2h"].items() if v > 0},
             "spread": x.get("spread"), "total": x.get("total")})
+    # 불러오기는 베트맨 배당으로(사람들이 보고 사는 배당). 기준점이 여러 개면 양쪽 배당이 가장 비슷한 것
+    def _bal(o):
+        a, b = (o.get("O"), o.get("U")) if "O" in o else (o.get("H"), o.get("A"))
+        return abs(a - b) if a and b else 99
+    for m in (r or {}).get("markets", []):
+        g = games.get(f"{m['kickoff']}|{m['home']}|{m['away']}")
+        if not g or not m.get("odds"):
+            continue
+        mk = "WL" if m["market"] == "1X2" else m["market"]
+        cur = g.setdefault("bm", {}).get(mk)
+        if cur is None or _bal(m["odds"]) < _bal(cur):
+            g["bm"][mk] = {**m["odds"], "line": m.get("line")}
     out["today"] = sorted(games.values(), key=lambda g: g["ko"])
     # 베트맨 배당 기록(해외 기록이 없는 리그용) + 오늘 경기의 베트맨 배당(불러오기용)
     try:
@@ -347,7 +359,9 @@ def _xbook_payload(r: dict | None) -> dict:
             g = bgames.setdefault(f"{m['kickoff']}|{m['home']}|{m['away']}", {
                 "sport": m["sport"], "grp": grp, "label": f"{m['home']} vs {m['away']}", "league": m["league"], "ko": m["kickoff"], "bm": {}})
             mk = "WL" if m["market"] == "1X2" else m["market"]
-            g["bm"][mk] = {**m["odds"], "line": m.get("line")}
+            cur = g["bm"].get(mk)
+            if cur is None or _bal(m["odds"]) < _bal(cur):
+                g["bm"][mk] = {**m["odds"], "line": m.get("line")}
         out["btoday"] = sorted(bgames.values(), key=lambda g: g["ko"])
     except Exception:  # noqa: BLE001
         log.exception("베트맨 기록 구도표 실패")
@@ -405,19 +419,35 @@ HOT_LEAGUES = ("KBO", "K리그1", "K리그2", "KBL", "WKBL", "KOVO 남자", "KOV
                "UEFA 챔피언스리그", "스페인 라리가", "축구 월드컵", "UEFA 네이션스리그")
 
 
+def _move(g: dict) -> float:
+    """경기의 가장 큰 배당 변동률(처음 발매 대비)."""
+    best = 0.0
+    for m in g.get("markets") or []:
+        fl = m.get("flow") or {}
+        a, b = fl.get("from") or {}, fl.get("to") or {}
+        for k in a:
+            if k in b and a[k] and a[k] > 1:
+                best = max(best, abs(b[k] / a[k] - 1))
+    return best
+
+
+MOVE_CUT = {"v": 1.0}  # 그날 경기들의 배당 변동 상위 15% 경계(매 빌드 다시 계산, 최소 4%)
+
+
+def _set_move_cut(games: list[dict]) -> None:
+    mv = sorted((_move(g) for g in games), reverse=True)
+    mv = [x for x in mv if x > 0]
+    MOVE_CUT["v"] = max(0.04, mv[max(0, int(len(mv) * 0.15) - 1)]) if mv else 1.0
+
+
 def _is_hot(g: dict) -> bool:
-    """사람들이 많이 찾을 경기: 한국 대표팀·국내 리그·빅리그, 또는 배당이 크게 움직인 경기."""
+    """사람들이 많이 찾을 경기: 한국 대표팀·국내 리그·빅리그, 또는 그날 배당이 가장 크게 움직인 경기(상위 15%)."""
     names = f"{g.get('home', '')} {g.get('away', '')}"
     if "한국" in names or "대한민국" in names:
         return True
     if g.get("league") in HOT_LEAGUES:
         return True
-    for m in g.get("markets") or []:
-        fl = m.get("flow") or {}
-        a, b = fl.get("from") or {}, fl.get("to") or {}
-        if any(k in b and a[k] > 1 and abs(b[k] / a[k] - 1) >= 0.08 for k in a):
-            return True
-    return False
+    return _move(g) >= MOVE_CUT["v"]
 
 
 def _event_ld(g: dict) -> dict:
@@ -612,6 +642,10 @@ def build() -> None:
     page("analysis.html", "/analysis/", sections=an_secs, lastmod=(latest or {}).get("date"))
     rss_items = []
     hot: list[str] = []
+    try:
+        _set_move_cut([g for r0 in reports[:3] for g in _matches(r0)])
+    except Exception:  # noqa: BLE001
+        pass
     for i, r in enumerate(reports):
         prev_d = reports[i + 1]["date"] if i + 1 < len(reports) else None
         next_d = reports[i - 1]["date"] if i > 0 else None
@@ -630,7 +664,10 @@ def build() -> None:
                 # 검색 결과에서 눈에 띄게: 제목·설명 앞에 예상 스코어와 추천 확률(사람들이 실제로 찾는 정보)
                 pd = predict(g) if i < 4 else None
                 pdt = f" 예상 {pd['h']}:{pd['a']}" if pd else ""
-                title = f"{g['home']} vs {g['away']} 분석{pdt} · {g['league']} {_kdt(g['kickoff'])}"
+                rdl = _round_label((main or g["markets"][0]).get("round"))
+                kd = datetime.fromisoformat(g["kickoff"])
+                title = (f"{g['home']} vs {g['away']} 분석{pdt} · 프로토 승부식 {rdl + ' ' if rdl else ''}"
+                         f"{kd.month}월 {kd.day}일 · {g['league']}")
                 desc = (main or {}).get("narrative") or f"{g['league']} {g['home']} 대 {g['away']} 경기 분석"
                 a0 = (main or {}).get("analysis") or {}
                 if pd and is_pick(a0):
