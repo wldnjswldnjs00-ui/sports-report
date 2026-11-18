@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{{ a.title }} | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}{{ a.lead }}{% endblock %}
+{% block main %}
+<article class="wrap prose kh-article">
+  <header class="page-head">
+    <p class="kicker"><a href="/knowhow/">노하우</a> · {{ a.cat }}</p>
+    <h1>{{ a.title }}</h1>
+    <p class="lede">{{ a.lead }}</p>
+  </header>
+  <div class="kh-body">{{ a.body|safe }}</div>
+  {% if lg_url %}<p class="kh-more"><a href="{{ lg_url }}">{{ a.league }} 순위와 팀 기록 보기 →</a></p>{% endif %}
+  <p class="fine kh-note">숫자는 베트맨 공식 결과, 유럽 축구 공개 기록(football-data.co.uk), 미국 프로농구·야구 공개 기록으로 계산했으며 경기가 쌓일 때마다 자동으로 다시 계산됩니다. 과거 기록은 앞으로의 결과를 보장하지 않습니다.</p>
+</article>
+{% if rel %}
+<section class="wrap block">
+  <h2 class="sub">함께 보면 좋은 글</h2>
+  <ul class="kh-list">
+    {% for x in rel %}<li><a href="/knowhow/{{ x.slug }}/"><b>{{ x.title }}</b><span>{{ x.lead }}</span></a></li>{% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}노하우 · 기록으로 본 프로토 분석 기준 | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}베트맨 발매 경기와 해외 리그 기록으로 계산한 분석 노하우. 정배·역배·무승부·홈 이점·언더오버·핸디캡·조합 폴더 수, 리그별 특징.{% endblock %}
+{% block main %}
+<section class="wrap page-head">
+  <p class="kicker">KNOW-HOW</p><h1>노하우</h1>
+  <p class="lede">쌓인 경기 기록으로 계산한 분석 기준입니다. 숫자는 경기가 쌓일 때마다 자동으로 다시 계산됩니다.</p>
+</section>
+<section class="wrap block">
+  <div class="chips kh-filter" data-kh-filter>
+    <button type="button" class="chip is-on" data-c="all">전체 <small>{{ arts|length }}</small></button>
+    {% for c in ['공통', '리그 비교', '리그별'] %}{% set n = arts|selectattr('cat', 'equalto', c)|list|length %}{% if n %}<button type="button" class="chip" data-c="{{ c }}">{{ c }} <small>{{ n }}</small></button>{% endif %}{% endfor %}
+  </div>
+  {% for c in ['공통', '리그 비교', '리그별'] %}{% set lst = arts|selectattr('cat', 'equalto', c)|list %}
+  {% if lst %}
+  <div class="kh-group" data-c="{{ c }}">
+    <h2 class="sub">{{ c }}</h2>
+    <ul class="kh-list">
+      {% for a in lst %}
+      <li><a href="/knowhow/{{ a.slug }}/"><b>{{ a.title }}</b><span>{{ a.lead }}</span>{% if a.league %}<small>{{ a.league }}</small>{% endif %}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+  {% endfor %}
+</section>
+<script>
+(function () {
+  var f = document.querySelector("[data-kh-filter]"); if (!f) return;
+  f.addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    f.querySelectorAll("button").forEach(function (x) { x.classList.toggle("is-on", x === b); });
+    document.querySelectorAll(".kh-group").forEach(function (g) { g.hidden = b.dataset.c !== "all" && g.dataset.c !== b.dataset.c; });
+  });
+})();
+</script>
+{% endblock %}

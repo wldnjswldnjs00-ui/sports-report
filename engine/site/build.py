@@ -198,7 +198,7 @@ def _env() -> Environment:
     env.globals.update(is_pick=is_pick, PICK_MIN=config.PICK_MIN,
         cfg=config, STRATEGIES=STRATEGIES, MARKET_LABEL=MARKET_LABEL, SPORT_LABEL=SPORT_LABEL, XSRC=("유럽 축구", "NBA", "MLB", "A매치"), mk_short=_mk_short,
         outcome=_outcome, pick_label=_pick_label, line_groups=_line_groups, upset_map=_upset_map, flow_key=_flow_key, round_label=_round_label, rounds_of=_rounds, now=config.now_kst(), asset_v=config.now_kst().strftime("%Y%m%d%H%M"),
-        nav=[("/", "TODAY"), ("/analysis/", "경기 분석"), ("/leagues/", "리그·순위"), ("/odds/", "배당 분석"), ("/tool/", "금액 계산기"), ("/performance/", "성과"),
+        nav=[("/", "TODAY"), ("/analysis/", "경기 분석"), ("/leagues/", "리그·순위"), ("/knowhow/", "노하우"), ("/odds/", "배당 분석"), ("/tool/", "금액 계산기"), ("/performance/", "성과"),
              ("/reports/", "지난 리포트"), ("/guide/", "가이드"), ("/support/", "후원")],
     )
     return env
@@ -635,6 +635,23 @@ def build() -> None:
     # 지금 발매 중인 리그(오늘·다음 구매일 리포트에 경기가 있는 리그)
     live_lg = {PX.lkey(m["league"]) for r in reports if r["date"] >= today.isoformat() for m in r.get("markets", [])}
     page("leagues.html", "/leagues/", live_lg=live_lg, lkey=PX.lkey)
+    # 노하우: 기록으로 매 빌드 다시 계산하는 글(표본이 모자란 글은 만들지 않는다)
+    try:
+        from . import knowhow as KH
+        kh = KH.build_all()
+    except Exception:  # noqa: BLE001
+        log.exception("노하우 글 생성 실패(다른 페이지는 계속)")
+        kh = []
+    if kh:
+        page("knowhow_index.html", "/knowhow/", arts=kh,
+             jsonld=_jsonld(_crumbs([("홈", "/"), ("노하우", "/knowhow/")])))
+        lg_by_name = {PX.lkey(lg["name"]): f"/leagues/{lg['slug']}/" for lg in leagues.values()}
+        for a in kh:
+            same = [x for x in kh if x is not a and (x["cat"] == a["cat"] or (a["sport"] and x["sport"] == a["sport"]))]
+            other = [x for x in kh if x is not a and x["cat"] != a["cat"] and x["cat"] == "공통"]
+            rel = (same[:4] + other[:2])[:6]
+            page("knowhow.html", f"/knowhow/{a['slug']}/", a=a, rel=rel, lg_url=lg_by_name.get(PX.lkey(a["league"] or "")),
+                 jsonld=_jsonld(_crumbs([("홈", "/"), ("노하우", "/knowhow/"), (a["title"], f"/knowhow/{a['slug']}/")])))
     for lg in leagues.values():
         page("league.html", f"/leagues/{lg['slug']}/", og_image=OGP.league(config.DIST, f"/leagues/{lg['slug']}/", lg), lg=lg,
              jsonld=_jsonld(_crumbs([("홈", "/"), ("리그별 기록", "/leagues/"), (lg["name"], f"/leagues/{lg['slug']}/")])))

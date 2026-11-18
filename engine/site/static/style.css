@@ -1209,3 +1209,21 @@ h1, h2, h3, .block-head h2 { text-wrap: balance; }
 .mc-also b { font-family: var(--en); font-size: 12px; }
 .mc-also small { color: var(--ink-3); font-family: var(--en); font-size: 11px; }
 .mc-odds { font-size: 11.5px; color: var(--ink-3); text-align: right; font-family: var(--en); margin-top: -2px; }
+
+/* 노하우 */
+.kh-filter { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.kh-group[hidden] { display: none; }
+.kh-list { list-style: none; margin: 0 0 22px; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); }
+.kh-list a { display: grid; gap: 6px; height: 100%; padding: 16px 18px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); text-decoration: none; }
+.kh-list a:hover { border-color: var(--ink-3); }
+.kh-list b { font-size: 16px; line-height: 1.4; }
+.kh-list span { font-size: 13.5px; color: var(--ink-2); line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.kh-list small { font-size: 12px; color: var(--ink-3); font-weight: 600; }
+.kh-article { max-width: 760px; }
+.kh-body h2 { font-size: 21px; margin: 34px 0 10px; }
+.kh-body p { font-size: 16px; line-height: 1.85; margin: 0 0 14px; color: var(--ink); }
+.kh-body .tblw { margin: 6px 0 18px; }
+.kh-tbl td, .kh-tbl th { white-space: nowrap; }
+.kh-tbl td:first-child { white-space: normal; }
+.kh-more { margin: 22px 0 8px; font-weight: 700; }
+.kh-note { margin-top: 18px; }
