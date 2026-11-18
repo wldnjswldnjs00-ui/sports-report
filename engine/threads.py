@@ -198,6 +198,76 @@ def post() -> bool:
     return True
 
 
+def _auth() -> tuple[str, str] | None:
+    """(사용자 ID, 토큰). Worker 토큰이 안 되면 Secrets 토큰으로."""
+    from . import threads_token
+    token = _token()
+    cands = [c for c in dict.fromkeys([token, threads_token._seed()]) if c]
+    uid = os.getenv("THREADS_USER_ID", "").strip()
+    for tk in cands:
+        try:
+            me = str(http("GET", f"{API}/me", params={"fields": "id", "access_token": tk}, retries=2).json()["id"])
+            return (uid if uid.isdigit() else me), tk
+        except Exception:  # noqa: BLE001
+            continue
+    return (uid, cands[0]) if uid.isdigit() and cands else None
+
+
+def post_knowhow() -> bool:
+    """하루 한 편, 노하우 글을 쓰레드에 올린다(낮 12:30). 새 주간 리포트가 있으면 그것부터, 없으면 아직 안 올린 글 순서대로.
+    모든 글을 올렸으면 가장 오래전에 올린 글부터 다시(주간 리포트는 매주 새로 생기므로 새 글이 계속 들어온다)."""
+    if not os.getenv("THREADS_TOKEN", "").strip():
+        return False
+    st = read_json(STATE, {}) or {}
+    today = config.today_kst()
+    if st.get("kh_day") == today:
+        return False
+    lst = read_json(config.DIST / "data" / "kh_list.json", []) or []
+    if not lst:
+        log.info("Threads 노하우: 글 목록 없음")
+        return False
+    done = st.get("kh") or []
+    weekly = [x for x in lst if x.get("cat") == "주간 리포트" and x["slug"] not in done]
+    rest = [x for x in lst if x.get("cat") != "주간 리포트" and x["slug"] not in done]
+    pick = (weekly or rest or [])[:1]
+    if not pick:  # 다 올렸으면 가장 오래전에 올린 것부터 다시
+        order = {s: i for i, s in enumerate(done)}
+        pick = sorted([x for x in lst if x.get("cat") != "주간 리포트"], key=lambda x: order.get(x["slug"], -1))[:1]
+    if not pick:
+        return False
+    a = pick[0]
+    url = f"{config.SITE_URL}/knowhow/{a['slug']}/"
+    try:
+        if not http("GET", url, retries=2, timeout=20).ok:
+            return False
+    except Exception:  # noqa: BLE001
+        log.warning("Threads 노하우: 글 페이지가 아직 열리지 않음(배포 지연) — 다음 실행에 맡김")
+        return False
+    tags = ["#프로토", "#프로토분석", "#스포츠분석"] + ([f"#{a['league'].replace(' ', '')}"] if a.get("league") else [])
+    text = f"{a['title']}\n\n{a['lead']}\n\n전체 글은 아래 링크에서 볼 수 있습니다.\n{' '.join(tags)} #만19세이상"
+    if len(text) > 480:
+        text = text[:470] + "…"
+    au = _auth()
+    if not au:
+        log.warning("Threads 노하우: 토큰 확인 실패")
+        return False
+    uid, token = au
+    try:
+        r = http("POST", f"{API}/{uid}/threads", params={"media_type": "TEXT", "text": text, "link_attachment": url, "access_token": token}, retries=2)
+        cid = r.json()["id"]
+        time.sleep(8)
+        http("POST", f"{API}/{uid}/threads_publish", params={"creation_id": cid, "access_token": token}, retries=3)
+    except Exception as e:  # noqa: BLE001
+        rr = getattr(e, "response", None)
+        log.warning("Threads 노하우 게시 실패: %s", ((rr.text if rr is not None else str(e))[:300]).replace(token, "***"))
+        return False
+    st["kh"] = [x for x in done if x != a["slug"]][-1000:] + [a["slug"]]
+    st["kh_day"] = today
+    write_json(STATE, st)
+    log.info("Threads 노하우 게시 완료: %s", a["title"])
+    return True
+
+
 def post_daily() -> bool:
     """준비 + 게시를 한 번에(이미지가 이미 배포돼 있을 때만 게시됨)."""
     return prepare() and post()

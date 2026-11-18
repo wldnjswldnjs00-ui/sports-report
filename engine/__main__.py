@@ -26,6 +26,7 @@ def main(argv=None) -> int:
     ap.add_argument("--dry", action="store_true", help="threads: 올리지 않고 카드·글 초안만 만들기")
     ap.add_argument("--prepare", action="store_true", help="threads: 카드 이미지 만들기(게시 대기)")
     ap.add_argument("--post", action="store_true", help="threads: 배포된 카드로 게시")
+    ap.add_argument("--knowhow", action="store_true", help="threads: 노하우 글 한 편 게시(하루 한 번)")
     a = ap.parse_args(argv)
 
     from . import pipeline
@@ -62,6 +63,8 @@ def main(argv=None) -> int:
             TH.prepare()
         elif a.post:
             TH.post()
+        elif a.knowhow:
+            TH.post_knowhow()
         else:
             TH.post_daily()
     elif a.cmd == "indexnow":
