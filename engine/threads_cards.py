@@ -278,6 +278,84 @@ RESULT_CSS = """
 CSS += RESULT_CSS
 
 
+# ───────────── 노하우 카드 묶음 ─────────────
+KH_CSS = """
+.khc{background:radial-gradient(circle at 50% 30%,#202426 0,#121414 70%);color:#fff}
+.khc .brand{color:#fff}.khc .top{color:#bfc1c4}
+.kh-eye{font:700 30px JO,PT;color:#ff7aa8;letter-spacing:2px;margin:0 0 26px}
+.kh-t{font:800 84px/1.18 JO,PT;letter-spacing:-2px;margin:0;word-break:keep-all}
+.kh-l{font:500 36px/1.6 PT;color:#d4d6d9;margin:44px 0 0;word-break:keep-all}
+.kh-h{font:700 56px/1.25 JO,PT;margin:0 0 30px;word-break:keep-all}
+.kh-tbl{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:2px solid #d9e2de;border-radius:28px;overflow:hidden;font:600 30px PT}
+.kh-tbl th{font:700 24px PT;color:#7b8581;text-align:right;padding:20px 22px;background:#f6f9f7;border-bottom:2px solid #d9e2de;white-space:nowrap}
+.khc .body h1,.khc .body p{text-align:left}
+.kh-tbl th:first-child,.kh-tbl td:first-child{text-align:left}
+.kh-tbl td{padding:20px 22px;text-align:right;border-bottom:1px solid #edf2ef;font-variant-numeric:tabular-nums}
+.kh-tbl tr:last-child td{border-bottom:0}
+.kh-p{font:500 38px/1.65 PT;margin:0 0 30px;word-break:keep-all}
+.kh-p b{color:#0b9a7e}
+.kh-num{font:800 150px/1 JO;letter-spacing:-5px;margin:40px 0 0;color:#ffd23d}
+"""
+CSS += KH_CSS
+
+
+def card_kh_cover(d: str, cat: str, title: str, lead: str, big: str | None = None) -> str:
+    return (f'<div class="card khc">{_top(d)}<div class="body"><p class="kh-eye">노하우 · {_e(cat)}</p>'
+            f'<h1 class="kh-t">{_e(title)}</h1>' + (f'<p class="kh-num">{_e(big)}</p>' if big else "") + f'<p class="kh-l">{_e(lead)}</p></div></div>')
+
+
+def card_kh_table(d: str, heading: str, head: list[str], rows: list[list[str]]) -> str:
+    th = "".join(f"<th>{_e(h)}</th>" for h in head)
+    trs = "".join("<tr>" + "".join(f"<td>{_e(c)}</td>" for c in r) + "</tr>" for r in rows)
+    return f'<div class="card">{_top(d)}<div class="body"><h2 class="kh-h">{_e(heading)}</h2><table class="kh-tbl"><thead><tr>{th}</tr></thead><tbody>{trs}</tbody></table></div></div>'
+
+
+def card_kh_text(d: str, heading: str, paras: list[str]) -> str:
+    ps = "".join(f'<p class="kh-p">{_e(x)}</p>' for x in paras)
+    return f'<div class="card">{_top(d)}<div class="body"><h2 class="kh-h">{_e(heading)}</h2>{ps}</div></div>'
+
+
+def card_link(line1: str, line2: str) -> str:
+    """마지막 장: 사이트 주소와 안내(노하우·결과 묶음 공통)."""
+    return (f'<div class="card cta"><p class="slogan">데이터와 수학으로, 분석을 똑똑하게</p><h2>{_e(line1)}<br>{_e(line2)}</h2>'
+            '<div class="url"><span class="lockic">🔗</span>스포츠분석<b>.kr</b></div>'
+            '<p class="free">모든 분석과 기록은 <b>무료</b> · 회원가입 없이 바로</p>'
+            '<p>프로필 링크를 누르면 바로 이동합니다</p>'
+            '<div class="care"><b>잃어도 괜찮은 소액으로, 재미로만 즐기세요.</b><br>분석은 참고용이며 적중을 보장하지 않습니다. 만 19세 이상 · 베트맨 공식 채널에서만<br>도박 문제 상담 1336 (24시간 무료)</div></div>')
+
+
+# ───────────── 전날 결과 묶음 ─────────────
+RES2_CSS = """
+.rp{display:grid;grid-template-columns:1fr auto;gap:4px 18px;align-items:center;background:#fff;border:2px solid #d9e2de;border-radius:24px;padding:18px 26px}
+.rp .match{font-size:30px}.rp .meta{font-size:22px}
+.rp .rt{grid-row:1/3;grid-column:2;display:flex;align-items:center;gap:14px}
+.rp .ok{font:700 26px PT;color:#fff;background:#0b9a7e;border-radius:999px;padding:8px 18px}
+.rp .no{font:700 26px PT;color:#9aa3a0;background:#edf2ef;border-radius:999px;padding:8px 18px}
+.rp.hit{border-color:#0b9a7e}
+.rl{display:flex;flex-direction:column;gap:12px}
+.rs-row{display:grid;grid-template-columns:1fr auto;align-items:center;background:#fff;border:2px solid #d9e2de;border-radius:24px;padding:22px 30px;font:700 34px PT}
+.rs-row span{font:700 46px JO;letter-spacing:-1px}.rs-row span i{font-style:normal;color:#9aa3a0;font-size:34px}
+"""
+CSS += RES2_CSS
+
+
+def card_result_picks(d: str, rows: list[dict]) -> str:
+    """어제 픽을 확률 높은 순으로(맞힌 것만 고르지 않고 위에서부터 그대로)."""
+    items = []
+    for r in rows:
+        badge = '<span class="ok">적중</span>' if r["hit"] else '<span class="no">—</span>'
+        items.append(f'<div class="rp{" hit" if r["hit"] else ""}"><div class="meta">{_e(r["meta"])}</div>'
+                     f'<div class="rt"><span class="bub">{_e(r["pick"])}</span><span class="odds">{r["odds"]:.2f}</span>{badge}</div>'
+                     f'<div class="match">{_e(r["home"])}<i>vs</i>{_e(r["away"])}</div></div>')
+    return f'<div class="card">{_top(d)}<div class="body"><h1 style="font-size:64px">어제의 픽</h1><p class="sub">확률이 높았던 순서 그대로</p><div class="rl">{"".join(items)}</div></div></div>'
+
+
+def card_result_combos(d: str, rows: list[tuple[str, int, int]], best: str | None) -> str:
+    rs = "".join(f'<div class="rs-row">{_e(n)}<span>{h}<i>/</i>{t}</span></div>' for n, h, t in rows)
+    hi = f'<div class="rs-hi"><p class="rs-l">가장 큰 적중</p><p class="rs-h">{_e(best)}</p></div>' if best else ""
+    return f'<div class="card">{_top(d)}<div class="body"><h1 style="font-size:64px">전략별 조합</h1><p class="sub">발행한 조합 중 적중</p><div class="rl">{rs}</div>{hi}</div></div>'
+
+
 def render(cards: list[str], out_dir: Path, prefix: str) -> list[Path]:
     from playwright.sync_api import sync_playwright
     out_dir.mkdir(parents=True, exist_ok=True)

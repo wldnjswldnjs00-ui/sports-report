@@ -4,7 +4,6 @@ name: 매일 분석
 # GitHub 자체 schedule 은 이 저장소에서 한 번도 실행되지 않았고 늦게 도는 일이 잦아서 쓰지 않는다(겹쳐 두 번 도는 것도 방지).
 #   23:05 "5 14 * * *"  다음 구매일 리포트      06:00 "0 21 * * *"  새 리포트 + 전날 채점(결과 API)
 #   07:00 "0 22 * * *"  재수집 + 쓰레드 아침(빠지면 09:30 이 대신)    09:30 "30 0 * * *"  재수집
-#   12:30 "30 3 * * *"  재수집 + 쓰레드 노하우 글(빠지면 13:00 이 대신)
 #   13:00 "0 4 * * *"   재수집                  18:00 "0 9 * * *"   해외 배당 새로고침
 #   19:00 "0 10 * * *"  다음 구매일 분석 공개 + 쓰레드 저녁    22:00 "0 13 * * *"  다음 구매일 분석(쓰레드 저녁 예비)
 run-name: ${{ inputs.slot && format('매일 분석 · {0}', inputs.slot) || (github.event_name == 'push' && '코드 반영 실행' || '매일 분석 (수동)') }}
@@ -95,6 +94,15 @@ jobs:
           if [ -z "$THREADS_TOKEN" ]; then echo "토큰 없음"; exit 0; fi
           pip install -q playwright==1.47.0 && python -m playwright install --with-deps chromium >/dev/null
           python -m engine threads --prepare
+      - name: 쓰레드 노하우 카드 묶음 준비(밤 22:00, 빠지면 23:05)
+        if: env.SLOT == '0 13 * * *' || env.SLOT == '5 14 * * *' || contains(github.event.head_commit.message, '[threads-kh]')
+        continue-on-error: true
+        env:
+          THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
+        run: |
+          if [ -z "$THREADS_TOKEN" ]; then echo "토큰 없음"; exit 0; fi
+          python -c "import playwright" 2>/dev/null || { pip install -q playwright==1.47.0 && python -m playwright install --with-deps chromium >/dev/null; }
+          python -m engine threads --knowhow-prepare
       - name: 쓰레드 전날 결과 카드 준비(13:00, 결과가 덜 나왔으면 18:00 실행이 대신. 하루 한 번)
         if: env.SLOT == '0 4 * * *' || env.SLOT == '0 9 * * *' || contains(github.event.head_commit.message, '[threads-result]')
         continue-on-error: true
@@ -145,8 +153,8 @@ jobs:
             if git pull --rebase -X theirs origin "${GITHUB_REF_NAME}" && git push; then exit 0; fi
             sleep $((i * 5))
           done
-      - name: 쓰레드 노하우 글(낮 12:30, 빠지면 13:00 실행이 대신. 하루 한 편)
-        if: steps.commit.outputs.pushed == '1' && (env.SLOT == '30 3 * * *' || env.SLOT == '0 4 * * *' || contains(github.event.head_commit.message, '[threads-kh]'))
+      - name: 쓰레드 노하우 카드 묶음 게시(밤 22:00, 빠지면 23:05. 하루 한 편)
+        if: steps.commit.outputs.pushed == '1' && (env.SLOT == '0 13 * * *' || env.SLOT == '5 14 * * *' || contains(github.event.head_commit.message, '[threads-kh]'))
         continue-on-error: true
         env:
           THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}

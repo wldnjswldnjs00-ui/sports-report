@@ -27,6 +27,7 @@ def main(argv=None) -> int:
     ap.add_argument("--prepare", action="store_true", help="threads: 카드 이미지 만들기(게시 대기)")
     ap.add_argument("--post", action="store_true", help="threads: 배포된 카드로 게시")
     ap.add_argument("--knowhow", action="store_true", help="threads: 노하우 글 한 편 게시(하루 한 번)")
+    ap.add_argument("--knowhow-prepare", action="store_true", help="threads: 노하우 카드 묶음 만들기")
     ap.add_argument("--result-prepare", action="store_true", help="threads: 전날 결과 카드 만들기")
     ap.add_argument("--result-post", action="store_true", help="threads: 전날 결과 카드 게시")
     a = ap.parse_args(argv)
@@ -67,6 +68,8 @@ def main(argv=None) -> int:
             TH.post()
         elif a.knowhow:
             TH.post_knowhow()
+        elif a.knowhow_prepare:
+            TH.prepare_knowhow()
         elif a.result_prepare:
             TH.prepare_result()
         elif a.result_post:

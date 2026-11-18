@@ -12,7 +12,9 @@
 """
 from __future__ import annotations
 
+import html
 import logging
+import re
 import os
 import time
 from datetime import date, timedelta
@@ -214,57 +216,28 @@ def _auth() -> tuple[str, str] | None:
 
 
 def post_knowhow() -> bool:
-    """하루 한 편, 노하우 글을 쓰레드에 올린다(낮 12:30). 새 주간 리포트가 있으면 그것부터, 없으면 아직 안 올린 글 순서대로.
-    모든 글을 올렸으면 가장 오래전에 올린 글부터 다시(주간 리포트는 매주 새로 생기므로 새 글이 계속 들어온다)."""
-    if not os.getenv("THREADS_TOKEN", "").strip():
-        return False
+    """준비해 둔 노하우 카드 묶음을 게시(밤 22:00, 빠지면 23:05)."""
     st = read_json(STATE, {}) or {}
-    today = config.today_kst()
-    if st.get("kh_day") == today:
+    pend = st.get("pending_kh")
+    if not pend or st.get("kh_day") == pend["day"]:
         return False
-    lst = read_json(config.DIST / "data" / "kh_list.json", []) or []
-    if not lst:
-        log.info("Threads 노하우: 글 목록 없음")
-        return False
-    done = st.get("kh") or []
-    weekly = [x for x in lst if x.get("cat") == "주간 리포트" and x["slug"] not in done]
-    rest = [x for x in lst if x.get("cat") != "주간 리포트" and x["slug"] not in done]
-    pick = (weekly or rest or [])[:1]
-    if not pick:  # 다 올렸으면 가장 오래전에 올린 것부터 다시
-        order = {s: i for i, s in enumerate(done)}
-        pick = sorted([x for x in lst if x.get("cat") != "주간 리포트"], key=lambda x: order.get(x["slug"], -1))[:1]
-    if not pick:
-        return False
-    a = pick[0]
-    url = f"{config.SITE_URL}/knowhow/{a['slug']}/"
-    try:
-        if not http("GET", url, retries=2, timeout=20).ok:
-            return False
-    except Exception:  # noqa: BLE001
-        log.warning("Threads 노하우: 글 페이지가 아직 열리지 않음(배포 지연) — 다음 실행에 맡김")
-        return False
-    tags = ["#프로토", "#프로토분석", "#스포츠분석"] + ([f"#{a['league'].replace(' ', '')}"] if a.get("league") else [])
-    text = f"{a['title']}\n\n{a['lead']}\n\n전체 글은 아래 링크에서 볼 수 있습니다.\n{' '.join(tags)} #만19세이상"
-    if len(text) > 480:
-        text = text[:470] + "…"
     au = _auth()
     if not au:
         log.warning("Threads 노하우: 토큰 확인 실패")
         return False
     uid, token = au
-    try:
-        r = http("POST", f"{API}/{uid}/threads", params={"media_type": "TEXT", "text": text, "link_attachment": url, "access_token": token}, retries=2)
-        cid = r.json()["id"]
-        time.sleep(8)
-        http("POST", f"{API}/{uid}/threads_publish", params={"creation_id": cid, "access_token": token}, retries=3)
-    except Exception as e:  # noqa: BLE001
-        rr = getattr(e, "response", None)
-        log.warning("Threads 노하우 게시 실패: %s", ((rr.text if rr is not None else str(e))[:300]).replace(token, "***"))
+    urls = [f"{config.SITE_URL}/threads/{f}" for f in pend["files"]]
+    if not _wait_live(urls):
+        log.warning("Threads 노하우: 카드 이미지가 사이트에 아직 없음 — 다음 실행에 맡김")
         return False
-    st["kh"] = [x for x in done if x != a["slug"]][-1000:] + [a["slug"]]
-    st["kh_day"] = today
+    if not _publish(uid, token, urls, pend["text"], "노하우"):
+        return False
+    st = read_json(STATE, {}) or {}
+    st["kh"] = [x for x in (st.get("kh") or []) if x != pend["slug"]][-1000:] + [pend["slug"]]
+    st["kh_day"] = pend["day"]
+    st.pop("pending_kh", None)
     write_json(STATE, st)
-    log.info("Threads 노하우 게시 완료: %s", a["title"])
+    log.info("Threads 노하우 게시 완료: %s", pend["title"])
     return True
 
 
@@ -313,7 +286,25 @@ def result_stats(day: str) -> dict | None:
         if m["market"] == "HANDICAP":
             lab = "핸디" + lab
         hl = f"{team} {lab} {m['odds'][k]:.2f} 적중" if m["market"] != "OU" else f"{m['home']} vs {m['away']} {lab} {m['odds'][k]:.2f} 적중"
-    return {"day": day, "n": len(done), "hit": len(hits), "rate": len(hits) / len(done),
+    lab = {"H": "승", "D": "무", "A": "패", "O": "오버", "U": "언더"}
+    rows = []
+    for m in sorted(done, key=lambda m: -m["analysis"]["pick_prob"])[:7]:
+        k = m["analysis"]["pick"]
+        pk = lab.get(k, k)
+        if m["market"] == "HANDICAP":
+            pk = "핸디" + pk + (f" {m['line']:+g}" if k == "H" and m.get("line") is not None else "")
+        if m["market"] == "OU" and m.get("line") is not None:
+            pk = f"{pk} {m['line']:g}"
+        ko = str(m.get("kickoff") or "")
+        rows.append({"home": m["home"], "away": m["away"], "pick": pk, "odds": m["odds"].get(k, 0), "hit": outs[m["id"]] == k,
+                     "meta": f"{m['league']} · {int(ko[5:7])}/{int(ko[8:10])} {ko[11:16]}" if len(ko) >= 16 else m["league"]})
+    crow = []
+    for key, cs in (rep.get("combos") or {}).items():
+        fin = [c for c in cs or [] if c.get("result") in ("win", "lose")]
+        if fin:
+            crow.append((STRATEGIES.get(key, {}).get("label", key), sum(1 for c in fin if c["result"] == "win"), len(fin)))
+    return {"picks": rows, "combos": crow,
+            "day": day, "n": len(done), "hit": len(hits), "rate": len(hits) / len(done),
             "hi_n": len(hi), "hi_hit": sum(1 for m in hi if outs[m["id"]] == m["analysis"]["pick"]),
             "n30": n30, "r30": (h30 / n30) if n30 else 0, "highlight": hl}
 
@@ -331,7 +322,11 @@ def prepare_result(force: bool = False) -> bool:
         return False
     from . import threads_cards as TC
     _prune()
-    paths = TC.render([TC.card_result(day, res)], IMG_DIR, f"{day}-result")
+    cards = [TC.card_result(day, res), TC.card_result_picks(day, res["picks"])]
+    if res["combos"]:
+        cards.append(TC.card_result_combos(day, res["combos"], res.get("highlight")))
+    cards.append(TC.card_link("어제 픽 전체와", "30일 기록은 여기서"))
+    paths = TC.render(cards, IMG_DIR, f"{day}-result")
     st["pending_result"] = {"day": day, "files": [p.name for p in paths],
                             "text": "어제 결과 · 매일 같은 기준으로 모든 픽을 기록합니다\n#프로토 #승부식 #프로토분석 #스포츠토토 #베트맨 #스포츠분석 #만19세이상"}
     write_json(STATE, st)
@@ -352,29 +347,123 @@ def post_result() -> bool:
         log.warning("Threads 결과: 토큰 확인 실패")
         return False
     uid, token = au
-    url = f"{config.SITE_URL}/threads/{pend['files'][0]}"
-    if not _wait_live([url]):
+    urls = [f"{config.SITE_URL}/threads/{f}" for f in pend["files"]]
+    if not _wait_live(urls):
         log.warning("Threads 결과: 카드 이미지가 사이트에 아직 없음 — 다음 실행에 맡김")
         return False
-    try:
-        r = http("POST", f"{API}/{uid}/threads", params={"media_type": "IMAGE", "image_url": url, "text": pend["text"], "access_token": token}, retries=2)
-        cid = r.json()["id"]
-        end = time.time() + 120
-        while time.time() < end:
-            s_ = http("GET", f"{API}/{cid}", params={"fields": "status", "access_token": token}, retries=1).json()
-            if s_.get("status") in ("FINISHED", "ERROR", "EXPIRED"):
-                break
-            time.sleep(5)
-        http("POST", f"{API}/{uid}/threads_publish", params={"creation_id": cid, "access_token": token}, retries=3)
-    except Exception as e:  # noqa: BLE001
-        rr = getattr(e, "response", None)
-        log.warning("Threads 결과 게시 실패: %s", ((rr.text if rr is not None else str(e))[:300]).replace(token, "***"))
+    if not _publish(uid, token, urls, pend["text"], "결과"):
         return False
     st = read_json(STATE, {}) or {}
     st["posted"] = (st.get("posted") or [])[-30:] + [key]
     st.pop("pending_result", None)
     write_json(STATE, st)
     log.info("Threads 결과 게시 완료(%s)", pend["day"])
+    return True
+
+
+def _publish(uid: str, token: str, urls: list[str], text: str, what: str) -> bool:
+    """이미지 한 장이면 단독, 여러 장이면 묶음(캐러셀)으로 게시."""
+    def ready(cid, wait=150):
+        end = time.time() + wait
+        while time.time() < end:
+            try:
+                st_ = http("GET", f"{API}/{cid}", params={"fields": "status,error_message", "access_token": token}, retries=1).json()
+                if st_.get("status") == "FINISHED":
+                    return True
+                if st_.get("status") in ("ERROR", "EXPIRED"):
+                    log.warning("Threads %s 컨테이너 오류: %s", what, st_.get("error_message"))
+                    return False
+            except Exception:  # noqa: BLE001
+                pass
+            time.sleep(5)
+        return False
+    step = "이미지 등록"
+    try:
+        if len(urls) == 1:
+            cid = http("POST", f"{API}/{uid}/threads", params={"media_type": "IMAGE", "image_url": urls[0], "text": text, "access_token": token}, retries=2).json()["id"]
+        else:
+            kids = [http("POST", f"{API}/{uid}/threads", params={"media_type": "IMAGE", "image_url": u, "is_carousel_item": "true", "access_token": token}, retries=2).json()["id"] for u in urls[:20]]
+            step = "이미지 처리 대기"
+            if not all(ready(k) for k in kids):
+                return False
+            step = "묶음 만들기"
+            cid = http("POST", f"{API}/{uid}/threads", params={"media_type": "CAROUSEL", "children": ",".join(kids), "text": text, "access_token": token}, retries=2).json()["id"]
+        step = "처리 대기"
+        ready(cid, 180)
+        step = "게시"
+        http("POST", f"{API}/{uid}/threads_publish", params={"creation_id": cid, "access_token": token}, retries=3)
+        return True
+    except Exception as e:  # noqa: BLE001
+        rr = getattr(e, "response", None)
+        log.warning("Threads %s 게시 실패(%s): %s", what, step, ((rr.text if rr is not None else str(e))[:300]).replace(token, "***"))
+        return False
+
+
+def _kh_all() -> list[dict]:
+    from .site import knowhow as KH
+    out = []
+    try:
+        from .site import knowhow_weekly as KW
+        out += KW.load()
+    except Exception:  # noqa: BLE001
+        pass
+    return out + KH.build_all()
+
+
+def _kh_parts(body: str) -> tuple[list[tuple[list[str], list[list[str]]]], list[str]]:
+    """글 본문 HTML 에서 (표 목록, 문단 목록)을 뽑는다."""
+    clean = lambda x: re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", x))).strip()
+    tables = []
+    for t in re.findall(r"<table.*?</table>", body, flags=re.S):
+        head = [clean(x) for x in re.findall(r"<th[^>]*>(.*?)</th>", t, flags=re.S)]
+        rows = [[clean(c) for c in re.findall(r"<td[^>]*>(.*?)</td>", tr, flags=re.S)] for tr in re.findall(r"<tr>(.*?)</tr>", t, flags=re.S)]
+        rows = [r for r in rows if r]
+        if head and rows:
+            tables.append((head, rows))
+    paras = [clean(p) for p in re.findall(r"<p>(.*?)</p>", body, flags=re.S)]
+    return tables, [p for p in paras if len(p) > 20]
+
+
+def prepare_knowhow(force: bool = False) -> bool:
+    """노하우 글 한 편을 카드 묶음(표지 → 핵심 표 → 정리 → 사이트)으로 만든다. 하루 한 편, 주간 리포트가 있으면 그것부터."""
+    if not (os.getenv("THREADS_TOKEN", "").strip() or force):
+        return False
+    st = read_json(STATE, {}) or {}
+    today = config.today_kst()
+    if st.get("kh_day") == today:
+        return False
+    lst = _kh_all()
+    if not lst:
+        return False
+    done = st.get("kh") or []
+    weekly = [x for x in lst if x.get("cat") == "주간 리포트" and x["slug"] not in done]
+    rest = [x for x in lst if x.get("cat") != "주간 리포트" and x["slug"] not in done]
+    pick = (weekly or rest or [])[:1]
+    if not pick:
+        order = {s_: i for i, s_ in enumerate(done)}
+        pick = sorted([x for x in lst if x.get("cat") != "주간 리포트"], key=lambda x: order.get(x["slug"], -1))[:1]
+    if not pick:
+        return False
+    a = pick[0]
+    tables, paras = _kh_parts(a.get("body") or "")
+    from . import threads_cards as TC
+    big = None
+    m = re.search(r"\d+(?:\.\d+)?%", a.get("lead") or "")
+    if m:
+        big = m.group(0)
+    cards = [TC.card_kh_cover(today, a.get("cat") or "", a["title"], a.get("lead") or "", big)]
+    for head, rows in tables[:2]:
+        cards.append(TC.card_kh_table(today, "기록으로 보면", head[:5], [r[:5] for r in rows[:7]]))
+    if paras:
+        cards.append(TC.card_kh_text(today, "정리하면", paras[-2:] if len(paras) > 2 else paras[:2]))
+    cards.append(TC.card_link("전체 글과 다른 노하우는", "여기서 무료로"))
+    _prune()
+    paths = TC.render(cards, IMG_DIR, f"{today}-kh")
+    tags = ["#프로토", "#프로토분석", "#스포츠분석"] + ([f"#{a['league'].replace(' ', '')}"] if a.get("league") else [])
+    st["pending_kh"] = {"day": today, "slug": a["slug"], "title": a["title"], "files": [p_.name for p_ in paths],
+                        "text": f"{a['title']}\n{' '.join(tags)} #만19세이상"}
+    write_json(STATE, st)
+    log.info("Threads 노하우 카드 %d장 준비: %s", len(paths), a["title"])
     return True
 
 
