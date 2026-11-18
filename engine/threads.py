@@ -114,6 +114,10 @@ def _wait_live(urls: list[str], minutes: int = 10) -> bool:
     return False
 
 
+class _Skip(Exception):
+    """이미 올라가 있어 게시 과정을 건너뛴다."""
+
+
 def post() -> bool:
     st = read_json(STATE, {}) or {}
     pend = st.get("pending")
@@ -122,6 +126,9 @@ def post() -> bool:
         return False
     key = f"{pend['day']}:{pend['slot']}"
     if key in (st.get("posted") or []):
+        return False
+    if pend["slot"] != (os.getenv("THREADS_SLOT", "").strip() or slot_now()) or pend["day"] != day_for(pend["slot"]):
+        log.info("Threads: 지난 시간대 카드(%s)라 올리지 않음", key)
         return False
     # 토큰 확인: Worker 토큰이 안 되면 GitHub Secrets 토큰으로 한 번 더(둘 중 되는 것을 쓴다)
     from . import threads_token
@@ -147,6 +154,12 @@ def post() -> bool:
     if not _wait_live(urls):
         log.warning("Threads: 카드 이미지가 사이트에 아직 없음(배포 지연) — 게시하지 않음")
         return False
+    if _already_up(uid, token, pend["text"]):
+        log.info("Threads: 이미 올라가 있어 기록만 남김(%s)", key)
+        kids = []
+    else:
+        kids = None
+
     def _err(e) -> str:
         """쓰레드가 돌려준 오류 내용(토큰은 빼고)."""
         r = getattr(e, "response", None)
@@ -171,6 +184,8 @@ def post() -> bool:
 
     step = "이미지 등록"
     try:
+        if kids is not None:
+            raise _Skip
         kids = []
         for u in urls[:20]:
             r = http("POST", f"{API}/{uid}/threads", params={"media_type": "IMAGE", "image_url": u, "is_carousel_item": "true", "access_token": token}, retries=2)
@@ -187,6 +202,8 @@ def post() -> bool:
         _ready(cid, 180)
         step = "게시"
         http("POST", f"{API}/{uid}/threads_publish", params={"creation_id": cid, "access_token": token}, retries=3)
+    except _Skip:
+        pass
     except Exception as e:  # noqa: BLE001
         log.warning("Threads 게시 실패(%s): %s", step, _err(e))
         return False
@@ -219,7 +236,7 @@ def post_knowhow() -> bool:
     """준비해 둔 노하우 카드 묶음을 게시(밤 22:00, 빠지면 23:05)."""
     st = read_json(STATE, {}) or {}
     pend = st.get("pending_kh")
-    if not pend or st.get("kh_day") == pend["day"]:
+    if not pend or st.get("kh_day") == pend["day"] or pend["day"] != config.today_kst():
         return False
     au = _auth()
     if not au:
@@ -363,8 +380,8 @@ def prepare_result(force: bool = False) -> bool:
 def post_result() -> bool:
     st = read_json(STATE, {}) or {}
     pend = st.get("pending_result")
-    if not pend:
-        return False
+    if not pend or pend["day"] != (date.fromisoformat(config.today_kst()) - timedelta(days=1)).isoformat():
+        return False  # 어제 것이 아니면(지난 카드) 올리지 않는다
     key = f"{pend['day']}:result"
     if key in (st.get("posted") or []):
         return False
@@ -387,8 +404,30 @@ def post_result() -> bool:
     return True
 
 
+def _already_up(uid: str, token: str, text: str, hours: int = 2) -> bool:
+    """같은 글이 최근 몇 시간 안에 이미 올라가 있는가(게시는 됐는데 기록 저장이 실패한 경우 두 번 올리지 않게)."""
+    try:
+        data = http("GET", f"{API}/{uid}/threads", params={"fields": "text,timestamp", "limit": 10, "access_token": token},
+                    retries=1).json().get("data") or []
+    except Exception:  # noqa: BLE001 - 확인이 안 되면 그냥 올린다
+        return False
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc)
+    for d in data:
+        try:
+            ts = datetime.strptime(d["timestamp"], "%Y-%m-%dT%H:%M:%S%z")
+        except Exception:  # noqa: BLE001
+            continue
+        if (d.get("text") or "").strip() == text.strip() and (now - ts).total_seconds() < hours * 3600:
+            return True
+    return False
+
+
 def _publish(uid: str, token: str, urls: list[str], text: str, what: str) -> bool:
     """이미지 한 장이면 단독, 여러 장이면 묶음(캐러셀)으로 게시."""
+    if _already_up(uid, token, text):
+        log.info("Threads %s: 이미 올라가 있어 기록만 남김", what)
+        return True
     def ready(cid, wait=150):
         end = time.time() + wait
         while time.time() < end:
