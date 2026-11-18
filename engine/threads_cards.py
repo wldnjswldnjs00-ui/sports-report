@@ -334,6 +334,8 @@ RES2_CSS = """
 .rp.hit{border-color:#0b9a7e}
 .rl{display:flex;flex-direction:column;gap:12px}
 .rs-row{display:grid;grid-template-columns:1fr auto;align-items:center;background:#fff;border:2px solid #d9e2de;border-radius:24px;padding:22px 30px;font:700 34px PT}
+.rs-row em{display:block;font:700 26px PT;font-style:normal;color:#0b9a7e;margin-top:4px}
+.rp .dog{display:inline-block;background:#ff3d7f;color:#fff;font:700 22px PT;padding:3px 12px;border-radius:999px;margin-right:10px;vertical-align:1px}
 .rs-row span{font:700 46px JO;letter-spacing:-1px}.rs-row span i{font-style:normal;color:#9aa3a0;font-size:34px}
 """
 CSS += RES2_CSS
@@ -344,14 +346,16 @@ def card_result_picks(d: str, rows: list[dict]) -> str:
     items = []
     for r in rows:
         badge = '<span class="ok">적중</span>' if r["hit"] else '<span class="no">—</span>'
-        items.append(f'<div class="rp{" hit" if r["hit"] else ""}"><div class="meta">{_e(r["meta"])}</div>'
+        dog = '<b class="dog">역배</b>' if r.get("dog") else ""
+        items.append(f'<div class="rp{" hit" if r["hit"] else ""}"><div class="meta">{dog}{_e(r["meta"])}</div>'
                      f'<div class="rt"><span class="bub">{_e(r["pick"])}</span><span class="odds">{r["odds"]:.2f}</span>{badge}</div>'
                      f'<div class="match">{_e(r["home"])}<i>vs</i>{_e(r["away"])}</div></div>')
-    return f'<div class="card">{_top(d)}<div class="body"><h1 style="font-size:64px">어제의 픽</h1><p class="sub">배당 1.50 이상 픽, 경기 시작 순서 그대로</p><div class="rl">{"".join(items)}</div></div></div>'
+    return f'<div class="card">{_top(d)}<div class="body"><h1 style="font-size:64px">어제의 픽</h1><p class="sub">{"적중한 역배와 " if any(r.get("dog") for r in rows) else ""}배당 1.50 이상 픽, 경기 시작 순서대로</p><div class="rl">{"".join(items)}</div></div></div>'
 
 
-def card_result_combos(d: str, rows: list[tuple[str, int, int]], best: str | None) -> str:
-    rs = "".join(f'<div class="rs-row">{_e(n)}<span>{h}<i>/</i>{t}</span></div>' for n, h, t in rows)
+def card_result_combos(d: str, rows: list[tuple], best: str | None) -> str:
+    rs = "".join(f'<div class="rs-row"><div>{_e(r[0])}' + (f'<em>최고 ×{r[3]:.2f}</em>' if len(r) > 3 and r[3] else "")
+                 + f'</div><span>{r[1]}<i>/</i>{r[2]}</span></div>' for r in rows)
     hi = f'<div class="rs-hi"><p class="rs-l">가장 큰 적중</p><p class="rs-h">{_e(best)}</p></div>' if best else ""
     return f'<div class="card">{_top(d)}<div class="body"><h1 style="font-size:64px">전략별 조합</h1><p class="sub">발행한 조합 중 적중</p><div class="rl">{rs}</div>{hi}</div></div>'
 

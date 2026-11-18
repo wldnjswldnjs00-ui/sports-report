@@ -292,21 +292,42 @@ def result_stats(day: str) -> dict | None:
     show = [m for m in done if m["odds"].get(m["analysis"]["pick"], 0) >= 1.5]
     if len(show) < 3:
         show = [m for m in done if m["odds"].get(m["analysis"]["pick"], 0) >= 1.3]
-    for m in sorted(show, key=lambda m: str(m.get("kickoff")))[:7]:
+    # 적중한 역배(픽·조합 다리 모두에서): 베트맨 배당이 상대보다 높은 쪽을 맞힌 것은 꼭 넣는다
+    from .analysis.combos import _is_dog
+    by_id = {m["id"]: m for m in rep.get("markets") or []}
+    dogs = {}
+    for m in done:
         k = m["analysis"]["pick"]
+        if outs[m["id"]] == k and _is_dog(m, m["analysis"], k):
+            dogs[(m["id"], k)] = m
+    for cs in (rep.get("combos") or {}).values():
+        for c in cs or []:
+            for lg in c.get("legs") or []:
+                m = by_id.get(lg.get("market_id"))
+                k = lg.get("outcome")
+                if m and outs.get(m["id"]) == k and _is_dog(m, {}, k):
+                    dogs.setdefault((m["id"], k), m)
+    sel = [(m, k, True) for (_, k), m in dogs.items()]
+    seen = set(dogs)
+    sel += [(m, m["analysis"]["pick"], False) for m in sorted(show, key=lambda m: str(m.get("kickoff")))
+            if (m["id"], m["analysis"]["pick"]) not in seen]
+    sel = sorted(sel[:7], key=lambda x: str(x[0].get("kickoff")))
+    for m, k, dog in sel:
         pk = lab.get(k, k)
         if m["market"] == "HANDICAP":
             pk = "핸디" + pk + (f" {m['line']:+g}" if k == "H" and m.get("line") is not None else "")
         if m["market"] == "OU" and m.get("line") is not None:
             pk = f"{pk} {m['line']:g}"
         ko = str(m.get("kickoff") or "")
-        rows.append({"home": m["home"], "away": m["away"], "pick": pk, "odds": m["odds"].get(k, 0), "hit": outs[m["id"]] == k,
+        rows.append({"home": m["home"], "away": m["away"], "pick": pk, "odds": m["odds"].get(k, 0), "hit": outs[m["id"]] == k, "dog": dog,
                      "meta": f"{m['league']} · {int(ko[5:7])}/{int(ko[8:10])} {ko[11:16]}" if len(ko) >= 16 else m["league"]})
     crow = []
     for key, cs in (rep.get("combos") or {}).items():
         fin = [c for c in cs or [] if c.get("result") in ("win", "lose")]
         if fin:
-            crow.append((STRATEGIES.get(key, {}).get("label", key), sum(1 for c in fin if c["result"] == "win"), len(fin)))
+            wins = [c for c in fin if c["result"] == "win"]
+            crow.append((STRATEGIES.get(key, {}).get("label", key), len(wins), len(fin),
+                         max((c.get("total_odds") or 0 for c in wins), default=0)))
     return {"picks": rows, "combos": crow,
             "day": day, "n": len(done), "hit": len(hits), "rate": len(hits) / len(done),
             "hi_n": len(hi), "hi_hit": sum(1 for m in hi if outs[m["id"]] == m["analysis"]["pick"]),
@@ -429,6 +450,89 @@ def _kh_parts(body: str) -> tuple[list[tuple[list[str], list[list[str]]]], list[
     return tables, [p for p in paras if len(p) > 20]
 
 
+
+# ── 쓰레드 노하우: 관심이 큰 주제부터, 넓은 주제 → 종목 → 인기 리그 순. 제목은 쓰레드용으로 짧고 궁금하게 ──
+_KH_COMMON = ["underdogs", "favorites-by-odds", "folders", "odds-movement", "streaks", "bankroll", "handicap",
+              "over-under", "soccer-draws", "home-advantage", "compare-favorites", "compare-goals", "compare-draws",
+              "time-of-day", "payout-rate", "nba-mlb-margins"]
+_KH_HOOK = {
+    "underdogs": "역배, 진짜 몇 번에 한 번 터질까",
+    "favorites-by-odds": "1점대 정배, 정말 믿어도 될까",
+    "folders": "폴더 하나 더 붙이면 적중률은 얼마나 달라질까",
+    "odds-movement": "배당이 내려간 쪽, 정말 이겼을까",
+    "streaks": "연승 중인 팀, 다음 경기도 이길까",
+    "bankroll": "잘 고르는 사람도 연속으로 빗나간다: 금액 나누는 기준",
+    "handicap": "핸디 받은 팀, 생각보다 잘 버틸까",
+    "over-under": "오버냐 언더냐, 기록이 가리키는 쪽",
+    "soccer-draws": "축구 무승부, 언제 노려볼 만할까",
+    "home-advantage": "홈팀은 정말 유리할까: 종목별로 보면",
+    "compare-favorites": "정배가 가장 잘 버티는 축구 리그는",
+    "compare-goals": "골 제일 많이 나는 축구 리그는",
+    "compare-draws": "무승부 제일 잘 나오는 축구 리그는",
+    "time-of-day": "새벽 경기와 저녁 경기, 정배 기록이 다를까",
+    "payout-rate": "배당 안에 숨은 몫, 폴더를 늘리면 커진다",
+    "nba-mlb-margins": "NBA·MLB 기준점, 10시즌 기록으로 보면",
+}
+_KH_TOPIC = ["upset", "fav", "hc", "ou", "home", "league", "o25", "draws", "favfd", "goals", "fd"]  # 리그·종목 글 안에서의 주제 순서
+_KH_TOPIC_HOOK = {
+    "upset": "{n} 역배, 몇 경기에 한 번 터질까", "fav": "{n} 정배, 진짜 믿어도 될까",
+    "hc": "{n} 핸디 받은 팀, 얼마나 버틸까", "ou": "{n} 오버냐 언더냐, 기록으로 보면",
+    "home": "{n} 홈팀은 얼마나 유리할까", "league": "{n}, 기록으로 보면 이런 리그",
+    "o25": "{n} 오버 2.5, 배당이 맞았을까", "draws": "{n} 무승부는 언제 나올까",
+    "goals": "{n} 한 경기 골은 몇 개", "favfd": "{n} 정배, 여러 시즌 기록으로 보면", "fd": "{n}, 숫자로 보면 이런 리그",
+}
+_KH_SPORT = {"soccer": "축구", "baseball": "야구", "basketball": "농구", "volleyball": "배구"}
+_KH_POPULAR = ["KBO", "잉글랜드 프리미어리그", "NBA", "MLB", "K리그1", "UEFA 챔피언스리그", "스페인 라리가",
+               "이탈리아 세리에A", "독일 분데스리가", "KBL", "NPB", "축구 월드컵", "일본 J1리그", "프랑스 리그1"]
+_KH_SHORT = {"잉글랜드 프리미어리그": "프리미어리그", "UEFA 챔피언스리그": "챔피언스리그", "스페인 라리가": "라리가",
+             "이탈리아 세리에A": "세리에A", "독일 분데스리가": "분데스리가"}
+
+
+def _kh_topic(a: dict) -> str:
+    sl = a["slug"]
+    return "favfd" if sl.startswith("fav-fd-") else sl.split("-")[0]
+
+
+def _kh_rank(a: dict):
+    """작을수록 먼저. 공통 → 종목별(종목을 섞어 주제 순) → 인기 리그(리그를 섞어 주제 순) → 나머지 리그(경기 수 많은 순)."""
+    sl, cat = a["slug"], a.get("cat")
+    if sl in _KH_COMMON:
+        return (0, _KH_COMMON.index(sl), 0)
+    tp = _kh_topic(a)
+    ti = _KH_TOPIC.index(tp) if tp in _KH_TOPIC else len(_KH_TOPIC)
+    if cat == "종목별":
+        sp = sl.rsplit("-", 1)[-1]
+        si = list(_KH_SPORT).index(sp) if sp in _KH_SPORT else 9
+        return (1, ti + si, si)  # 대각선 순서: 날마다 종목과 주제가 함께 바뀐다
+    if cat in ("공통", "리그 비교"):
+        return (0, 50, 0)
+    lg = a.get("league") or ""
+    if lg in _KH_POPULAR:
+        li = _KH_POPULAR.index(lg)
+        return (2, ti + li, li)
+    return (3, ti, -(a.get("games") or 0))
+
+
+def _kh_hook(a: dict) -> str:
+    sl = a["slug"]
+    if sl in _KH_HOOK:
+        return _KH_HOOK[sl]
+    tp = _kh_topic(a)
+    if a.get("cat") == "종목별":
+        n = _KH_SPORT.get(sl.rsplit("-", 1)[-1], "")
+    else:
+        n = _KH_SHORT.get(a.get("league") or "", a.get("league") or "")
+    if n and tp in _KH_TOPIC_HOOK:
+        return _KH_TOPIC_HOOK[tp].format(n=n)
+    return a["title"]
+
+
+def _kh_lead(lead: str) -> str:
+    """표지 설명은 첫 문장만, 사이트 안내 문장은 뺀다."""
+    ss = [x for x in re.split(r"(?<=[.!?])\s+", lead or "") if x and not re.search(r"메뉴|화면|페이지|자동으로|다시 계산", x)]
+    return ss[0] if ss else ""
+
+
 def _kh_sections(body: str):
     """(소제목, 표 머리, 표 행) 목록과 문단 목록. 표는 바로 앞 소제목과 짝을 짓는다."""
     clean = lambda x: re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", x))).strip()
@@ -493,10 +597,11 @@ def prepare_knowhow(force: bool = False) -> bool:
     if not lst:
         return False
     done = st.get("kh") or []
+    lst.sort(key=_kh_rank)
     pick = [x for x in lst if x["slug"] not in done][:1]
-    if not pick:
+    if not pick:  # 한 바퀴 다 돌면 가장 오래전에 올린 글부터 다시
         order = {s_: i for i, s_ in enumerate(done)}
-        pick = sorted([x for x in lst if x.get("cat") != "주간 리포트"], key=lambda x: order.get(x["slug"], -1))[:1]
+        pick = sorted(lst, key=lambda x: order.get(x["slug"], -1))[:1]
     if not pick:
         return False
     a = pick[0]
@@ -506,7 +611,8 @@ def prepare_knowhow(force: bool = False) -> bool:
     m = re.search(r"\d+(?:\.\d+)?%", a.get("lead") or "")
     if m:
         big = m.group(0)
-    cards = [TC.card_kh_cover(today, a.get("cat") or "", a["title"], a.get("lead") or "", big)]
+    hook = _kh_hook(a)
+    cards = [TC.card_kh_cover(today, a.get("cat") or "", hook, _kh_lead(a.get("lead") or ""), big)]
     for heading, head, rows in secs[:2]:
         st_ = _kh_stat_rows(head, rows)
         if st_:
@@ -518,7 +624,7 @@ def prepare_knowhow(force: bool = False) -> bool:
     paths = TC.render(cards, IMG_DIR, f"{today}-kh")
     tags = ["#프로토", "#프로토분석", "#스포츠분석"] + ([f"#{a['league'].replace(' ', '')}"] if a.get("league") else [])
     st["pending_kh"] = {"day": today, "slug": a["slug"], "title": a["title"], "files": [p_.name for p_ in paths],
-                        "text": f"{a['title']}\n{' '.join(tags)} #만19세이상"}
+                        "text": f"{hook}\n{' '.join(tags)} #만19세이상"}
     write_json(STATE, st)
     log.info("Threads 노하우 카드 %d장 준비: %s", len(paths), a["title"])
     return True
