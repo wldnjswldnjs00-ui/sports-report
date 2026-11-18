@@ -220,9 +220,14 @@
     } catch (e) { /* 환경맵 없이도 동작 */ }
     scene.add(new T.AmbientLight(0xffffff, 0.45));
     var key = new T.DirectionalLight(0xffffff, 1.25);
-    key.position.set(3, 6, 7); key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.radius = 8;
-    key.shadow.camera.left = -8; key.shadow.camera.right = 8; key.shadow.camera.top = 6; key.shadow.camera.bottom = -6;
+    key.position.set(3, 6, 7);
     scene.add(key);
+    // 그림자 전용 빛: 거의 바로 위에서 비춰 그림자가 공 발밑에 생기게(비스듬한 주광은 그림자를 옆으로 끌어냄)
+    var top = new T.DirectionalLight(0xffffff, 0.05);
+    top.position.set(0.4, 12, 0.8); top.castShadow = true; top.shadow.mapSize.set(1024, 1024); top.shadow.radius = 10;
+    top.shadow.camera.left = -9; top.shadow.camera.right = 9; top.shadow.camera.top = 7; top.shadow.camera.bottom = -7;
+    top.shadow.camera.near = 1; top.shadow.camera.far = 30;
+    scene.add(top);
     var floorMat = new T.ShadowMaterial({ opacity: 0.12 });
     var floor = new T.Mesh(new T.PlaneGeometry(40, 40), floorMat);
     floor.rotation.x = -Math.PI / 2; floor.position.y = -2.1; floor.receiveShadow = true; scene.add(floor);
