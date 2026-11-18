@@ -399,8 +399,18 @@ def _event_ld(g: dict) -> dict:
           "homeTeam": {"@type": "SportsTeam", "name": g["home"]}, "awayTeam": {"@type": "SportsTeam", "name": g["away"]},
           "competitor": [{"@type": "SportsTeam", "name": g["home"]}, {"@type": "SportsTeam", "name": g["away"]}],
           "url": config.SITE_URL + g["url"], "description": f"{g['league']} {g['home']} 대 {g['away']} 경기 분석"}
-    if g.get("venue"):
-        ev["location"] = {"@type": "Place", "name": g["venue"]}
+    # 구글 이벤트 필수: location(장소 이름·주소). 경기장을 모르면 홈 팀 경기장으로 적는다(중립 경기 제외 대부분 맞음)
+    place = g.get("venue") or f"{g['home']} 홈 경기장"
+    ev["location"] = {"@type": "Place", "name": place, "address": place}
+    hours = {"soccer": 2, "basketball": 2.5, "baseball": 3, "volleyball": 2}.get(g["sport"], 2.5)
+    try:
+        ev["endDate"] = (datetime.fromisoformat(g["kickoff"]) + timedelta(hours=hours)).isoformat(timespec="minutes")
+    except ValueError:
+        pass
+    ev["organizer"] = {"@type": "Organization", "name": g["league"]}
+    ev["performer"] = [{"@type": "SportsTeam", "name": g["home"]}, {"@type": "SportsTeam", "name": g["away"]}]
+    ev["image"] = [config.SITE_URL + "/static/og.png"]
+    ev["eventAttendanceMode"] = "https://schema.org/OfflineEventAttendanceMode"
     return ev
 
 
