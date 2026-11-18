@@ -485,7 +485,10 @@ _KH_SPORT = {"soccer": "축구", "baseball": "야구", "basketball": "농구", "
 _KH_POPULAR = ["KBO", "잉글랜드 프리미어리그", "NBA", "MLB", "K리그1", "UEFA 챔피언스리그", "스페인 라리가",
                "이탈리아 세리에A", "독일 분데스리가", "KBL", "NPB", "축구 월드컵", "일본 J1리그", "프랑스 리그1"]
 _KH_SHORT = {"잉글랜드 프리미어리그": "프리미어리그", "UEFA 챔피언스리그": "챔피언스리그", "스페인 라리가": "라리가",
-             "이탈리아 세리에A": "세리에A", "독일 분데스리가": "분데스리가"}
+             "이탈리아 세리에A": "세리에A", "독일 분데스리가": "분데스리가", "미국 메이저리그사커": "MLS",
+             "남자축구 국제친선경기": "A매치 친선전", "UEFA 네이션스리그": "네이션스리그", "일본 J1리그": "J리그",
+             "UEFA 유로파리그": "유로파리그", "프랑스 리그1": "리그1", "잉글랜드 챔피언십": "EFL 챔피언십",
+             "FIVB 남자배구 네이션스리그": "남자배구 VNL", "FIVB 여자배구 네이션스리그": "여자배구 VNL"}
 
 
 def _kh_topic(a: dict) -> str:
@@ -493,24 +496,92 @@ def _kh_topic(a: dict) -> str:
     return "favfd" if sl.startswith("fav-fd-") else sl.split("-")[0]
 
 
-def _kh_rank(a: dict):
-    """작을수록 먼저. 공통 → 종목별(종목을 섞어 주제 순) → 인기 리그(리그를 섞어 주제 순) → 나머지 리그(경기 수 많은 순)."""
-    sl, cat = a["slug"], a.get("cat")
-    if sl in _KH_COMMON:
-        return (0, _KH_COMMON.index(sl), 0)
-    tp = _kh_topic(a)
-    ti = _KH_TOPIC.index(tp) if tp in _KH_TOPIC else len(_KH_TOPIC)
-    if cat == "종목별":
-        sp = sl.rsplit("-", 1)[-1]
-        si = list(_KH_SPORT).index(sp) if sp in _KH_SPORT else 9
-        return (1, ti + si, si)  # 대각선 순서: 날마다 종목과 주제가 함께 바뀐다
-    if cat in ("공통", "리그 비교"):
-        return (0, 50, 0)
-    lg = a.get("league") or ""
-    if lg in _KH_POPULAR:
-        li = _KH_POPULAR.index(lg)
-        return (2, ti + li, li)
-    return (3, ti, -(a.get("games") or 0))
+# 리그별 시즌 달(베트맨 기록이 짧아도 시즌 중인지 알 수 있게). 키는 리그 이름에 들어 있는 말.
+_KH_MONTHS = [
+    (("잉글랜드", "스페인", "이탈리아", "독일", "프랑스", "네덜란드", "포르투갈", "벨기에", "튀르키예", "그리스",
+      "스코틀랜드", "챔피언스리그", "유로파"), (8, 9, 10, 11, 12, 1, 2, 3, 4, 5)),
+    (("K리그", "J1", "J2"), (2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)),
+    (("메이저리그사커",), (2, 3, 4, 5, 6, 7, 8, 9, 10, 11)),
+    (("KBO", "MLB", "NPB"), (3, 4, 5, 6, 7, 8, 9, 10)),
+    (("NBA", "KBL", "WKBL"), (10, 11, 12, 1, 2, 3, 4, 5, 6)),
+    (("KOVO",), (10, 11, 12, 1, 2, 3, 4)),
+    (("네이션스리그", "FIVB"), (5, 6, 7)),
+]
+_KH_SPORT_MONTHS = {"baseball": (3, 4, 5, 6, 7, 8, 9, 10), "basketball": (10, 11, 12, 1, 2, 3, 4, 5, 6),
+                    "volleyball": (10, 11, 12, 1, 2, 3, 4, 5, 6, 7), "soccer": tuple(range(1, 13))}
+
+
+def _kh_season(days: int = 21):
+    """지금 시즌 중인 리그·종목: 최근 3주 베트맨에 올라온 것 + 시즌 달 표. 실패해도 달 표만으로 판단."""
+    lg, sp = set(), set()
+    today = date.fromisoformat(config.today_kst())
+    cut = (today - timedelta(days=days)).isoformat()
+    try:
+        for f in config.REPORTS.glob("*.json"):
+            if f.stem >= cut:
+                for m in (read_json(f) or {}).get("markets") or []:
+                    lg.add(m.get("league"))
+                    sp.add(m.get("sport"))
+    except Exception:  # noqa: BLE001 - 순서만 바뀔 뿐, 실패해도 게시는 계속
+        pass
+    mo = today.month
+    sp |= {k for k, ms in _KH_SPORT_MONTHS.items() if mo in ms}
+    return lg, sp, mo
+
+
+def _kh_live(league: str, season) -> bool:
+    lgs, _, mo = season
+    if league in lgs:
+        return True
+    for keys, ms in _KH_MONTHS:
+        if any(k in league for k in keys):
+            # 네이션스리그는 축구(가을 A매치)와 배구(여름)가 이름이 겹친다 → 베트맨 기록이 있으면 위에서 이미 참
+            return mo in ms
+    return False
+
+
+def _kh_order(lst: list[dict], season) -> list[dict]:
+    """게시 순서. 공통 글 → (시즌 중 종목 + 시즌 중 인기 리그) → 시즌 중 다른 리그 → 쉬는 종목·리그.
+    묶음 안에서는 종목/리그를 돌아가며 한 편씩, 주제도 묶음마다 시작점을 달리해 같은 리그·같은 주제가 이어지지 않게."""
+    common = sorted([a for a in lst if a["slug"] in _KH_COMMON], key=lambda a: _KH_COMMON.index(a["slug"]))
+    common += [a for a in lst if a["slug"] not in _KH_COMMON and a.get("cat") in ("공통", "리그 비교")]
+    groups: dict[tuple, list[dict]] = {}
+    for a in lst:
+        if a in common:
+            continue
+        if a.get("cat") == "종목별":
+            spt = a["slug"].rsplit("-", 1)[-1]
+            band = 0 if spt in season[1] else 2
+            key = (band, 0, list(_KH_SPORT).index(spt) if spt in _KH_SPORT else 9, "s:" + spt)
+        else:
+            lg = a.get("league") or ""
+            live = _kh_live(lg, season)
+            pop = lg in _KH_POPULAR
+            band = (0 if pop else 1) if live else 2
+            key = (band, 1 if pop else 2, _KH_POPULAR.index(lg) if pop else -(a.get("games") or 0), "l:" + lg)
+        groups.setdefault(key, []).append(a)
+    out = list(common)
+    for band in (0, 1, 2):
+        ks = sorted(k for k in groups if k[0] == band)
+        # 종목 글과 리그 글을 번갈아(종목 하나, 리그 하나 …)
+        sk = [k for k in ks if k[3].startswith("s:")]
+        lk = [k for k in ks if k[3].startswith("l:")]
+        mixed = []
+        while sk or lk:
+            if sk:
+                mixed.append(sk.pop(0))
+            mixed += lk[:2]
+            lk = lk[2:]
+        qs = []
+        for gi, k in enumerate(mixed):
+            items = sorted(groups[k], key=lambda a: _KH_TOPIC.index(_kh_topic(a)) if _kh_topic(a) in _KH_TOPIC else 99)
+            r = gi % max(1, len(items))
+            qs.append(items[r:] + items[:r])  # 묶음마다 다른 주제부터
+        while any(qs):
+            for q in qs:
+                if q:
+                    out.append(q.pop(0))
+    return out
 
 
 def _kh_hook(a: dict) -> str:
@@ -597,7 +668,7 @@ def prepare_knowhow(force: bool = False) -> bool:
     if not lst:
         return False
     done = st.get("kh") or []
-    lst.sort(key=_kh_rank)
+    lst = _kh_order(lst, _kh_season())
     pick = [x for x in lst if x["slug"] not in done][:1]
     if not pick:  # 한 바퀴 다 돌면 가장 오래전에 올린 글부터 다시
         order = {s_: i for i, s_ in enumerate(done)}
