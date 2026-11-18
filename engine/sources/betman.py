@@ -20,12 +20,25 @@ from .. import config
 from ..util import read_json, http as _http, write_json
 
 
+_down = False  # 이번 실행에서 베트맨이 접속 자체를 거부했으면 남은 요청은 바로 건너뛴다(무료 실행 시간 절약)
+
+
 def http(method, url, **kw):
-    """베트맨 전용: 응답이 느릴 때가 있어 연결 15초·읽기 45초, 4회 재시도(5·10·20초 간격)."""
+    """베트맨 전용: 응답이 느릴 때가 있어 연결 15초·읽기 45초, 4회 재시도(5·10·20초 간격).
+
+    재시도 끝에도 접속이 안 되면(접속 거부·시간 초과) 이번 실행의 나머지 베트맨 요청은 기다리지 않고 바로 실패시킨다."""
+    global _down
+    import requests
+    if _down:
+        raise requests.ConnectionError("베트맨 접속 불가(이번 실행에서 이미 실패해 건너뜀)")
     kw.setdefault("timeout", (15, 45))
     kw.setdefault("retries", 4)
     kw.setdefault("backoff", 5.0)
-    return _http(method, url, **kw)
+    try:
+        return _http(method, url, **kw)
+    except (requests.ConnectionError, requests.Timeout):
+        _down = True
+        raise
 
 log = logging.getLogger("engine.betman")
 

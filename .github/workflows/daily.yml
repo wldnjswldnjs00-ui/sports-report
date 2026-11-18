@@ -73,14 +73,16 @@ jobs:
             fi
           }
           work
-          # 베트맨 접속이 실패했으면(이번 실행에서 진단 파일이 새로 생김) 10분 뒤 한 번 더, 그래도 실패면 10분 뒤 마지막으로
-          for wait in 600 600; do
-            if [ -f data/state/betman_debug.json ] && [ -n "$(find data/state/betman_debug.json -mmin -25)" ]; then
-              echo "베트맨 접속 실패 → ${wait}초 뒤 다시 시도"; sleep "$wait"; work
+          # 베트맨 접속이 실패했으면(이번 실행에서 진단 파일이 새로 생김) 판매 시간(08~23시)에만 5분 뒤 한 번 더.
+          # 밤에는 베트맨이 접속을 받지 않는 때가 많아 기다려도 소용없고 무료 실행 시간만 쓴다 → 다음 정시 실행이 이어받는다.
+          H=$(TZ=Asia/Seoul date +%H)
+          if [ -f data/state/betman_debug.json ] && [ -n "$(find data/state/betman_debug.json -mmin -25)" ]; then
+            if [ "$H" -ge 8 ] && [ "$H" -le 22 ]; then
+              echo "베트맨 접속 실패 → 300초 뒤 다시 시도"; sleep 300; work
             else
-              break
+              echo "베트맨 접속 실패(판매 시간 밖) → 다음 정시 실행에 맡김"
             fi
-          done
+          fi
       - name: 쓰레드 카드 준비(저녁 19:00·아침 07:00, 빠지면 22:00·09:30 실행이 대신. 같은 글은 한 번만)
         id: tprep
         if: env.SLOT == '0 10 * * *' || env.SLOT == '0 13 * * *' || env.SLOT == '0 22 * * *' || env.SLOT == '30 0 * * *' || contains(github.event.head_commit.message, '[threads-now]')
