@@ -24,7 +24,7 @@ from datetime import datetime, timedelta, timezone
 from .. import config
 
 KST = timezone(timedelta(hours=9))
-MIN_CHARS = 150
+MIN_CHARS = 100
 SPORT_KO = {"soccer": "축구", "basketball": "농구", "baseball": "야구", "volleyball": "배구"}
 FD_NAME = {"E0": "잉글랜드 프리미어리그", "E1": "잉글랜드 챔피언십", "SP1": "스페인 라리가", "SP2": "스페인 라리가2",
            "I1": "이탈리아 세리에A", "I2": "이탈리아 세리에B", "D1": "독일 분데스리가", "D2": "독일 분데스리가2",
@@ -1385,9 +1385,15 @@ def build_all() -> list[dict]:
         out.append(d)
     # 리그별·유럽 축구는 같은 리그 글끼리 붙여서(경기가 많은 리그부터), 리그 안에서는 개요 → 정배 → 홈 → 언더오버 → 핸디캡 → 역배 순
     order = ["league-", "fd-", "fav-", "home-", "ou-", "hc-", "upset-", "goals-", "draws-", "o25-"]
-    lg_n = Counter(a["league"] for a in out if a["league"])
+    lg_n = Counter()
+    for g in games:
+        lg_n[g["league"]] += 1
+    for code, rws in fd.items():
+        lg_n[FD_NAME.get(code, code)] += len(rws)
     def k(a):
         t = next((i for i, p in enumerate(order) if a["slug"].startswith(p)), 99)
         return (-lg_n.get(a["league"], 0), a["league"] or "", t) if a["cat"] in ("리그별", "유럽 축구") else (0, "", 0)
     out.sort(key=k)
+    for a in out:
+        a["games"] = lg_n.get(a["league"], 0) if a["league"] else 0
     return out

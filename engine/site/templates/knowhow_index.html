@@ -7,7 +7,23 @@
   <p class="lede">쌓인 경기 기록으로 계산한 분석 기준 {{ arts|length }}편. 숫자는 경기가 쌓일 때마다 자동으로 다시 계산됩니다.</p>
 </section>
 {% set ns = namespace(tone=0) %}
-{% for c in cats %}{% set lst = arts|selectattr('cat', 'equalto', c.name)|list %}
+<section class="wrap kh-tools">
+  <label class="kh-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" placeholder="리그·주제 검색" aria-label="노하우 검색" data-kh-q></label>
+  <div class="kh-sports" role="group" aria-label="종목">
+    <button type="button" class="chip is-on" data-sp="">전체</button>
+    {% for sp, lgs in kh_leagues %}<button type="button" class="chip" data-sp="{{ sp }}">{{ SPORT_LABEL.get(sp, sp) }}</button>{% endfor %}
+  </div>
+  {% for sp, lgs in kh_leagues %}
+  <div class="kh-lgs" data-for="{{ sp }}" hidden>{% for n in lgs %}<button type="button" class="chip" data-lg="{{ n }}">{{ n }}</button>{% endfor %}</div>
+  {% endfor %}
+</section>
+<section class="wrap kh-results" hidden>
+  <p class="kh-res-head" data-kh-head></p>
+  <div class="kh-grid" data-kh-grid></div>
+</section>
+<script type="application/json" id="kh-data">{{ kh_data|tojson }}</script>
+<div data-kh-secs>
+{% for c in cats %}{% set lst = cat_lists[c.name] %}
 {% if lst %}
 <section class="wrap kh-sec">
   <div class="kh-sec-head"><h2>{{ c.name }} <small>{{ lst|length }}</small></h2><a href="/knowhow/c/{{ c.slug }}/">더 보기 →</a></div>
@@ -31,6 +47,50 @@
 </section>
 {% endif %}
 {% endfor %}
+</div>
+<script>
+(function () {
+  var data = JSON.parse(document.getElementById("kh-data").textContent);
+  var LB = {{ SPORT_LABEL|tojson }};
+  var q = document.querySelector("[data-kh-q]"), secs = document.querySelector("[data-kh-secs]"), res = document.querySelector(".kh-results"),
+      grid = document.querySelector("[data-kh-grid]"), head = document.querySelector("[data-kh-head]");
+  var sp = "", lg = "";
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function render() {
+    var term = (q.value || "").trim().toLowerCase();
+    var on = term || sp || lg;
+    secs.hidden = !!on; res.hidden = !on;
+    if (!on) return;
+    var words = term.split(/\s+/).filter(Boolean);
+    var hit = data.filter(function (a) {
+      if (lg && a.g !== lg) return false;
+      if (sp && a.p !== sp) return false;
+      var hay = (a.t + " " + a.l + " " + a.g + " " + a.c + " " + (LB[a.p] || "")).toLowerCase();
+      return words.every(function (w) { return hay.indexOf(w) >= 0; });
+    });
+    head.textContent = (lg || (sp ? LB[sp] : "")) + (term ? (lg || sp ? " · " : "") + "'" + q.value.trim() + "'" : "") + " " + hit.length + "편";
+    grid.innerHTML = hit.length ? hit.map(function (a, i) {
+      return '<a class="kh-card kh-sq tone-' + ((i + 1) % 6) + '" href="/knowhow/' + encodeURI(a.s) + '/"><span class="kh-eye">' + esc(a.g || LB[a.p] || a.c) + '</span><span class="kh-title">' + esc(a.t) + '</span><span class="kh-pill">읽기</span></a>';
+    }).join("") : '<p class="none">찾는 글이 없습니다. 리그 이름이나 정배·역배·언더오버 같은 주제로 찾아보세요.</p>';
+  }
+  document.querySelector(".kh-sports").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    sp = b.dataset.sp; lg = "";
+    this.querySelectorAll("button").forEach(function (x) { x.classList.toggle("is-on", x === b); });
+    document.querySelectorAll(".kh-lgs").forEach(function (r) { r.hidden = r.dataset.for !== sp; r.querySelectorAll("button").forEach(function (x) { x.classList.remove("is-on"); }); });
+    render();
+  });
+  document.querySelectorAll(".kh-lgs").forEach(function (r) {
+    r.addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return;
+      var off = b.classList.contains("is-on");
+      r.querySelectorAll("button").forEach(function (x) { x.classList.toggle("is-on", !off && x === b); });
+      lg = off ? "" : b.dataset.lg; render();
+    });
+  });
+  q.addEventListener("input", render);
+})();
+</script>
 <script>
 (function () {
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;

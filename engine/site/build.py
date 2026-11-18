@@ -645,7 +645,27 @@ def build() -> None:
     if kh:
         cats = [{"name": "공통", "slug": "common"}, {"name": "종목별", "slug": "sports"}, {"name": "리그 비교", "slug": "compare"},
                 {"name": "리그별", "slug": "leagues"}, {"name": "유럽 축구", "slug": "europe"}]
-        page("knowhow_index.html", "/knowhow/", arts=kh, cats=cats,
+        # 리그별 카드는 종목이 섞이게: 종목마다 경기 많은 리그 순으로 줄 세운 뒤 번갈아 뽑는다(리그 개요 글 먼저)
+        def mix(lst):
+            heads = [x for x in lst if x["slug"].startswith(("league-", "fd-"))]
+            rest = [x for x in lst if x not in heads]
+            by = defaultdict(list)
+            for x in heads:
+                by[x["sport"]].append(x)
+            mixed = []
+            while any(by.values()):
+                for sp in ("baseball", "basketball", "soccer", "volleyball"):
+                    if by.get(sp):
+                        mixed.append(by[sp].pop(0))
+            return mixed + rest
+        cat_lists = {c["name"]: (mix if c["name"] == "리그별" else list)([x for x in kh if x["cat"] == c["name"]]) for c in cats}
+        lg_list = defaultdict(dict)
+        for x in kh:
+            if x["league"]:
+                lg_list[x["sport"] or "soccer"][x["league"]] = max(lg_list[x["sport"] or "soccer"].get(x["league"], 0), x.get("games", 0))
+        kh_leagues = [(sp, [n for n, _ in sorted(d.items(), key=lambda kv: -kv[1])]) for sp, d in sorted(lg_list.items(), key=lambda kv: ["soccer", "baseball", "basketball", "volleyball"].index(kv[0]) if kv[0] in ("soccer", "baseball", "basketball", "volleyball") else 9)]
+        kh_data = [{"s": x["slug"], "t": x["title"], "l": x["lead"], "g": x["league"] or "", "p": x["sport"] or "", "c": x["cat"]} for x in kh]
+        page("knowhow_index.html", "/knowhow/", arts=kh, cats=cats, cat_lists=cat_lists, kh_leagues=kh_leagues, kh_data=kh_data,
              jsonld=_jsonld(_crumbs([("홈", "/"), ("노하우", "/knowhow/")])))
         for c in cats:
             lst = [x for x in kh if x["cat"] == c["name"]]
