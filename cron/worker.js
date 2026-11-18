@@ -253,7 +253,8 @@ async function ttRefresh(env, force = false) {
     console.log(`쓰레드 토큰 연장 실패 ${r.status}`);
     return st;
   }
-  const d = await r.json();
+  let d = {};
+  try { d = await r.json(); } catch (e) { return st; } // 이상한 응답이면 기존 토큰을 그대로 쓴다
   if (!d.access_token) return st;
   const next = { token: d.access_token, refreshed: Date.now(), expires: Date.now() + (Number(d.expires_in) || 0) * 1000 };
   await env.PUSH.put("tt", JSON.stringify(next));
