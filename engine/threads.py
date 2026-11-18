@@ -255,7 +255,7 @@ def result_stats(day: str) -> dict | None:
     if not picks or len(done) < max(3, int(len(picks) * 0.9)):
         return None  # 아직 끝나지 않은 경기가 많다
     hits = [m for m in done if outs[m["id"]] == m["analysis"]["pick"]]
-    hi = [m for m in done if m["analysis"]["pick_prob"] >= 0.65]
+    hi = [m for m in done if m["odds"].get(m["analysis"]["pick"], 0) >= 1.5]
     # 최근 30일(이 날 포함)
     n30 = h30 = 0
     cut = (date.fromisoformat(day) - timedelta(days=29)).isoformat()
@@ -288,7 +288,11 @@ def result_stats(day: str) -> dict | None:
         hl = f"{team} {lab} {m['odds'][k]:.2f} 적중" if m["market"] != "OU" else f"{m['home']} vs {m['away']} {lab} {m['odds'][k]:.2f} 적중"
     lab = {"H": "승", "D": "무", "A": "패", "O": "오버", "U": "언더"}
     rows = []
-    for m in sorted(done, key=lambda m: -m["analysis"]["pick_prob"])[:7]:
+    # 배당 1.50 이상 픽을 경기 시작 순으로(낮은 배당만 보여 주지 않게). 모자라면 1.30 이상까지
+    show = [m for m in done if m["odds"].get(m["analysis"]["pick"], 0) >= 1.5]
+    if len(show) < 3:
+        show = [m for m in done if m["odds"].get(m["analysis"]["pick"], 0) >= 1.3]
+    for m in sorted(show, key=lambda m: str(m.get("kickoff")))[:7]:
         k = m["analysis"]["pick"]
         pk = lab.get(k, k)
         if m["market"] == "HANDICAP":
@@ -322,10 +326,11 @@ def prepare_result(force: bool = False) -> bool:
         return False
     from . import threads_cards as TC
     _prune()
-    cards = [TC.card_result(day, res), TC.card_result_picks(day, res["picks"])]
-    if res["combos"]:
-        cards.append(TC.card_result_combos(day, res["combos"], res.get("highlight")))
-    cards.append(TC.card_link("어제 픽 전체와", "30일 기록은 여기서"))
+    cards = [TC.card_result(day, res)] + ([TC.card_result_picks(day, res["picks"])] if res["picks"] else [])
+    hit_combos = [c for c in res["combos"] if c[1] > 0]  # 적중이 나온 전략만
+    if hit_combos:
+        cards.append(TC.card_result_combos(day, hit_combos, res.get("highlight")))
+    cards.append(TC.card_link("오늘 분석도", "이미 올라와 있습니다"))
     paths = TC.render(cards, IMG_DIR, f"{day}-result")
     st["pending_result"] = {"day": day, "files": [p.name for p in paths],
                             "text": "어제 결과 · 매일 같은 기준으로 모든 픽을 기록합니다\n#프로토 #승부식 #프로토분석 #스포츠토토 #베트맨 #스포츠분석 #만19세이상"}
@@ -424,6 +429,58 @@ def _kh_parts(body: str) -> tuple[list[tuple[list[str], list[list[str]]]], list[
     return tables, [p for p in paras if len(p) > 20]
 
 
+def _kh_sections(body: str):
+    """(소제목, 표 머리, 표 행) 목록과 문단 목록. 표는 바로 앞 소제목과 짝을 짓는다."""
+    clean = lambda x: re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", x))).strip()
+    secs, cur = [], ""
+    for m in re.finditer(r"<h2>(.*?)</h2>|(<table.*?</table>)", body, flags=re.S):
+        if m.group(1) is not None:
+            cur = clean(m.group(1))
+            continue
+        t = m.group(2)
+        head = [clean(x) for x in re.findall(r"<th[^>]*>(.*?)</th>", t, flags=re.S)]
+        rows = [[clean(c) for c in re.findall(r"<td[^>]*>(.*?)</td>", tr, flags=re.S)] for tr in re.findall(r"<tr>(.*?)</tr>", t, flags=re.S)]
+        rows = [r for r in rows if r]
+        if head and rows:
+            secs.append((cur, head, rows))
+    paras = [clean(p) for p in re.findall(r"<p>(.*?)</p>", body, flags=re.S)]
+    return secs, [p for p in paras if len(p) > 20]
+
+
+def _kh_stat_rows(head: list[str], rows: list[list[str]]):
+    """표에서 '이름 → 핵심 숫자' 4줄만. 핵심 열은 실제 적중·오버·무승부·비율 같은 결과 열."""
+    if len(head) < 2:
+        return None
+    pref = ("실제", "적중", "오버", "무승부", "홈 승", "비율", "버틴", "값")
+    col = next((i for i, h in enumerate(head) if i and any(p in h for p in pref)), len(head) - 1)
+    good = [r for r in rows if len(r) > col and r[col] and r[0]]
+    if len(good) < 2:
+        return None
+    if len(good) > 4:  # 많으면 고르게 4줄(처음·끝 포함)
+        idx = sorted({0, len(good) // 3, 2 * len(good) // 3, len(good) - 1})
+        good = [good[i] for i in idx]
+    cap = "" if head[0] in ("항목", "구분") or head[col] == "값" else f"{head[0]}별 {head[col]}"
+    return cap, [(r[0], re.sub(r"\s*\(.*?\)", "", r[col])) for r in good]  # 괄호 속 표본 수는 빼고 숫자만
+
+
+def _kh_sentences(paras: list[str]) -> list[str]:
+    """마무리 문단에서 짧은 문장 1~2개씩 묶어 카드 한 장 분량으로."""
+    sents = []
+    for p in paras[-2:]:
+        sents += [x.strip() for x in re.split(r"(?<=[.!?])\s+", p) if len(x.strip()) > 8
+                  and not re.search(r"메뉴|화면|페이지|발매되면|자동으로|다시 계산", x)]  # 사이트 안내 문장은 빼고 내용만
+    out, cur = [], ""
+    for x in sents:
+        if len(cur) + len(x) > 70 and cur:
+            out.append(cur)
+            cur = x
+        else:
+            cur = (cur + " " + x).strip()
+    if cur:
+        out.append(cur)
+    return [o for o in out if len(o) <= 120]
+
+
 def prepare_knowhow(force: bool = False) -> bool:
     """노하우 글 한 편을 카드 묶음(표지 → 핵심 표 → 정리 → 사이트)으로 만든다. 하루 한 편, 주간 리포트가 있으면 그것부터."""
     if not (os.getenv("THREADS_TOKEN", "").strip() or force):
@@ -432,30 +489,30 @@ def prepare_knowhow(force: bool = False) -> bool:
     today = config.today_kst()
     if st.get("kh_day") == today:
         return False
-    lst = _kh_all()
+    lst = [x for x in _kh_all() if x.get("cat") != "주간 리포트"]  # 노하우 탭 글만
     if not lst:
         return False
     done = st.get("kh") or []
-    weekly = [x for x in lst if x.get("cat") == "주간 리포트" and x["slug"] not in done]
-    rest = [x for x in lst if x.get("cat") != "주간 리포트" and x["slug"] not in done]
-    pick = (weekly or rest or [])[:1]
+    pick = [x for x in lst if x["slug"] not in done][:1]
     if not pick:
         order = {s_: i for i, s_ in enumerate(done)}
         pick = sorted([x for x in lst if x.get("cat") != "주간 리포트"], key=lambda x: order.get(x["slug"], -1))[:1]
     if not pick:
         return False
     a = pick[0]
-    tables, paras = _kh_parts(a.get("body") or "")
+    secs, paras = _kh_sections(a.get("body") or "")
     from . import threads_cards as TC
     big = None
     m = re.search(r"\d+(?:\.\d+)?%", a.get("lead") or "")
     if m:
         big = m.group(0)
     cards = [TC.card_kh_cover(today, a.get("cat") or "", a["title"], a.get("lead") or "", big)]
-    for head, rows in tables[:2]:
-        cards.append(TC.card_kh_table(today, "기록으로 보면", head[:5], [r[:5] for r in rows[:7]]))
-    if paras:
-        cards.append(TC.card_kh_text(today, "정리하면", paras[-2:] if len(paras) > 2 else paras[:2]))
+    for heading, head, rows in secs[:2]:
+        st_ = _kh_stat_rows(head, rows)
+        if st_:
+            cards.append(TC.card_kh_stats(today, heading or a["title"], st_[0], st_[1]))
+    for k, t in enumerate(_kh_sentences(paras)[:2], 1):
+        cards.append(TC.card_kh_quote(today, t, "정리" if k == 1 else ""))
     cards.append(TC.card_link("전체 글과 다른 노하우는", "여기서 무료로"))
     _prune()
     paths = TC.render(cards, IMG_DIR, f"{today}-kh")

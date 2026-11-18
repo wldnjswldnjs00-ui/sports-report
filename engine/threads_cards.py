@@ -254,7 +254,7 @@ def card_result(d: str, res: dict) -> str:
                 + (f'<p class="rs-s">{_e(small)}</p>' if small else "") + "</div>")
     parts = [f'<h1>어제의 결과</h1><p class="sub">{_e(_day(d))} 프로토 승부식</p>', '<div class="rs-grid">']
     if res.get("hi_n"):
-        parts.append(blk("확률 65% 이상 픽", f'{res["hi_hit"]}<i>/</i>{res["hi_n"]}', "적중"))
+        parts.append(blk("배당 1.50 이상 픽", f'{res["hi_hit"]}<i>/</i>{res["hi_n"]}', "적중"))
     parts.append(blk("전체 픽", f'{res["hit"]}<i>/</i>{res["n"]}', f"적중 {res['rate'] * 100:.0f}%"))
     parts.append(blk("최근 30일 적중률", f'{res["r30"] * 100:.0f}<i>%</i>', f"픽 {res['n30']:,}개 기준"))
     parts.append("</div>")
@@ -347,13 +347,38 @@ def card_result_picks(d: str, rows: list[dict]) -> str:
         items.append(f'<div class="rp{" hit" if r["hit"] else ""}"><div class="meta">{_e(r["meta"])}</div>'
                      f'<div class="rt"><span class="bub">{_e(r["pick"])}</span><span class="odds">{r["odds"]:.2f}</span>{badge}</div>'
                      f'<div class="match">{_e(r["home"])}<i>vs</i>{_e(r["away"])}</div></div>')
-    return f'<div class="card">{_top(d)}<div class="body"><h1 style="font-size:64px">어제의 픽</h1><p class="sub">확률이 높았던 순서 그대로</p><div class="rl">{"".join(items)}</div></div></div>'
+    return f'<div class="card">{_top(d)}<div class="body"><h1 style="font-size:64px">어제의 픽</h1><p class="sub">배당 1.50 이상 픽, 경기 시작 순서 그대로</p><div class="rl">{"".join(items)}</div></div></div>'
 
 
 def card_result_combos(d: str, rows: list[tuple[str, int, int]], best: str | None) -> str:
     rs = "".join(f'<div class="rs-row">{_e(n)}<span>{h}<i>/</i>{t}</span></div>' for n, h, t in rows)
     hi = f'<div class="rs-hi"><p class="rs-l">가장 큰 적중</p><p class="rs-h">{_e(best)}</p></div>' if best else ""
     return f'<div class="card">{_top(d)}<div class="body"><h1 style="font-size:64px">전략별 조합</h1><p class="sub">발행한 조합 중 적중</p><div class="rl">{rs}</div>{hi}</div></div>'
+
+
+KH2_CSS = """
+.ks{display:flex;flex-direction:column;gap:22px;margin-top:10px}
+.ks-r{display:flex;justify-content:space-between;align-items:baseline;gap:30px;padding:30px 40px;background:#fff;border-radius:32px}
+.ks-r span{font:600 38px PT;color:#3f4744;word-break:keep-all}
+.ks-r b{font:800 76px/1 JO;letter-spacing:-2px;color:#121414;white-space:nowrap}
+.ks-cap{font:600 30px PT;color:#7b8581;margin:0 0 6px}
+.kq{font:700 58px/1.5 JO,PT;letter-spacing:-1px;margin:0;word-break:keep-all;text-align:left}
+.kq-n{font:700 30px JO;color:#ff3d7f;margin:0 0 30px;text-align:left}
+"""
+CSS += KH2_CSS
+
+
+def card_kh_stats(d: str, heading: str, caption: str, rows: list[tuple[str, str]]) -> str:
+    """표 대신 핵심 숫자만 크게(최대 4줄)."""
+    rs = "".join(f'<div class="ks-r"><span>{_e(a)}</span><b>{_e(b)}</b></div>' for a, b in rows[:4])
+    return (f'<div class="card">{_top(d)}<div class="body"><h2 class="kh-h">{_e(heading)}</h2>'
+            + (f'<p class="ks-cap">{_e(caption)}</p>' if caption else "") + f'<div class="ks">{rs}</div></div></div>')
+
+
+def card_kh_quote(d: str, text: str, n: str = "") -> str:
+    """정리 문장 한두 개를 한 장에 크게."""
+    return (f'<div class="card">{_top(d)}<div class="body">' + (f'<p class="kq-n">{_e(n)}</p>' if n else "")
+            + f'<p class="kq">{_e(text)}</p></div></div>')
 
 
 def render(cards: list[str], out_dir: Path, prefix: str) -> list[Path]:
