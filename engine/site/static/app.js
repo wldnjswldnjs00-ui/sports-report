@@ -755,17 +755,42 @@
     if (!legs.length || !c) { toast("먼저 경기를 담아 주세요."); return; }
     var url = location.origin + "/?s=" + shareCode(slip.ids) + "&utm_source=share";
     var text = "내 조합 " + legs.length + "폴더 · 종합배당 " + c.odds.toFixed(2) + " (스포츠분석)";
-    shareImage(legs, c).then(function (blob) {
-      var file = blob && window.File ? new File([blob], "my-combo.png", { type: "image/png" }) : null;
-      if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
-        return navigator.share({ files: [file], title: "내 조합", text: text + "\n" + url }).catch(function () {});
+    shareImage(legs, c).then(function (blob) { openCard(blob, url, text); });
+  }
+  // 이미지 카드를 화면에 먼저 보여 주고, 저장·링크 복사·공유는 그 아래 버튼으로(바로 내려받지 않음)
+  function openCard(blob, url, text) {
+    var old = doc.querySelector(".share-card"); if (old) old.remove();
+    var src = blob ? URL.createObjectURL(blob) : "";
+    var file = blob && window.File ? new File([blob], "my-combo.png", { type: "image/png" }) : null;
+    var canFile = !!(file && navigator.canShare && navigator.canShare({ files: [file] }));
+    var box = doc.createElement("div");
+    box.className = "share-card"; box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true"); box.setAttribute("aria-label", "내 조합 이미지");
+    box.innerHTML = '<div class="share-card-in">' +
+      '<button type="button" class="x" data-sc-close aria-label="닫기">×</button>' +
+      (src ? '<img alt="내 조합 이미지 카드" src="' + src + '">' : '<p class="muted">이미지를 만들지 못했습니다. 링크로 공유해 주세요.</p>') +
+      '<p class="share-card-tip">휴대폰에서는 이미지를 길게 눌러도 저장할 수 있습니다.</p>' +
+      '<div class="share-card-act">' +
+      (canFile || navigator.share ? '<button type="button" class="btn" data-sc-share>공유하기</button>' : '') +
+      (src ? '<button type="button" class="btn ghost" data-sc-save>이미지 저장</button>' : '') +
+      '<button type="button" class="btn ghost" data-sc-copy>링크 복사</button>' +
+      '</div></div>';
+    doc.body.appendChild(box);
+    function close() { box.remove(); doc.removeEventListener("keydown", esc); if (src) setTimeout(function () { URL.revokeObjectURL(src); }, 1000); }
+    function esc(e) { if (e.key === "Escape") close(); }
+    doc.addEventListener("keydown", esc);
+    box.addEventListener("click", function (e) {
+      if (e.target === box || e.target.closest("[data-sc-close]")) return close();
+      if (e.target.closest("[data-sc-save]")) {
+        var a = doc.createElement("a"); a.href = src; a.download = "내조합.png"; doc.body.appendChild(a); a.click(); a.remove();
+        toast("이미지를 저장했습니다.");
+      } else if (e.target.closest("[data-sc-copy]")) {
+        try { navigator.clipboard.writeText(url).then(function () { toast("링크를 복사했습니다."); }, function () { toast(url); }); } catch (er) { toast(url); }
+      } else if (e.target.closest("[data-sc-share]")) {
+        if (canFile) navigator.share({ files: [file], title: "내 조합", text: text + "\n" + url }).catch(function () {});
+        else if (navigator.share) navigator.share({ title: "내 조합", text: text, url: url }).catch(function () {});
       }
-      if (navigator.share) return navigator.share({ title: "내 조합", text: text, url: url }).catch(function () {});
-      // PC: 링크 복사 + 이미지 저장
-      try { navigator.clipboard.writeText(url); } catch (e) {}
-      if (blob) { var a = doc.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "내조합.png"; a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000); }
-      toast("링크를 복사하고 이미지를 저장했습니다.");
     });
+    var cb = box.querySelector("[data-sc-close]"); if (cb) cb.focus();
   }
   function importShared() {
     var m = /[?&]s=([^&]+)/.exec(location.search);
