@@ -23554,7 +23554,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 아르헨티나 선택이 맞았다.",
+    "r": "추정 확률 92%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 94% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260136:4337",
@@ -23840,7 +23847,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 아르헨티나 핸디 선택이 맞았다.",
+    "r": "추정 확률 72%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 80% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260136:4338",
@@ -24127,7 +24141,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 아르헨티나 핸디 선택이 맞았다.",
+    "r": "추정 확률 48%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 61% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260136:4339",
@@ -24400,7 +24421,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 코스타리카 핸디, 결과는 아르헨티나 핸디.",
+    "r": "추정 확률 71%는 29%의 빗나갈 몫을 포함한다. 이번이 그 경우였다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 58% 적중했다. 이번은 나머지 42%에 해당한다.",
+    "o2": "판단 과정에 오류는 없었다. 확률이 허용한 범위의 결과로 기록한다."
+   }
   },
   {
    "id": "betman:G101:260136:4340",
@@ -24674,7 +24702,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 언더, 결과는 오버.",
+    "r": "발행 당시 이변 위험이 45로 이미 높았다. 추정 확률이 54%에 그친 박빙 경기였다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 48% 적중했다. 이번은 나머지 52%에 해당한다.",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260136:4497",
@@ -24966,7 +25001,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 콜롬비아, 결과는 무승부.",
+    "r": "발행 당시 이변 위험이 52로 이미 높았다. 추정 확률이 48%에 그친 박빙 경기였다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 53% 적중했다. 이번은 나머지 47%에 해당한다.",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260136:4498",
@@ -25257,7 +25299,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 칠레 핸디 선택이 맞았다.",
+    "r": "추정 확률 54%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 47% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260136:4499",
@@ -25523,7 +25572,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 언더 선택이 맞았다.",
+    "r": "추정 확률 56%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 A매치 경기에서는 51% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260136:4501",
@@ -35275,7 +35331,7 @@
       "xo": 1.32,
       "upset_risk": 23,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 2,
@@ -35537,7 +35593,7 @@
       "xo": 1.32,
       "upset_risk": 23,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 3,
@@ -35633,7 +35689,7 @@
       "xo": 1.32,
       "upset_risk": 23,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 3,
@@ -35799,7 +35855,7 @@
       "xo": 1.32,
       "upset_risk": 23,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 2,
@@ -35814,8 +35870,8 @@
     "key": "betman:G101:260136:4337:H+betman:G101:260136:4410:H",
     "strategy": "safe",
     "rank": 3,
-    "result": "pending",
-    "return": null
+    "result": "win",
+    "return": 14300
    }
   ],
   "balanced": [
@@ -35897,7 +35953,7 @@
       "xo": 1.49,
       "upset_risk": 42,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 3,
@@ -35912,8 +35968,8 @@
     "key": "betman:G101:260136:4413:A+betman:G101:260136:4457:H+betman:G101:260136:4499:U",
     "strategy": "balanced",
     "rank": 1,
-    "result": "pending",
-    "return": null
+    "result": "win",
+    "return": 25000
    },
    {
     "legs": [
@@ -36133,7 +36189,7 @@
       "xo": 1.32,
       "upset_risk": 23,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4457",
@@ -36333,7 +36389,7 @@
       "xo": 1.49,
       "upset_risk": 42,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 4,
@@ -36377,7 +36433,7 @@
       "xo": 1.32,
       "upset_risk": 23,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4430",
@@ -36569,7 +36625,7 @@
       "xo": 1.32,
       "upset_risk": 23,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4424",
@@ -36691,7 +36747,7 @@
       "xo": 1.32,
       "upset_risk": 23,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4444",
@@ -36769,7 +36825,7 @@
       "xo": 1.49,
       "upset_risk": 42,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 4,
@@ -36935,7 +36991,7 @@
       "xo": 1.03,
       "upset_risk": 5,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260136:4479",
@@ -43418,7 +43474,15 @@
   "betman:G101:260136:4491": "U",
   "betman:G101:260136:4493": "H",
   "betman:G101:260136:4494": "H",
-  "betman:G101:260136:4495": "O"
+  "betman:G101:260136:4495": "O",
+  "betman:G101:260136:4336": "H",
+  "betman:G101:260136:4337": "H",
+  "betman:G101:260136:4338": "H",
+  "betman:G101:260136:4339": "H",
+  "betman:G101:260136:4340": "O",
+  "betman:G101:260136:4497": "D",
+  "betman:G101:260136:4498": "H",
+  "betman:G101:260136:4499": "U"
  },
  "headline": "오늘 26경기 분석 완료. 가장 단단한 선택은 포르투갈 원정승, 추정 68%. 이후 9경기도 미리 분석했습니다."
 }
