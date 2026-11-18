@@ -33,6 +33,7 @@
 <section class="wrap page-head">
   <p class="kicker">ANALYSIS</p><h1>경기 분석</h1>
   <p class="lede">배당이 아니라 실제 점수 기록으로 두 팀을 비교해, 눈에 띄는 것만 골라 적었습니다. 매 갱신마다 자동으로 다시 계산합니다.</p>
+  <p class="fine">베트맨에서 발매된 경기만 나옵니다. 날짜가 비어 있으면 그날 경기가 아직 발매 전이라는 뜻이고, 다음 회차가 열리면 자동으로 추가됩니다.</p>
 </section>
 {% for sec in sections %}{{ day(sec) }}{% else %}<section class="wrap block"><p class="none">분석할 경기가 아직 없습니다. 발매가 시작되면 바로 채워집니다.</p></section>{% endfor %}
 <section class="wrap block">
