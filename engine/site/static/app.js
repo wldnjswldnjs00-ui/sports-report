@@ -763,15 +763,17 @@
     var src = blob ? URL.createObjectURL(blob) : "";
     var file = blob && window.File ? new File([blob], "my-combo.png", { type: "image/png" }) : null;
     var canFile = !!(file && navigator.canShare && navigator.canShare({ files: [file] }));
+    // 휴대폰: 이미지만 담아 공유 창을 열면 '이미지 저장'(아이폰)·'갤러리에 저장'(안드로이드)이 바로 나온다 → 사진첩에 저장
+    var touch = !!(window.matchMedia && matchMedia("(pointer: coarse)").matches);
     var box = doc.createElement("div");
     box.className = "share-card"; box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true"); box.setAttribute("aria-label", "내 조합 이미지");
     box.innerHTML = '<div class="share-card-in">' +
       '<button type="button" class="x" data-sc-close aria-label="닫기">×</button>' +
       (src ? '<img alt="내 조합 이미지 카드" src="' + src + '">' : '<p class="muted">이미지를 만들지 못했습니다. 링크로 공유해 주세요.</p>') +
-      '<p class="share-card-tip">휴대폰에서는 이미지를 길게 눌러도 저장할 수 있습니다.</p>' +
+      (touch && !canFile && src ? '<p class="share-card-tip">이미지를 길게 눌러 사진에 저장하세요.</p>' : '') +
       '<div class="share-card-act">' +
       (canFile || navigator.share ? '<button type="button" class="btn" data-sc-share>공유하기</button>' : '') +
-      (src ? '<button type="button" class="btn ghost" data-sc-save>이미지 저장</button>' : '') +
+      (src && (!touch || canFile) ? '<button type="button" class="btn ghost" data-sc-save>이미지 저장</button>' : '') +
       '<button type="button" class="btn ghost" data-sc-copy>링크 복사</button>' +
       '</div></div>';
     doc.body.appendChild(box);
@@ -781,8 +783,12 @@
     box.addEventListener("click", function (e) {
       if (e.target === box || e.target.closest("[data-sc-close]")) return close();
       if (e.target.closest("[data-sc-save]")) {
-        var a = doc.createElement("a"); a.href = src; a.download = "내조합.png"; doc.body.appendChild(a); a.click(); a.remove();
-        toast("이미지를 저장했습니다.");
+        if (touch && canFile) {
+          navigator.share({ files: [file] }).catch(function () {});  // 글·링크 없이 이미지만 → 공유 창 맨 위에 '이미지 저장'
+        } else {
+          var a = doc.createElement("a"); a.href = src; a.download = "내조합.png"; doc.body.appendChild(a); a.click(); a.remove();
+          toast("이미지를 저장했습니다.");
+        }
       } else if (e.target.closest("[data-sc-copy]")) {
         try { navigator.clipboard.writeText(url).then(function () { toast("링크를 복사했습니다."); }, function () { toast(url); }); } catch (er) { toast(url); }
       } else if (e.target.closest("[data-sc-share]")) {
