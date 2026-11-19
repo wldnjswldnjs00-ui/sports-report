@@ -346,7 +346,17 @@ async function tpost(env, it) {
 
 export default {
   async fetch(request, env) {
-    const path = new URL(request.url).pathname;
+    const url = new URL(request.url);
+    const path = url.pathname;
+    // 검색엔진용 주소 하나로 모으기: http → https, www → 대표 주소, /index.html·끝 슬래시 없는 주소 → 슬래시 주소(모두 영구 301)
+    if (request.method === "GET" || request.method === "HEAD") {
+      let to = null;
+      if (url.protocol === "http:") { url.protocol = "https:"; to = url; }
+      if (url.hostname.startsWith("www.")) { url.hostname = url.hostname.slice(4); to = url; }
+      if (path.endsWith("/index.html")) { url.pathname = path.slice(0, -10); to = url; }
+      else if (!path.endsWith("/") && !path.startsWith("/api/") && !/\.[A-Za-z0-9]{1,8}$/.test(path)) { url.pathname = path + "/"; to = url; }
+      if (to) return new Response(null, { status: 301, headers: { Location: to.toString(), "Cache-Control": "public, max-age=86400" } });
+    }
     if (path === "/api/tick") {
       // 예비 깨우기 주소: 외부 무료 예약 서비스가 5분마다 부르면, Cloudflare 예약이 멈춰도 같은 확인-후-실행이 돈다
       if (await throttled()) return json({ ok: true, skipped: "too soon" });

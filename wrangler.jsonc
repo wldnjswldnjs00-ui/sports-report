@@ -13,7 +13,9 @@
     "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "404-page",
-    "html_handling": "auto-trailing-slash"
+    "html_handling": "auto-trailing-slash",
+    // 모든 요청이 Worker를 먼저 거쳐 http·슬래시 없는 주소를 301로 하나로 모은다(방문 규모상 무료 한도 여유)
+    "run_worker_first": true
   },
   // 비공개 저장소(KV sports-report-kv): 알림 구독, 서명 키, 쓰레드 토큰(7일마다 자동 연장)
   "kv_namespaces": [{ "binding": "PUSH", "id": "cd2febbe3e794d71a7072a3fff0f693b" }],

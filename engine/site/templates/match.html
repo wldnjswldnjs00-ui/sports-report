@@ -11,7 +11,7 @@
     <p class="kicker">{{ SPORT_LABEL[g.sport] }} · {{ g.league }}{% set rd = round_label(g.markets[0].round) %}{% if rd %} · <a href="/rounds/{{ g.markets[0].round }}/">프로토 승부식 {{ rd }}</a>{% endif %}{% if g.no %} {{ g.no }}번{% endif %}</p>
     <h1>{{ g.home }} <span class="vs">vs</span> {{ g.away }} 분석</h1>
     <p class="lede">{{ g.kickoff|kdt }} KST{% if g.venue %} · {{ g.venue }}{% endif %} · 베트맨 프로토 승부식 {{ g.markets|length }}개 마켓</p>
-    {% set hu = team_link(g.sport, g.home) %}{% set au = team_link(g.sport, g.away) %}{% set vl = vs_link(g.sport, g.home, g.away) %}{% if hu or au or vl %}<p class="tm-links">팀 기록 {% if hu %}<a class="chip" href="{{ hu }}">{{ g.home }}</a>{% endif %}{% if au %}<a class="chip" href="{{ au }}">{{ g.away }}</a>{% endif %}{% if vl %}<a class="chip" href="{{ vl }}">상대전적</a>{% endif %}</p>{% endif %}
+    {% set hu = team_link(g.sport, g.home) %}{% set au = team_link(g.sport, g.away) %}{% set vl = vs_link(g.sport, g.home, g.away) %}{% if hu or au or vl %}<p class="tm-links">팀 기록 {% if hu %}<a class="chip" href="{{ hu }}">{{ nick(g.home) or g.home }}</a>{% endif %}{% if au %}<a class="chip" href="{{ au }}">{{ nick(g.away) or g.away }}</a>{% endif %}{% if vl %}<a class="chip" href="{{ vl }}">상대전적</a>{% endif %}</p>{% endif %}
   </header>
 
   {% set th = team_info(g.sport, g.home) %}{% set ta = team_info(g.sport, g.away) %}

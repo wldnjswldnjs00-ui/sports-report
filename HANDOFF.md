@@ -106,3 +106,8 @@
 - [x] README 맨 위에 사이트·주요 허브 링크(공개 저장소라 구글이 GitHub에서 발견). 저장소 homepage 설정은 이 환경 프록시가 막아 못 함
 - [x] (2026-11-20) 서치 콘솔 `https://스포츠분석.kr/` 속성은 이미 있었음. 주인이 sitemap.xml 제출 → 성공, 발견 990(제출 전엔 구글이 아는 페이지 3개뿐이었음)
 - [ ] (선택, 주인에게 다시 묻지 말 것) 서비스 계정 연결 시 gsc.py 가 자동 동작: 구글 클라우드 서비스 계정 만들고 Search Console API·Indexing API 켜기 → 서치 콘솔에 `https://스포츠분석.kr/`(www 없는 주소) 속성 추가(메타 태그로 이미 확인됨) → 서비스 계정 이메일을 그 속성 '소유자'로 추가 → JSON 키를 GitHub Secret `GSC_SA_JSON` 에 저장
+- [x] (2026-11-20) 구조·시스템 쪽 추가:
+  - Worker 먼저 실행(`run_worker_first`): http→https, www→대표, `/index.html`·슬래시 없는 주소 → 슬래시 주소를 **영구 301**로(전엔 http가 200 그대로 = 같은 페이지 두 벌, 슬래시는 임시 307)
+  - 쿠팡 배너: 화면을 멈추는 동기 스크립트(g.js) → 공식 iframe + 지연 로딩. 웹폰트 CSS 2개 비차단 로딩(preload→stylesheet)
+  - 팀 줄임말 `engine/site/nick.py`(골스·레이커스·KCC·대한항공·맨시티 등): 경기·상대전적·팀 설명 앞부분, 구조화 데이터 alternateName, 경기 페이지 팀 칩 글자
+  - 사이트맵 구역별 분리(sitemap.xml = 묶음 → pages·matches·knowhow·vs·teams). 서치 콘솔에서 구역마다 색인 비율 확인 가능

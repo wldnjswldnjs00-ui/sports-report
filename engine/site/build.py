@@ -22,6 +22,7 @@ from ..analysis.grading import is_pick
 from ..analysis.grading import load_perf
 from ..schema import MARKET_LABEL, OUTCOME_LABEL, SPORT_LABEL
 from ..util import read_json, slug, write_json
+from . import nick as NK
 from . import insight as INS
 
 log = logging.getLogger("engine.build")
@@ -462,10 +463,17 @@ def _is_hot(g: dict) -> bool:
     return _move(g) >= MOVE_CUT["v"]
 
 
+def _team_ld(name: str) -> dict:
+    d = {"@type": "SportsTeam", "name": name}
+    if NK.names(name):
+        d["alternateName"] = NK.names(name)
+    return d
+
+
 def _event_ld(g: dict) -> dict:
     ev = {"@type": "SportsEvent", "name": f"{g['home']} vs {g['away']}", "startDate": g["kickoff"],
           "sport": SPORT_LABEL.get(g["sport"], ""), "eventStatus": "https://schema.org/EventScheduled",
-          "homeTeam": {"@type": "SportsTeam", "name": g["home"]}, "awayTeam": {"@type": "SportsTeam", "name": g["away"]},
+          "homeTeam": _team_ld(g["home"]), "awayTeam": _team_ld(g["away"]),
           "competitor": [{"@type": "SportsTeam", "name": g["home"]}, {"@type": "SportsTeam", "name": g["away"]}],
           "url": config.SITE_URL + g["url"], "description": f"{g['league']} {g['home']} 대 {g['away']} 경기 분석"}
     # 구글 이벤트 필수: location(장소 이름·주소). 경기장을 모르면 홈 팀 경기장으로 적는다(중립 경기 제외 대부분 맞음)
@@ -636,7 +644,7 @@ def build() -> None:
         return murl.get((m.get("home"), m.get("away"), str(m.get("kickoff"))[:10])) if m else None
 
     ctx = dict(perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues,
-               team_link=team_link, match_url=match_url, team_info=team_info, box_of=box_of, insights=insights, recent5=recent5, predict=predict, vs_link=vs_link)
+               team_link=team_link, match_url=match_url, team_info=team_info, box_of=box_of, insights=insights, recent5=recent5, predict=predict, vs_link=vs_link, nick=NK.nick)
     urls: list[tuple[str, str]] = []
 
     imgs: dict[str, str] = {}
@@ -760,6 +768,9 @@ def build() -> None:
                 a0 = (main or {}).get("analysis") or {}
                 if pd and is_pick(a0):
                     desc = f"예상 스코어 {pd['h']}:{pd['a']} · {_pick_label(main, a0.get('pick'))} {a0.get('pick_prob', 0) * 100:.0f}%. " + desc
+                nh, na = NK.nick(g["home"]), NK.nick(g["away"])
+                if nh or na:
+                    desc = f"{nh or g['home']} {na or g['away']} 분석 · " + desc
                 if i < 4 and _is_hot(g):
                     hot.append(g["url"])
                 ld = _jsonld({"@context": "https://schema.org", **_event_ld(g)},
@@ -796,7 +807,8 @@ def build() -> None:
         nxt = [{"url": match_url(u["m"]), "kickoff": u["m"]["kickoff"], "home": u["m"]["home"], "away": u["m"]["away"]} for u in v["next"]]
         nxt = [n for n in nxt if n["url"]]
         title = f"{v['a']} vs {v['b']} 상대전적 · 최근 맞대결 {len(g0)}경기"
-        desc = (f"{v['league']} {v['a']} vs {v['b']} 맞대결 기록: {v['a']} {aw}승" + (f" {dr}무" if dr else "") + f" {bw}패, "
+        _na, _nb = NK.nick(v["a"]), NK.nick(v["b"])
+        desc = ((f"{_na or v['a']} {_nb or v['b']} 상대전적 · " if (_na or _nb) else "") + f"{v['league']} {v['a']} vs {v['b']} 맞대결 기록: {v['a']} {aw}승" + (f" {dr}무" if dr else "") + f" {bw}패, "
                 f"경기당 평균 {a_for:.1f} 대 {b_for:.1f}. 최근 경기 점수와 홈·원정 성적, 다음 경기 분석.")
         # 맞대결 요약 문장(페이지마다 숫자로 달라지는 내용)
         notes = []
@@ -834,7 +846,7 @@ def build() -> None:
     for t in tms.values():
         page("team.html", t["url"], og_image=OGP.team(config.DIST, t), t=t, lastmod=(t["games"][0]["date"] if t["games"] else None),
              auto_thin=not t.get("upcoming"),
-             jsonld=_jsonld({"@context": "https://schema.org", "@type": "SportsTeam", "name": t["name"], "sport": SPORT_LABEL.get(t["sport"], t["sport"]),
+             jsonld=_jsonld({"@context": "https://schema.org", "@type": "SportsTeam", "name": t["name"], **({"alternateName": NK.names(t["name"])} if NK.names(t["name"]) else {}), "sport": SPORT_LABEL.get(t["sport"], t["sport"]),
                              "url": config.SITE_URL + t["url"]},
                             _crumbs([("홈", "/"), ("팀별 기록", "/teams/"), (t["name"], t["url"])])))
     # 리그 페이지에 순위표를 붙인다(최근 리포트에 없는 리그도 순위표가 있으면 페이지를 만든다)
@@ -992,7 +1004,19 @@ def build() -> None:
             shutil.copy2(f, config.DIST / "threads" / f.name)
         if (tdir / "tq.json").exists():  # 쓰레드 예약 게시 대기열(Worker 가 읽어 정해진 시각에 올림)
             shutil.copy2(tdir / "tq.json", config.DIST / "data" / "tq.json")
-    _write(config.DIST / "sitemap.xml", env.get_template("sitemap.xml").render(urls=urls, imgs=imgs))
+    # 사이트맵: 구역별 파일 + 묶음(sitemap.xml). 서치 콘솔에서 구역마다 색인 비율을 따로 볼 수 있다
+    groups: dict[str, list] = defaultdict(list)
+    for u, d in urls:
+        top = u.strip("/").split("/")[0]
+        groups[{"matches": "matches", "reports": "matches", "rounds": "matches", "teams": "teams", "vs": "vs",
+                "knowhow": "knowhow"}.get(top, "pages")].append((u, d))
+    smap = []
+    for gname in ("pages", "matches", "knowhow", "vs", "teams"):
+        if groups.get(gname):
+            _write(config.DIST / f"sitemap-{gname}.xml", env.get_template("sitemap.xml").render(urls=groups[gname], imgs=imgs))
+            smap.append((f"/sitemap-{gname}.xml", max(d for _, d in groups[gname])))
+    _write(config.DIST / "sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+           + "".join(f"  <sitemap><loc>{config.SITE_URL}{u}</loc><lastmod>{d}</lastmod></sitemap>\n" for u, d in smap) + "</sitemapindex>\n")
     # 검색·AI 검색 크롤러는 모두 허용(AI 답변에 출처로 인용되도록). /data/ 는 페이지가 아니라 막는다
     ai = "".join(f"User-agent: {b}\nAllow: /\nDisallow: /data/\n\n" for b in ("OAI-SearchBot", "Claude-SearchBot", "PerplexityBot", "Google-Extended"))
     _write(config.DIST / "robots.txt", f"User-agent: *\nAllow: /\nDisallow: /data/\n\n{ai}Sitemap: {config.SITE_URL}/sitemap.xml\n")
