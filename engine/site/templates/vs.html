@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }} | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}{{ page_desc }}{% endblock %}
+{% block main %}
+{% set ua = team_link(v.sport, v.a) %}{% set ub = team_link(v.sport, v.b) %}
+<article class="wrap">
+  <nav class="crumbs" aria-label="위치"><a href="/">홈</a> <span>/</span> <a href="/teams/">팀별 기록</a> <span>/</span> <span aria-current="page">{{ v.a }} vs {{ v.b }}</span></nav>
+  <header class="page-head">
+    <p class="kicker">{{ SPORT_LABEL[v.sport] }} · {{ v.league }} · 상대전적</p>
+    <h1>{{ v.a }} <span class="vs">vs</span> {{ v.b }} 상대전적</h1>
+    <p class="lede">베트맨 발매 경기 기준 최근 맞대결 {{ st.n }}경기: {{ v.a }} {{ st.aw }}승{% if st.d %} {{ st.d }}무{% endif %} {{ st.bw }}패, 경기당 평균 {{ '%.1f'|format(st.a_for) }} 대 {{ '%.1f'|format(st.b_for) }}.</p>
+  </header>
+
+  {% if nxt %}
+  <section class="block">
+    <h2 class="sub">다음 맞대결</h2>
+    <ul class="vs-next">{% for n in nxt %}<li><a href="{{ n.url }}"><span class="muted">{{ n.kickoff|kdt }}</span> {{ n.home }} vs {{ n.away }} <b>경기 분석 보기 →</b></a></li>{% endfor %}</ul>
+  </section>
+  {% endif %}
+
+  <section class="block">
+    <dl class="kpis">
+      <div><dt>{% if ua %}<a href="{{ ua }}">{{ v.a }}</a>{% else %}{{ v.a }}{% endif %} 승</dt><dd>{{ st.aw }}</dd></div>
+      {% if v.sport == 'soccer' or st.d %}<div><dt>무승부</dt><dd>{{ st.d }}</dd></div>{% endif %}
+      <div><dt>{% if ub %}<a href="{{ ub }}">{{ v.b }}</a>{% else %}{{ v.b }}{% endif %} 승</dt><dd>{{ st.bw }}</dd></div>
+      <div><dt>평균 합계</dt><dd>{{ '%.1f'|format(st.tot) }}</dd></div>
+    </dl>
+    <p class="fine">{{ v.a }} 홈 경기 {{ st.ah[1] }}번 중 홈팀 승 {{ st.ah[0] }}번 · {{ v.b }} 홈 경기 {{ st.bh[1] }}번 중 홈팀 승 {{ st.bh[0] }}번</p>
+  </section>
+
+  <section class="block">
+    <h2 class="sub">맞대결 기록</h2>
+    <div class="tblw"><table class="tbl">
+      <thead><tr><th>날짜</th><th>경기 (홈 vs 원정)</th><th class="n">점수</th></tr></thead>
+      <tbody>
+      {% for g in v.games %}
+        <tr><td>{{ g.date|kdate }}</td><td>{{ g.home }} vs {{ g.away }}</td><td class="n">{{ g.hs|int }} : {{ g.as|int }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    <p class="fine">베트맨(스포츠토토) 공식 발매 경기의 결과만 셉니다. 매 자동 업데이트마다 새 맞대결이 더해집니다.</p>
+  </section>
+
+  <section class="block">
+    <p class="tm-links">팀 기록 {% if ua %}<a class="chip" href="{{ ua }}">{{ v.a }}</a>{% endif %}{% if ub %}<a class="chip" href="{{ ub }}">{{ v.b }}</a>{% endif %}</p>
+  </section>
+</article>
+{% endblock %}

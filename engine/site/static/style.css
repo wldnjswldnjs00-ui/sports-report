@@ -1314,3 +1314,8 @@ h1, h2, h3, .block-head h2 { text-wrap: balance; }
 .facts-qa > div { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
 .facts-qa dt { font-weight: 700; font-size: 14.5px; margin-bottom: 4px; }
 .facts-qa dd { margin: 0; color: var(--ink-2); font-size: 14px; line-height: 1.6; }
+/* 상대전적 */
+.vs-next { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.vs-next a { display: block; padding: 12px 14px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; text-decoration: none; color: var(--ink); }
+.vs-next b { float: right; font-size: 13px; color: var(--ink-2); }
+@media (max-width: 560px) { .vs-next b { float: none; display: block; margin-top: 4px; } }

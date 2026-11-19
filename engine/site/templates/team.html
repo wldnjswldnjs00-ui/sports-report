@@ -66,7 +66,7 @@
     <thead><tr><th>상대</th><th class="n">경기</th><th class="n">전적</th></tr></thead>
     <tbody>
     {% for h in t.h2h %}
-      <tr><td>{% set ou = team_link(t.sport, h.opp) %}{% if ou %}<a href="{{ ou }}">{{ h.opp }}</a>{% else %}{{ h.opp }}{% endif %}</td><td class="n">{{ h.n }}</td><td class="n">{{ h.w }}승{% if h.d %} {{ h.d }}무{% endif %} {{ h.l }}패</td></tr>
+      <tr><td>{% set ou = team_link(t.sport, h.opp) %}{% if ou %}<a href="{{ ou }}">{{ h.opp }}</a>{% else %}{{ h.opp }}{% endif %}</td><td class="n">{{ h.n }}</td><td class="n">{% set vl = vs_link(t.sport, t.name, h.opp) %}{% if vl %}<a href="{{ vl }}">{{ h.w }}승{% if h.d %} {{ h.d }}무{% endif %} {{ h.l }}패</a>{% else %}{{ h.w }}승{% if h.d %} {{ h.d }}무{% endif %} {{ h.l }}패{% endif %}</td></tr>
     {% endfor %}
     </tbody>
   </table></div>

@@ -8,7 +8,7 @@ import json
 import re
 import logging
 import shutil
-from collections import defaultdict
+from collections import Counter, defaultdict
 from datetime import date, timedelta, datetime
 from email.utils import format_datetime
 from pathlib import Path
@@ -415,6 +415,9 @@ def _matches(r: dict) -> list[dict]:
     return out
 
 
+THIN_CHARS = 600  # 이보다 짧은 노하우 글은 검색에서 뺀다(사이트에는 그대로). 얇은 페이지가 많으면 사이트 전체 평가가 낮아짐
+
+
 HOT_LEAGUES = ("KBO", "K리그1", "K리그2", "KBL", "WKBL", "KOVO 남자", "KOVO 여자", "NBA", "MLB", "잉글랜드 프리미어리그",
                "UEFA 챔피언스리그", "스페인 라리가", "축구 월드컵", "UEFA 네이션스리그")
 
@@ -572,6 +575,38 @@ def build() -> None:
     def team_info(sport, name):
         return tinfo.get((sport, name))
 
+    # 상대전적: 두 팀 조합마다 고정 주소 하나(이름순). 맞대결이 2경기 이상이거나, 1경기 이상 + 다가오는 경기가 있는 조합만
+    canon = {(t["sport"], a): t["name"] for t in tms.values() for a in t["aliases"]}
+    vs: dict[tuple, dict] = {}
+    for t in tms.values():
+        for x in t["games"]:
+            a, b = t["name"], canon.get((t["sport"], x["opp"]), x["opp"])
+            if not a < b:
+                continue
+            v = vs.setdefault((t["sport"], a, b), {"sport": t["sport"], "a": a, "b": b, "games": [], "next": [], "leagues": Counter()})
+            v["games"].append({"date": x["date"], "league": x["league"], "home": a if x["home"] else b, "away": b if x["home"] else a,
+                               "hs": x["me"] if x["home"] else x["op"], "as": x["op"] if x["home"] else x["me"]})
+            v["leagues"][x["league"]] += 1
+    for t in tms.values():
+        for u in t.get("upcoming") or []:
+            a, b = sorted([t["name"], canon.get((t["sport"], u["opp"]), u["opp"])])
+            v = vs.get((t["sport"], a, b))
+            if v is not None and all(n["m"] is not u["m"] for n in v["next"]):
+                v["next"].append(u)
+    for v in list(vs.values()):
+        uniq = {(g["date"], g["home"], g["away"]): g for g in v["games"]}
+        v["games"] = sorted(uniq.values(), key=lambda g: g["date"], reverse=True)
+        if len(v["games"]) < 2 and not (v["games"] and v["next"]):
+            del vs[(v["sport"], v["a"], v["b"])]
+            continue
+        v["url"] = f"/vs/{v['sport']}/{slug(v['a'])}-vs-{slug(v['b'])}/"
+        v["league"] = v["leagues"].most_common(1)[0][0]
+
+    def vs_link(sport, h, a):
+        k = (sport, *sorted([canon.get((sport, h), h), canon.get((sport, a), a)]))
+        v = vs.get(k)
+        return v["url"] if v else None
+
     def insights(g):
         try:
             return INS.build(g, team_info(g["sport"], g["home"]), team_info(g["sport"], g["away"]))
@@ -592,13 +627,19 @@ def build() -> None:
         return murl.get((m.get("home"), m.get("away"), str(m.get("kickoff"))[:10])) if m else None
 
     ctx = dict(perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues,
-               team_link=team_link, match_url=match_url, team_info=team_info, box_of=box_of, insights=insights, recent5=recent5, predict=predict)
+               team_link=team_link, match_url=match_url, team_info=team_info, box_of=box_of, insights=insights, recent5=recent5, predict=predict, vs_link=vs_link)
     urls: list[tuple[str, str]] = []
+
+    imgs: dict[str, str] = {}
 
     def page(tpl: str, out: str, **kw):
         html = env.get_template(tpl).render(**ctx, path=out, **kw)
         _write(config.DIST / out.strip("/") / "index.html" if out != "/" else config.DIST / "index.html", html)
+        if kw.get("noindex"):
+            return  # 검색에서 빼는 페이지(얇은 글)는 사이트맵에도 넣지 않는다
         urls.append((out, kw.get("lastmod") or today.isoformat()))
+        if kw.get("og_image"):
+            imgs[out] = kw["og_image"]
 
     site_ld = {"@context": "https://schema.org", "@graph": [
         {"@type": "WebSite", "@id": config.SITE_URL + "/#site", "name": config.SITE_NAME, "alternateName": config.SITE_DOMAIN_DISPLAY,
@@ -691,6 +732,30 @@ def build() -> None:
              jsonld=_jsonld(_crumbs([("홈", "/"), ("회차별 분석", "/rounds/"), (f"{ro['year']}년 {ro['label']}", f"/rounds/{ts}/")])))
     # 팀별 기록
     page("teams.html", "/teams/", groups=PX.team_groups(tms))
+    for v in vs.values():
+        g0 = v["games"]
+        aw = sum(1 for g in g0 if (g["hs"] > g["as"]) == (g["home"] == v["a"]) and g["hs"] != g["as"])
+        dr = sum(1 for g in g0 if g["hs"] == g["as"])
+        bw = len(g0) - aw - dr
+        a_for = sum(g["hs"] if g["home"] == v["a"] else g["as"] for g in g0) / len(g0) if g0 else 0
+        b_for = sum(g["as"] if g["home"] == v["a"] else g["hs"] for g in g0) / len(g0) if g0 else 0
+        ah = [g for g in g0 if g["home"] == v["a"]]
+        bh = [g for g in g0 if g["home"] == v["b"]]
+        st = {"n": len(g0), "aw": aw, "bw": bw, "d": dr, "a_for": a_for, "b_for": b_for, "tot": a_for + b_for,
+              "ah": (sum(1 for g in ah if g["hs"] > g["as"]), len(ah)), "bh": (sum(1 for g in bh if g["hs"] > g["as"]), len(bh))}
+        nxt = [{"url": match_url(u["m"]), "kickoff": u["m"]["kickoff"], "home": u["m"]["home"], "away": u["m"]["away"]} for u in v["next"]]
+        nxt = [n for n in nxt if n["url"]]
+        title = f"{v['a']} vs {v['b']} 상대전적 · 최근 맞대결 {len(g0)}경기"
+        desc = (f"{v['league']} {v['a']} vs {v['b']} 맞대결 기록: {v['a']} {aw}승" + (f" {dr}무" if dr else "") + f" {bw}패, "
+                f"경기당 평균 {a_for:.1f} 대 {b_for:.1f}. 최근 경기 점수와 홈·원정 성적, 다음 경기 분석.")
+        page("vs.html", v["url"], v=v, st=st, nxt=nxt, page_title=title, page_desc=desc[:155], lastmod=g0[0]["date"] if g0 else None,
+             jsonld=_jsonld(_crumbs([("홈", "/"), ("팀별 기록", "/teams/"), (f"{v['a']} vs {v['b']}", v["url"])])))
+    # 다가오는 경기가 있는 상대전적 페이지는 검색엔진 알림(IndexNow)에 먼저 보낸다
+    try:
+        hot_now = read_json(config.DIST / "data" / "hot.json", []) or []
+        write_json(config.DIST / "data" / "hot.json", hot_now + [v["url"] for v in vs.values() if v["next"]])
+    except Exception:  # noqa: BLE001
+        pass
     for t in tms.values():
         page("team.html", t["url"], og_image=OGP.team(config.DIST, t), t=t, lastmod=(t["games"][0]["date"] if t["games"] else None),
              jsonld=_jsonld({"@context": "https://schema.org", "@type": "SportsTeam", "name": t["name"], "sport": SPORT_LABEL.get(t["sport"], t["sport"]),
@@ -768,6 +833,7 @@ def build() -> None:
             other = [x for x in kh if x is not a and x["cat"] != a["cat"] and x["cat"] == "공통"]
             rel = (same[:4] + other[:2])[:6]
             page("knowhow.html", f"/knowhow/{a['slug']}/", a=a, rel=rel, lg_url=lg_by_name.get(PX.lkey(a["league"] or "")),
+                 noindex=(a.get("chars") or 0) < THIN_CHARS,
                  jsonld=_jsonld(_crumbs([("홈", "/"), ("노하우", "/knowhow/"), (a["title"], f"/knowhow/{a['slug']}/")])))
     # 구글 웹스토리: 오늘의 핵심 경기(빅매치 우선) — 매 빌드 자동
     try:
@@ -862,7 +928,7 @@ def build() -> None:
             shutil.copy2(f, config.DIST / "threads" / f.name)
         if (tdir / "tq.json").exists():  # 쓰레드 예약 게시 대기열(Worker 가 읽어 정해진 시각에 올림)
             shutil.copy2(tdir / "tq.json", config.DIST / "data" / "tq.json")
-    _write(config.DIST / "sitemap.xml", env.get_template("sitemap.xml").render(urls=urls))
+    _write(config.DIST / "sitemap.xml", env.get_template("sitemap.xml").render(urls=urls, imgs=imgs))
     _write(config.DIST / "robots.txt", f"User-agent: *\nAllow: /\nDisallow: /data/\n\nSitemap: {config.SITE_URL}/sitemap.xml\n")
     _write(config.DIST / "rss.xml", env.get_template("rss.xml").render(
         items=[{**it, "pub": format_datetime(datetime.fromisoformat(it["date"]))} for it in rss_items],
