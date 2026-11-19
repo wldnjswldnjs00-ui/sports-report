@@ -411,6 +411,7 @@ dd { margin: 3px 0 0; font: 600 21px/1.2 var(--en); letter-spacing: -0.03em; }
   .m-time { grid-area: meta; } .m-teams { grid-area: teams; } .m-pick { grid-area: pick; } .m-res { grid-area: res; }
   .match-more { padding-left: 14px; padding-right: 14px; }
   .kpis { grid-template-columns: repeat(2, 1fr); }
+  .kpis dd { font-size: clamp(19px, 6.2vw, 28px); white-space: nowrap; }  /* '0승 2무 4패' 가 좁은 휴대폰에서 칸을 넘지 않게 */
   .tp-nums { grid-template-columns: repeat(2, 1fr); }
   .past a { grid-template-columns: minmax(0, 1fr) auto; }
   .past-h { display: none; }
