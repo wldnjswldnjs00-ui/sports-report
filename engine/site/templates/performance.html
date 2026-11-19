@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% from "_macros.html" import ev_class %}
-{% block title %}예측 성과와 확률 보정 · {{ cfg.SITE_NAME }}{% endblock %}
+{% block title %}프로토 분석 적중률 · 매일 공개하는 예측 기록 | {{ cfg.SITE_NAME }}{% endblock %}
 {% block desc %}프로토 분석 적중 기록: 모델이 매긴 확률과 실제 결과를 매일 자동으로 대조한 성과입니다. 확률 구간별 보정, 종목·마켓·전략별 적중률을 공개합니다.{% endblock %}
 {% block main %}
 <section class="wrap page-head">
-  <p class="kicker">성과</p><h1>숫자로 보는 성적표</h1>
+  <p class="kicker">성과</p><h1>프로토 적중률 성적표</h1>
   <p class="lede">좋은 날만 골라 보여주지 않습니다. 발행된 모든 픽과 조합을 채점한 누적 기록입니다.{% if perf.updated %} 마지막 집계 {{ perf.updated|kdt }}.{% endif %}</p>
 </section>
 {% if not perf.picks or not perf.picks.all.n %}

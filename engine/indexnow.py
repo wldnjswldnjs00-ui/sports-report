@@ -5,11 +5,11 @@
 from __future__ import annotations
 
 import logging
-from datetime import timedelta
+from datetime import date, timedelta
 from urllib.parse import quote, urlparse
 
 from . import config
-from .util import http, read_json
+from .util import http, read_json, write_json
 
 log = logging.getLogger("engine.indexnow")
 ENDPOINTS = ("https://searchadvisor.naver.com/indexnow", "https://api.indexnow.org/indexnow")
@@ -29,10 +29,24 @@ def recent_urls() -> list[str]:
     return [config.SITE_URL + quote(u) for u in pick][:500]
 
 
-def ping() -> int:
+def all_urls() -> list[str]:
+    """사이트맵에 들어간 모든 주소(빅매치·고정 페이지 먼저)."""
+    urls = read_json(config.DIST / "data" / "urls.json", []) or []
+    head = recent_urls()
+    return list(dict.fromkeys(head + [config.SITE_URL + quote(u) for u in urls]))[:10000]
+
+
+def ping(full: bool | None = None) -> int:
+    """평소엔 새 페이지만, 7일에 한 번은 전체 주소를 보낸다(네이버·빙이 사이트 전체를 빨리 다시 읽게)."""
     if not config.INDEXNOW_KEY:
         return 0
-    urls = recent_urls()
+    stf = config.STATE / "indexnow.json"
+    st = read_json(stf, {}) or {}
+    today = config.now_kst().date()
+    if full is None:
+        last = st.get("full")
+        full = not last or (today - date.fromisoformat(last)).days >= 7
+    urls = all_urls() if full else recent_urls()
     if not urls:
         return 0
     host = urlparse(config.SITE_URL).hostname
@@ -45,4 +59,7 @@ def ping() -> int:
             ok += 1
         except Exception as e:  # noqa: BLE001
             log.warning("IndexNow %s 실패: %s", ep, e)
+    if full and ok:
+        st["full"] = today.isoformat()
+        write_json(stf, st)
     return ok
