@@ -471,6 +471,152 @@ def r_recency(games):
     return _A("availability-big-loss", "크게 진 다음 경기: 가용성 휴리스틱", lead, secs)
 
 
+def r_overconfidence(perf):
+    cal = (perf or {}).get("calibration") or []
+    n = (((perf or {}).get("picks") or {}).get("all") or {}).get("n")
+    if not cal or not n or n < 50:
+        return None
+    rows = [[c["bucket"], f"{c['n']:,}", KH.pct(c["expected"]), KH.pct(c["actual"])] for c in cal]
+    hi = [c for c in cal if c["bucket"][:1] in "789"]
+    lead = (f"이 사이트는 추천 {n:,}개의 '추정 확률'과 '실제 적중'을 매일 자동으로 대조합니다. 사람이 자기 예측을 이렇게 기록해 보면 "
+            "대부분 실제보다 자신 있게 예측했다는 것을 알게 됩니다.")
+    secs = [("연구가 말하는 것", [
+        "리히텐슈타인·피쇼프·필립스(Lichtenstein, Fischhoff & Phillips, 1982)는 확률 판단 연구를 정리하며, 사람들이 '90% 확실하다'고 답한 문제의 실제 정답률이 그보다 낮은 경우가 흔하다는 '과신(overconfidence)'을 보고했습니다. "
+        "확률을 말하는 것과, 그 확률이 실제로 맞는지 기록으로 확인하는 것(보정, calibration)은 전혀 다른 일입니다."]),
+        ("이 사이트의 보정 기록", ["추정 확률 구간마다 실제 적중률을 나란히 놓았습니다. 두 숫자가 비슷할수록 확률이 정직하다는 뜻이고, 표본이 쌓이며 매일 바뀝니다.",
+                             ("table", ["추정 확률", "추천 수", "추정 평균", "실제 적중"], rows)]),
+        ("왜 기록이 중요한가", [
+            "기억은 맞힌 경기를 오래 남기고 빗나간 경기를 쉽게 잊습니다. 그래서 기록 없이 느끼는 적중률은 거의 항상 실제보다 높습니다. "
+            "이 사이트가 모든 추천을 숨기지 않고 매일 채점해 '성과' 페이지에 공개하는 이유이고, 그 결과로 계산 방식을 스스로 고칩니다."]),
+        ("실전에서", ["내 선택을 확률과 함께 적어 두고, 한 달 뒤 구간별로 실제 적중률을 비교해 봅니다.",
+                    "참고: Lichtenstein, S., Fischhoff, B., & Phillips, L. D. (1982). Calibration of probabilities: The state of the art to 1980. In Kahneman, Slovic & Tversky (Eds.), Judgment under Uncertainty. Cambridge University Press."])]
+    return _A("overconfidence-calibration", "내 예측은 몇 % 맞을까: 과신과 보정", lead, secs)
+
+
+def r_confirmation():
+    lead = "응원하는 팀, 이미 고른 쪽의 근거만 눈에 들어오는 것을 확증 편향이라고 합니다. 분석을 할수록 오히려 강해질 수 있습니다."
+    secs = [("연구가 말하는 것", [
+        "로드·로스·레퍼(Lord, Ross & Lepper, 1979, Journal of Personality and Social Psychology)는 사형제도에 찬반 의견이 다른 사람들에게 같은 연구 자료를 보여 줬습니다. "
+        "양쪽 모두 자기 의견을 지지하는 자료는 믿을 만하다고, 반대 자료는 허점이 많다고 평가했고, 자료를 본 뒤 오히려 원래 의견이 더 강해졌습니다. 같은 정보를 보고도 각자 보고 싶은 쪽으로 읽는다는 뜻입니다."]),
+        ("스포츠 분석에서는", [
+            "한 팀을 고르고 나면 그 팀이 이길 이유는 잘 보이고, 질 이유는 '이번엔 괜찮겠지'로 넘기게 됩니다. 좋아하는 팀이 있다면 더 강해집니다. "
+            "이 사이트의 경기 페이지가 추천과 함께 '이변 위험'과 반대쪽 근거, 숫자 비교를 같이 보여주는 이유입니다."]),
+        ("실전에서", ["고르기 전에 반대쪽이 이길 이유를 세 가지 적어 봅니다. 적기 어렵다면 확신해도 되고, 쉽게 적힌다면 다시 봅니다.",
+                    "응원하는 팀 경기는 따로 떼어 두는 것도 방법입니다.",
+                    "참고: Lord, C. G., Ross, L., & Lepper, M. R. (1979). Biased assimilation and attitude polarization. Journal of Personality and Social Psychology."])]
+    return _A("confirmation-bias", "보고 싶은 것만 보일 때: 확증 편향", lead, secs)
+
+
+def r_crowd(games):
+    edges = [0.0, 0.4, 0.5, 0.6, 0.7, 0.8, 1.01]
+    n = hit = 0
+    for g in games:
+        f = KH.fair(g["o"])
+        k = max((0, 2), key=lambda i: f[i])
+        n += 1
+        hit += g["res"] == k
+    if n < 200:
+        return None
+    lead = (f"1906년 영국의 한 장터에서 사람들이 소의 무게를 맞히는 내기를 했는데, 800명 가까운 답을 모아 평균 내자 실제 무게와 거의 같았습니다. "
+            f"배당도 수많은 사람의 판단이 모인 숫자라, 배당의 정배는 베트맨 기록에서 {KH.pct(hit / n)} 맞았습니다.")
+    secs = [("연구가 말하는 것", [
+        "프랜시스 골턴(Galton, 1907, Nature, 'Vox populi')은 장터의 소 무게 맞히기 대회에서 모인 답들의 가운데 값이 실제 무게와 1% 안쪽으로 맞았다고 보고했습니다. "
+        "한 사람 한 사람은 크게 틀려도, 서로 다른 정보를 가진 많은 사람의 판단을 모으면 오차가 서로 상쇄된다는 '군중의 지혜'의 출발점이 된 기록입니다."]),
+        ("배당은 군중의 판단", [
+            f"배당은 많은 사람의 판단과 정보가 모여 정해집니다. 베트맨 기록 {n:,}경기에서 배당이 더 낮은 쪽(정배)이 이긴 비율은 {KH.pct(hit / n)}입니다. "
+            "개인이 이 숫자를 꾸준히 넘기는 것은 쉽지 않습니다. 다만 군중의 지혜는 사람들이 서로 독립적으로 판단할 때 잘 작동합니다. 모두가 같은 소문을 따라가면 오히려 함께 틀립니다."]),
+        ("실전에서", ["배당을 '군중이 본 확률'로 먼저 읽고, 그와 다르게 볼 분명한 근거가 있을 때만 다르게 고릅니다.",
+                    "갑자기 한쪽으로 쏠린 배당은 새 정보일 수도, 같은 소문을 따라간 쏠림일 수도 있습니다. 쏠린 이유를 확인합니다.",
+                    "참고: Galton, F. (1907). Vox populi. Nature. / Surowiecki, J. (2004). The Wisdom of Crowds. Doubleday."])]
+    return _A("wisdom-of-crowds", "배당은 왜 잘 맞을까: 군중의 지혜", lead, secs)
+
+
+def r_clustering():
+    rng = random.Random(42)
+    flips = [rng.random() < 0.5 for _ in range(100)]
+    best = run = 1
+    for a, b in zip(flips, flips[1:]):
+        run = run + 1 if a == b else 1
+        best = max(best, run)
+    sims = []
+    for _ in range(5000):
+        f = [rng.random() < 0.5 for _ in range(100)]
+        m = r = 1
+        for a, b in zip(f, f[1:]):
+            r = r + 1 if a == b else 1
+            m = max(m, r)
+        sims.append(m)
+    p6 = sum(1 for x in sims if x >= 6) / len(sims)
+    lead = f"동전을 100번 던지면 같은 면이 6번 이상 연속으로 나올 확률이 {KH.pct(p6)}입니다. 무작위에도 '흐름'처럼 보이는 덩어리가 자주 생깁니다."
+    secs = [("연구가 말하는 것", [
+        "토머스 길로비치(Gilovich, 1991, 책 How We Know What Isn't So)는 사람들이 무작위로 흩어진 결과에서도 패턴을 찾아내는 경향을 '군집 착각(clustering illusion)'이라고 설명했습니다. "
+        "2차 세계대전 때 런던 시민들은 폭탄이 특정 지역을 노리고 떨어진다고 믿었지만, 이후 분석(Clarke, 1946)에서는 낙하 지점이 무작위 분포와 잘 맞았다는 이야기가 대표적입니다."]),
+        ("실험", [f"컴퓨터로 동전 100번 던지기를 5,000번 반복했습니다. 같은 면이 6번 이상 이어진 경우가 {KH.pct(p6)}였습니다. 한 번의 예시 기록에서는 최장 {best}번 연속이 나왔습니다. "
+                "완전히 무작위인데도 '연승' '연패'처럼 보이는 흐름이 이렇게 자주 생깁니다."]),
+        ("실전에서", ["몇 경기 연속 같은 결과는 흐름이 아니라 우연일 가능성을 먼저 생각합니다.",
+                    "내 적중과 빗나감이 몰려 오는 것도 대부분 우연입니다. 몰린 결과를 보고 방법을 자주 바꾸지 않습니다.",
+                    "참고: Gilovich, T. (1991). How We Know What Isn't So. Free Press. / Clarke, R. D. (1946). An application of the Poisson distribution. Journal of the Institute of Actuaries."])]
+    return _A("clustering-illusion", "무작위에도 흐름이 보이는 이유: 군집 착각", lead, secs)
+
+
+def r_red_card():
+    lead = "축구에서 레드카드 한 장은 경기의 기울기를 바꿉니다. 연구에 따르면 일찍 나온 퇴장일수록 영향이 크고, 퇴장당한 팀의 득점 기대가 크게 줄어듭니다."
+    secs = [("연구가 말하는 것", [
+        "리더·크라머·홉스태컨(Ridder, Cramer & Hopstaken, 1994, Journal of the American Statistical Association)은 네덜란드 리그 경기를 분석해, 레드카드 이후 퇴장당한 팀의 득점 속도가 줄고 상대 팀의 득점 속도가 늘어난다는 것을 추정했습니다. "
+        "연구진은 이를 바탕으로, 경기 초반에는 확실한 실점을 반칙으로 막고 퇴장당하는 것이 오히려 더 불리할 수 있다고 계산했습니다. 퇴장의 무게가 남은 시간에 따라 달라진다는 뜻입니다."]),
+        ("의미", [
+            "레드카드는 남은 시간이 길수록 영향이 큽니다. 전반 초반의 퇴장은 경기 전체 흐름을 바꾸지만, 후반 막판의 퇴장은 결과를 바꾸지 못하는 경우가 많습니다. "
+            "카드가 많은 리그나 거친 경기 스타일의 팀끼리 만나는 경기는 이런 변수가 생길 가능성이 상대적으로 높습니다."]),
+        ("실전에서", ["경기 전 분석에서는 두 팀의 경기 스타일과 리그의 카드 빈도를 참고합니다(노하우의 리그 비교 글).",
+                    "참고: Ridder, G., Cramer, J. S., & Hopstaken, P. (1994). Down to ten: Estimating the effect of a red card in soccer. Journal of the American Statistical Association."])]
+    return _A("red-card-effect", "레드카드 한 장의 무게: 퇴장 효과 연구", lead, secs)
+
+
+def r_back_to_back(games):
+    from datetime import datetime, timedelta, timezone
+    kst = timezone(timedelta(hours=9))
+    nba = [g for g in games if g["league"] == "NBA"]
+    last = {}
+    n = w = 0
+    e = 0.0
+    for g in sorted(nba, key=lambda x: x["ko"]):
+        d = datetime.fromtimestamp(g["ko"] / 1000, kst).date()
+        for side, team in ((0, g["home"]), (2, g["away"])):
+            prev = last.get(team)
+            if prev and (d - prev).days == 1:
+                n += 1
+                w += g["res"] == side
+                e += KH.fair(g["o"])[side]
+            last[team] = d
+    lead = "NBA에서 이틀 연속 경기를 치르는 '백투백'은 오랫동안 불리한 조건으로 꼽혀 왔습니다. 연구는 휴식 차이가 홈 이점의 일부까지 설명한다고 봅니다."
+    secs = [("연구가 말하는 것", [
+        "엔타인과 스몰(Entine & Small, 2008, Journal of Quantitative Analysis in Sports)은 NBA 경기에서 휴식일 차이를 분석해, 원정팀이 백투백으로 치르는 경우가 더 많다는 점이 홈 이점의 일부를 설명한다고 보고했습니다. "
+        "즉, 홈팀이 유리한 이유 중에는 관중뿐 아니라 '원정팀이 더 지쳐 있다'는 일정 요인도 섞여 있다는 뜻입니다."])]
+    if n >= 30:
+        secs.append(("우리 기록으로 보면", [
+            f"베트맨 발매 NBA 경기에서 전날에도 경기를 치른 팀이 나선 {n:,}번을 모았습니다. 실제 승률은 {KH.pct(w / n)}, 배당이 본 승리 확률은 {KH.pct(e / n)}입니다. "
+            + ("배당과 거의 같습니다. 연전 부담은 이미 배당에 들어가 있습니다." if abs(w / n - e / n) < 0.03 else
+               f"차이는 {KH.pp(w / n - e / n)}입니다. 표본이 쌓이면서 이 차이가 유지되는지 지켜볼 만합니다.")]))
+    secs.append(("실전에서", ["경기 페이지의 '숫자가 말하는 것'에서 연전 여부를 확인할 수 있습니다. 한 팀만 연전이면 그 차이를 눈여겨봅니다.",
+                            "연전 막바지 경기는 주전 출전 시간이 줄어 큰 핸디·합계 결과가 흔들리기 쉽습니다.",
+                            "참고: Entine, O. A., & Small, D. S. (2008). The role of rest in the NBA home-court advantage. Journal of Quantitative Analysis in Sports."]))
+    return _A("nba-back-to-back", "NBA 백투백은 정말 불리할까: 휴식 연구", lead, secs)
+
+
+def r_outcome_bias(perf):
+    lead = "좋은 결정이 나쁜 결과로 끝나기도 하고, 나쁜 결정이 운 좋게 맞기도 합니다. 결과만 보고 결정을 평가하는 것을 결과 편향이라고 합니다."
+    pk = (((perf or {}).get("picks") or {}).get("all") or {})
+    extra = (f" 이 사이트의 추천도 지금까지 {pk['n']:,}개 중 {KH.pct(pk.get('hit_rate') or 0)}가 맞았습니다. 나머지는 확률대로 빗나간 것이지, 그 결정이 모두 틀렸던 것은 아닙니다." if pk.get("n") else "")
+    secs = [("연구가 말하는 것", [
+        "배런과 허시(Baron & Hershey, 1988, Journal of Personality and Social Psychology)는 같은 의학적 결정을 두고 결과만 다르게 알려 주는 실험을 했습니다. "
+        "참가자들은 결과가 좋았다고 들은 경우 그 결정을 훨씬 좋게 평가했습니다. 결정할 때 알 수 있었던 정보는 똑같았는데도 말입니다."]),
+        ("스포츠 분석에서는", ["70% 확률 선택이 빗나갔다고 그 선택이 틀린 것은 아닙니다. 열 번 중 세 번은 원래 빗나갑니다." + extra]),
+        ("실전에서", ["결과가 아니라 '고를 때의 근거가 맞았나'로 내 선택을 돌아봅니다.",
+                    "한두 번의 결과로 방법을 바꾸지 않고, 충분히 쌓인 기록으로 판단합니다.",
+                    "참고: Baron, J., & Hershey, J. C. (1988). Outcome bias in decision evaluation. Journal of Personality and Social Psychology."])]
+    return _A("outcome-bias", "빗나갔다고 틀린 결정일까: 결과 편향", lead, secs)
+
+
 def build(perf: dict | None = None) -> list[dict]:
     from ..sources import betman_history
     rows = betman_history.load_all()
@@ -480,7 +626,9 @@ def build(perf: dict | None = None) -> list[dict]:
     for fn in (lambda: r_longshot(games, fd), lambda: r_market(games), lambda: r_hot_hand(games), lambda: r_gambler(games),
                lambda: r_regression(games), lambda: r_anchoring(games), lambda: r_recency(games), lambda: r_home_research(games),
                lambda: r_poisson(fd), r_kelly, r_parlay_sim, lambda: r_near_miss(perf), r_loss_aversion, r_house_money,
-               r_illusion_control, r_action_bias, lambda: r_choice(games), r_sunk_cost):
+               r_illusion_control, r_action_bias, lambda: r_choice(games), r_sunk_cost,
+               lambda: r_overconfidence(perf), r_confirmation, lambda: r_crowd(games), r_clustering, r_red_card,
+               lambda: r_back_to_back(games), lambda: r_outcome_bias(perf)):
         try:
             a = fn()
         except Exception:  # noqa: BLE001
