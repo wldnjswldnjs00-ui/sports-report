@@ -644,7 +644,7 @@ def build() -> None:
         return murl.get((m.get("home"), m.get("away"), str(m.get("kickoff"))[:10])) if m else None
 
     ctx = dict(perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues,
-               team_link=team_link, match_url=match_url, team_info=team_info, box_of=box_of, insights=insights, recent5=recent5, predict=predict, vs_link=vs_link, nick=NK.nick)
+               team_link=team_link, match_url=match_url, team_info=team_info, box_of=box_of, insights=insights, recent5=recent5, predict=predict, vs_link=vs_link, nick=NK.nick, lg_alias=NK.league)
     urls: list[tuple[str, str]] = []
 
     imgs: dict[str, str] = {}

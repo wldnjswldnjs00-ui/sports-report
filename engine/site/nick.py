@@ -38,3 +38,15 @@ def nick(name: str) -> str:
 
 def names(name: str) -> list[str]:
     return NICK.get(name or "", [])
+
+
+# 리그를 사람들이 검색창에 치는 이름(제목·설명에만, 화면 본문은 공식 이름 그대로)
+LEAGUE: dict[str, str] = {
+    "KOVO 남자": "V리그 남자배구", "KOVO 여자": "V리그 여자배구", "KBL": "KBL 남자프로농구", "WKBL": "WKBL 여자프로농구",
+    "J1 백년구상리그": "J리그", "J2J3 백년구상리그": "J2리그", "일본 J1리그": "J리그", "미국 메이저리그사커": "MLS",
+    "잉글랜드 프리미어리그": "EPL 프리미어리그", "K리그1": "K리그1 프로축구", "KBO": "KBO 프로야구",
+}
+
+
+def league(name: str) -> str:
+    return LEAGUE.get(name or "", "")
