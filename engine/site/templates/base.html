@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block title %}{{ cfg.SITE_NAME }}{% endblock %}</title>
 <meta name="description" content="{% block desc %}{{ cfg.SITE_DESC }}{% endblock %}">
-<link rel="canonical" href="{{ cfg.SITE_URL }}{{ path|urlencode }}">
+<link rel="canonical" href="{{ cfg.SITE_URL }}{{ (canonical or path)|urlencode }}">
 <meta name="robots" content="{% block robots %}{% if noindex %}noindex,follow{% else %}index,follow,max-image-preview:large,max-snippet:-1{% endif %}{% endblock %}">
 {% if cfg.GOOGLE_SITE_VERIFICATION %}<meta name="google-site-verification" content="{{ cfg.GOOGLE_SITE_VERIFICATION }}">{% endif %}
 {% if cfg.NAVER_SITE_VERIFICATION %}<meta name="naver-site-verification" content="{{ cfg.NAVER_SITE_VERIFICATION }}">{% endif %}

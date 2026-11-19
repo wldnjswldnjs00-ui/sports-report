@@ -635,8 +635,8 @@ def build() -> None:
     def page(tpl: str, out: str, **kw):
         html = env.get_template(tpl).render(**ctx, path=out, **kw)
         _write(config.DIST / out.strip("/") / "index.html" if out != "/" else config.DIST / "index.html", html)
-        if kw.get("noindex"):
-            return  # 검색에서 빼는 페이지(얇은 글)는 사이트맵에도 넣지 않는다
+        if kw.get("noindex") or (kw.get("canonical") and kw["canonical"] != out):
+            return  # 검색에서 빼는 페이지(얇은 글)·대표 주소가 따로 있는 페이지는 사이트맵에 넣지 않는다
         urls.append((out, kw.get("lastmod") or today.isoformat()))
         if kw.get("og_image"):
             imgs[out] = kw["og_image"]
@@ -707,8 +707,10 @@ def build() -> None:
                 pdt = f" 예상 {pd['h']}:{pd['a']}" if pd else ""
                 rdl = _round_label((main or g["markets"][0]).get("round"))
                 kd = datetime.fromisoformat(g["kickoff"])
-                title = (f"{g['home']} vs {g['away']} 분석{pdt} · 프로토 승부식 {rdl + ' ' if rdl else ''}"
-                         f"{kd.month}월 {kd.day}일 · {g['league']}")
+                # 검색 결과에서 잘리지 않게 핵심(팀·예상·회차·날짜)을 앞에 두고, 짧을 때만 리그를 붙인다
+                title = f"{g['home']} vs {g['away']} 분석{pdt} · 프로토 {rdl + ' ' if rdl else ''}{kd.month}월 {kd.day}일"
+                if len(title) + len(g["league"]) <= 52:
+                    title += f" · {g['league']}"
                 desc = (main or {}).get("narrative") or f"{g['league']} {g['home']} 대 {g['away']} 경기 분석"
                 a0 = (main or {}).get("analysis") or {}
                 if pd and is_pick(a0):
@@ -719,7 +721,10 @@ def build() -> None:
                              _article_ld(title, desc[:160], g["url"], r.get("generated_at") or r["date"], r.get("updated_at") or r["date"]),
                              _crumbs([("홈", "/"), (_kdate(r["date"]), url), (f"{g['home']} vs {g['away']}", g["url"])]))
                 mog = OGP.match(config.DIST, g, _round_label((g.get("main") or g["markets"][0]).get("round"))) if i < 4 else None
-                page("match.html", g["url"], og_image=mog, g=g, r=r, outs=outs, lastmod=r["date"], jsonld=ld, page_title=title, page_desc=desc[:155])
+                # 같은 경기가 여러 날짜 리포트에 나오면 가장 최근 리포트의 페이지를 대표 주소로(중복 페이지 방지)
+                canon_url = murl.get((g["home"], g["away"], g["kickoff"][:10])) or g["url"]
+                page("match.html", g["url"], og_image=mog, g=g, r=r, outs=outs, lastmod=r["date"], jsonld=ld, page_title=title, page_desc=desc[:155],
+                     canonical=canon_url)
     write_json(config.DIST / "data" / "hot.json", hot)  # 검색엔진 알림(IndexNow)에서 먼저 보낼 빅매치
     page("archive.html", "/reports/")
     # 회차별 분석
