@@ -185,12 +185,21 @@ jobs:
             if git pull --rebase -X theirs origin "${GITHUB_REF_NAME}" && git push; then exit 0; fi
             sleep $((i * 5))
           done
-      - name: 검색엔진에 새 페이지 알림(IndexNow)
+      - name: 검색엔진에 새 페이지 알림(IndexNow·구글 서치 콘솔)
         if: steps.commit.outputs.pushed == '1'
         continue-on-error: true
+        env:
+          GSC_SA_JSON: ${{ secrets.GSC_SA_JSON }}
         run: |
           python -m engine build >/dev/null
           python -m engine indexnow
+          git add data/state/gsc.json 2>/dev/null || true
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -q -m "data: 구글 색인 요청 기록"
+          for i in 1 2 3 4; do
+            if git pull -q --rebase -X theirs origin "${GITHUB_REF_NAME}" && git push -q; then exit 0; fi
+            sleep $((i * 5))
+          done
       - name: 쓰레드가 안 올라갔으면 바로 다시(쓰레드 다시 올리기 시작)
         if: always() && (env.SLOT == '0 22 * * *' || env.SLOT == '30 0 * * *' || env.SLOT == '0 10 * * *' || env.SLOT == '0 13 * * *' || env.SLOT == '0 2 * * *' || env.SLOT == '0 4 * * *' || env.SLOT == '0 9 * * *' || env.SLOT == '0 6 * * *')
         continue-on-error: true

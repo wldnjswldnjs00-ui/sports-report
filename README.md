@@ -1,5 +1,13 @@
 # 스포츠분석.kr
 
+**[스포츠분석.kr](https://xn--sr3bw9dq7a9xy85g.kr/)** · 오늘의 프로토 승부식 분석. 베트맨 발매 경기의 승패·핸디캡·언더오버 확률을 매일 자동으로 업데이트합니다.
+
+- [오늘의 프로토 분석](https://xn--sr3bw9dq7a9xy85g.kr/) · [경기별 분석 카드](https://xn--sr3bw9dq7a9xy85g.kr/analysis/) · [회차별 분석](https://xn--sr3bw9dq7a9xy85g.kr/rounds/)
+- [팀 맞대결 상대전적](https://xn--sr3bw9dq7a9xy85g.kr/vs/) · [리그별 분석](https://xn--sr3bw9dq7a9xy85g.kr/leagues/) · [팀별 분석](https://xn--sr3bw9dq7a9xy85g.kr/teams/)
+- [프로토 노하우](https://xn--sr3bw9dq7a9xy85g.kr/knowhow/) · [배당 계산기](https://xn--sr3bw9dq7a9xy85g.kr/odds/) · [적중 기록](https://xn--sr3bw9dq7a9xy85g.kr/performance/) · [분석 방법](https://xn--sr3bw9dq7a9xy85g.kr/method/) · [프로토 이용 가이드](https://xn--sr3bw9dq7a9xy85g.kr/guide/)
+
+---
+
 베트맨 공식 발매 경기를 매일 자동으로 분석해서 정적 사이트로 발행합니다.
 
 - **계산**: GitHub Actions에서 하루 5번 실행 (수집 → 분석 → 채점 → 데이터 커밋)

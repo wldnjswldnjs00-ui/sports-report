@@ -415,6 +415,15 @@ def _matches(r: dict) -> list[dict]:
     return out
 
 
+_BODY_CUT = re.compile(r"<script.*?</script>|<style.*?</style>|<header.*?</header>|<footer.*?</footer>|<nav.*?</nav>", re.S)
+
+
+def _body_chars(html_s: str) -> int:
+    """머리말·메뉴·꼬리말·스크립트를 뺀 본문 글자 수(공백 제외)."""
+    import html as _h
+    return len(re.sub(r"\s+", "", _h.unescape(re.sub(r"<[^>]+>", " ", _BODY_CUT.sub("", html_s)))))
+
+
 THIN_CHARS = 600  # 이보다 짧은 노하우 글은 검색에서 뺀다(사이트에는 그대로). 얇은 페이지가 많으면 사이트 전체 평가가 낮아짐
 
 
@@ -633,7 +642,12 @@ def build() -> None:
     imgs: dict[str, str] = {}
 
     def page(tpl: str, out: str, **kw):
+        auto_thin = kw.pop("auto_thin", False)
         html = env.get_template(tpl).render(**ctx, path=out, **kw)
+        if auto_thin and not kw.get("noindex") and _body_chars(html) < THIN_CHARS:
+            # 본문이 얇은 자동 페이지는 사이트에는 두고 검색·사이트맵에서만 뺀다(구글 수집을 굵은 페이지에 모은다)
+            kw["noindex"] = True
+            html = env.get_template(tpl).render(**ctx, path=out, **kw)
         _write(config.DIST / out.strip("/") / "index.html" if out != "/" else config.DIST / "index.html", html)
         if kw.get("noindex") or (kw.get("canonical") and kw["canonical"] != out):
             return  # 검색에서 빼는 페이지(얇은 글)·대표 주소가 따로 있는 페이지는 사이트맵에 넣지 않는다
@@ -802,7 +816,7 @@ def build() -> None:
         # 품질 기준: 맞대결 4경기 이상이거나 다가오는 경기가 있는 조합만 검색에 내보낸다(얇은 페이지 대량 노출 방지)
         thin = len(g0) < 4 and not nxt
         page("vs.html", v["url"], v=v, st=st, nxt=nxt, page_title=title, page_desc=desc[:155], lastmod=g0[0]["date"] if g0 else None,
-             noindex=thin,
+             noindex=thin, auto_thin=not nxt,
              jsonld=_jsonld(_crumbs([("홈", "/"), ("팀별 기록", "/teams/"), (f"{v['a']} vs {v['b']}", v["url"])])))
     # 상대전적 허브(/vs/): 리그별로 맞대결이 많은 조합과 다가오는 맞대결
     hub: dict[str, list] = defaultdict(list)
@@ -819,6 +833,7 @@ def build() -> None:
         pass
     for t in tms.values():
         page("team.html", t["url"], og_image=OGP.team(config.DIST, t), t=t, lastmod=(t["games"][0]["date"] if t["games"] else None),
+             auto_thin=not t.get("upcoming"),
              jsonld=_jsonld({"@context": "https://schema.org", "@type": "SportsTeam", "name": t["name"], "sport": SPORT_LABEL.get(t["sport"], t["sport"]),
                              "url": config.SITE_URL + t["url"]},
                             _crumbs([("홈", "/"), ("팀별 기록", "/teams/"), (t["name"], t["url"])])))
@@ -867,6 +882,13 @@ def build() -> None:
                      jsonld=_jsonld(_crumbs([("홈", "/"), ("노하우", "/knowhow/"), (c["name"], f"/knowhow/c/{c['slug']}/")])))
         lg_by_name = {PX.lkey(lg["name"]): f"/leagues/{lg['slug']}/" for lg in leagues.values()}
         for a in kh:
+            lead = (a.get("lead") or "").strip()
+            if len(lead) < 80:
+                # 검색 결과 설명이 짧으면 본문 첫 문장으로 채운다(글마다 숫자가 달라 중복 없음)
+                txt = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", a.get("body") or "")).strip()
+                first = next((x.strip() for x in re.split(r"(?<=[.다요])\s", txt) if len(x.strip()) > 15 and x.strip() not in lead), "")
+                lead = (lead + " " + first).strip()
+            a["meta_desc"] = lead[:155]
             same = [x for x in kh if x is not a and (x["cat"] == a["cat"] or (a["sport"] and x["sport"] == a["sport"]))]
             other = [x for x in kh if x is not a and x["cat"] != a["cat"] and x["cat"] == "공통"]
             rel = (same[:4] + other[:2])[:6]

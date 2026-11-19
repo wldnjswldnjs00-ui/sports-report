@@ -82,6 +82,8 @@ def main(argv=None) -> int:
     elif a.cmd == "indexnow":
         from .indexnow import ping
         ping()
+        from .gsc import run as gsc_run
+        gsc_run()
     elif a.cmd == "build":
         from .site.build import build
         build()
