@@ -8,24 +8,27 @@
   var stage = document.querySelector("[data-stage]");
   if (!stage) return;
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var THREE_URL = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
+  // 사이트 안에 넣어 둔 three.js 를 먼저(외부 서버가 막히거나 느려도 3D 가 뜨게), 안 되면 cdnjs
+  var THREE_URLS = ["/static/three.min.js", "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"];
 
   function webglOK() {
     try { var c = document.createElement("canvas"); return !!(c.getContext("webgl") || c.getContext("experimental-webgl")); }
     catch (e) { return false; }
   }
-  if (!webglOK()) return;
-  // 공이 위에서 떨어지며 등장하므로 정지 이미지는 처음부터 숨긴다. 4초 안에 3D가 안 뜨면(불러오기 실패) 다시 보인다.
-  if (!reduce) {
-    stage.classList.add("is-gl");
-    setTimeout(function () { if (!stage.classList.contains("is-live")) stage.classList.remove("is-gl"); }, 4000);
-  }
+  // 3D 를 띄울 수 없는 기기(WebGL 없음)나 두 곳 모두 불러오기 실패일 때만 무대를 접는다(느린 기기는 기다린다)
+  function off() { if (!stage.classList.contains("is-live")) { stage.classList.remove("is-gl"); stage.classList.add("is-off"); } }
+  if (!webglOK()) { off(); return; }
+  if (!reduce) stage.classList.add("is-gl");
 
   function loadThree(cb) {
     if (window.THREE) return cb();
-    var s = document.createElement("script");
-    s.src = THREE_URL; s.async = true; s.crossOrigin = "anonymous"; s.onload = cb;
-    document.head.appendChild(s);
+    (function next(i) {
+      if (i >= THREE_URLS.length) return off();
+      var s = document.createElement("script");
+      s.src = THREE_URLS[i]; s.async = true; s.onload = function () { window.THREE ? cb() : next(i + 1); };
+      s.onerror = function () { s.remove(); next(i + 1); };
+      document.head.appendChild(s);
+    })(0);
   }
   var started = false;
   var io = new IntersectionObserver(function (es) {
@@ -197,7 +200,7 @@
     if (!T) return;
     var canvas = stage.querySelector("canvas"), renderer;
     try { renderer = new T.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true, powerPreference: "low-power" }); }
-    catch (e) { return; }
+    catch (e) { off(); return; }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
     renderer.outputEncoding = T.sRGBEncoding;
     renderer.toneMapping = T.ACESFilmicToneMapping;
