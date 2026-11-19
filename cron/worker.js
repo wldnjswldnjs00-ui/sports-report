@@ -341,17 +341,6 @@ async function tpost(env, it) {
   await ready(cid, 120);
   const pub = await (await fetch(`${TAPI}/${me.id}/threads_publish?` + new URLSearchParams({ creation_id: cid, access_token: st.token }), { method: "POST" })).json();
   if (!pub.id) throw new Error("게시 " + JSON.stringify(pub).slice(0, 160));
-  if (it.link) {
-    // 링크는 본문 대신 바로 아래 답글로(추천 피드 도달 유지). 실패해도 본 글은 그대로
-    try {
-      await new Promise((r) => setTimeout(r, 4000));
-      let rid;
-      try { rid = await post({ media_type: "TEXT", text: it.link_text || "전체 내용은 여기서", reply_to_id: pub.id, link_attachment: it.link }); }
-      catch (e) { rid = await post({ media_type: "TEXT", text: (it.link_text || "전체 내용은 여기서") + "\n" + it.link, reply_to_id: pub.id }); }
-      await ready(rid, 40);
-      await fetch(`${TAPI}/${me.id}/threads_publish?` + new URLSearchParams({ creation_id: rid, access_token: st.token }), { method: "POST" });
-    } catch (e) { /* 답글은 덤 */ }
-  }
   return true;
 }
 

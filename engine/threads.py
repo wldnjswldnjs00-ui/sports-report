@@ -13,13 +13,11 @@
 from __future__ import annotations
 
 import html
-import json
 import logging
 import re
 import os
 import time
 from datetime import date, timedelta
-from urllib.parse import quote
 
 from . import config
 from .util import http, read_json, write_json
@@ -203,11 +201,7 @@ def post() -> bool:
         step = "묶음 처리 대기"
         _ready(cid, 180)
         step = "게시"
-        pid = http("POST", f"{API}/{uid}/threads_publish", params={"creation_id": cid, "access_token": token}, retries=3).json().get("id")
-        _reply(uid, token, pid, "가린 경기까지 전체 분석은 여기서 무료로 봐요", config.SITE_URL + "/analysis/")
-        if pend["slot"] == "night":
-            _poll(uid, token, pend["day"])
-            st["poll_day"] = (read_json(STATE, {}) or {}).get("poll_day", st.get("poll_day"))
+        http("POST", f"{API}/{uid}/threads_publish", params={"creation_id": cid, "access_token": token}, retries=3)
     except _Skip:
         pass
     except Exception as e:  # noqa: BLE001
@@ -253,7 +247,7 @@ def post_knowhow() -> bool:
     if not _wait_live(urls):
         log.warning("Threads 노하우: 카드 이미지가 사이트에 아직 없음 — 다음 실행에 맡김")
         return False
-    if not _publish(uid, token, urls, pend["text"], "노하우", f"{config.SITE_URL}/knowhow/{quote(pend['slug'])}/", "표 전체와 리그별 숫자는 여기서 볼 수 있어요"):
+    if not _publish(uid, token, urls, pend["text"], "노하우"):
         return False
     st = read_json(STATE, {}) or {}
     st["kh"] = [x for x in (st.get("kh") or []) if x != pend["slug"]][-1000:] + [pend["slug"]]
@@ -400,7 +394,7 @@ def post_result() -> bool:
     if not _wait_live(urls):
         log.warning("Threads 결과: 카드 이미지가 사이트에 아직 없음 — 다음 실행에 맡김")
         return False
-    if not _publish(uid, token, urls, pend["text"], "결과", config.SITE_URL + "/performance/", "지금까지 모든 픽 기록은 여기 다 남아 있어요"):
+    if not _publish(uid, token, urls, pend["text"], "결과"):
         return False
     st = read_json(STATE, {}) or {}
     st["posted"] = (st.get("posted") or [])[-30:] + [key]
@@ -429,7 +423,7 @@ def _already_up(uid: str, token: str, text: str, hours: int = 2) -> bool:
     return False
 
 
-def _publish(uid: str, token: str, urls: list[str], text: str, what: str, link: str | None = None, link_text: str = "") -> bool:
+def _publish(uid: str, token: str, urls: list[str], text: str, what: str) -> bool:
     """이미지 한 장이면 단독, 여러 장이면 묶음(캐러셀)으로 게시."""
     if _already_up(uid, token, text):
         log.info("Threads %s: 이미 올라가 있어 기록만 남김", what)
@@ -462,125 +456,13 @@ def _publish(uid: str, token: str, urls: list[str], text: str, what: str, link: 
         step = "처리 대기"
         ready(cid, 180)
         step = "게시"
-        pid = http("POST", f"{API}/{uid}/threads_publish", params={"creation_id": cid, "access_token": token}, retries=3).json().get("id")
-        if link:
-            _reply(uid, token, pid, link_text or "전체 내용은 여기서", link)
+        http("POST", f"{API}/{uid}/threads_publish", params={"creation_id": cid, "access_token": token}, retries=3)
         return True
     except Exception as e:  # noqa: BLE001
         rr = getattr(e, "response", None)
         log.warning("Threads %s 게시 실패(%s): %s", what, step, ((rr.text if rr is not None else str(e))[:300]).replace(token, "***"))
         return False
 
-
-
-# ───────────── 도달 늘리기: 링크는 본문 대신 바로 아래 답글로, 저녁엔 투표 글 하나 더 ─────────────
-POP = ("잉글랜드 프리미어리그", "EPL", "NBA", "UEFA 챔피언스리그", "KBL", "KOVO 남자", "KOVO 여자", "스페인 라리가", "독일 분데스리가",
-       "이탈리아 세리에A", "K리그1", "KBO", "MLB", "일본 J1리그", "WKBL")
-
-
-def _text_post(uid: str, token: str, text: str, reply_to: str | None = None, link: str | None = None, poll: dict | None = None) -> str | None:
-    """글자 글 하나를 올리고 id 를 돌려준다. 링크 카드·투표가 거절되면 빼고 한 번 더(링크는 본문에 남긴다)."""
-    base = {"media_type": "TEXT", "access_token": token}
-    if reply_to:
-        base["reply_to_id"] = reply_to
-    tries = []
-    full = dict(base, text=text)
-    if link:
-        full["link_attachment"] = link
-    if poll:
-        full["poll_attachment"] = json.dumps(poll, ensure_ascii=False)
-    tries.append(full)
-    if link or poll:
-        tries.append(dict(base, text=(text + ("\n" + link if link else ""))[:500]))
-    for params in tries:
-        try:
-            cid = http("POST", f"{API}/{uid}/threads", params=params, retries=2).json()["id"]
-            for _ in range(12):
-                try:
-                    if http("GET", f"{API}/{cid}", params={"fields": "status", "access_token": token}, retries=1).json().get("status") == "FINISHED":
-                        break
-                except Exception:  # noqa: BLE001
-                    pass
-                time.sleep(3)
-            return http("POST", f"{API}/{uid}/threads_publish", params={"creation_id": cid, "access_token": token}, retries=3).json().get("id")
-        except Exception as e:  # noqa: BLE001
-            rr = getattr(e, "response", None)
-            log.warning("Threads 글자 글 실패: %s", ((rr.text if rr is not None else str(e))[:200]).replace(token, "***"))
-    return None
-
-
-def _reply(uid: str, token: str, parent: str | None, text: str, link: str) -> None:
-    """방금 올린 글 바로 아래에 사이트 링크 답글(본문엔 링크가 없어 추천 피드 도달이 덜 깎인다). 실패해도 본 글은 그대로."""
-    if not parent:
-        return
-    try:
-        time.sleep(5)
-        _text_post(uid, token, text, reply_to=parent, link=link)
-    except Exception:  # noqa: BLE001
-        pass
-
-
-def poll_match(rep: dict) -> dict | None:
-    """투표 글에 쓸 경기: 인기 리그 먼저, 그중 두 팀 확률이 가장 비슷한(의견이 갈리는) 경기."""
-    best = None
-    for m in rep.get("markets") or []:
-        if m.get("market") not in ("1X2", "WL"):
-            continue
-        p = (m.get("analysis") or {}).get("p") or {}
-        if "H" not in p or "A" not in p:
-            continue
-        lg = str(m.get("league") or "")
-        rank = POP.index(lg) if lg in POP else len(POP)
-        key = (rank, abs(p["H"] - p["A"]))
-        if best is None or key < best[0]:
-            best = (key, m)
-    return best[1] if best else None
-
-
-def _poll(uid: str, token: str, day: str) -> None:
-    st = read_json(STATE, {}) or {}
-    if st.get("poll_day") == day:
-        return
-    rep = read_json(config.REPORTS / f"{day}.json") or {}
-    m = poll_match(rep)
-    if not m:
-        return
-    h, a = m["home"], m["away"]
-    try:
-        from .site.nick import nick
-        hs, as_ = nick(h) or h, nick(a) or a
-    except Exception:  # noqa: BLE001
-        hs, as_ = h, a
-    opts = {"option_a": f"{hs} 승"[:25]}
-    if m.get("market") == "1X2":
-        opts["option_b"] = "무승부"
-        opts["option_c"] = f"{as_} 승"[:25]
-    else:
-        opts["option_b"] = f"{as_} 승"[:25]
-    try:
-        kd = date.fromisoformat(str(m.get("kickoff"))[:10])
-        when = f"{kd.month}/{kd.day}({WEEK[kd.weekday()]}) "
-    except Exception:  # noqa: BLE001
-        when = ""
-    text = f"{when}{m.get('league', '')} {h} vs {a}\n여러분 생각은? 내일 결과로 같이 확인해요\n#{str(m.get('league') or '프로토').replace(' ', '')}"
-    pid = _text_post(uid, token, text, poll=opts)
-    if not pid:
-        return
-    base = slug_match(m, rep)
-    _reply(uid, token, pid, "이 경기 분석(확률·예상 스코어)은 여기", config.SITE_URL + base)
-    st = read_json(STATE, {}) or {}
-    st["poll_day"] = day
-    write_json(STATE, st)
-    log.info("Threads 투표 글 게시: %s vs %s", h, a)
-
-
-def slug_match(m: dict, rep: dict) -> str:
-    """경기 페이지 주소(같은 두 팀 경기가 그날 둘 이상이면 분석 모음으로)."""
-    from .util import slug
-    same = {str(x.get("kickoff")) for x in rep.get("markets") or [] if x.get("home") == m["home"] and x.get("away") == m["away"]}
-    if len(same) > 1:
-        return "/analysis/"
-    return quote(f"/matches/{rep.get('date')}/{slug(m['home'] + ' vs ' + m['away'])}/")
 
 def _kh_all() -> list[dict]:
     from .site import knowhow as KH
