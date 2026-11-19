@@ -354,7 +354,7 @@ export default {
       if (url.protocol === "http:") { url.protocol = "https:"; to = url; }
       if (url.hostname.startsWith("www.")) { url.hostname = url.hostname.slice(4); to = url; }
       if (path.endsWith("/index.html")) { url.pathname = path.slice(0, -10); to = url; }
-      else if (!path.endsWith("/") && !path.startsWith("/api/") && !/\.[A-Za-z0-9]{1,8}$/.test(path)) { url.pathname = path + "/"; to = url; }
+      else if (!path.endsWith("/") && !path.startsWith("/api/") && !/\.[A-Za-z0-9]{1,16}$/.test(path)) { url.pathname = path + "/"; to = url; }
       if (to) return new Response(null, { status: 301, headers: { Location: to.toString(), "Cache-Control": "public, max-age=86400" } });
     }
     if (path === "/api/tick") {

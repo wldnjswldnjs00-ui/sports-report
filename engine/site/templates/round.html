@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}프로토 승부식 {{ ro.label }} {{ '분석·결과' if ro.graded else '분석' }} ({{ ro.year }}) · {{ ro.leagues|join(' · ') }} | {{ cfg.SITE_NAME }}{% endblock %}
-{% block desc %}베트맨 프로토 승부식 {{ ro.year }}년 {{ ro.label }} {{ ro.markets|length }}개 마켓 분석{% if ro.graded %}과 결과(결과 나온 {{ ro.graded }}개 중 {{ ro.hit }}개 적중){% endif %}. {{ ro.leagues|join(', ') }}. 경기별 추정 확률, 해외 배당 기준 픽, 결과.{% endblock %}
+{% block title %}프로토 승부식 {{ ro.label }} 분석 ({{ ro.year }}) · {{ ro.leagues|join(' · ') }} | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}베트맨 프로토 승부식 {{ ro.year }}년 {{ ro.label }} {{ ro.markets|length }}개 마켓 분석. {{ ro.leagues|join(', ') }}. 경기별 추정 확률, 해외 배당 기준 픽, 결과.{% endblock %}
 {% block main %}
 <section class="wrap page-head">
   <p class="kicker"><a href="/rounds/">회차</a> · {{ ro.year }}년</p>
