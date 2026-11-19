@@ -11,3 +11,4 @@
 - GitHub Secrets: ODDS_API_KEY, THREADS_TOKEN, THREADS_USER_ID
 - Meta 쓰레드 API 차단 해제 (2026-11-18)
 - GitHub 저장소 공개 전환(Actions 무료 시간 무제한, 2026-11-20 0시대)
+- 구글 서치 콘솔: `https://스포츠분석.kr/` 속성 등록·sitemap.xml 제출 완료 (2026-11-20, 성공·발견 990)
