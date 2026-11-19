@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}상대전적 · 리그별 팀 맞대결 기록 | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}NBA·KBO·MLB·K리그·EPL 등 베트맨 발매 리그의 팀 간 맞대결 기록. 승패, 평균 점수, 홈·원정 성적과 다가오는 맞대결 분석을 매일 자동으로 갱신합니다.{% endblock %}
+{% block main %}
+<section class="wrap page-head">
+  <p class="kicker">HEAD TO HEAD</p><h1>상대전적</h1>
+  <p class="lede">리그별로 맞대결이 많은 조합과 곧 열리는 맞대결입니다. 경기가 끝날 때마다 자동으로 기록이 더해집니다.</p>
+</section>
+{% for lg, lst in hub %}
+<section class="wrap block">
+  <h2 class="sub">{{ lg }} <small class="muted">{{ lst|length }}</small></h2>
+  <ul class="vs-hub">{% for v in lst[:40] %}<li><a href="{{ v.url }}">{{ v.a }} <i>vs</i> {{ v.b }}<small>{{ v.games|length }}경기{% if v.next %} · 곧 경기{% endif %}</small></a></li>{% endfor %}</ul>
+</section>
+{% endfor %}
+{% endblock %}

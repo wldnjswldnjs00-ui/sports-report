@@ -4,12 +4,14 @@
 {% block main %}
 {% set ua = team_link(v.sport, v.a) %}{% set ub = team_link(v.sport, v.b) %}
 <article class="wrap">
-  <nav class="crumbs" aria-label="위치"><a href="/">홈</a> <span>/</span> <a href="/teams/">팀별 기록</a> <span>/</span> <span aria-current="page">{{ v.a }} vs {{ v.b }}</span></nav>
+  <nav class="crumbs" aria-label="위치"><a href="/">홈</a> <span>/</span> <a href="/vs/">상대전적</a> <span>/</span> <span aria-current="page">{{ v.a }} vs {{ v.b }}</span></nav>
   <header class="page-head">
     <p class="kicker">{{ SPORT_LABEL[v.sport] }} · {{ v.league }} · 상대전적</p>
     <h1>{{ v.a }} <span class="vs">vs</span> {{ v.b }} 상대전적</h1>
     <p class="lede">베트맨 발매 경기 기준 최근 맞대결 {{ st.n }}경기: {{ v.a }} {{ st.aw }}승{% if st.d %} {{ st.d }}무{% endif %} {{ st.bw }}패, 경기당 평균 {{ '%.1f'|format(st.a_for) }} 대 {{ '%.1f'|format(st.b_for) }}.</p>
   </header>
+
+  {% if st.notes %}<section class="block"><ul class="ins-notes">{% for t in st.notes %}<li>{{ t }}</li>{% endfor %}</ul></section>{% endif %}
 
   {% if nxt %}
   <section class="block">
@@ -38,7 +40,7 @@
       {% endfor %}
       </tbody>
     </table></div>
-    <p class="fine">베트맨(스포츠토토) 공식 발매 경기의 결과만 셉니다. 매 자동 업데이트마다 새 맞대결이 더해집니다.</p>
+    <p class="fine">베트맨(스포츠토토) 공식 발매 경기의 결과만 셉니다. 매 자동 업데이트마다 새 맞대결이 더해집니다. <a href="/method/">분석 방법</a></p>
   </section>
 
   <section class="block">

@@ -15,7 +15,7 @@ log = logging.getLogger("engine.indexnow")
 ENDPOINTS = ("https://searchadvisor.naver.com/indexnow", "https://api.indexnow.org/indexnow")
 
 
-FIXED = ("/", "/reports/", "/performance/", "/analysis/", "/knowhow/", "/leagues/", "/rounds/", "/facts/", "/stories/today/")
+FIXED = ("/", "/reports/", "/performance/", "/analysis/", "/knowhow/", "/leagues/", "/rounds/", "/facts/", "/stories/today/", "/vs/")
 
 
 def recent_urls() -> list[str]:

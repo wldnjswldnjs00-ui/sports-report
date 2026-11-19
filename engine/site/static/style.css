@@ -1319,3 +1319,7 @@ h1, h2, h3, .block-head h2 { text-wrap: balance; }
 .vs-next a { display: block; padding: 12px 14px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; text-decoration: none; color: var(--ink); }
 .vs-next b { float: right; font-size: 13px; color: var(--ink-2); }
 @media (max-width: 560px) { .vs-next b { float: none; display: block; margin-top: 4px; } }
+.vs-hub { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 8px; }
+.vs-hub a { display: grid; gap: 2px; padding: 10px 14px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; text-decoration: none; color: var(--ink); font-weight: 600; font-size: 14px; word-break: keep-all; }
+.vs-hub i { font-style: normal; color: var(--ink-3); font-weight: 500; font-size: 12px; }
+.vs-hub small { color: var(--ink-3); font-weight: 600; font-size: 12px; }

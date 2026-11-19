@@ -748,8 +748,33 @@ def build() -> None:
         title = f"{v['a']} vs {v['b']} 상대전적 · 최근 맞대결 {len(g0)}경기"
         desc = (f"{v['league']} {v['a']} vs {v['b']} 맞대결 기록: {v['a']} {aw}승" + (f" {dr}무" if dr else "") + f" {bw}패, "
                 f"경기당 평균 {a_for:.1f} 대 {b_for:.1f}. 최근 경기 점수와 홈·원정 성적, 다음 경기 분석.")
+        # 맞대결 요약 문장(페이지마다 숫자로 달라지는 내용)
+        notes = []
+        last3 = g0[:3]
+        if len(last3) == 3:
+            w3 = [g["home"] if g["hs"] > g["as"] else g["away"] if g["as"] > g["hs"] else None for g in last3]
+            if w3[0] and w3.count(w3[0]) == 3:
+                notes.append(f"최근 맞대결 3번은 모두 {w3[0]}이(가) 이겼습니다.")
+        hw = sum(1 for g in g0 if g["hs"] > g["as"])
+        if len(g0) >= 4:
+            notes.append(f"맞대결 {len(g0)}경기 중 홈팀이 {hw}번 이겼습니다" + (", 홈 이점이 뚜렷한 조합입니다." if hw / len(g0) >= 0.7 else
+                                                                         ", 원정팀이 강한 조합입니다." if hw / len(g0) <= 0.3 else "."))
+        margins = [abs(g["hs"] - g["as"]) for g in g0]
+        unit = {"soccer": "골", "baseball": "점", "basketball": "점", "volleyball": "세트"}.get(v["sport"], "점")
+        notes.append(f"평균 점수 차는 {sum(margins) / len(margins):.1f}{unit}, 두 팀 합계는 경기당 {st['tot']:.1f}{unit}입니다.")
+        st["notes"] = notes
+        # 품질 기준: 맞대결 4경기 이상이거나 다가오는 경기가 있는 조합만 검색에 내보낸다(얇은 페이지 대량 노출 방지)
+        thin = len(g0) < 4 and not nxt
         page("vs.html", v["url"], v=v, st=st, nxt=nxt, page_title=title, page_desc=desc[:155], lastmod=g0[0]["date"] if g0 else None,
+             noindex=thin,
              jsonld=_jsonld(_crumbs([("홈", "/"), ("팀별 기록", "/teams/"), (f"{v['a']} vs {v['b']}", v["url"])])))
+    # 상대전적 허브(/vs/): 리그별로 맞대결이 많은 조합과 다가오는 맞대결
+    hub: dict[str, list] = defaultdict(list)
+    for v in vs.values():
+        if len(v["games"]) >= 4 or v["next"]:
+            hub[v["league"]].append(v)
+    hub_list = sorted(((lg, sorted(lst, key=lambda x: (not x["next"], -len(x["games"])))) for lg, lst in hub.items()), key=lambda x: -len(x[1]))
+    page("vs_index.html", "/vs/", hub=hub_list, jsonld=_jsonld(_crumbs([("홈", "/"), ("상대전적", "/vs/")])))
     # 다가오는 경기가 있는 상대전적 페이지는 검색엔진 알림(IndexNow)에 먼저 보낸다
     try:
         hot_now = read_json(config.DIST / "data" / "hot.json", []) or []
@@ -834,7 +859,11 @@ def build() -> None:
             rel = (same[:4] + other[:2])[:6]
             page("knowhow.html", f"/knowhow/{a['slug']}/", a=a, rel=rel, lg_url=lg_by_name.get(PX.lkey(a["league"] or "")),
                  noindex=(a.get("chars") or 0) < THIN_CHARS,
-                 jsonld=_jsonld(_crumbs([("홈", "/"), ("노하우", "/knowhow/"), (a["title"], f"/knowhow/{a['slug']}/")])))
+                 jsonld=_jsonld({"@context": "https://schema.org", "@type": "Article", "headline": a["title"][:110], "description": (a.get("lead") or "")[:200],
+                                 "inLanguage": "ko-KR", "mainEntityOfPage": config.SITE_URL + f"/knowhow/{a['slug']}/",
+                                 "author": _org(), "publisher": _org(), "image": [config.SITE_URL + "/static/og.png"],
+                                 **({"about": {"@type": "SportsOrganization", "name": a["league"]}} if a.get("league") else {})},
+                                _crumbs([("홈", "/"), ("노하우", "/knowhow/"), (a["title"], f"/knowhow/{a['slug']}/")])))
     # 구글 웹스토리: 오늘의 핵심 경기(빅매치 우선) — 매 빌드 자동
     try:
         from . import stories as ST
@@ -929,7 +958,9 @@ def build() -> None:
         if (tdir / "tq.json").exists():  # 쓰레드 예약 게시 대기열(Worker 가 읽어 정해진 시각에 올림)
             shutil.copy2(tdir / "tq.json", config.DIST / "data" / "tq.json")
     _write(config.DIST / "sitemap.xml", env.get_template("sitemap.xml").render(urls=urls, imgs=imgs))
-    _write(config.DIST / "robots.txt", f"User-agent: *\nAllow: /\nDisallow: /data/\n\nSitemap: {config.SITE_URL}/sitemap.xml\n")
+    # 검색·AI 검색 크롤러는 모두 허용(AI 답변에 출처로 인용되도록). /data/ 는 페이지가 아니라 막는다
+    ai = "".join(f"User-agent: {b}\nAllow: /\nDisallow: /data/\n\n" for b in ("OAI-SearchBot", "Claude-SearchBot", "PerplexityBot", "Google-Extended"))
+    _write(config.DIST / "robots.txt", f"User-agent: *\nAllow: /\nDisallow: /data/\n\n{ai}Sitemap: {config.SITE_URL}/sitemap.xml\n")
     _write(config.DIST / "rss.xml", env.get_template("rss.xml").render(
         items=[{**it, "pub": format_datetime(datetime.fromisoformat(it["date"]))} for it in rss_items],
         built=format_datetime(config.now_kst())))
