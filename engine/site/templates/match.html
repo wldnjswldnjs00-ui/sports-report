@@ -115,6 +115,12 @@
 
 
 
+  {% set kl = kh_for(g.league) %}{% if kl %}
+  <section class="block">
+    <h2 class="sub">{{ g.league }} 노하우</h2>
+    <ul class="kh-list">{% for x in kl %}<li><a href="/knowhow/{{ x.slug }}/"><b>{{ x.title }}</b><span>{{ x.lead }}</span></a></li>{% endfor %}</ul>
+  </section>
+  {% endif %}
   <nav class="daynav"><a href="/reports/{{ r.date }}/">← {{ r.date|kdate }} 전체 경기</a><a href="/tool/">조합 계산기 →</a></nav>
 </article>
 {% endblock %}

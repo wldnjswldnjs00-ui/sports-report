@@ -1369,6 +1369,12 @@ def build_all() -> list[dict]:
         arts.append(art_fd_league(code, rws, allst))
         arts += f_topic_articles(code, rws)
     arts += scoped_articles(games, ou, hc)
+    # 짧은 리그 주제 글 보강(같은 종목 비교표·실전 활용·같은 리그 글 연결) — 검색에 낼 만한 분량으로
+    try:
+        from .knowhow_enrich import enrich
+        enrich(arts, games, ou, hc, fd)
+    except Exception:  # noqa: BLE001
+        pass
     sport_avg = _sport_avgs(games, ou)
     out, seen = [], set()
     for a in arts:

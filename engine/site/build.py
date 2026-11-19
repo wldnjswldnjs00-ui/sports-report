@@ -681,6 +681,37 @@ def build() -> None:
     for d, gs in by_day.items():
         an_secs.append({"title": _kdate(d), "games": gs})
     page("analysis.html", "/analysis/", sections=an_secs, lastmod=(latest or {}).get("date"))
+    # 노하우: 기록으로 매 빌드 다시 계산하는 글(표본이 모자란 글은 만들지 않는다)
+    try:
+        from . import knowhow as KH
+        kh = KH.build_all()
+    except Exception:  # noqa: BLE001
+        log.exception("노하우 글 생성 실패(다른 페이지는 계속)")
+        kh = []
+    # 연구·심리: 잘 알려진 연구와 실험을 소개하고 우리 기록으로 확인(숫자는 매 빌드 다시 계산)
+    try:
+        from . import knowhow_research as KR
+        kh = kh + KR.build(perf)
+    except Exception:  # noqa: BLE001
+        log.exception("연구·심리 글 실패(다른 노하우는 계속)")
+    # 주간 리포트: 매주 자동으로 새 글이 쌓인다(한 번 만든 글은 고정). 쓰레드 노하우 게시가 이 글들도 차례로 올린다
+    try:
+        from . import knowhow_weekly as KW
+        from ..sources import betman_history as _bh2
+        KW.ensure(_bh2.load_all())
+        kh = KW.load() + kh
+    except Exception:  # noqa: BLE001
+        log.exception("주간 리포트 실패(다른 노하우는 계속)")
+    write_json(config.DIST / "data" / "kh_list.json",
+               [{"slug": x["slug"], "title": x["title"], "lead": x["lead"], "cat": x["cat"], "sport": x.get("sport"), "league": x.get("league")} for x in kh])
+    # 경기 페이지에서 그 리그 노하우로 잇기(검색에 나가는 글만, 리그 개요 글 먼저)
+    kh_by_league: dict[str, list] = defaultdict(list)
+    for x in kh:
+        if x.get("league") and (x.get("chars") or 0) >= THIN_CHARS:
+            kh_by_league[x["league"].replace(" ", "")].append(x)
+    for v in kh_by_league.values():
+        v.sort(key=lambda x: 0 if x["slug"].startswith(("league-", "fd-")) else 1)
+    ctx["kh_for"] = lambda lg: kh_by_league.get(str(lg or "").replace(" ", ""), [])[:3]
     rss_items = []
     hot: list[str] = []
     try:
@@ -804,29 +835,6 @@ def build() -> None:
     # 지금 발매 중인 리그(오늘·다음 구매일 리포트에 경기가 있는 리그)
     live_lg = {PX.lkey(m["league"]) for r in reports if r["date"] >= today.isoformat() for m in r.get("markets", [])}
     page("leagues.html", "/leagues/", live_lg=live_lg, lkey=PX.lkey)
-    # 노하우: 기록으로 매 빌드 다시 계산하는 글(표본이 모자란 글은 만들지 않는다)
-    try:
-        from . import knowhow as KH
-        kh = KH.build_all()
-    except Exception:  # noqa: BLE001
-        log.exception("노하우 글 생성 실패(다른 페이지는 계속)")
-        kh = []
-    # 연구·심리: 잘 알려진 연구와 실험을 소개하고 우리 기록으로 확인(숫자는 매 빌드 다시 계산)
-    try:
-        from . import knowhow_research as KR
-        kh = kh + KR.build(perf)
-    except Exception:  # noqa: BLE001
-        log.exception("연구·심리 글 실패(다른 노하우는 계속)")
-    # 주간 리포트: 매주 자동으로 새 글이 쌓인다(한 번 만든 글은 고정). 쓰레드 노하우 게시가 이 글들도 차례로 올린다
-    try:
-        from . import knowhow_weekly as KW
-        from ..sources import betman_history as _bh2
-        KW.ensure(_bh2.load_all())
-        kh = KW.load() + kh
-    except Exception:  # noqa: BLE001
-        log.exception("주간 리포트 실패(다른 노하우는 계속)")
-    write_json(config.DIST / "data" / "kh_list.json",
-               [{"slug": x["slug"], "title": x["title"], "lead": x["lead"], "cat": x["cat"], "sport": x.get("sport"), "league": x.get("league")} for x in kh])
     if kh:
         cats = [{"name": "공통", "slug": "common"}, {"name": "종목별", "slug": "sports"}, {"name": "리그 비교", "slug": "compare"},
                 {"name": "리그별", "slug": "leagues"}, {"name": "유럽 축구", "slug": "europe"}, {"name": "연구·심리", "slug": "research"}, {"name": "주간 리포트", "slug": "weekly"}]
