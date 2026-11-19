@@ -118,3 +118,4 @@
 - [x] 많이 검색되는 말로 제목 변경: 프로토 계산기(/tool/), 프로토 승부식 하는법(/guide/), 프로토 분석 적중률(/performance/), 프로토 배당 분석(/odds/)
 - [x] (2026-11-20) 프로토 용어 사전 `/용어/` + 10쪽(정배·역배·승무패·핸디캡·언더오버·배당률·환급률·폴더·단폴·프로토 승부식). '○○ 뜻' 검색용, 베트맨 지난 회차 기록으로 리그별 표 매일 재계산(engine/site/glossary.py). DefinedTerm·FAQ 구조화 데이터, 꼬리말·가이드에서 연결, IndexNow 고정 목록에 추가. 참고: GitHub coreyhaines31/marketingskills programmatic-seo 'Glossary' 플레이북
 - 참고: GitHub goenning/google-indexing-script(구글 48시간 색인)는 gsc.py 와 같은 Indexing API 방식이고 공식 지원은 채용·라이브 방송 페이지뿐
+- [x] (2026-11-20) 결과가 나온 회차·지난 리포트 제목에 '분석·결과'(예: 프로토 승부식 136회차 분석·결과) — '○회차 결과' 검색용. 설명에 적중 수
