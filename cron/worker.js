@@ -284,6 +284,66 @@ async function ttApi(request, env) {
   return json({ ok: true, token: st.token, expires: st.expires || null, error: st.error || null });
 }
 
+// ───────── 쓰레드 예약 게시(GitHub 실행이 멈춰도 동작하는 예비 경로) ─────────
+// 사이트에 배포된 /data/tq.json(게시 대기열)을 보고, 정해진 시각이 되면 KV 에 보관한 쓰레드 토큰으로 직접 올린다.
+// 대기열 항목: {id, at(ms), images:[주소], text}. 한 번 올린 항목은 KV(tq:<id>)에 기록해 두 번 올리지 않는다.
+const TAPI = "https://graph.threads.net/v1.0";
+async function tq(env, now) {
+  if (!env.PUSH) return;
+  let q = [];
+  try { const r = await env.ASSETS.fetch(new Request(SITE + "/data/tq.json")); if (r.ok) q = await r.json(); } catch (e) { return; }
+  for (const it of q || []) {
+    if (!it || !it.id || !(now >= it.at) || now > it.at + 3 * 3600e3) continue;
+    const key = "tq:" + it.id, mark = await env.PUSH.get(key);
+    if (mark === "done" || mark === "busy") continue;
+    const tries = Number((mark || "").replace("fail", "")) || 0;
+    if (tries >= 3) continue;
+    await env.PUSH.put(key, "busy", { expirationTtl: 900 });
+    let ok = false, why = "";
+    try { ok = await tpost(env, it); } catch (e) { why = String(e).slice(0, 160); }
+    await env.PUSH.put(key, ok ? "done" : "fail" + (tries + 1), { expirationTtl: 7 * 86400 });
+    await note(env, ok ? `쓰레드 게시 ${it.id}` : `쓰레드 게시 실패 ${it.id} ${why}`);
+  }
+}
+async function tpost(env, it) {
+  const st = await env.PUSH.get("tt", "json");
+  if (!st || !st.token) throw new Error("토큰 없음");
+  const tk = encodeURIComponent(st.token);
+  const me = await (await fetch(`${TAPI}/me?fields=id&access_token=${tk}`)).json();
+  if (!me.id) throw new Error("me " + JSON.stringify(me).slice(0, 120));
+  const post = async (params) => {
+    const u = `${TAPI}/${me.id}/threads?` + new URLSearchParams({ ...params, access_token: st.token });
+    const j = await (await fetch(u, { method: "POST" })).json();
+    if (!j.id) throw new Error("생성 " + JSON.stringify(j).slice(0, 160));
+    return j.id;
+  };
+  const ready = async (id, wait) => {
+    for (let i = 0; i < wait / 4; i++) {
+      const j = await (await fetch(`${TAPI}/${id}?fields=status,error_message&access_token=${tk}`)).json();
+      if (j.status === "FINISHED") return true;
+      if (j.status === "ERROR" || j.status === "EXPIRED") throw new Error("처리 " + (j.error_message || j.status));
+      await new Promise((r) => setTimeout(r, 4000));
+    }
+    return false;
+  };
+  const imgs = it.images || [];
+  let cid;
+  if (imgs.length > 1) {
+    const kids = [];
+    for (const u of imgs.slice(0, 20)) kids.push(await post({ media_type: "IMAGE", image_url: u, is_carousel_item: "true" }));
+    for (const k of kids) await ready(k, 120);
+    cid = await post({ media_type: "CAROUSEL", children: kids.join(","), text: it.text || "" });
+  } else if (imgs.length === 1) {
+    cid = await post({ media_type: "IMAGE", image_url: imgs[0], text: it.text || "" });
+  } else {
+    cid = await post({ media_type: "TEXT", text: it.text || "" });
+  }
+  await ready(cid, 120);
+  const pub = await (await fetch(`${TAPI}/${me.id}/threads_publish?` + new URLSearchParams({ creation_id: cid, access_token: st.token }), { method: "POST" })).json();
+  if (!pub.id) throw new Error("게시 " + JSON.stringify(pub).slice(0, 160));
+  return true;
+}
+
 export default {
   async fetch(request, env) {
     const path = new URL(request.url).pathname;
@@ -316,5 +376,6 @@ export default {
       ctx.waitUntil(env.PUSH.put("hb", new Date(event.scheduledTime).toISOString()).catch(() => null));
     }
     ctx.waitUntil(ttRefresh(env).catch(() => null)); // 7일마다 쓰레드 토큰 연장(지났을 때만)
+    ctx.waitUntil(tq(env, event.scheduledTime).catch(() => null)); // 쓰레드 예약 게시(대기열이 있을 때만)
   },
 };

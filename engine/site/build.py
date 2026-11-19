@@ -860,6 +860,8 @@ def build() -> None:
         (config.DIST / "threads").mkdir(parents=True, exist_ok=True)
         for f in tdir.glob("*.jpg"):
             shutil.copy2(f, config.DIST / "threads" / f.name)
+        if (tdir / "tq.json").exists():  # 쓰레드 예약 게시 대기열(Worker 가 읽어 정해진 시각에 올림)
+            shutil.copy2(tdir / "tq.json", config.DIST / "data" / "tq.json")
     _write(config.DIST / "sitemap.xml", env.get_template("sitemap.xml").render(urls=urls))
     _write(config.DIST / "robots.txt", f"User-agent: *\nAllow: /\nDisallow: /data/\n\nSitemap: {config.SITE_URL}/sitemap.xml\n")
     _write(config.DIST / "rss.xml", env.get_template("rss.xml").render(
