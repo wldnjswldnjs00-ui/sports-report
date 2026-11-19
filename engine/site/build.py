@@ -716,6 +716,12 @@ def build() -> None:
     except Exception:  # noqa: BLE001
         log.exception("노하우 글 생성 실패(다른 페이지는 계속)")
         kh = []
+    # 연구·심리: 잘 알려진 연구와 실험을 소개하고 우리 기록으로 확인(숫자는 매 빌드 다시 계산)
+    try:
+        from . import knowhow_research as KR
+        kh = kh + KR.build(perf)
+    except Exception:  # noqa: BLE001
+        log.exception("연구·심리 글 실패(다른 노하우는 계속)")
     # 주간 리포트: 매주 자동으로 새 글이 쌓인다(한 번 만든 글은 고정). 쓰레드 노하우 게시가 이 글들도 차례로 올린다
     try:
         from . import knowhow_weekly as KW
@@ -728,7 +734,7 @@ def build() -> None:
                [{"slug": x["slug"], "title": x["title"], "lead": x["lead"], "cat": x["cat"], "sport": x.get("sport"), "league": x.get("league")} for x in kh])
     if kh:
         cats = [{"name": "공통", "slug": "common"}, {"name": "종목별", "slug": "sports"}, {"name": "리그 비교", "slug": "compare"},
-                {"name": "리그별", "slug": "leagues"}, {"name": "유럽 축구", "slug": "europe"}, {"name": "주간 리포트", "slug": "weekly"}]
+                {"name": "리그별", "slug": "leagues"}, {"name": "유럽 축구", "slug": "europe"}, {"name": "연구·심리", "slug": "research"}, {"name": "주간 리포트", "slug": "weekly"}]
         # 리그별 카드는 종목이 섞이게: 종목마다 경기 많은 리그 순으로 줄 세운 뒤 번갈아 뽑는다(리그 개요 글 먼저)
         def mix(lst):
             heads = [x for x in lst if x["slug"].startswith(("league-", "fd-"))]
