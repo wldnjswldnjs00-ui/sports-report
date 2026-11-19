@@ -68,11 +68,12 @@ CSS = f"""
 .mark{{width:46px;height:46px;border-radius:50%;background:conic-gradient(from 90deg,#ff3d7f,#ffd23d,#18c4b0,#6c7bff,#ff3d7f);box-shadow:inset 0 0 0 6px rgba(255,255,255,.4)}}
 .brand{{font:700 36px JO,PT;color:#121414}}.brand b{{font:700 20px JO;color:#ff3d7f;margin-left:4px}}
 .date{{margin-left:auto}}
-.body{{flex:1;display:flex;flex-direction:column;justify-content:center}}
+.body{{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:safe center;padding-top:18px}}
 .body h1,.body .sub,.body .note{{text-align:center}}
 h1{{font:700 84px/1.1 JO,PT;margin:0 0 10px}}
 .sub{{font:500 30px PT;color:#5c6662;margin:0 0 34px}}
 .list{{display:flex;flex-direction:column;gap:18px}}
+.list.many{{gap:12px}}.list.many .row{{padding:18px 28px}}.list.many .match{{font-size:32px}}.list.many .meta{{font-size:22px}}
 .row{{background:#fff;border:2px solid #d9e2de;border-radius:28px;padding:26px 30px;display:grid;grid-template-columns:1fr auto;gap:6px 20px;align-items:center}}
 .meta{{font:500 24px PT;color:#7b8581}}
 .match{{font:700 36px/1.25 PT;word-break:keep-all}}
@@ -151,14 +152,14 @@ def card_picks(d: str, picks: list[dict], hide: int = 2) -> str:
     hid = _hidden(picks, hide)
     rows = "".join(_locked_row() if i in hid else _row(l, f'<span class="bub">{_e(_bub(l))}</span><span class="pct">{l["p"] * 100:.0f}% · {l["odds"]:.2f}배</span>')
                    for i, l in enumerate(picks))
-    return _page(d, picks, f'<h1>적중 확률 높은 경기</h1><p class="sub">해외 배당 기준 분석 · 배당은 베트맨</p><div class="list">{rows}</div>')
+    return _page(d, picks, f'<h1>적중 확률 높은 경기</h1><p class="sub">해외 배당 기준 분석 · 배당은 베트맨</p><div class="list{" many" if len(picks) >= 5 else ""}">{rows}</div>')
 
 
 def card_upsets(d: str, ups: list[dict], hide: int = 2) -> str:
     hid = _hidden(ups, hide)
     rows = "".join(_locked_row() if i in hid else _row(l, f'<span class="bub">{_e(_bub(l))}</span><span class="odds">{l["odds"]:.2f}</span>')
                    for i, l in enumerate(ups))
-    return _page(d, ups, f'<h1>역배 후보</h1><p class="sub">해외 시장은 열세로 보지만 기록·레이팅이 받쳐주는 팀</p><div class="list">{rows}</div>')
+    return _page(d, ups, f'<h1>역배 후보</h1><p class="sub">해외 시장은 열세로 보지만 기록·레이팅이 받쳐주는 팀</p><div class="list{" many" if len(ups) >= 5 else ""}">{rows}</div>')
 
 
 def card_combo(d: str, title: str, c: dict, hide: int = 2) -> str:
@@ -206,7 +207,7 @@ def _best(cs: list[dict]) -> dict | None:
 
 
 SHOW_MIN = 4  # 적중 확률·역배 카드에 최소한 보이는 경기 수(주인 요청: 한 장에 3~4경기 이상)
-HIDE = 2      # 그 위로 더 있으면 확률이 가장 높은 경기부터 최대 2개를 가린다(사이트에서 공개)
+HIDE = 1      # 그 위로 더 있으면 확률이 가장 높은 경기 1개를 가린다(사이트에서 공개). 2개면 카드가 넘쳐 제목이 머리글과 겹침
 
 
 def build(rep: dict, slot: str = "night", exclude: set[str] | None = None) -> tuple[list[str], list[str]]:
