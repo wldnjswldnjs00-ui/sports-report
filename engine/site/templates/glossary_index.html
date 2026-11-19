@@ -1,0 +1,9 @@
+{% extends "_page.html" %}
+{% block title %}프로토 용어 사전 · 정배·역배·핸디캡·언더오버 뜻 | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}정배, 역배, 승무패, 핸디캡, 언더오버, 배당률, 환급률, 폴더, 단폴 뜻을 베트맨 기록으로 계산한 숫자와 함께 정리했습니다. 매일 자동 갱신.{% endblock %}
+{% block kicker %}프로토 용어{% endblock %}
+{% block h1 %}프로토 용어 사전{% endblock %}
+{% block body %}
+<p class="lede">프로토를 하면서 자주 보는 말을 한 쪽씩 정리했습니다. 숫자는 베트맨 지난 회차 기록으로 매일 다시 계산합니다.</p>
+<dl class="facts-qa">{% for x in all_terms %}<div><dt><a href="/용어/{{ x.slug }}/">{{ x.term }}</a></dt><dd>{{ x.lead }}</dd></div>{% endfor %}</dl>
+{% endblock %}

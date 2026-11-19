@@ -1324,3 +1324,4 @@ h1, h2, h3, .block-head h2 { text-wrap: balance; }
 .vs-hub i { font-style: normal; color: var(--ink-3); font-weight: 500; font-size: 12px; }
 .vs-hub small { color: var(--ink-3); font-weight: 600; font-size: 12px; }
 .ad-cp-frame{display:block;width:100%;max-width:680px;height:140px;border:0;margin:0 auto}
+.tbl-wrap{overflow-x:auto;margin:16px 0}

@@ -116,3 +116,5 @@
 - [x] 리그 검색 이름(nick.LEAGUE): V리그 남자배구(KOVO 남자)·J리그 등 제목·설명에만
 - [x] (2026-11-20) IndexNow 전체 주소(990) 네이버·빙에 보냄(둘 다 200). 이후 7일마다 전체, 평소엔 새 페이지만(state/indexnow.json). 네이버(Yeti)·빙·다음·구글 로봇 모두 200 확인
 - [x] 많이 검색되는 말로 제목 변경: 프로토 계산기(/tool/), 프로토 승부식 하는법(/guide/), 프로토 분석 적중률(/performance/), 프로토 배당 분석(/odds/)
+- [x] (2026-11-20) 프로토 용어 사전 `/용어/` + 10쪽(정배·역배·승무패·핸디캡·언더오버·배당률·환급률·폴더·단폴·프로토 승부식). '○○ 뜻' 검색용, 베트맨 지난 회차 기록으로 리그별 표 매일 재계산(engine/site/glossary.py). DefinedTerm·FAQ 구조화 데이터, 꼬리말·가이드에서 연결, IndexNow 고정 목록에 추가. 참고: GitHub coreyhaines31/marketingskills programmatic-seo 'Glossary' 플레이북
+- 참고: GitHub goenning/google-indexing-script(구글 48시간 색인)는 gsc.py 와 같은 Indexing API 방식이고 공식 지원은 채용·라이브 방송 페이지뿐

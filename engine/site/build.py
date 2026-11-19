@@ -939,6 +939,23 @@ def build() -> None:
         fx = FA.build(_bh.load_all(), perf)
         page("facts.html", "/facts/", facts=fx, min_n=FA.MIN_GAMES,
              jsonld=_jsonld(fx["faq_ld"], _crumbs([("홈", "/"), ("숫자로 보는 리그", "/facts/")])))
+        # 프로토 용어 사전(/용어/): '○○ 뜻' 검색용, 기록 숫자는 매일 다시 계산
+        try:
+            from . import glossary as GL
+            gterms = GL.terms(GL.stats(_bh.load_all()))
+            page("glossary_index.html", "/용어/", all_terms=gterms,
+                 jsonld=_jsonld({"@context": "https://schema.org", "@type": "DefinedTermSet", "name": "프로토 용어 사전", "url": config.SITE_URL + "/용어/",
+                                 "hasDefinedTerm": [{"@type": "DefinedTerm", "name": x["term"], "url": config.SITE_URL + f"/용어/{x['slug']}/"} for x in gterms]},
+                                _crumbs([("홈", "/"), ("프로토 용어", "/용어/")])))
+            for t in gterms:
+                page("glossary.html", f"/용어/{t['slug']}/", t=t, all_terms=gterms,
+                     jsonld=_jsonld({"@context": "https://schema.org", "@type": "DefinedTerm", "name": t["term"], "description": t["lead"][:200],
+                                     "inDefinedTermSet": config.SITE_URL + "/용어/"},
+                                    {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+                                        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in t["faq"]]},
+                                    _crumbs([("홈", "/"), ("프로토 용어", "/용어/"), (t["term"], f"/용어/{t['slug']}/")])))
+        except Exception:  # noqa: BLE001
+            log.exception("용어 사전 실패(다른 페이지는 계속)")
         khl = [{"title": x["title"], "url": f"/knowhow/{x['slug']}/"} for x in (kh or [])]
         (config.DIST / "llms.txt").write_text(FA.llms_txt(config.SITE_URL, config.SITE_NAME, fx, khl), encoding="utf-8")
     except Exception:  # noqa: BLE001

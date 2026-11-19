@@ -1,0 +1,21 @@
+{% extends "_page.html" %}
+{% block title %}{{ t.q }} · {{ t.ran }}? 베트맨 기록으로 본 숫자 | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}{{ t.lead[:150] }}{% endblock %}
+{% block kicker %}프로토 용어{% endblock %}
+{% block h1 %}{{ t.term }} 뜻{% endblock %}
+{% block body %}
+<p class="lede">{{ t.lead }}</p>
+{% for p in t.paras %}<p>{{ p }}</p>{% endfor %}
+{% set head, rows = t.table %}
+{% if rows %}
+<div class="tbl-wrap"><table class="tbl">
+  <thead><tr>{% for h in head %}<th>{{ h }}</th>{% endfor %}</tr></thead>
+  <tbody>{% for r in rows %}<tr>{% for c in r %}<td>{{ c }}</td>{% endfor %}</tr>{% endfor %}</tbody>
+</table></div>
+{% endif %}
+<h2>자주 묻는 질문</h2>
+<dl class="facts-qa">{% for q, a in t.faq %}<div><dt>{{ q }}</dt><dd>{{ a }}</dd></div>{% endfor %}</dl>
+<h2>같이 보면 좋은 것</h2>
+<p class="tm-links">{% for name, u in t.links if not u.startswith('/용어/') %}<a class="chip" href="{{ u }}">{{ name }}</a>{% endfor %}{% for x in all_terms if x.slug != t.slug %}<a class="chip" href="/용어/{{ x.slug }}/">{{ x.term }}</a>{% endfor %}</p>
+<p class="fine">베트맨 지난 회차 공식 결과와 베트맨 배당으로 매일 다시 계산합니다. 경기 수가 적은 리그는 넣지 않습니다.</p>
+{% endblock %}
