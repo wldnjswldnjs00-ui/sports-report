@@ -1,6 +1,7 @@
 {
  "betman_fails": 0,
  "threads_first": "2026-11-17",
- "site_expect": "2026-11-19",
- "weird": 0
+ "site_expect": "2026-11-20",
+ "weird": 0,
+ "idle_since": "2026-11-20T00:25+09:00"
 }
