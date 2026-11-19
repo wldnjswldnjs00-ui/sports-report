@@ -205,6 +205,10 @@ def _best(cs: list[dict]) -> dict | None:
     return max(live, key=lambda c: c.get("joint_p", 0)) if live else None
 
 
+SHOW_MIN = 4  # 적중 확률·역배 카드에 최소한 보이는 경기 수(주인 요청: 한 장에 3~4경기 이상)
+HIDE = 2      # 그 위로 더 있으면 확률이 가장 높은 경기부터 최대 2개를 가린다(사이트에서 공개)
+
+
 def build(rep: dict, slot: str = "night", exclude: set[str] | None = None) -> tuple[list[str], list[str]]:
     """(카드 HTML 목록, 쓴 경기 키). 아침에는 밤에 쓴 경기·조합을 피한다."""
     used = set(exclude or ())
@@ -212,7 +216,8 @@ def build(rep: dict, slot: str = "night", exclude: set[str] | None = None) -> tu
     out: list[str] = []
     shown: list[str] = []
 
-    def take(pool, n):
+    def take(pool, n, need=SHOW_MIN):
+        """pool 에서 n 개. 아침에 밤 경기를 빼고 나니 보이는 경기가 need 개보다 적으면, 밤에 쓴 경기도 다시 써서 채운다."""
         res = []
         for l in pool:
             k = _key(l)
@@ -223,18 +228,32 @@ def build(rep: dict, slot: str = "night", exclude: set[str] | None = None) -> tu
             res.append(l)
             if len(res) >= n:
                 break
+        if len(res) < need + HIDE:
+            for l in pool:
+                k = _key(l)
+                if l in res or k in {_key(x) for x in res}:
+                    continue
+                res.append(l)
+                if k not in shown:
+                    shown.append(k)
+                if len(res) >= need + HIDE:
+                    break
         return res
+
+    def hide_n(items):
+        """보이는 경기를 최소 SHOW_MIN 개 남기고, 남는 만큼만(최대 HIDE개) 가린다."""
+        return max(0, min(HIDE, len(items) - SHOW_MIN))
 
     out.append(card_cover(d, rep, slot))
     tops = list(rep.get("top_picks") or [])
     if slot == "morning":
         tops = sorted(tops + list(rep.get("handi_picks") or []) + list(rep.get("ou_picks") or []), key=lambda l: -l["p"])
-    picks = take(tops, 4)
+    picks = take(tops, SHOW_MIN + HIDE)
     if picks:
-        out.append(card_picks(d, picks, 2))
-    ups = take(list(rep.get("upsets") or []), 4)
+        out.append(card_picks(d, picks, hide_n(picks)))
+    ups = take(list(rep.get("upsets") or []), SHOW_MIN + HIDE)
     if ups:
-        out.append(card_upsets(d, ups, 2))
+        out.append(card_upsets(d, ups, hide_n(ups)))
     for key, title in (("aggressive", "공격형 조합"), ("lotto", "로또폴더")):
         cs = list((rep.get("combos") or {}).get(key) or [])
         # 아침에는 밤에 올린 조합과 경기가 덜 겹치는 조합을 고른다
