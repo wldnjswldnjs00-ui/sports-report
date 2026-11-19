@@ -373,11 +373,17 @@ def _fetch(day: str) -> list[dict[str, Any]]:
         if rounds:
             write_json(ROUNDS_STATE, {"rounds": sorted({str(g["gmTs"]) for g in rounds}), "at": config.now_kst().isoformat(timespec="seconds")})
     if not rounds:
+        # 발매 목록이 비어 있어도(새벽 판매 중지·회차 사이) 회차 번호로 직접 조회하면 경기·배당을 받을 수 있다
+        rounds = _guess_rounds()
+        if rounds:
+            log.info("발매 목록 비어 있음 → 회차 번호로 직접 조회: %s", [g["gmTs"] for g in rounds])
+    if not rounds:
         ok = bool(listing) and str(((listing.get("rsMsg") or {}).get("statusCode")) or "S") == "S"
         raise (NoSale if ok else RuntimeError)("발매 중인 프로토 승부식 회차 없음")
 
     out: list[dict[str, Any]] = []
     PENDING.clear()
+    found: list[str] = []
     for g in sorted(rounds, key=lambda g: str(g['gmTs']))[:6]:
         ts = str(g["gmTs"])
         year = str(g.get("gmOsidTsYear") or ("20" + ts[:2]))
@@ -385,13 +391,24 @@ def _fetch(day: str) -> list[dict[str, Any]]:
         time.sleep(1.5)
         http("GET", slip)
         time.sleep(1.5)
-        r = http("POST", GAME_URL, json={"gmId": GM_ID, "gmTs": int(ts), "gameYear": year, "_sbmInfo": {"debugMode": "false"}},
-                 headers={**ajax, "Referer": slip})
-        _snap(f"game_{ts}", r)
-        doc = _json(r)
-        _schema_note(doc)
-        out.extend(parse_round(doc, ts))
+        try:
+            r = http("POST", GAME_URL, json={"gmId": GM_ID, "gmTs": int(ts), "gameYear": year, "_sbmInfo": {"debugMode": "false"}},
+                     headers={**ajax, "Referer": slip})
+            _snap(f"game_{ts}", r)
+            doc = _json(r)
+            _schema_note(doc)
+            got = parse_round(doc, ts)
+        except Exception as e:  # noqa: BLE001  아직 없는 회차 번호 등: 그 회차만 건너뜀
+            log.info("회차 %s 조회 건너뜀: %s", ts, type(e).__name__)
+            continue
+        out.extend(got)
         PENDING.extend(parse_pending(doc))
+        if got:
+            found.append(ts)
+    if found:
+        st_r = read_json(ROUNDS_STATE, {}) or {}
+        write_json(ROUNDS_STATE, {"rounds": sorted(set(st_r.get("rounds") or []) | set(found)),
+                                  "at": config.now_kst().isoformat(timespec="seconds")})
     if not out:
         raise NoSale("발매 회차는 있으나 배당이 공개된 경기가 없음(발매 시작 전)")
     return [m for m in out if in_horizon(m["kickoff"], day)]
