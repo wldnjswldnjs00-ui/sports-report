@@ -2,14 +2,16 @@ name: 정기 실행 지킴이
 
 # Cloudflare 예약 실행이 빠졌을 때 GitHub 가 스스로 대신 돌린다(사람 손 없이).
 #  - 누락 경고 이슈가 열리면(Worker 가 40분 동안 실행이 안 생겼을 때 엶) 바로 그 시각의 작업을 시작하고 이슈를 닫는다.
-#  - GitHub 자체 예약으로도 30분마다 확인한다(Cloudflare 와 독립된 두 번째 시계).
+#  - GitHub 자체 예약으로도 정해진 시각 45분쯤 뒤에 한 번 확인한다(Cloudflare 와 독립된 두 번째 시계).
 #  - 이미 실행됐으면 아무것도 하지 않는다 → 여러 경로가 겹쳐도 한 번만 돈다.
 # GITHUB_TOKEN 만 쓴다(Cloudflare 의 GH_TOKEN 이 만료돼도 이 경로는 동작). workflow_dispatch 는 GITHUB_TOKEN 으로도 새 실행이 생긴다.
 on:
   issues:
     types: [opened]
+  # 비공개 저장소는 GitHub Actions 무료 시간이 월 2,000분이라, 정해진 시각 45분쯤 뒤에만 확인한다(하루 10번, 1분씩).
   schedule:
-    - cron: "17,47 * * * *"
+    - cron: "48 2,4,6,9,10,13,14,21,22 * * *"
+    - cron: "17 1 * * *"
   workflow_dispatch:
 
 permissions:

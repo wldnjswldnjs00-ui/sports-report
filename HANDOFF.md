@@ -5,7 +5,7 @@
 
 ## 프로젝트 한 줄 요약
 스포츠분석.kr — 베트맨 프로토 승부식 분석 사이트. Python 엔진(`engine/`)이 정적 사이트(`dist/`)를 만들고 Cloudflare Workers 로 배포.
-정해진 시각 실행: Cloudflare Worker 예약(`cron/worker.js`, 5분마다 확인) + GitHub 예비 시계(`.github/workflows/clock.yml`) + 지킴이(`watchdog.yml`).
+정해진 시각 실행: Cloudflare Worker 예약(`cron/worker.js`, 5분마다 확인) + 지킴이(`watchdog.yml`, 정해진 시각 45분 뒤 확인). ※ GitHub 예비 시계(clock.yml)는 2026-11-19 삭제: 저장소가 비공개라 Actions 무료 시간(월 2,000분)을 하루 만에 다 써서 모든 실행이 멈췄음. 6시간씩 도는 워크플로를 다시 만들지 말 것.
 매일 분석: `.github/workflows/daily.yml` (SLOT 별로 수집·분석·채점·쓰레드 게시). 상태 확인: https://스포츠분석.kr/api/status
 
 ## 지금 진행 중인 일: '노하우' 섹션 (상단 메뉴)
@@ -57,7 +57,7 @@
    노하우 글의 배당 이야기는 베트맨 배당 기준이 맞다(사이트 규칙: 분석은 해외 배당, 화면 표시는 베트맨). 글에 '베트맨 배당 기준'을 분명히 적는 정도만.
 3. [x] (완료: `threads.post_knowhow`, 슬롯 "30 3 * * *"·예비 "0 4 * * *", 주간 리포트 `engine/site/knowhow_weekly.py` → `data/knowhow_weekly/`) **쓰레드 노하우 글 게시**: 하루 한 편, 낮 12:30 KST(03:30 UTC) 새 시간대. 노하우 글을 한 편씩 돌아가며(게시 기록 `data/state/threads.json` 의 kh 목록),
    다 올리면 **기간형 새 글**(최근 7일·30일 리그별 이변·정배·언더오버 등, 기간이 바뀌면 내용이 새로 바뀜)을 자동 생성해 사이트 노하우에도 추가하고 그걸 올린다.
-   시간대 추가 시 `cron/worker.js` SCHEDULE, `.github/workflows/clock.yml`, `watchdog.yml`, `daily.yml` 조건 모두 같이 고칠 것.
+   시간대 추가 시 `cron/worker.js` SCHEDULE, `watchdog.yml`(SCHEDULE·LATE·cron), `daily.yml` 조건 모두 같이 고칠 것.
 - [x] 빅매치 기준의 배당 변동은 고정 8%가 아니라 그날 경기들 중 변동 상위 15%(최소 4%)로 매 빌드 계산(`build._set_move_cut`)
 - [x] 경기 페이지 제목에 베트맨 회차와 날짜: "… 분석 예상 119:109 · 프로토 승부식 137회차 11월 19일 · NBA"
 
