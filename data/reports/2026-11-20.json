@@ -6,8 +6,8 @@
  "calibration_alpha": 0.04,
  "demo": false,
  "sources": {
-  "betman": "30개 수집",
-  "odds_api": "12개 매칭",
+  "betman": "실패: ConnectionError",
+  "odds_api": "0개 매칭",
   "form": "30개 마켓",
   "bbook": "18개 마켓",
   "selfcheck": {
@@ -9046,7 +9046,8 @@
       "xo": 1.13,
       "upset_risk": 11,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4637",
@@ -9072,7 +9073,8 @@
       "xo": 1.45,
       "upset_risk": 31,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 2,
@@ -9086,7 +9088,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4637:H+betman:G101:260137:4649:H",
     "strategy": "safe",
-    "rank": 1
+    "rank": 1,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -9114,7 +9118,8 @@
       "xo": 1.13,
       "upset_risk": 11,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4669",
@@ -9140,7 +9145,8 @@
       "xo": 1.34,
       "upset_risk": 24,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 2,
@@ -9154,7 +9160,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4649:H+betman:G101:260137:4669:H",
     "strategy": "safe",
-    "rank": 2
+    "rank": 2,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -9182,7 +9190,8 @@
       "xo": 1.25,
       "upset_risk": 20,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4637",
@@ -9208,7 +9217,8 @@
       "xo": 1.45,
       "upset_risk": 31,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 2,
@@ -9222,7 +9232,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4637:H+betman:G101:260137:4641:A",
     "strategy": "safe",
-    "rank": 3
+    "rank": 3,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -9250,7 +9262,8 @@
       "xo": 1.25,
       "upset_risk": 20,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4669",
@@ -9276,7 +9289,8 @@
       "xo": 1.34,
       "upset_risk": 24,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 2,
@@ -9290,7 +9304,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4641:A+betman:G101:260137:4669:H",
     "strategy": "safe",
-    "rank": 4
+    "rank": 4,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -9318,7 +9334,8 @@
       "xo": 1.25,
       "upset_risk": 20,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4661",
@@ -9344,7 +9361,8 @@
       "xo": 1.44,
       "upset_risk": 29,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 2,
@@ -9358,7 +9376,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4641:A+betman:G101:260137:4661:H",
     "strategy": "safe",
-    "rank": 5
+    "rank": 5,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -9386,7 +9406,8 @@
       "xo": 1.34,
       "upset_risk": 24,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4637",
@@ -9412,7 +9433,8 @@
       "xo": 1.45,
       "upset_risk": 31,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 2,
@@ -9426,7 +9448,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4637:H+betman:G101:260137:4669:H",
     "strategy": "safe",
-    "rank": 6
+    "rank": 6,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -9454,7 +9478,8 @@
       "xo": 1.45,
       "upset_risk": 31,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4661",
@@ -9480,7 +9505,8 @@
       "xo": 1.44,
       "upset_risk": 29,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 2,
@@ -9494,7 +9520,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4637:H+betman:G101:260137:4661:H",
     "strategy": "safe",
-    "rank": 7
+    "rank": 7,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -9522,7 +9550,8 @@
       "xo": 1.34,
       "upset_risk": 24,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4661",
@@ -9548,7 +9577,8 @@
       "xo": 1.44,
       "upset_risk": 29,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 2,
@@ -9562,7 +9592,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4661:H+betman:G101:260137:4669:H",
     "strategy": "safe",
-    "rank": 8
+    "rank": 8,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -9590,7 +9622,8 @@
       "xo": 1.44,
       "upset_risk": 29,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4665",
@@ -9616,7 +9649,8 @@
       "xo": 1.45,
       "upset_risk": 30,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 2,
@@ -9630,7 +9664,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4661:H+betman:G101:260137:4665:H",
     "strategy": "safe",
-    "rank": 9
+    "rank": 9,
+    "result": "pending",
+    "return": null
    }
   ],
   "single": [
@@ -9660,7 +9696,8 @@
       "xo": 1.51,
       "upset_risk": 38,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 1,
@@ -9674,7 +9711,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4634:A",
     "strategy": "single",
-    "rank": 1
+    "rank": 1,
+    "result": "pending",
+    "return": null
    }
   ],
   "balanced": [
@@ -9704,7 +9743,8 @@
       "xo": 1.88,
       "upset_risk": 44,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4665",
@@ -9730,7 +9770,8 @@
       "xo": 1.45,
       "upset_risk": 30,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 2,
@@ -9744,7 +9785,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4650:A+betman:G101:260137:4665:H",
     "strategy": "balanced",
-    "rank": 1
+    "rank": 1,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -9772,7 +9815,8 @@
       "xo": 1.88,
       "upset_risk": 44,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4634",
@@ -9798,7 +9842,8 @@
       "xo": 1.51,
       "upset_risk": 38,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 2,
@@ -9812,7 +9857,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4634:A+betman:G101:260137:4650:A",
     "strategy": "balanced",
-    "rank": 2
+    "rank": 2,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -9840,7 +9887,8 @@
       "xo": 1.45,
       "upset_risk": 30,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4637",
@@ -9866,7 +9914,8 @@
       "xo": 1.45,
       "upset_risk": 31,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4659",
@@ -9892,7 +9941,8 @@
       "xo": 1.56,
       "upset_risk": 43,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 3,
@@ -9906,7 +9956,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4637:H+betman:G101:260137:4659:U+betman:G101:260137:4665:H",
     "strategy": "balanced",
-    "rank": 3
+    "rank": 3,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -9934,7 +9986,8 @@
       "xo": 1.34,
       "upset_risk": 24,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4641",
@@ -9960,7 +10013,8 @@
       "xo": 1.25,
       "upset_risk": 20,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4661",
@@ -9986,7 +10040,8 @@
       "xo": 1.44,
       "upset_risk": 29,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4655",
@@ -10012,7 +10067,8 @@
       "xo": 1.48,
       "upset_risk": 39,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 4,
@@ -10026,7 +10082,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4641:A+betman:G101:260137:4655:U+betman:G101:260137:4661:H+betman:G101:260137:4669:H",
     "strategy": "balanced",
-    "rank": 4
+    "rank": 4,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -10054,7 +10112,8 @@
       "xo": 1.48,
       "upset_risk": 39,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4634",
@@ -10080,7 +10139,8 @@
       "xo": 1.51,
       "upset_risk": 38,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4659",
@@ -10106,7 +10166,8 @@
       "xo": 1.56,
       "upset_risk": 43,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 3,
@@ -10120,7 +10181,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4634:A+betman:G101:260137:4655:U+betman:G101:260137:4659:U",
     "strategy": "balanced",
-    "rank": 5
+    "rank": 5,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -10148,7 +10211,8 @@
       "xo": 1.88,
       "upset_risk": 44,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4669",
@@ -10174,7 +10238,8 @@
       "xo": 1.34,
       "upset_risk": 24,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4659",
@@ -10200,7 +10265,8 @@
       "xo": 1.56,
       "upset_risk": 43,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 3,
@@ -10214,7 +10280,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4650:A+betman:G101:260137:4659:U+betman:G101:260137:4669:H",
     "strategy": "balanced",
-    "rank": 6
+    "rank": 6,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -10242,7 +10310,8 @@
       "xo": 1.44,
       "upset_risk": 29,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4665",
@@ -10268,7 +10337,8 @@
       "xo": 1.45,
       "upset_risk": 30,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4637",
@@ -10294,7 +10364,8 @@
       "xo": 1.45,
       "upset_risk": 31,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4634",
@@ -10320,7 +10391,8 @@
       "xo": 1.51,
       "upset_risk": 38,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 4,
@@ -10334,7 +10406,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4634:A+betman:G101:260137:4637:H+betman:G101:260137:4661:H+betman:G101:260137:4665:H",
     "strategy": "balanced",
-    "rank": 7
+    "rank": 7,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -10362,7 +10436,8 @@
       "xo": 1.88,
       "upset_risk": 44,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4669",
@@ -10388,7 +10463,8 @@
       "xo": 1.34,
       "upset_risk": 24,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4661",
@@ -10414,7 +10490,8 @@
       "xo": 1.44,
       "upset_risk": 29,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4637",
@@ -10440,7 +10517,8 @@
       "xo": 1.45,
       "upset_risk": 31,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 4,
@@ -10454,7 +10532,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4637:H+betman:G101:260137:4650:A+betman:G101:260137:4661:H+betman:G101:260137:4669:H",
     "strategy": "balanced",
-    "rank": 8
+    "rank": 8,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -10482,7 +10562,8 @@
       "xo": 1.34,
       "upset_risk": 24,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4665",
@@ -10508,7 +10589,8 @@
       "xo": 1.45,
       "upset_risk": 30,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4634",
@@ -10534,7 +10616,8 @@
       "xo": 1.51,
       "upset_risk": 38,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4659",
@@ -10560,7 +10643,8 @@
       "xo": 1.56,
       "upset_risk": 43,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 4,
@@ -10574,7 +10658,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4634:A+betman:G101:260137:4659:U+betman:G101:260137:4665:H+betman:G101:260137:4669:H",
     "strategy": "balanced",
-    "rank": 9
+    "rank": 9,
+    "result": "pending",
+    "return": null
    }
   ],
   "aggressive": [
@@ -10604,7 +10690,8 @@
       "xo": 1.88,
       "upset_risk": 44,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4634",
@@ -10630,7 +10717,8 @@
       "xo": 1.51,
       "upset_risk": 38,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4659",
@@ -10656,7 +10744,8 @@
       "xo": 1.56,
       "upset_risk": 43,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4671",
@@ -10682,7 +10771,8 @@
       "xo": 1.68,
       "upset_risk": 48,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 4,
@@ -10696,7 +10786,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4634:A+betman:G101:260137:4650:A+betman:G101:260137:4659:U+betman:G101:260137:4671:O",
     "strategy": "aggressive",
-    "rank": 1
+    "rank": 1,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -10724,7 +10816,8 @@
       "xo": 1.88,
       "upset_risk": 44,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4665",
@@ -10750,7 +10843,8 @@
       "xo": 1.45,
       "upset_risk": 30,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4642",
@@ -10776,7 +10870,8 @@
       "xo": 2.2,
       "upset_risk": 46,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4647",
@@ -10802,7 +10897,8 @@
       "xo": 2.02,
       "upset_risk": 50,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 4,
@@ -10816,7 +10912,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4642:H+betman:G101:260137:4647:U+betman:G101:260137:4650:A+betman:G101:260137:4665:H",
     "strategy": "aggressive",
-    "rank": 2
+    "rank": 2,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -10844,7 +10942,8 @@
       "xo": 1.88,
       "upset_risk": 44,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4638",
@@ -10870,7 +10969,8 @@
       "xo": 1.9,
       "upset_risk": 46,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4642",
@@ -10896,7 +10996,8 @@
       "xo": 2.2,
       "upset_risk": 46,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4659",
@@ -10922,7 +11023,8 @@
       "xo": 1.56,
       "upset_risk": 43,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 4,
@@ -10936,7 +11038,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4638:A+betman:G101:260137:4642:H+betman:G101:260137:4650:A+betman:G101:260137:4659:U",
     "strategy": "aggressive",
-    "rank": 3
+    "rank": 3,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -10964,7 +11068,8 @@
       "xo": 1.88,
       "upset_risk": 44,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4638",
@@ -10990,7 +11095,8 @@
       "xo": 1.9,
       "upset_risk": 46,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4671",
@@ -11016,7 +11122,8 @@
       "xo": 1.68,
       "upset_risk": 48,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4647",
@@ -11042,7 +11149,8 @@
       "xo": 2.02,
       "upset_risk": 50,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 4,
@@ -11056,7 +11164,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4638:A+betman:G101:260137:4647:U+betman:G101:260137:4650:A+betman:G101:260137:4671:O",
     "strategy": "aggressive",
-    "rank": 4
+    "rank": 4,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -11084,7 +11194,8 @@
       "xo": 1.9,
       "upset_risk": 46,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4665",
@@ -11110,7 +11221,8 @@
       "xo": 1.45,
       "upset_risk": 30,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4634",
@@ -11136,7 +11248,8 @@
       "xo": 1.51,
       "upset_risk": 38,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4659",
@@ -11162,7 +11275,8 @@
       "xo": 1.56,
       "upset_risk": 43,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4663",
@@ -11188,7 +11302,8 @@
       "xo": 1.65,
       "upset_risk": 47,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 5,
@@ -11202,7 +11317,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4634:A+betman:G101:260137:4638:A+betman:G101:260137:4659:U+betman:G101:260137:4663:O+betman:G101:260137:4665:H",
     "strategy": "aggressive",
-    "rank": 5
+    "rank": 5,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -11230,7 +11347,8 @@
       "xo": 1.48,
       "upset_risk": 39,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4634",
@@ -11256,7 +11374,8 @@
       "xo": 1.51,
       "upset_risk": 38,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4642",
@@ -11282,7 +11401,8 @@
       "xo": 2.2,
       "upset_risk": 46,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4659",
@@ -11308,7 +11428,8 @@
       "xo": 1.56,
       "upset_risk": 43,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4647",
@@ -11334,7 +11455,8 @@
       "xo": 2.02,
       "upset_risk": 50,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 5,
@@ -11348,7 +11470,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4634:A+betman:G101:260137:4642:H+betman:G101:260137:4647:U+betman:G101:260137:4655:U+betman:G101:260137:4659:U",
     "strategy": "aggressive",
-    "rank": 6
+    "rank": 6,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -11376,7 +11500,8 @@
       "xo": 1.9,
       "upset_risk": 46,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4634",
@@ -11402,7 +11527,8 @@
       "xo": 1.51,
       "upset_risk": 38,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4642",
@@ -11428,7 +11554,8 @@
       "xo": 2.2,
       "upset_risk": 46,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4663",
@@ -11454,7 +11581,8 @@
       "xo": 1.65,
       "upset_risk": 47,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4647",
@@ -11480,7 +11608,8 @@
       "xo": 2.02,
       "upset_risk": 50,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 5,
@@ -11494,7 +11623,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4634:A+betman:G101:260137:4638:A+betman:G101:260137:4642:H+betman:G101:260137:4647:U+betman:G101:260137:4663:O",
     "strategy": "aggressive",
-    "rank": 7
+    "rank": 7,
+    "result": "pending",
+    "return": null
    }
   ],
   "upset": [
@@ -11524,7 +11655,8 @@
       "xo": 2.04,
       "upset_risk": 49,
       "single": true,
-      "dog": true
+      "dog": true,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4633",
@@ -11550,7 +11682,8 @@
       "xo": 2.35,
       "upset_risk": 57,
       "single": true,
-      "dog": true
+      "dog": true,
+      "result": null
      }
     ],
     "size": 2,
@@ -11564,7 +11697,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4633:A+betman:G101:260137:4645:H",
     "strategy": "upset",
-    "rank": 1
+    "rank": 1,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -11592,7 +11727,8 @@
       "xo": 2.04,
       "upset_risk": 49,
       "single": true,
-      "dog": true
+      "dog": true,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4653",
@@ -11618,7 +11754,8 @@
       "xo": 3.1,
       "upset_risk": 52,
       "single": true,
-      "dog": true
+      "dog": true,
+      "result": null
      }
     ],
     "size": 2,
@@ -11632,7 +11769,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4645:H+betman:G101:260137:4653:A",
     "strategy": "upset",
-    "rank": 2
+    "rank": 2,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -11660,7 +11799,8 @@
       "xo": 4.8,
       "upset_risk": 20,
       "single": false,
-      "dog": true
+      "dog": true,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4645",
@@ -11686,7 +11826,8 @@
       "xo": 2.04,
       "upset_risk": 49,
       "single": true,
-      "dog": true
+      "dog": true,
+      "result": null
      }
     ],
     "size": 2,
@@ -11700,7 +11841,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4641:H+betman:G101:260137:4645:H",
     "strategy": "upset",
-    "rank": 3
+    "rank": 3,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -11728,7 +11871,8 @@
       "xo": 2.35,
       "upset_risk": 57,
       "single": true,
-      "dog": true
+      "dog": true,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4653",
@@ -11754,7 +11898,8 @@
       "xo": 3.1,
       "upset_risk": 52,
       "single": true,
-      "dog": true
+      "dog": true,
+      "result": null
      }
     ],
     "size": 2,
@@ -11768,7 +11913,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4633:A+betman:G101:260137:4653:A",
     "strategy": "upset",
-    "rank": 4
+    "rank": 4,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -11796,7 +11943,8 @@
       "xo": 4.8,
       "upset_risk": 20,
       "single": false,
-      "dog": true
+      "dog": true,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4633",
@@ -11822,7 +11970,8 @@
       "xo": 2.35,
       "upset_risk": 57,
       "single": true,
-      "dog": true
+      "dog": true,
+      "result": null
      }
     ],
     "size": 2,
@@ -11836,7 +11985,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4633:A+betman:G101:260137:4641:H",
     "strategy": "upset",
-    "rank": 5
+    "rank": 5,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -11864,7 +12015,8 @@
       "xo": 4.8,
       "upset_risk": 20,
       "single": false,
-      "dog": true
+      "dog": true,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4637",
@@ -11890,7 +12042,8 @@
       "xo": 3.15,
       "upset_risk": 31,
       "single": true,
-      "dog": true
+      "dog": true,
+      "result": null
      }
     ],
     "size": 2,
@@ -11904,7 +12057,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4637:A+betman:G101:260137:4641:H",
     "strategy": "upset",
-    "rank": 6
+    "rank": 6,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -11932,7 +12087,8 @@
       "xo": 3.1,
       "upset_risk": 52,
       "single": true,
-      "dog": true
+      "dog": true,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4657",
@@ -11958,7 +12114,8 @@
       "xo": 3.9,
       "upset_risk": 40,
       "single": false,
-      "dog": true
+      "dog": true,
+      "result": null
      }
     ],
     "size": 2,
@@ -11972,7 +12129,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4653:A+betman:G101:260137:4657:A",
     "strategy": "upset",
-    "rank": 7
+    "rank": 7,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -12000,7 +12159,8 @@
       "xo": 4.8,
       "upset_risk": 20,
       "single": false,
-      "dog": true
+      "dog": true,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4657",
@@ -12026,7 +12186,8 @@
       "xo": 3.9,
       "upset_risk": 40,
       "single": false,
-      "dog": true
+      "dog": true,
+      "result": null
      }
     ],
     "size": 2,
@@ -12040,7 +12201,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4641:H+betman:G101:260137:4657:A",
     "strategy": "upset",
-    "rank": 8
+    "rank": 8,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -12068,7 +12231,8 @@
       "xo": 2.04,
       "upset_risk": 49,
       "single": true,
-      "dog": true
+      "dog": true,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4637",
@@ -12094,7 +12258,8 @@
       "xo": 3.15,
       "upset_risk": 31,
       "single": true,
-      "dog": true
+      "dog": true,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4657",
@@ -12120,7 +12285,8 @@
       "xo": 3.9,
       "upset_risk": 40,
       "single": false,
-      "dog": true
+      "dog": true,
+      "result": null
      }
     ],
     "size": 3,
@@ -12134,7 +12300,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4637:A+betman:G101:260137:4645:H+betman:G101:260137:4657:A",
     "strategy": "upset",
-    "rank": 9
+    "rank": 9,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -12162,7 +12330,8 @@
       "xo": 3.15,
       "upset_risk": 31,
       "single": true,
-      "dog": true
+      "dog": true,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4633",
@@ -12188,7 +12357,8 @@
       "xo": 2.35,
       "upset_risk": 57,
       "single": true,
-      "dog": true
+      "dog": true,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4657",
@@ -12214,7 +12384,8 @@
       "xo": 3.9,
       "upset_risk": 40,
       "single": false,
-      "dog": true
+      "dog": true,
+      "result": null
      }
     ],
     "size": 3,
@@ -12228,7 +12399,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4633:A+betman:G101:260137:4637:A+betman:G101:260137:4657:A",
     "strategy": "upset",
-    "rank": 10
+    "rank": 10,
+    "result": "pending",
+    "return": null
    }
   ],
   "lotto": [
@@ -12258,7 +12431,8 @@
       "xo": 1.88,
       "upset_risk": 44,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4665",
@@ -12284,7 +12458,8 @@
       "xo": 1.45,
       "upset_risk": 30,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4641",
@@ -12310,7 +12485,8 @@
       "xo": 4.8,
       "upset_risk": 20,
       "single": false,
-      "dog": true
+      "dog": true,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4634",
@@ -12336,7 +12512,8 @@
       "xo": 1.51,
       "upset_risk": 38,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4659",
@@ -12362,7 +12539,8 @@
       "xo": 1.56,
       "upset_risk": 43,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4647",
@@ -12388,7 +12566,8 @@
       "xo": 2.02,
       "upset_risk": 50,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 6,
@@ -12402,7 +12581,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4634:A+betman:G101:260137:4641:H+betman:G101:260137:4647:U+betman:G101:260137:4650:A+betman:G101:260137:4659:U+betman:G101:260137:4665:H",
     "strategy": "lotto",
-    "rank": 1
+    "rank": 1,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -12430,7 +12611,8 @@
       "xo": 1.88,
       "upset_risk": 44,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4638",
@@ -12456,7 +12638,8 @@
       "xo": 1.9,
       "upset_risk": 46,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4665",
@@ -12482,7 +12665,8 @@
       "xo": 1.45,
       "upset_risk": 30,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4641",
@@ -12508,7 +12692,8 @@
       "xo": 4.8,
       "upset_risk": 20,
       "single": false,
-      "dog": true
+      "dog": true,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4655",
@@ -12534,7 +12719,8 @@
       "xo": 1.48,
       "upset_risk": 39,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4647",
@@ -12560,7 +12746,8 @@
       "xo": 2.02,
       "upset_risk": 50,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 6,
@@ -12574,7 +12761,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4638:A+betman:G101:260137:4641:H+betman:G101:260137:4647:U+betman:G101:260137:4650:A+betman:G101:260137:4655:U+betman:G101:260137:4665:H",
     "strategy": "lotto",
-    "rank": 2
+    "rank": 2,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -12602,7 +12791,8 @@
       "xo": 1.88,
       "upset_risk": 44,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4638",
@@ -12628,7 +12818,8 @@
       "xo": 1.9,
       "upset_risk": 46,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4641",
@@ -12654,7 +12845,8 @@
       "xo": 4.8,
       "upset_risk": 20,
       "single": false,
-      "dog": true
+      "dog": true,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4659",
@@ -12680,7 +12872,8 @@
       "xo": 1.56,
       "upset_risk": 43,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4663",
@@ -12706,7 +12899,8 @@
       "xo": 1.65,
       "upset_risk": 47,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4647",
@@ -12732,7 +12926,8 @@
       "xo": 2.02,
       "upset_risk": 50,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4671",
@@ -12758,7 +12953,8 @@
       "xo": 1.68,
       "upset_risk": 48,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 7,
@@ -12772,7 +12968,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4638:A+betman:G101:260137:4641:H+betman:G101:260137:4647:U+betman:G101:260137:4650:A+betman:G101:260137:4659:U+betman:G101:260137:4663:O+betman:G101:260137:4671:O",
     "strategy": "lotto",
-    "rank": 3
+    "rank": 3,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -12800,7 +12998,8 @@
       "xo": 1.9,
       "upset_risk": 46,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4665",
@@ -12826,7 +13025,8 @@
       "xo": 1.45,
       "upset_risk": 30,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4641",
@@ -12852,7 +13052,8 @@
       "xo": 4.8,
       "upset_risk": 20,
       "single": false,
-      "dog": true
+      "dog": true,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4655",
@@ -12878,7 +13079,8 @@
       "xo": 1.48,
       "upset_risk": 39,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4634",
@@ -12904,7 +13106,8 @@
       "xo": 1.51,
       "upset_risk": 38,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4659",
@@ -12930,7 +13133,8 @@
       "xo": 1.56,
       "upset_risk": 43,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4663",
@@ -12956,7 +13160,8 @@
       "xo": 1.65,
       "upset_risk": 47,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260137:4671",
@@ -12982,7 +13187,8 @@
       "xo": 1.68,
       "upset_risk": 48,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 8,
@@ -12996,7 +13202,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260137:4634:A+betman:G101:260137:4638:A+betman:G101:260137:4641:H+betman:G101:260137:4655:U+betman:G101:260137:4659:U+betman:G101:260137:4663:O+betman:G101:260137:4665:H+betman:G101:260137:4671:O",
     "strategy": "lotto",
-    "rank": 4
+    "rank": 4,
+    "result": "pending",
+    "return": null
    }
   ]
  },
@@ -13026,7 +13234,8 @@
    "upset_risk": 44,
    "single": false,
    "dog": false,
-   "kelly": 0.0019
+   "kelly": 0.0019,
+   "result": null
   }
  ],
  "upsets": [
@@ -14249,5 +14458,6 @@
   "combos": 40
  },
  "outcomes": {},
- "headline": "오늘 10경기 분석 완료. 가장 단단한 선택은 포틀랜드 트레일블레이저스 원정승, 추정 78%."
+ "headline": "오늘 10경기 분석 완료. 가장 단단한 선택은 포틀랜드 트레일블레이저스 원정승, 추정 78%.",
+ "last_attempt": "2026-11-20T00:35:27+09:00"
 }
