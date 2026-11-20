@@ -18,7 +18,7 @@ STAKE = 10_000  # 예시 금액(원)
 
 STRATEGIES = {
     "safe": {
-        "label": "안정형", "sizes": (2, 3), "min_leg_p": 0.66, "min_conf": 50,
+        "label": "안정형", "sizes": (2, 3), "min_leg_p": 0.66, "min_conf": 50, "min_leg_odds": 1.12,
         "odds_range": (1.2, 3.5), "min_joint": 0.40, "top": 10, "pool": 16,
         "desc": "확률이 높은 경기만 2~3개 묶습니다.",
     },
@@ -28,7 +28,7 @@ STRATEGIES = {
         "desc": "베트맨에서 한 경기만 살 수 있는 경기 중, 확률 55% 이상이고 배당 1.5배 이상인 선택입니다. 승패·핸디캡·언오버 모두 봅니다.",
     },
     "balanced": {
-        "label": "밸런스형", "sizes": (2, 3, 4), "min_leg_p": 0.55, "min_conf": 40,
+        "label": "밸런스형", "sizes": (2, 3, 4), "min_leg_p": 0.55, "min_conf": 40, "min_leg_odds": 1.3,
         "odds_range": (2.5, 8.0), "min_joint": 0.10, "top": 12, "pool": 18,
         "desc": "적중 가능성과 배당의 균형을 맞춘 3~4경기 조합입니다.",
     },
@@ -144,6 +144,12 @@ def _overlap(a: dict, b: dict) -> float:
 def strategy_combos(legs: list[dict[str, Any]], name: str, used_all: dict[str, int] | None = None) -> list[dict[str, Any]]:
     cfg = STRATEGIES[name]
     pool = [l for l in legs if l["p"] >= cfg["min_leg_p"] and l["confidence"] >= cfg["min_conf"]]
+    # 조합 배당 범위에 닿을 수 있는 경기만 후보로(1.01~1.1 같은 초저배당이 후보 자리를 다 차지하면 조합이 0개가 된다)
+    lo_leg = cfg.get("min_leg_odds")
+    low = []
+    if lo_leg:
+        low = [l for l in pool if l["odds"] < lo_leg]
+        pool = [l for l in pool if l["odds"] >= lo_leg]
     if name == "safe":
         pool.sort(key=lambda l: -l["p"])
     elif name == "single":
@@ -180,6 +186,18 @@ def strategy_combos(legs: list[dict[str, Any]], name: str, used_all: dict[str, i
                 break
     else:
         pool = diverse[: cfg["pool"]]
+        if lo_leg and len(pool) < cfg["pool"]:
+            # 배당이 맞는 경기가 모자라는 날(경기 적은 날)만 낮은 배당 경기로 채운다
+            low.sort(key=lambda l: -l["odds"])
+            seen = {l["match"]: 0 for l in pool}
+            for l in pool:
+                seen[l["match"]] += 1
+            for l in low:
+                if len(pool) >= cfg["pool"]:
+                    break
+                if seen.get(l["match"], 0) < 2:
+                    pool.append(l)
+                    seen[l["match"]] = seen.get(l["match"], 0) + 1
     lo, hi = cfg["odds_range"]
     cands = []
     for size in cfg["sizes"]:
