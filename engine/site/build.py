@@ -420,6 +420,45 @@ def _matches(r: dict) -> list[dict]:
     return out
 
 
+_TP_SKIP = ("/privacy/", "/terms/", "/contact/", "/support/", "/responsible/", "/about/", "/404", "/t/", "/stories/", "/tool/")
+_TP_SECTION = re.compile(r'<section class="(?:wrap )?block[ "]')
+
+
+def _tp_box() -> str:
+    return ('<aside class="ad ad-tp" aria-label="광고"><span class="ad-label">광고</span>'
+            f'<tenping class="adsbytenping" style="width:100%;max-width:768px;margin:0 auto;display:block;" '
+            f'tenping-ad-display-type="{config.TENPING_TYPE}" tenping-ad-client="{config.TENPING_CLIENT}"></tenping></aside>\n')
+
+
+def _inject_tp(html_s: str, out: str) -> str:
+    """긴 페이지는 섹션 두 개마다 텐핑 칸 하나(페이지당 최대 3개, 광고끼리 붙지 않게). 짧은 안내 페이지는 넣지 않는다.
+    노하우 글처럼 섹션이 하나인 긴 글은 본문 가운데 소제목 앞에 하나."""
+    if not config.TENPING_CLIENT or any(out.startswith(x) for x in _TP_SKIP):
+        return html_s
+    have = html_s.count('class="ad ad-tp"')
+    box = _tp_box()
+    pos = [m.start() for m in _TP_SECTION.finditer(html_s)]
+    picks, gap = [], 0
+    for i, p in enumerate(pos, 1):
+        gap += 1
+        if i < 3:
+            continue
+        before = html_s[max(0, p - 400):p]
+        if 'class="ad' in before:
+            gap = 0  # 바로 앞에 광고가 있으면 여기서부터 다시 센다
+            continue
+        if gap >= 2:
+            picks.append(p)
+            gap = 0
+    if not picks and out.startswith("/knowhow/") and out.count("/") == 3:
+        hs = [m.start() for m in re.finditer(r"<h2[ >]", html_s)]
+        if len(hs) >= 3:
+            picks = [hs[len(hs) // 2]]
+    for p in reversed(picks[: max(0, 3 - have)]):
+        html_s = html_s[:p] + box + html_s[p:]
+    return html_s
+
+
 _BODY_CUT = re.compile(r"<script.*?</script>|<style.*?</style>|<header.*?</header>|<footer.*?</footer>|<nav.*?</nav>", re.S)
 
 
@@ -666,12 +705,16 @@ def build() -> None:
     imgs: dict[str, str] = {}
 
     def page(tpl: str, out: str, **kw):
+        return _page(tpl, out, **kw)
+
+    def _page(tpl: str, out: str, **kw):
         auto_thin = kw.pop("auto_thin", False)
         html = env.get_template(tpl).render(**ctx, path=out, **kw)
         if auto_thin and not kw.get("noindex") and _body_chars(html) < THIN_CHARS:
             # 본문이 얇은 자동 페이지는 사이트에는 두고 검색·사이트맵에서만 뺀다(구글 수집을 굵은 페이지에 모은다)
             kw["noindex"] = True
             html = env.get_template(tpl).render(**ctx, path=out, **kw)
+        html = _inject_tp(html, out)
         _write(config.DIST / out.strip("/") / "index.html" if out != "/" else config.DIST / "index.html", html)
         if kw.get("noindex") or (kw.get("canonical") and kw["canonical"] != out):
             return  # 검색에서 빼는 페이지(얇은 글)·대표 주소가 따로 있는 페이지는 사이트맵에 넣지 않는다

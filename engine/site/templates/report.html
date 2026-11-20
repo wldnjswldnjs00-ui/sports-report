@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import ad, combo_card, prob_bar, ev_class, result_tag, form_seq, oreo_block, review_block, pick_table %}
+{% from "_macros.html" import ad, tenping_ad, combo_card, prob_bar, ev_class, result_tag, form_seq, oreo_block, review_block, pick_table %}
 {% block title %}{% if r %}{% if is_home %}오늘의 프로토 승부식 분석 · {{ r.date|kdate }} | {{ cfg.SITE_NAME }}{% else %}{{ r.date|kdate }} 프로토 승부식 분석{% if leagues_top %} · {{ leagues_top|join(' · ') }}{% endif %} | {{ cfg.SITE_NAME }}{% endif %}{% else %}프로토 승부식 분석 | {{ cfg.SITE_NAME }}{% endif %}{% endblock %}
 {% block desc %}{% if r %}{% if is_home %}오늘의 프로토 분석 · {% endif %}{{ r.date|kdate(False) }} 베트맨 프로토 승부식 {{ r.stats.matches }}경기 분석{% if leagues_top %}({{ leagues_top|join(', ') }}){% endif %}. 해외 배당 기준 승패·핸디캡·언더오버 확률, 안정형·공격형 조합 추천. {{ r.headline }}{% else %}{{ cfg.SITE_DESC }}{% endif %}{% endblock %}
 {% block ogtype %}{% if r and not is_home %}article{% else %}website{% endif %}{% endblock %}
@@ -238,6 +238,7 @@
     {% endfor %}
     </ol>
   </div>
+  {% if loop.index in (3, 9) and not loop.last %}{{ tenping_ad() }}{% endif %}{# 경기 목록이 길어 리그 묶음 사이에도 한 칸 #}
   {% endfor %}
 </section>
 

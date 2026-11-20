@@ -1417,4 +1417,4 @@ a.g-link:hover { border-color: var(--ink-3); background: var(--card-2); }
 /* 텐핑 소문박스: 가운데 정렬. 광고가 안 채워지면(차단·앱 안 브라우저 등) '광고' 글자만 남지 않게 통째로 숨긴다 */
 .ad-tp { max-width: 800px; }
 .ad-tp .ad-label { text-align: center; }
-.ad-tp:has(.adsbytenping:empty) { display: none; }
+.ad-tp.tp-off { display: none; }

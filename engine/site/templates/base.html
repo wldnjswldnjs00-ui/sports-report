@@ -142,6 +142,8 @@
 <script src="/static/app.js?v={{ asset_v }}" defer></script>
 <script src="/static/pwa.js?v={{ asset_v }}" defer></script>
 {% block scripts %}{% endblock %}
-{% if cfg.TENPING_CLIENT %}<script async src="https://ads.tenping.kr/scripts/adsbytenping.min.js"></script>{% endif %}
+{% if cfg.TENPING_CLIENT %}<script async src="https://ads.tenping.kr/scripts/adsbytenping.min.js"></script>
+<script>/* 텐핑 칸이 10초가 지나도 비어 있으면(차단·앱 안 브라우저 등) '광고' 글자만 남지 않게 숨긴다. 채우는 방식과 상관없이 칸 높이로 판단 */
+setTimeout(function(){document.querySelectorAll('.ad-tp').forEach(function(a){var l=a.querySelector('.ad-label');if(a.offsetHeight-(l?l.offsetHeight:0)<24)a.classList.add('tp-off')})},10000)</script>{% endif %}
 </body>
 </html>
