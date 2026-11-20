@@ -142,5 +142,6 @@
 <script src="/static/app.js?v={{ asset_v }}" defer></script>
 <script src="/static/pwa.js?v={{ asset_v }}" defer></script>
 {% block scripts %}{% endblock %}
+{% if cfg.TENPING_CLIENT %}<script async src="https://ads.tenping.kr/scripts/adsbytenping.min.js"></script>{% endif %}
 </body>
 </html>

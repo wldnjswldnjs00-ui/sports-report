@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import prob_bar, ev_class, result_tag, form_block, oreo_block, review_block %}
+{% from "_macros.html" import prob_bar, ev_class, result_tag, form_block, oreo_block, review_block, tenping_ad %}
 {% block title %}{{ page_title }} | {{ cfg.SITE_NAME }}{% endblock %}
 {% block desc %}{{ page_desc }}{% endblock %}
 {% block ogtype %}article{% endblock %}
@@ -62,6 +62,8 @@
     </div>
   </section>
   {% endif %}
+
+  {{ tenping_ad() }}
 
   {% set fm = g.markets|selectattr('form')|first %}
   {% if fm %}

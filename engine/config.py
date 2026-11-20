@@ -31,6 +31,9 @@ ADSENSE_CLIENT = os.getenv("ADSENSE_CLIENT", "ca-pub-6870676006996989").strip()
 ADSENSE_SLOT = "".join(ch for ch in os.getenv("ADSENSE_SLOT", "") if ch.isdigit())
 # 쿠팡 파트너스 다이나믹 배너(캐러셀 680×140): 배너 코드의 id 숫자와 trackingCode(AF...).
 # 페이지 소스에 공개되는 값이라 비밀이 아니다. 환경 변수로 바꿀 수 있고, 빈 값을 넣으면 끈다.
+# 텐핑 소문박스(공개 설치 코드의 값, 비밀 아님). 캠페인은 텐핑이 알아서 바꿔 보여준다
+TENPING_CLIENT = os.getenv("TENPING_CLIENT", "39fmzsudfQ7bCsjS4P2pqUhoXTpTjMTQeifD3sGCZfXr5AmYqmvS8HHuezQ1sEpj").strip()
+TENPING_TYPE = os.getenv("TENPING_TYPE", "1LawCE8FqKOhetXZhMopsQ%3d%3d").strip()
 COUPANG_BANNER_ID = "".join(ch for ch in os.getenv("COUPANG_BANNER_ID", "1051068") if ch.isdigit())
 COUPANG_TRACKING = "".join(ch for ch in os.getenv("COUPANG_TRACKING", "AF4576944").strip() if ch.isalnum())
 COUPANG_TEMPLATE = os.getenv("COUPANG_TEMPLATE", "carousel").strip() or "carousel"

@@ -134,3 +134,4 @@
   - Worker: 발매 목록은 protoGames 부분만 해석(CPU 10ms 한도), GitHub 토큰 만료일(ghexp)을 /api/status 에 → health 가 14일 전 알림. Worker 예약이 3시간 넘게 멈추면 알림.
   - health: 어제 쓰레드 4개 중 2개 이상 빠지면 알림(kh_days 기록).
   - 저장소는 압축 기준 하루 약 2.5MB 늘어남(연 1GB 안팎) — 몇 년은 문제없음.
+- (11/21) 텐핑 소문박스: 첫 화면·지난 리포트의 가운데 광고 자리(조합 바로 아래)와 경기 페이지 '모델 판단' 아래. 쿠팡은 아래 자리로. 광고가 안 채워지면 칸째 숨김(.ad-tp:has(:empty)). 값은 config.TENPING_CLIENT/TYPE(공개 코드).
