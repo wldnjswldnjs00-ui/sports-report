@@ -670,10 +670,41 @@ def _kh_stat_rows(head: list[str], rows: list[list[str]]):
     good = [r for r in rows if len(r) > col and r[col] and r[0]]
     if len(good) < 2:
         return None
+    extra = ""
+    if len({r[0] for r in good}) < len(good):
+        # '종목 × 배당 구간' 처럼 같은 이름이 여러 줄인 표: 모든 이름에 공통으로 있는 구간 하나로 맞춰 비교한다
+        best = None
+        for j in range(1, len(head)):
+            if j == col:
+                continue
+            cnt = {}
+            for r in good:
+                if len(r) > j:
+                    cnt.setdefault(r[j], set()).add(r[0])
+            for v, names in cnt.items():
+                # 우연히 두어 개만 겹치는 값(점수 등)은 쓰지 않는다: 이름의 절반 이상·3개 이상에 있는 구간만
+                if len(names) >= max(3, (len({r[0] for r in good}) + 1) // 2) and (best is None or len(names) > best[2]):
+                    best = (j, v, len(names))
+        if best:
+            j, v, _ = best
+            seen, pick = set(), []
+            for r in good:
+                if len(r) > j and r[j] == v and r[0] not in seen:
+                    seen.add(r[0])
+                    pick.append(r)
+            good, extra = pick, f"{head[j]} {v} · "
+        else:  # 공통 구간이 없으면 둘째 칸(리그 등)을 이름으로
+            good = [[r[1]] + r[1:] for r in good]
+            head = [head[1]] + head[1:]
+    if len({r[0] for r in good}) < len(good):  # 그래도 겹치면 처음 것만
+        seen = set()
+        good = [r for r in good if not (r[0] in seen or seen.add(r[0]))]
+    if len(good) < 2:
+        return None
     if len(good) > 4:  # 많으면 고르게 4줄(처음·끝 포함)
         idx = sorted({0, len(good) // 3, 2 * len(good) // 3, len(good) - 1})
         good = [good[i] for i in idx]
-    cap = "" if head[0] in ("항목", "구분") or head[col] == "값" else f"{head[0]}별 {head[col]}"
+    cap = "" if head[0] in ("항목", "구분") or head[col] == "값" else f"{extra}{head[0]}별 {head[col]}"
     return cap, [(r[0], re.sub(r"\s*\(.*?\)", "", r[col])) for r in good]  # 괄호 속 표본 수는 빼고 숫자만
 
 
