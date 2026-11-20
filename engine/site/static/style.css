@@ -1433,3 +1433,4 @@ a.g-link:hover { border-color: var(--ink-3); background: var(--card-2); }
   100% { transform: translateY(-5.85em); }
 }
 @media (prefers-reduced-motion: reduce) { .sl-track { animation: none; transform: translateY(-5.85em); } }
+.ad-tp.tp-off + .ad-alt { display: block; }  /* 가운데 텐핑 칸이 숨으면 같은 자리에 쿠팡 */
