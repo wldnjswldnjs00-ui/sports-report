@@ -947,7 +947,8 @@ def build() -> None:
         # 프로토 용어 사전(/용어/): '○○ 뜻' 검색용, 기록 숫자는 매일 다시 계산
         try:
             from . import glossary as GL
-            gterms = GL.terms(GL.stats(_bh.load_all()))
+            _rows_bh = _bh.load_all()
+            gterms = GL.terms(GL.stats(_rows_bh), GL.bands(_rows_bh))
             page("glossary_index.html", "/용어/", all_terms=gterms,
                  jsonld=_jsonld({"@context": "https://schema.org", "@type": "DefinedTermSet", "name": "프로토 용어 사전", "url": config.SITE_URL + "/용어/",
                                  "hasDefinedTerm": [{"@type": "DefinedTerm", "name": x["term"], "url": config.SITE_URL + f"/용어/{x['slug']}/"} for x in gterms]},

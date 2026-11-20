@@ -1,9 +1,27 @@
-{% extends "_page.html" %}
-{% block title %}프로토 용어 사전 · 정배·역배·핸디캡·언더오버 뜻 | {{ cfg.SITE_NAME }}{% endblock %}
-{% block desc %}정배, 역배, 승무패, 핸디캡, 언더오버, 배당률, 환급률, 폴더, 단폴 뜻을 베트맨 기록으로 계산한 숫자와 함께 정리했습니다. 매일 자동 갱신.{% endblock %}
-{% block kicker %}프로토 용어{% endblock %}
-{% block h1 %}프로토 용어 사전{% endblock %}
-{% block body %}
-<p class="lede">프로토를 하면서 자주 보는 말을 한 쪽씩 정리했습니다. 숫자는 베트맨 지난 회차 기록으로 매일 다시 계산합니다.</p>
-<dl class="facts-qa">{% for x in all_terms %}<div><dt><a href="/용어/{{ x.slug }}/">{{ x.term }}</a></dt><dd>{{ x.lead }}</dd></div>{% endfor %}</dl>
+{% extends "base.html" %}
+{% block title %}프로토 용어 사전 · 정배·역배·플핸·적특·축 뜻 {{ all_terms|length }}개 | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}정배, 역배, 플핸, 마핸, 적특, 축, 핸디캡, 언더오버, 배당률, 환급률, 켈리 기준 등 프로토 용어 {{ all_terms|length }}개를 베트맨 기록으로 계산한 숫자와 함께 정리했습니다. 매일 자동 갱신.{% endblock %}
+{% block main %}
+<section class="wrap page-head">
+  <p class="kicker">GLOSSARY</p><h1>프로토 용어 사전</h1>
+  <p class="lede">프로토를 하면서 자주 보는 말 {{ all_terms|length }}개. 숫자는 베트맨 지난 회차 기록으로 매일 다시 계산합니다.</p>
+</section>
+<section class="wrap block" data-find-scope>
+  <label class="kh-search h2h-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" placeholder="용어 찾기 (예: 플핸, 적특)" aria-label="용어 검색" data-find=".gl-card" data-groups=".gl-sec"></label>
+  {% set cats = ['기본', '마켓', '배당·확률', '분석', '조합·구매'] %}
+  <div class="h2h-tabs gl-jump">{% for c in cats %}<a class="chip" href="#c-{{ loop.index }}">{{ c }} <small>{{ all_terms|selectattr('cat', 'equalto', c)|list|length }}</small></a>{% endfor %}</div>
+  <p class="h2h-none muted" data-find-none hidden>찾는 용어가 아직 없습니다.</p>
+  {% for c in cats %}{% set lst = all_terms|selectattr('cat', 'equalto', c)|list %}{% if lst %}
+  <div class="gl-sec" id="c-{{ loop.index }}">
+    <h2 class="sub">{{ c }}</h2>
+    <div class="gl-grid">{% for x in lst %}
+      <a class="gl-card" href="/용어/{{ x.slug }}/" data-q="{{ x.term }} {{ x.q }}">
+        <span class="gl-term">{{ x.term }}</span>
+        {% if x.kpi %}<span class="gl-kpi">{{ x.kpi }}</span>{% endif %}
+        <span class="gl-short">{{ x.short }}</span>
+      </a>{% endfor %}
+    </div>
+  </div>
+  {% endif %}{% endfor %}
+</section>
 {% endblock %}

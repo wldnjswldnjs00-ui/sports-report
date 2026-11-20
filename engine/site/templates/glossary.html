@@ -1,21 +1,28 @@
-{% extends "_page.html" %}
+{% extends "base.html" %}
 {% block title %}{{ t.q }} · {{ t.ran }}? 베트맨 기록으로 본 숫자 | {{ cfg.SITE_NAME }}{% endblock %}
 {% block desc %}{{ t.lead[:150] }}{% endblock %}
-{% block kicker %}프로토 용어{% endblock %}
-{% block h1 %}{{ t.term }} 뜻{% endblock %}
-{% block body %}
-<p class="lede">{{ t.lead }}</p>
-{% for p in t.paras %}<p>{{ p }}</p>{% endfor %}
-{% set head, rows = t.table %}
-{% if rows %}
-<div class="tbl-wrap"><table class="tbl">
-  <thead><tr>{% for h in head %}<th>{{ h }}</th>{% endfor %}</tr></thead>
-  <tbody>{% for r in rows %}<tr>{% for c in r %}<td>{{ c }}</td>{% endfor %}</tr>{% endfor %}</tbody>
-</table></div>
-{% endif %}
-<h2>자주 묻는 질문</h2>
-<dl class="facts-qa">{% for q, a in t.faq %}<div><dt>{{ q }}</dt><dd>{{ a }}</dd></div>{% endfor %}</dl>
-<h2>같이 보면 좋은 것</h2>
-<p class="tm-links">{% for name, u in t.links if not u.startswith('/용어/') %}<a class="chip" href="{{ u }}">{{ name }}</a>{% endfor %}{% for x in all_terms if x.slug != t.slug %}<a class="chip" href="/용어/{{ x.slug }}/">{{ x.term }}</a>{% endfor %}</p>
-<p class="fine">베트맨 지난 회차 공식 결과와 베트맨 배당으로 매일 다시 계산합니다. 경기 수가 적은 리그는 넣지 않습니다.</p>
+{% block main %}
+<article class="wrap gl-page">
+  <nav class="gl-crumb"><a href="/용어/">프로토 용어 사전</a> <span>›</span> {{ t.cat }}</nav>
+  <header class="gl-hero">
+    <div><h1>{{ t.term }} <small>뜻</small></h1><p class="lede">{{ t.lead }}</p></div>
+    {% if t.kpi %}<div class="gl-stat"><b>{{ t.kpi }}</b><small>베트맨 기록 기준</small></div>{% endif %}
+  </header>
+  <div class="gl-body">
+    {% for p in t.paras %}<p>{{ p }}</p>{% endfor %}
+  </div>
+  {% set head, rows = t.table %}
+  {% if rows %}
+  <div class="fx-wrap gl-table"><table class="fx">
+    <thead><tr>{% for h in head %}<th>{{ h }}</th>{% endfor %}</tr></thead>
+    <tbody>{% for r in rows %}<tr>{% for c in r %}{% if loop.first %}<th><b>{{ c }}</b></th>{% else %}<td><span class="fx-v">{{ c }}</span></td>{% endif %}{% endfor %}</tr>{% endfor %}</tbody>
+  </table></div>
+  {% endif %}
+  <h2 class="sub">자주 묻는 질문</h2>
+  <div class="gl-faq">{% for q, a in t.faq %}<div><b>{{ q }}</b><p>{{ a }}</p></div>{% endfor %}</div>
+  <h2 class="sub">같이 보면 좋은 것</h2>
+  {% set rel = all_terms|selectattr('cat', 'equalto', t.cat)|rejectattr('slug', 'equalto', t.slug)|list %}
+  <p class="tm-links">{% for name, u in t.links if not u.startswith('/용어/') %}<a class="chip" href="{{ u }}">{{ name }}</a>{% endfor %}{% for name, u in t.links if u.startswith('/용어/') %}<a class="chip" href="{{ u }}">{{ name }}</a>{% endfor %}{% set linked = t.links|map(attribute=1)|list %}{% for x in rel if ('/용어/' ~ x.slug ~ '/') not in linked %}<a class="chip" href="/용어/{{ x.slug }}/">{{ x.term }}</a>{% endfor %}<a class="chip" href="/용어/">용어 전체 보기</a></p>
+  <p class="fine">베트맨 지난 회차 공식 결과와 베트맨 배당으로 매일 다시 계산합니다. 경기 수가 적은 리그는 넣지 않습니다.</p>
+</article>
 {% endblock %}
