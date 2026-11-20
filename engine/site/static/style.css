@@ -1421,16 +1421,18 @@ a.g-link:hover { border-color: var(--ink-3); background: var(--card-2); }
 .ad-alt { display: none; }
 .no-tp .ad-alt { display: block; }
 
-/* 첫 화면 문구: 세 줄이 하나씩 위로 올라가고 마지막 '데이터와 수학으로, 분석을 똑똑하게'에서 멈춘다(한 번만) */
-.sl-roll { display: block; height: 1.95em; overflow: hidden; }
-.sl-track { display: block; animation: sl-up 7.5s cubic-bezier(.7, 0, .2, 1) .3s both; }  /* 한 줄당 2초씩 보이고 0.5초에 넘어감 */
-.sl-track > span { display: block; height: 1.95em; padding-top: .45em; line-height: 1.5; white-space: nowrap; }
-.sl-track b { font-weight: 700; color: var(--ink); }
-@keyframes sl-up {
-  0%, 26.7% { transform: translateY(0); }
-  33.3%, 60% { transform: translateY(-1.95em); }
-  66.7%, 93.3% { transform: translateY(-3.9em); }
-  100% { transform: translateY(-5.85em); }
-}
-@media (prefers-reduced-motion: reduce) { .sl-track { animation: none; transform: translateY(-5.85em); } }
+/* 첫 화면 문구: 세 줄이 하나씩 위로 올라가고 마지막 '데이터와 수학으로, 분석을 똑똑하게'에서 멈춘다(한 번).
+   네 줄을 같은 자리에 겹쳐 두고 지금 줄만 보이게(나머지는 완전히 투명) → 기기마다 글꼴 높이가 달라도 옆 줄 조각이 비치지 않는다 */
+.sl-roll { display: block; padding-top: .45em; }
+.sl-track { display: grid; }
+.sl-track > span { grid-area: 1 / 1; line-height: 1.5; white-space: nowrap; opacity: 0; animation: 7.5s ease-in-out .3s both; }
+.sl-track > span:nth-child(1) { animation-name: sl-1; }
+.sl-track > span:nth-child(2) { animation-name: sl-2; }
+.sl-track > span:nth-child(3) { animation-name: sl-3; }
+.sl-track > span:nth-child(4) { animation-name: sl-4; }
+@keyframes sl-1 { 0%, 26.7% { opacity: 1; transform: none; } 30%, 100% { opacity: 0; transform: translateY(-.6em); } }
+@keyframes sl-2 { 0%, 30% { opacity: 0; transform: translateY(.6em); } 33.3%, 60% { opacity: 1; transform: none; } 63.3%, 100% { opacity: 0; transform: translateY(-.6em); } }
+@keyframes sl-3 { 0%, 63.3% { opacity: 0; transform: translateY(.6em); } 66.7%, 93.3% { opacity: 1; transform: none; } 96.7%, 100% { opacity: 0; transform: translateY(-.6em); } }
+@keyframes sl-4 { 0%, 96.7% { opacity: 0; transform: translateY(.6em); } 100% { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .sl-track > span { animation: none !important; } .sl-track > span:nth-child(4) { opacity: 1; } }
 .ad-tp.tp-off + .ad-alt { display: block; }  /* 가운데 텐핑 칸이 숨으면 같은 자리에 쿠팡 */
