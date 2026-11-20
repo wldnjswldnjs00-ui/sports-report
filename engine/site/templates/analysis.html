@@ -6,11 +6,11 @@
 {% macro day(sec) %}
 {% set cards = [] %}{% set ns = namespace(hot=0) %}
 {% for g in sec.games %}{% set ins = insights(g) %}{% set _ = cards.append((g, ins)) %}{% if ins and ins['items'] %}{% set ns.hot = ns.hot + 1 %}{% endif %}{% endfor %}
-<section class="wrap block">
+<section class="wrap block an-day">
   <header class="block-head"><h2>{{ sec.title }}</h2><p>{{ cards|length }}경기{% if ns.hot %} · 눈에 띄는 숫자 {{ ns.hot }}경기{% endif %}</p></header>
   <div class="sb-grid">
   {% for g, ins in cards %}{% set th = team_info(g.sport, g.home) %}{% set ta = team_info(g.sport, g.away) %}
-    <article class="sb-card{% if ins and ins['items'] %} is-hot{% endif %}">
+    <article class="sb-card{% if ins and ins['items'] %} is-hot{% endif %}" data-q="{{ g.home }} {{ g.away }} {{ g.league }}">
       <a class="sb-link" href="{{ g.url }}" aria-label="{{ g.home }} 대 {{ g.away }} 경기 분석 보기"></a>
       <span class="sb-meta">{{ g.kickoff|kdt }} · {{ g.league }}</span>
       <div class="sb-vs">
@@ -35,7 +35,12 @@
   <p class="lede">배당이 아니라 실제 점수 기록으로 두 팀을 비교해, 눈에 띄는 것만 골라 적었습니다. 매 갱신마다 자동으로 다시 계산합니다.</p>
   <p class="fine">베트맨에서 발매된 경기만 나옵니다. 날짜가 비어 있으면 그날 경기가 아직 발매 전이라는 뜻이고, 다음 회차가 열리면 자동으로 추가됩니다.</p>
 </section>
+<div data-find-scope>
+<section class="wrap block an-find"><label class="kh-search h2h-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" placeholder="팀·리그 이름으로 찾기" aria-label="경기 검색" data-find=".sb-card" data-groups=".an-day"></label>
+  <p class="h2h-none muted" data-find-none hidden>찾는 경기가 아직 없습니다.</p>
+</section>
 {% for sec in sections %}{{ day(sec) }}{% else %}<section class="wrap block"><p class="none">분석할 경기가 아직 없습니다. 발매가 시작되면 바로 채워집니다.</p></section>{% endfor %}
+</div>
 <section class="wrap block">
   <details class="rule">
     <summary>각 항목은 무엇을 보나요</summary>

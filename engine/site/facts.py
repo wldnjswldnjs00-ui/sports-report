@@ -84,7 +84,14 @@ def build(rows: list[list], perf: dict | None) -> dict:
     allqa = site + [q for L in leagues for q in L["qa"]]
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage",
               "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in allqa[:60]]}
-    return {"leagues": leagues, "site": site, "faq_ld": faq_ld}
+    table = _league_stats(rows)
+
+    def wavg(key, nkey="n"):
+        xs = [(t[key], t[nkey] if nkey in t else t["n"]) for t in table if t.get(key) is not None]
+        den = sum(n for _, n in xs)
+        return sum(v * n for v, n in xs) / den if den else None
+    avg = {"home": wavg("home"), "fav": wavg("fav", "fav_n"), "dog": wavg("dog", "dog_n"), "over": wavg("over", "ou_n")}
+    return {"leagues": leagues, "site": site, "faq_ld": faq_ld, "table": table, "avg": avg}
 
 
 def llms_txt(site_url: str, name: str, facts: dict, knowhow: list[dict] | None = None) -> str:

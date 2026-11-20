@@ -9,9 +9,11 @@
 {% set SP = ['soccer', 'basketball', 'baseball', 'volleyball'] %}
 {% set all = leagues.values()|list %}
 {% set ns = namespace(live=[]) %}{% for lg in all %}{% if lkey(lg.name) in live_lg %}{% set ns.live = ns.live + [lg] %}{% endif %}{% endfor %}
-<section class="wrap block lgi-page">
+<section class="wrap block lgi-page" data-find-scope>
+  <label class="kh-search h2h-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" placeholder="리그 이름으로 찾기" aria-label="리그 검색" data-find=".lgi-group li" data-groups=".lgi-group"></label>
+  <p class="h2h-none muted" data-find-none hidden>찾는 리그가 아직 없습니다.</p>
   {% if ns.live %}
-  <h2 class="sub">지금 발매 중</h2>
+  <h2 class="sub lgi-live-h">지금 발매 중</h2>
   <ul class="lgi-live">
     {% for lg in ns.live|sort(attribute='name') %}
     <li><a href="/leagues/{{ lg.slug }}/"><span class="lgi-dot" aria-hidden="true"></span>{{ lg.name }}<small>{{ SPORT_LABEL[lg.sport] }}</small></a></li>
@@ -20,7 +22,7 @@
   {% endif %}
 
   <div class="chips lgi-filter" role="tablist" data-lgi-filter>
-    <button type="button" class="chip is-on" data-f="all">전체</button>
+    <button type="button" class="chip is-on" data-f="all" data-find-all>전체</button>
     {% for sp in SP %}{% if all|selectattr('sport', 'equalto', sp)|list %}<button type="button" class="chip" data-f="{{ sp }}">{{ SPORT_LABEL[sp] }}</button>{% endif %}{% endfor %}
   </div>
 

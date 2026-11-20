@@ -1,17 +1,39 @@
-{% extends "_page.html" %}
+{% extends "base.html" %}
 {% block title %}숫자로 보는 리그 · 홈 승률·정배 적중률·평균 합계 | {{ cfg.SITE_NAME }}{% endblock %}
 {% block desc %}KBO·MLB·NPB·NBA·K리그·J리그·유럽 축구 등 베트맨 발매 리그의 홈 승률, 정배 적중률, 역배 적중률, 평균 합계, 언더오버 결과를 기록으로 계산해 매일 갱신합니다.{% endblock %}
-{% block kicker %}FACTS{% endblock %}
-{% block h1 %}숫자로 보는 리그{% endblock %}
-{% block body %}
-<p class="lede">베트맨 발매 경기 기록으로 계산한 리그별 핵심 숫자입니다. 매일 자동으로 다시 계산합니다.</p>
-<section class="facts">
-  <h2>사이트에 대해</h2>
-  <dl class="facts-qa">{% for q, a in facts.site %}<div><dt>{{ q }}</dt><dd>{{ a }}</dd></div>{% endfor %}</dl>
-  {% for L in facts.leagues %}
-  <h2 id="{{ L.league|slug }}">{{ L.league }} <small class="muted">{{ '{:,}'.format(L.n) }}경기</small></h2>
-  <dl class="facts-qa">{% for q, a in L.qa %}<div><dt>{{ q }}</dt><dd>{{ a }}</dd></div>{% endfor %}</dl>
-  {% endfor %}
+{% set UNIT = {'baseball': '점', 'soccer': '골', 'basketball': '점', 'volleyball': '세트'} %}
+{% macro cell(v, key, mx=1.0) %}{% set a = facts.avg[key] %}{% if v is none %}<td class="fx-na">–</td>{% else %}{% set d = (v - a) * 100 if a is not none else 0 %}{% set tone = 't-pos' if d >= 0.05 else ('t-neg' if d <= -0.05 else '') %}<td><span class="fx-v">{{ '%.1f'|format(v * 100) }}%</span><small class="fx-d {{ tone }}">{{ '+' if d >= 0.05 else ('−' if d <= -0.05 else '±') }}{{ '%.1f'|format(d|abs) }}</small><span class="fx-bar {{ tone }}"><i style="width:{{ [v / mx * 100, 100]|min|round(1) }}%"></i></span></td>{% endif %}{% endmacro %}
+{% block main %}
+<section class="wrap page-head">
+  <p class="kicker">FACTS</p><h1>숫자로 보는 리그</h1>
+  <p class="lede">베트맨 발매 경기 기록으로 계산한 리그별 핵심 숫자입니다. 매일 자동으로 다시 계산합니다.</p>
 </section>
-<p class="fine">베트맨 지난 회차 공식 결과와 베트맨 배당 기준입니다. 경기 수가 {{ min_n }}경기 미만인 리그는 넣지 않습니다. 참고용 분석이며 적중을 보장하지 않습니다.</p>
+<section class="wrap block" data-find-scope>
+  <label class="kh-search h2h-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" placeholder="리그 이름으로 찾기" aria-label="리그 검색" data-find=".fx-row"></label>
+  <div class="h2h-tabs" data-fx-tabs><button type="button" class="on" data-sp="" data-find-all>전체</button>{% for sp, lab in [('baseball', '야구'), ('soccer', '축구'), ('basketball', '농구'), ('volleyball', '배구')] %}{% if facts.table|selectattr('sport', 'equalto', sp)|list %}<button type="button" data-sp="{{ sp }}">{{ lab }}</button>{% endif %}{% endfor %}</div>
+  <p class="h2h-none muted" data-find-none hidden>찾는 리그가 아직 없습니다.</p>
+  <div class="fx-wrap"><table class="fx">
+    <thead><tr><th>리그</th><th>홈 승률</th><th>정배 승률</th><th>역배 3.0+</th><th>평균 합계</th><th>오버 비율</th></tr></thead>
+    <tbody>
+    {% for s in facts.table %}
+      <tr class="fx-row" data-sport="{{ s.sport }}" id="{{ s.league|slug }}"><th><b>{{ s.league }}</b><small>{{ SPORT_LABEL[s.sport] }} · {{ '{:,}'.format(s.n) }}경기</small></th>
+        {{ cell(s.home, 'home') }}{{ cell(s.fav, 'fav') }}{{ cell(s.dog, 'dog', 0.4) }}<td><span class="fx-v">{{ '%.1f'|format(s.avg_total) }}{{ UNIT.get(s.sport, '점') }}</span></td>{{ cell(s.over, 'over') }}</tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  <p class="fine">작은 숫자는 전체 리그 평균과의 차이(%p)입니다. 평균보다 높으면 초록, 낮으면 빨강. 전체 평균: 홈 승률 {{ '%.1f'|format(facts.avg.home * 100) }}%, 정배 승률 {{ '%.1f'|format(facts.avg.fav * 100) }}%{% if facts.avg.dog %}, 역배 {{ '%.1f'|format(facts.avg.dog * 100) }}%{% endif %}{% if facts.avg.over %}, 오버 {{ '%.1f'|format(facts.avg.over * 100) }}%{% endif %}. 경기 수가 {{ min_n }}경기 미만인 리그는 넣지 않습니다. 베트맨 지난 회차 공식 결과와 베트맨 배당 기준이며 참고용입니다.</p>
+  <details class="fx-qa"><summary>리그별 질문과 답 <small>{{ facts.site|length + facts.leagues|map(attribute='qa')|map('length')|sum }}</small></summary>
+    <h2>사이트에 대해</h2>
+    <dl class="facts-qa">{% for q, a in facts.site %}<div><dt>{{ q }}</dt><dd>{{ a }}</dd></div>{% endfor %}</dl>
+    {% for L in facts.leagues %}<h2>{{ L.league }}</h2><dl class="facts-qa">{% for q, a in L.qa %}<div><dt>{{ q }}</dt><dd>{{ a }}</dd></div>{% endfor %}</dl>{% endfor %}
+  </details>
+</section>
+<script>
+(function(){
+  var t=document.querySelector("[data-fx-tabs]"); if(!t) return;
+  t.addEventListener("click",function(e){ var b=e.target.closest("button"); if(!b) return;
+    t.querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===b);});
+    document.querySelectorAll(".fx-row").forEach(function(r){ r.hidden=!!b.dataset.sp && r.dataset.sport!==b.dataset.sp; }); });
+})();
+</script>
 {% endblock %}

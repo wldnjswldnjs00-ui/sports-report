@@ -814,3 +814,29 @@
   $$("[data-slip-share]").forEach(function (b) { b.addEventListener("click", shareSlip); });
   loadData().then(function () { if (tool) renderToolList(""); render(); importShared(); });
 })();
+
+/* 공통 검색창: <input data-find="항목 선택자" [data-groups="묶음 선택자"]>, 범위 [data-find-scope], 결과 없음 [data-find-none], 검색 시 [data-find-all] 버튼을 눌러 필터 해제 */
+(function () {
+  function norm(t) { return String(t || "").toLowerCase().replace(/\s+/g, ""); }
+  document.querySelectorAll("input[data-find]").forEach(function (q) {
+    var scope = q.closest("[data-find-scope]") || document;
+    var items = scope.querySelectorAll(q.dataset.find), groups = q.dataset.groups ? scope.querySelectorAll(q.dataset.groups) : [];
+    var none = scope.querySelector("[data-find-none]"), all = scope.querySelector("[data-find-all]");
+    q.addEventListener("input", function () {
+      var s = norm(q.value), hit = 0;
+      if (s && all && !all.classList.contains("on") && !all.classList.contains("is-on")) all.click();
+      scope.classList.toggle("finding", !!s);
+      items.forEach(function (it) { var ok = !s || norm(it.dataset.q || it.textContent).indexOf(s) >= 0; it.classList.toggle("find-off", !ok); if (ok) hit++; });
+      groups.forEach(function (g) {
+        var vis = g.querySelectorAll(q.dataset.find + ":not(.find-off)").length;
+        g.classList.toggle("find-off", !!s && !vis);
+        g.querySelectorAll("details").forEach(function (d) {
+          var dv = d.querySelectorAll(q.dataset.find + ":not(.find-off)").length;
+          d.classList.toggle("find-off", !!s && !dv);
+          if (s && dv) d.open = true;
+        });
+      });
+      if (none) none.hidden = !s || hit > 0;
+    });
+  });
+})();
