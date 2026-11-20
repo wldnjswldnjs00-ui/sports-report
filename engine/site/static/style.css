@@ -1403,3 +1403,14 @@ h1, h2, h3, .block-head h2 { text-wrap: balance; }
 .gl-faq b { display: block; font-size: 14.5px; } .gl-faq p { margin: 4px 0 0; color: var(--ink-2); font-size: 14px; }
 @media (max-width: 640px) { .gl-hero { grid-template-columns: 1fr; } .gl-hero h1 { font-size: 38px; } .gl-stat { text-align: left; display: flex; align-items: baseline; gap: 10px; } .gl-stat small { margin: 0; } }
 .gl-jump .chip { flex: none; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+/* 질문·답은 눌리는 카드처럼 보이지 않게(상자 없이 구분선만) */
+.facts-qa { gap: 0; }
+.facts-qa > div { background: none; border: 0; border-radius: 0; border-top: 1px solid var(--line); padding: 12px 2px; }
+.facts-qa > div:first-child { border-top: 0; }
+.gl-faq { gap: 0; border-top: 1px solid var(--line); }
+.gl-faq div { background: none; border: 0; border-radius: 0; border-bottom: 1px solid var(--line); padding: 14px 2px; }
+.gl-faq b::before { content: "Q. "; color: var(--ink-3); }
+/* 리그 결과 줄: 누르면 경기 분석(없으면 상대전적) */
+a.g-link { color: var(--ink); text-decoration: none; transition: border-color .15s, background .15s; }
+a.g-link:hover { border-color: var(--ink-3); background: var(--card-2); }
+.g-go { margin-left: auto; font-style: normal; color: var(--ink-3); font-size: 18px; line-height: 1; }

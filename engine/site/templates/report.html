@@ -61,7 +61,8 @@
   <header class="block-head"><h2>적중 확률이 높아 보이는 경기</h2><p><span data-rail-count>{{ tps|length }}</span>경기 · 옆으로 넘겨 보세요</p></header>
   <div class="tp-rail" data-rail tabindex="0" aria-label="적중 확률이 높아 보이는 경기">
   {% for t in tps %}{% set tm = mk.get(t.market_id) %}{% if tm %}
-    <article class="top-pick" data-ko="{{ t.kickoff }}">
+    <article class="top-pick" data-ko="{{ t.kickoff }}">{% set tpu = match_url(tm) %}{% if tpu %}
+      <a class="sb-link" href="{{ tpu }}" aria-label="{{ t.home }} 대 {{ t.away }} 경기 분석 보기"></a>{% endif %}
       <div class="tp-body">
         <p class="tp-league">{{ SPORT_LABEL[t.sport] }} · {{ t.league }} · {{ t.kickoff|kdt }}</p>
         <h3 class="tp-match">{{ t.home }} <i>vs</i> {{ t.away }}</h3>

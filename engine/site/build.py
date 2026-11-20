@@ -644,11 +644,23 @@ def build() -> None:
     def recent5(g, side):
         return INS.recent5(team_info(g["sport"], g[side]), g["kickoff"])
 
+    def match_on(home, away, day):
+        """리그 결과 줄 → 그 경기 분석 페이지(있으면). 결과 날짜와 킥오프 날짜가 하루 어긋날 수 있어 앞뒤 하루도 본다."""
+        try:
+            d0 = date.fromisoformat(str(day)[:10])
+        except ValueError:
+            return None
+        for k in (0, -1, 1):
+            u = murl.get((home, away, (d0 + timedelta(days=k)).isoformat()))
+            if u:
+                return u
+        return None
+
     def match_url(m):
         return murl.get((m.get("home"), m.get("away"), str(m.get("kickoff"))[:10])) if m else None
 
     ctx = dict(perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues,
-               team_link=team_link, match_url=match_url, team_info=team_info, box_of=box_of, insights=insights, recent5=recent5, predict=predict, vs_link=vs_link, nick=NK.nick, lg_alias=NK.league)
+               team_link=team_link, match_url=match_url, team_info=team_info, box_of=box_of, insights=insights, recent5=recent5, predict=predict, vs_link=vs_link, match_on=match_on, nick=NK.nick, lg_alias=NK.league)
     urls: list[tuple[str, str]] = []
 
     imgs: dict[str, str] = {}

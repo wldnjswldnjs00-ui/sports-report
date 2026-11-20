@@ -90,10 +90,11 @@
   {% if ns.any %}<p class="fine">▾ 표시가 있는 경기를 누르면 {{ {'baseball': '이닝별 점수', 'soccer': '전·후반 점수와 골 기록', 'basketball': '쿼터별 점수(연장 포함)'}.get(lg.sport, '구간별 점수') }}가 펼쳐집니다.</p>{% endif %}
   <ul class="g-list">
   {% for g in lg.games %}{% set bx = box_of(g.key) %}
-    <li>{% if bx %}<details class="g-box"><summary>{% else %}<div class="g-row">{% endif %}
+    {% set gl = match_on(g.home, g.away, g.date) or vs_link(lg.sport, g.home, g.away) %}
+    <li>{% if bx %}<details class="g-box"><summary>{% elif gl %}<a class="g-row g-link" href="{{ gl }}">{% else %}<div class="g-row">{% endif %}
       <span class="muted g-d">{{ g.date[5:]|replace('-', '/') }}</span>
       <span class="g-t"><span class="{{ 'ps-win' if g.hs > g.as }}">{{ g.home }}</span> <b>{{ g.hs|int }} : {{ g.as|int }}</b> <span class="{{ 'ps-win' if g.as > g.hs }}">{{ g.away }}</span></span>
-      {% if bx %}<i class="box-caret" aria-hidden="true"></i></summary>{{ scoreboard(bx, g.home, g.away) }}</details>{% else %}</div>{% endif %}</li>
+      {% if bx %}<i class="box-caret" aria-hidden="true"></i></summary>{{ scoreboard(bx, g.home, g.away) }}</details>{% elif gl %}<i class="g-go" aria-hidden="true">›</i></a>{% else %}</div>{% endif %}</li>
   {% endfor %}
   </ul>
 </section>
