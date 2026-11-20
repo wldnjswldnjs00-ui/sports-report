@@ -206,8 +206,9 @@ def _best(cs: list[dict]) -> dict | None:
     return max(live, key=lambda c: c.get("joint_p", 0)) if live else None
 
 
-SHOW_MIN = 4  # 적중 확률·역배 카드에 최소한 보이는 경기 수(주인 요청: 한 장에 3~4경기 이상)
-HIDE = 1      # 그 위로 더 있으면 확률이 가장 높은 경기 1개를 가린다(사이트에서 공개). 2개면 카드가 넘쳐 제목이 머리글과 겹침
+SHOW_N = 5  # 적중 확률·역배 카드 한 장에 5경기
+# 주인 요청(11/21): 두 카드 중 한 장은 3개, 다른 한 장은 2개를 가린다. 게시할 때마다 3개 가리는 카드가 번갈아 바뀐다.
+SHOW_MIN, HIDE = 2, 3
 
 
 def build(rep: dict, slot: str = "night", exclude: set[str] | None = None) -> tuple[list[str], list[str]]:
@@ -241,20 +242,27 @@ def build(rep: dict, slot: str = "night", exclude: set[str] | None = None) -> tu
                     break
         return res
 
-    def hide_n(items):
-        """보이는 경기를 최소 SHOW_MIN 개 남기고, 남는 만큼만(최대 HIDE개) 가린다."""
-        return max(0, min(HIDE, len(items) - SHOW_MIN))
+    # 게시 순서: 밤(D) = 전날 19시, 아침(D) = 당일 7시, 밤(D+1) = 당일 19시 … 이 순서의 홀짝으로 번갈아
+    from datetime import date as _date
+    order = 2 * _date.fromisoformat(d).toordinal() + (0 if slot == "morning" else -1)
+    picks_three = order % 2 == 0
+
+    def hide_n(items, three):
+        """5개 중 3개 또는 2개를 가린다(경기가 적으면 최소 1개는 보이게)."""
+        return max(0, min(3 if three else 2, len(items) - 1))
 
     out.append(card_cover(d, rep, slot))
     tops = list(rep.get("top_picks") or [])
     if slot == "morning":
         tops = sorted(tops + list(rep.get("handi_picks") or []) + list(rep.get("ou_picks") or []), key=lambda l: -l["p"])
-    picks = take(tops, SHOW_MIN + HIDE)
+    picks = take(tops, SHOW_N)
+    ups = take(list(rep.get("upsets") or []), SHOW_N)
+    if not ups:  # 역배 카드가 없는 날은 적중 확률 카드에서 3개
+        picks_three = True
     if picks:
-        out.append(card_picks(d, picks, hide_n(picks)))
-    ups = take(list(rep.get("upsets") or []), SHOW_MIN + HIDE)
+        out.append(card_picks(d, picks, hide_n(picks, picks_three)))
     if ups:
-        out.append(card_upsets(d, ups, hide_n(ups)))
+        out.append(card_upsets(d, ups, hide_n(ups, not picks_three)))
     for key, title in (("aggressive", "공격형 조합"), ("lotto", "로또폴더")):
         cs = list((rep.get("combos") or {}).get(key) or [])
         # 아침에는 밤에 올린 조합과 경기가 덜 겹치는 조합을 고른다
