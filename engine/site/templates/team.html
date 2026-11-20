@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% from "_macros.html" import scoreboard %}
-{% block title %}{{ t.name }} 경기 분석 · 최근 전적과 배당 기록 ({{ t.league }}) | {{ cfg.SITE_NAME }}{% endblock %}
+{% block title %}{% if t.upcoming %}{{ t.name }} 경기 일정 · 다음 경기 분석과 최근 전적 ({{ t.league }}){% else %}{{ t.name }} 경기 분석 · 최근 전적과 배당 기록 ({{ t.league }}){% endif %} | {{ cfg.SITE_NAME }}{% endblock %}
 {% block desc %}{% if t.rank %}{{ t.rank[3] }} {{ t.rank[2] }} {{ t.rank[0] }}위. {% endif %}{{ t.name }}({% if nick(t.name) %}{{ nick(t.name) }} · {% endif %}{{ t.league }}) 최근 {{ t.n }}경기 {{ t.w }}승{% if t.d %} {{ t.d }}무{% endif %} {{ t.l }}패. 홈·원정 성적, 정배·역배일 때 승률, 상대 전적, 다가오는 경기 분석.{% endblock %}
 {% block main %}
 {% set WDL = {'W': '승', 'D': '무', 'L': '패'} %}

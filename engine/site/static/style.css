@@ -1436,3 +1436,32 @@ a.g-link:hover { border-color: var(--ink-3); background: var(--card-2); }
 @keyframes sl-4 { 0%, 96.7% { opacity: 0; transform: translateY(.6em); } 100% { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .sl-track > span { animation: none !important; } .sl-track > span:nth-child(4) { opacity: 1; } }
 .ad-tp.tp-off + .ad-alt { display: block; }  /* 가운데 텐핑 칸이 숨으면 같은 자리에 쿠팡 */
+/* 경기 일정 페이지 */
+.sc-tz { font-size: .45em; font-weight: 600; color: var(--ink-3); vertical-align: middle; margin-left: 6px; }
+.sc-card { display: block; width: 100%; max-width: 640px; height: auto; border-radius: var(--r); margin-top: 18px; border: 1px solid var(--line); }
+.sc-lg { margin: 22px 0 8px; font-size: 16px; }
+.sc-lg small { font-weight: 500; color: var(--ink-3); margin-left: 4px; }
+.sc-list { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--card); overflow: hidden; }
+.sc-list li { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-top: 1px solid var(--line); min-width: 0; }
+.sc-list li:first-child { border-top: 0; }
+.sc-list time { flex: 0 0 auto; font: 700 14px var(--en); color: var(--ink-2); width: 44px; }
+.sc-teams { flex: 1 1 auto; min-width: 0; font-weight: 600; word-break: keep-all; }
+.sc-teams a { color: inherit; }
+.sc-teams i { font-style: normal; color: var(--ink-3); font-weight: 400; margin: 0 2px; }
+.sc-odds { flex: 0 0 auto; display: flex; gap: 8px; font: 600 13px var(--en); color: var(--ink-2); }
+.sc-odds i { font: 500 11px var(--ko); font-style: normal; color: var(--ink-3); margin-right: 2px; }
+.sc-go { flex: 0 0 auto; font-size: 13px; font-weight: 600; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink); }
+.sc-info p { color: var(--ink-2); line-height: 1.8; }
+.sc-more { margin-top: 14px; font-size: 14px; line-height: 1.9; }
+.sc-faq details { border-top: 1px solid var(--line); padding: 14px 0; }
+.sc-faq summary { cursor: pointer; font-weight: 600; }
+.sc-faq p { color: var(--ink-2); margin: 10px 0 0; line-height: 1.7; }
+.sc-cats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.sc-cats a { display: block; padding: 16px 18px; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--card); color: var(--ink); }
+.sc-cats b { display: block; }
+.sc-cats small { color: var(--ink-3); }
+@media (max-width: 560px) {
+  .sc-list li { flex-wrap: wrap; gap: 4px 10px; }
+  .sc-teams { flex-basis: calc(100% - 60px); }
+  .sc-odds { margin-left: 54px; }
+}

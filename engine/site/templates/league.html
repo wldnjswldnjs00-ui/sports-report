@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% from "_macros.html" import result_tag, scoreboard %}
 {% set tb = lg.table %}
-{% set la = lg_alias(lg.name) %}{% block title %}{{ la ~ "(" ~ lg.name ~ ")" if la and lg.name not in la else lg.name }} 순위{% if tb %} ({{ tb.season }}){% endif %} · 팀별 기록과 경기 분석 | {{ cfg.SITE_NAME }}{% endblock %}
+{% set la = lg_alias(lg.name) %}{% block title %}{{ la ~ "(" ~ lg.name ~ ")" if la and lg.name not in la else lg.name }} 순위·일정{% if tb %} ({{ tb.season }}){% endif %} · 팀별 기록과 경기 분석 | {{ cfg.SITE_NAME }}{% endblock %}
 {% block desc %}{% if lg_alias(lg.name) %}{{ lg_alias(lg.name) }} · {% endif %}{{ lg.name }}{% if tb %} {{ tb.season }} 순위표: 1위 {{ tb.rows[0].team }}{% if tb.rows|length > 1 %}, 2위 {{ tb.rows[1].team }}{% endif %}.{% endif %} 팀별 최근 전적과 상대전적, 최근 프로토 분석 경기와 결과를 매일 자동으로 갱신합니다.{% endblock %}
 {% block main %}
 {% set WDL = {'W': '승', 'D': '무', 'L': '패'} %}
 <section class="wrap page-head">
   <p class="kicker"><a href="/leagues/">리그</a> · {{ SPORT_LABEL[lg.sport] }}</p><h1>{{ lg.name }}</h1>
+  {% set su = sched_url(lg.name, lg.sport) %}{% if su %}<p class="sc-more"><a href="{{ su[0] }}">{{ su[1] }} 보기 →</a></p>{% endif %}
   <p class="lede">{% if tb %}{{ tb.season }} {{ tb.rows|length }}팀 · 집계 {{ tb.n }}경기(마지막 {{ tb.last[5:]|replace('-', '/') }}).{% endif %}{% if lg.n %} 최근 분석 {{ lg.n }}건{% if lg.graded %}, 채점 {{ lg.graded }}건 중 {{ lg.hit }}건 적중{% endif %}.{% endif %}</p>
 </section>
 

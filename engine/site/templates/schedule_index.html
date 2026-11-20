@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}오늘 경기 일정 (한국 시간) · 해외축구·NBA·KBL·배구 경기 시간 | {{ cfg.SITE_NAME }}{% endblock %}
+{% block desc %}오늘과 내일 경기 일정을 한국 시간으로 정리했습니다. 해외축구 경기 일정, NBA 경기 일정, KBL 경기 일정, 배구 경기 일정을 종목별로 보고 경기마다 분석으로 이어집니다.{% endblock %}
+{% block main %}
+<section class="wrap page-head">
+  <p class="kicker">SCHEDULE</p><h1>오늘 경기 일정 <small class="sc-tz">한국 시간</small></h1>
+  <p class="lede">베트맨 프로토 승부식에 발매된 경기를 종목별 경기 일정으로 모았습니다. 시간은 모두 한국 시간이고 매일 자동으로 갱신됩니다.</p>
+</section>
+<section class="wrap block">
+  <ul class="sc-cats">
+    {% for s in all_sc %}
+    <li><a href="{{ s.url }}"><b>{{ s.kw }}</b><small>{% if s.n %}{{ s.n }}경기{% if s.leagues %} · {{ s.leagues[0][0] }}{% if s.leagues|length > 1 %} 외 {{ s.leagues|length - 1 }}개 리그{% endif %}{% endif %}{% else %}발매 대기{% endif %}</small></a></li>
+    {% endfor %}
+  </ul>
+</section>
+{% for s in all_sc if s.n %}
+<section class="wrap block">
+  <h2><a href="{{ s.url }}">{{ s.kw }}</a></h2>
+  {% set d, dl, lgs = s.days[0] %}
+  <p class="muted">{{ dl }}</p>
+  <ol class="sc-list">
+    {% for lg, games in lgs %}{% for g in games[:4] %}
+    <li><time datetime="{{ g.kickoff }}">{{ g.kickoff|ktime }}</time><span class="sc-teams">{% if g.url %}<a href="{{ g.url }}">{{ g.home }} <i>vs</i> {{ g.away }}</a>{% else %}{{ g.home }} <i>vs</i> {{ g.away }}{% endif %}</span><small class="muted">{{ lg }}</small></li>
+    {% endfor %}{% endfor %}
+  </ol>
+  <p class="sc-more"><a href="{{ s.url }}">{{ s.kw }} 전체 보기 →</a></p>
+</section>
+{% endfor %}
+{% endblock %}

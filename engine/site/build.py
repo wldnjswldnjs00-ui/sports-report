@@ -207,7 +207,7 @@ def _env() -> Environment:
     env.globals.update(is_pick=is_pick, PICK_MIN=config.PICK_MIN,
         cfg=config, STRATEGIES=STRATEGIES, MARKET_LABEL=MARKET_LABEL, SPORT_LABEL=SPORT_LABEL, XSRC=("유럽 축구", "NBA", "MLB", "A매치"), mk_short=_mk_short,
         outcome=_outcome, pick_label=_pick_label, line_groups=_line_groups, upset_map=_upset_map, flow_key=_flow_key, round_label=_round_label, rounds_of=_rounds, now=config.now_kst(), asset_v=config.now_kst().strftime("%Y%m%d%H%M"),
-        nav=[("/", "TODAY"), ("/analysis/", "경기 분석"), ("/leagues/", "리그·순위"), ("/knowhow/", "노하우"), ("/odds/", "배당 분석"), ("/tool/", "금액 계산기"), ("/performance/", "성과"),
+        nav=[("/", "TODAY"), ("/analysis/", "경기 분석"), ("/schedule/", "경기 일정"), ("/leagues/", "리그·순위"), ("/knowhow/", "노하우"), ("/odds/", "배당 분석"), ("/tool/", "금액 계산기"), ("/performance/", "성과"),
              ("/reports/", "지난 리포트"), ("/guide/", "가이드"), ("/support/", "후원")],
     )
     return env
@@ -420,6 +420,13 @@ def _matches(r: dict) -> list[dict]:
     return out
 
 
+def _sched_url(league: str, sport: str):
+    """리그 → (일정 페이지 주소, 키워드)."""
+    from . import schedule as SC
+    c = SC.cat_of({"league": league, "sport": sport})
+    return (f"/schedule/{c}/", SC.CATS[c]["kw"]) if c in SC.CATS and c not in ("basketball",) else None
+
+
 _TP_SKIP = ("/privacy/", "/terms/", "/contact/", "/support/", "/responsible/", "/about/", "/404", "/t/", "/stories/", "/tool/")
 _TP_SECTION = re.compile(r'<section class="(?:wrap )?block[ "]')
 
@@ -564,6 +571,7 @@ def build() -> None:
     # 다음 구매일 리포트는 19시부터 '내일 분석'으로 공개(첫 화면은 23시 전환까지 오늘 그대로)
     tomorrow = (today + timedelta(days=1)).isoformat()
     show_next = config.now_kst().hour >= 19
+    all_reports = list(reports)  # 일정 페이지는 다음 구매일 경기도(시간만) 보여 준다
     reports = [r for r in reports if r["date"] <= today.isoformat() or (show_next and r["date"] == tomorrow)]
     latest = next((r for r in reports if r["date"] <= today.isoformat()), reports[0] if reports else None)
     is_demo = any(r.get("demo") for r in reports[:1])
@@ -699,7 +707,7 @@ def build() -> None:
         return murl.get((m.get("home"), m.get("away"), str(m.get("kickoff"))[:10])) if m else None
 
     ctx = dict(perf=perf, demo=is_demo, balls=_season_balls(today), summaries=summaries, leagues=leagues,
-               team_link=team_link, match_url=match_url, team_info=team_info, box_of=box_of, insights=insights, recent5=recent5, predict=predict, vs_link=vs_link, match_on=match_on, nick=NK.nick, lg_alias=NK.league)
+               team_link=team_link, match_url=match_url, team_info=team_info, box_of=box_of, insights=insights, recent5=recent5, predict=predict, vs_link=vs_link, match_on=match_on, nick=NK.nick, lg_alias=NK.league, sched_url=_sched_url)
     urls: list[tuple[str, str]] = []
 
     imgs: dict[str, str] = {}
@@ -922,6 +930,40 @@ def build() -> None:
     # 지금 발매 중인 리그(오늘·다음 구매일 리포트에 경기가 있는 리그)
     live_lg = {PX.lkey(m["league"]) for r in reports if r["date"] >= today.isoformat() for m in r.get("markets", [])}
     page("leagues.html", "/leagues/", live_lg=live_lg, lkey=PX.lkey)
+    # 경기 일정(한국 시간): '해외축구 경기 일정'·'NBA 경기 일정'·'KBL 경기 일정' 검색용
+    try:
+        from . import schedule as SC
+        scs = SC.build([r for r in all_reports if r["date"] >= (today - timedelta(days=1)).isoformat()], config.now_kst(), murl)
+        all_sc = list(scs.values())
+        for sc in all_sc:
+            kw = sc["kw"]
+            faq = [(f"{kw}은 한국 시간인가요?", f"네. {kw}의 모든 시간은 한국 시간입니다. 현지 시간을 따로 계산하지 않아도 됩니다."),
+                   (f"새벽 경기는 어느 날짜에 들어가나요?", "경기가 실제로 시작하는 한국 날짜에 들어갑니다. 예를 들어 토요일 밤 11시 경기는 토요일, 일요일 새벽 4시 경기는 일요일에 있습니다."),
+                   (f"{kw}은 언제 갱신되나요?", "하루 여러 번 자동으로 갱신되고, 베트맨에 새 회차가 발매되면 10~20분 안에 새 경기가 추가됩니다."),
+                   (f"{sc['short']} 경기 분석은 어디서 보나요?", f"{kw}에서 경기 이름이나 '분석'을 누르면 확률·예상 스코어·최근 흐름을 볼 수 있습니다.")]
+            rows = [(f"{g['kickoff'][11:16]}  {g['home']} vs {g['away']}", "", "") for _, _, lgs in sc["days"][:1] for _, gs in lgs for g in gs][:3]
+            og_path = config.DIST / "og" / "schedule" / f"{sc['key']}.jpg"
+            og_ok = False
+            try:
+                og_path.parent.mkdir(parents=True, exist_ok=True)
+                og_ok = OG.listing(og_path, kicker="경기 일정 · 한국 시간", title=kw, rows=rows or [("발매되면 자동으로 올라옵니다", "", "")],
+                                   sub=(f"{sc['days'][0][1]}부터 {sc['n']}경기" if sc["n"] else ""), foot=config.SITE_DOMAIN_DISPLAY)
+            except Exception:  # noqa: BLE001
+                og_ok = False
+            events = [{"@type": "SportsEvent", "name": f"{g['home']} vs {g['away']}", "startDate": g["kickoff"], "sport": SPORT_LABEL.get(g["sport"], g["sport"]),
+                       "location": {"@type": "Place", "name": g["league"]}, **({"url": config.SITE_URL + g["url"]} if g.get("url") else {})}
+                      for _, _, lgs in sc["days"] for _, gs in lgs for g in gs][:40]
+            page("schedule.html", sc["url"], sc=sc, all_sc=all_sc, faq=faq, og_image=(f"/og/schedule/{sc['key']}.jpg" if og_ok else None),
+                 noindex=not sc["n"], lastmod=today.isoformat(),
+                 jsonld=_jsonld({"@context": "https://schema.org", "@type": "ItemList", "name": kw, "itemListElement": [
+                                     {"@type": "ListItem", "position": i + 1, "item": e} for i, e in enumerate(events)]},
+                                {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+                                    {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]},
+                                _crumbs([("홈", "/"), ("경기 일정", "/schedule/"), (kw, sc["url"])])))
+        page("schedule_index.html", "/schedule/", all_sc=all_sc, lastmod=today.isoformat(),
+             jsonld=_jsonld(_crumbs([("홈", "/"), ("경기 일정", "/schedule/")])))
+    except Exception:  # noqa: BLE001
+        log.exception("경기 일정 페이지 실패(다른 페이지는 계속)")
     if kh:
         cats = [{"name": "공통", "slug": "common"}, {"name": "종목별", "slug": "sports"}, {"name": "리그 비교", "slug": "compare"},
                 {"name": "리그별", "slug": "leagues"}, {"name": "유럽 축구", "slug": "europe"}, {"name": "연구·심리", "slug": "research"}, {"name": "주간 리포트", "slug": "weekly"}]
