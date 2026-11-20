@@ -47,14 +47,15 @@
 
   /* 스크롤 등장 */
   if ("IntersectionObserver" in window && !reduce) {
+    // 아주 긴 섹션(경기가 많은 날의 경기 목록)은 8%가 한 화면에 다 들어올 수 없다 → 비율이 아니라 '조금이라도 보이면'으로 판단
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) {
-        if (!e.isIntersecting) return;
+        if (!e.isIntersecting || (e.intersectionRatio < 0.08 && e.intersectionRect.height < 120)) return;
         e.target.classList.add("is-in");
         $$("[data-count]", e.target).forEach(countUp);
         io.unobserve(e.target);
       });
-    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: [0, 0.002, 0.005, 0.01, 0.02, 0.05, 0.08, 0.2] });
     $$("[data-reveal]").forEach(function (el) { io.observe(el); });
     var heroStats = $(".stat-row");
     if (heroStats) $$("[data-count]", heroStats).forEach(countUp);
