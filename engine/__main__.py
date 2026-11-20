@@ -30,6 +30,8 @@ def main(argv=None) -> int:
     ap.add_argument("--knowhow-prepare", action="store_true", help="threads: 노하우 카드 묶음 만들기")
     ap.add_argument("--result-prepare", action="store_true", help="threads: 전날 결과 카드 만들기")
     ap.add_argument("--result-post", action="store_true", help="threads: 전날 결과 카드 게시")
+    ap.add_argument("--kh-redo-prepare", action="store_true", help="threads: 오늘 노하우 글 카드 다시 만들기")
+    ap.add_argument("--kh-redo-post", action="store_true", help="threads: 옛 노하우 글 지우고 다시 올리기")
     ap.add_argument("--due", default=None, help="threads: analysis|result|kh 가 아직 안 올라갔으면 yes 출력")
     a = ap.parse_args(argv)
 
@@ -61,7 +63,11 @@ def main(argv=None) -> int:
         check()
     elif a.cmd == "threads":
         from . import threads as TH
-        if a.due:
+        if a.kh_redo_prepare:
+            TH.redo_knowhow_prepare()
+        elif a.kh_redo_post:
+            TH.redo_knowhow_post()
+        elif a.due:
             print("yes" if TH.due(a.due) else "no")
         elif a.dry:
             TH.draft()

@@ -423,9 +423,9 @@ def _already_up(uid: str, token: str, text: str, hours: int = 2) -> bool:
     return False
 
 
-def _publish(uid: str, token: str, urls: list[str], text: str, what: str) -> bool:
+def _publish(uid: str, token: str, urls: list[str], text: str, what: str, check_dup: bool = True) -> bool:
     """이미지 한 장이면 단독, 여러 장이면 묶음(캐러셀)으로 게시."""
-    if _already_up(uid, token, text):
+    if check_dup and _already_up(uid, token, text):
         log.info("Threads %s: 이미 올라가 있어 기록만 남김", what)
         return True
     def ready(cid, wait=150):
@@ -746,6 +746,18 @@ def prepare_knowhow(force: bool = False) -> bool:
     if not pick:
         return False
     a = pick[0]
+    cards, text = _kh_cards(a, today)
+    from . import threads_cards as TC
+    _prune()
+    paths = TC.render(cards, IMG_DIR, f"{today}-kh")
+    st["pending_kh"] = {"day": today, "slug": a["slug"], "title": a["title"], "files": [p_.name for p_ in paths], "text": text}
+    write_json(STATE, st)
+    log.info("Threads 노하우 카드 %d장 준비: %s", len(paths), a["title"])
+    return True
+
+
+def _kh_cards(a: dict, today: str):
+    """노하우 글 한 편 → (카드 HTML 목록, 게시 글)."""
     secs, paras = _kh_sections(a.get("body") or "")
     from . import threads_cards as TC
     big = None
@@ -761,13 +773,82 @@ def prepare_knowhow(force: bool = False) -> bool:
     for k, t in enumerate(_kh_sentences(paras)[:2], 1):
         cards.append(TC.card_kh_quote(today, t, "정리" if k == 1 else ""))
     cards.append(TC.card_link("전체 글과 다른 노하우는", "여기서 무료로"))
-    _prune()
-    paths = TC.render(cards, IMG_DIR, f"{today}-kh")
     tags = ["#프로토", "#프로토분석", "#스포츠분석"] + ([f"#{a['league'].replace(' ', '')}"] if a.get("league") else [])
-    st["pending_kh"] = {"day": today, "slug": a["slug"], "title": a["title"], "files": [p_.name for p_ in paths],
-                        "text": f"{hook}\n{' '.join(tags)} #만19세이상"}
+    return cards, f"{hook}\n{' '.join(tags)} #만19세이상"
+
+
+def redo_knowhow_prepare() -> bool:
+    """오늘 올린 노하우 글을 고친 카드로 다시 만든다(이미지 주소를 새로 해 캐시된 옛 이미지가 쓰이지 않게)."""
+    st = read_json(STATE, {}) or {}
+    today = config.today_kst()
+    if (st.get("kh_redo") or {}).get("day") == today:  # 이미 준비(또는 완료)됨: 지우기 기록을 지키려고 다시 만들지 않는다
+        return False
+    if st.get("kh_day") != today or not st.get("kh"):
+        log.info("노하우 다시 올리기: 오늘 올린 글이 없거나 이미 다시 올림")
+        return False
+    slug = st["kh"][-1]
+    a = next((x for x in _kh_all() if x["slug"] == slug), None)
+    if not a:
+        return False
+    cards, text = _kh_cards(a, today)
+    from . import threads_cards as TC
+    paths = TC.render(cards, IMG_DIR, f"{today}-khr")
+    st["kh_redo"] = {"day": today, "slug": slug, "files": [p_.name for p_ in paths], "text": text}
     write_json(STATE, st)
-    log.info("Threads 노하우 카드 %d장 준비: %s", len(paths), a["title"])
+    log.info("노하우 다시 올리기 카드 %d장 준비: %s", len(paths), slug)
+    return True
+
+
+def redo_knowhow_post() -> bool:
+    """옛 글을 지우고(지우기가 안 되면 아무것도 안 함) 고친 카드로 다시 올린다."""
+    st = read_json(STATE, {}) or {}
+    rd = st.get("kh_redo")
+    if not rd or rd.get("done") or rd["day"] != config.today_kst():
+        return False
+    au = _auth()
+    if not au:
+        log.warning("노하우 다시 올리기: 토큰 확인 실패")
+        return False
+    uid, token = au
+    urls = [f"{config.SITE_URL}/threads/{f}" for f in rd["files"]]
+    if not _wait_live(urls):
+        log.warning("노하우 다시 올리기: 새 카드가 사이트에 아직 없음")
+        return False
+    if not rd.get("deleted"):
+        try:
+            data = http("GET", f"{API}/{uid}/threads", params={"fields": "id,text,timestamp", "limit": 25, "access_token": token},
+                        retries=2).json().get("data") or []
+        except Exception as e:  # noqa: BLE001
+            log.warning("노하우 다시 올리기: 글 목록 확인 실패 %s", str(e)[:200].replace(token, "***"))
+            return False
+        from datetime import datetime, timezone
+        def recent(ts):  # 최근 30시간 안에 올린 글만
+            try:
+                return (datetime.now(timezone.utc) - datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S%z")).total_seconds() < 30 * 3600
+            except Exception:  # noqa: BLE001
+                return False
+        olds = [d for d in data if (d.get("text") or "").strip() == rd["text"].strip() and recent(str(d.get("timestamp", "")))]
+        if not olds:
+            log.warning("노하우 다시 올리기: 지울 옛 글을 찾지 못함 — 두 번 올라가지 않게 멈춤")
+            return False
+        for d in olds:
+            try:
+                http("DELETE", f"{API}/{d['id']}", params={"access_token": token}, retries=2)
+            except Exception as e:  # noqa: BLE001
+                r = getattr(e, "response", None)
+                log.warning("노하우 다시 올리기: 옛 글 지우기 실패(권한 threads_delete 필요할 수 있음) %s",
+                            ((r.text if r is not None else str(e))[:300]).replace(token, "***"))
+                return False
+        rd["deleted"] = True
+        st["kh_redo"] = rd
+        write_json(STATE, st)
+        log.info("노하우 다시 올리기: 옛 글 %d개 지움", len(olds))
+    if not _publish(uid, token, urls, rd["text"], "노하우(다시)", check_dup=False):
+        return False
+    st = read_json(STATE, {}) or {}
+    st["kh_redo"] = {**rd, "done": True}
+    write_json(STATE, st)
+    log.info("노하우 다시 올리기 완료: %s", rd["slug"])
     return True
 
 
@@ -791,6 +872,9 @@ def due(kind: str) -> bool:
         if f"{day}:result" in posted:
             return False
         return bool(st.get("pending_result")) or result_stats(day) is not None  # 결과가 덜 나온 날은 13·18시가 이어받음
+    if kind == "kh-redo":
+        rd = st.get("kh_redo") or {}
+        return rd.get("day") == today and not rd.get("done")
     if kind == "kh":
         return st.get("kh_day") != today and config.now_kst().hour >= 15
     return False

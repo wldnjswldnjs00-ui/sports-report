@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       kind:
-        description: "analysis | result | kh"
+        description: "analysis | result | kh | kh-redo"
         required: true
       attempt:
         description: "몇 번째 시도"
@@ -43,7 +43,10 @@ jobs:
       - run: pip install -r requirements.txt
       - name: 아직 안 올라갔는지
         id: due
-        run: echo "due=$(python -m engine threads --due "$KIND")" >> "$GITHUB_OUTPUT"
+        run: |
+          # 다시 올리기는 처음 실행에서 카드를 준비해야 '해야 할 일'이 생긴다
+          if [ "$KIND" = "kh-redo" ]; then pip install -q playwright==1.47.0 && python -m playwright install --with-deps chromium >/dev/null && python -m engine threads --kh-redo-prepare; fi
+          echo "due=$(python -m engine threads --due "$KIND")" >> "$GITHUB_OUTPUT"
       - name: 카드 준비
         if: steps.due.outputs.due == 'yes'
         continue-on-error: true
@@ -53,6 +56,7 @@ jobs:
             analysis) python -m engine threads --prepare ;;
             result)   python -m engine threads --result-prepare ;;
             kh)       python -m engine threads --knowhow-prepare ;;
+            kh-redo)  python -m engine threads --kh-redo-prepare ;;
           esac
       - name: 커밋(사이트에 카드 이미지 배포)
         id: commit
@@ -76,6 +80,7 @@ jobs:
             analysis) python -m engine threads --post ;;
             result)   python -m engine threads --result-post ;;
             kh)       python -m engine threads --knowhow ;;
+            kh-redo)  python -m engine threads --kh-redo-post ;;
           esac
           git add data/state
           if git diff --cached --quiet; then exit 0; fi
