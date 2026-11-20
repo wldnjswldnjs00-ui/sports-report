@@ -142,15 +142,14 @@
 <script src="/static/app.js?v={{ asset_v }}" defer></script>
 <script src="/static/pwa.js?v={{ asset_v }}" defer></script>
 {% block scripts %}{% endblock %}
-{% if cfg.TENPING_CLIENT %}<script>/* 텐핑 캠페인은 대부분 휴대폰 전용: PC 에서는 '지금 접속한 환경에서는 이용할 수 없습니다'가 떠서 칸을 아예 숨기고 스크립트도 안 부른다.
-휴대폰에서도 그 문구가 뜬 칸, 10초가 지나도 비어 있는 칸은 숨긴다(채우는 방식과 상관없이 칸 높이·글자로 판단) */
+{% if cfg.TENPING_CLIENT %}<script async src="https://ads.tenping.kr/scripts/adsbytenping.min.js"></script>
+<script>/* 텐핑: 캠페인 대부분이 휴대폰 전용이라 PC 에서는 칸을 숨기고 가운데 자리는 쿠팡으로.
+휴대폰에서는 '이용할 수 없습니다'가 실제로 화면에 보이는 칸(숨은 글자는 무시: innerText)과, 15초가 지나도 비어 있는 칸만 숨긴다 */
 (function(){var tp=document.querySelectorAll('.ad-tp');if(!tp.length)return;
 var mob=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Macintosh/.test(navigator.userAgent));
 if(!mob){document.documentElement.classList.add('no-tp');tp.forEach(function(a){a.classList.add('tp-off')});return}
-var s=document.createElement('script');s.async=true;s.src='https://ads.tenping.kr/scripts/adsbytenping.min.js';document.body.appendChild(s);
-function chk(end){tp.forEach(function(a){if(a.classList.contains('tp-off'))return;var t=a.textContent||'',l=a.querySelector('.ad-label');
-if(/이용할 수 없|지원하지 않|접속할 수 없/.test(t)||(end&&a.offsetHeight-(l?l.offsetHeight:0)<24))a.classList.add('tp-off')})}
-[2500,5000].forEach(function(ms){setTimeout(function(){chk(false)},ms)});setTimeout(function(){chk(true)},10000);
-if(window.MutationObserver)tp.forEach(function(a){new MutationObserver(function(){chk(false)}).observe(a,{childList:true,subtree:true,characterData:true})})})();</script>{% endif %}
+function chk(end){tp.forEach(function(a){if(a.classList.contains('tp-off'))return;var l=a.querySelector('.ad-label'),h=a.offsetHeight-(l?l.offsetHeight:0);
+var t=(a.innerText||'').replace(/광고/,'');if((h>=24&&/이용할 수 없습니다|환경에서는 이용/.test(t))||(end&&h<24))a.classList.add('tp-off')})}
+[4000,8000].forEach(function(ms){setTimeout(function(){chk(false)},ms)});setTimeout(function(){chk(true)},15000)})();</script>{% endif %}
 </body>
 </html>
