@@ -34,6 +34,7 @@ jobs:
       ATTEMPT: ${{ inputs.attempt }}
       THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
       THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
+      ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}  # 경기를 다시 받아 올 때 해외 배당 분석에 필요
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -53,7 +54,7 @@ jobs:
         run: |
           pip install -q playwright==1.47.0 && python -m playwright install --with-deps chromium >/dev/null
           case "$KIND" in
-            analysis) python -m engine threads --prepare ;;
+            analysis) THREADS_COLLECT=1 python -m engine threads --prepare ;;
             result)   python -m engine threads --result-prepare ;;
             kh)       python -m engine threads --knowhow-prepare ;;
             kh-redo)  python -m engine threads --kh-redo-prepare ;;

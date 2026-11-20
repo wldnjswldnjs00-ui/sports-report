@@ -79,6 +79,14 @@ def prepare(slot: str | None = None, force: bool = False) -> bool:
     if f"{day}:{slot}" in (st.get("posted") or []):
         return False
     rep = read_json(config.REPORTS / f"{day}.json")
+    if (not rep or not rep.get("stats", {}).get("matches")) and os.getenv("THREADS_COLLECT"):
+        # 다시 올리기 실행: 정해진 시각에 베트맨이 막혀 경기가 없었으면 지금 다시 받아 온다
+        try:
+            from . import pipeline
+            pipeline.collect(day)
+        except Exception as e:  # noqa: BLE001
+            log.warning("Threads: 경기 다시 받기 실패 %s", str(e)[:200])
+        rep = read_json(config.REPORTS / f"{day}.json")
     if not rep or not rep.get("stats", {}).get("matches"):
         log.info("Threads: %s 리포트가 없어 건너뜀", day)
         return False
@@ -876,8 +884,7 @@ def due(kind: str) -> bool:
         if not slot:
             return False
         day = day_for(slot)
-        rep = read_json(config.REPORTS / f"{day}.json") or {}
-        return f"{day}:{slot}" not in posted and bool(rep.get("stats", {}).get("matches"))
+        return f"{day}:{slot}" not in posted  # 경기가 없으면(베트맨 막힘) 다시 올리기에서 경기를 다시 받아 온다
     if kind == "result":
         day = (date.fromisoformat(today) - timedelta(days=1)).isoformat()
         if f"{day}:result" in posted:

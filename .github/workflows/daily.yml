@@ -27,6 +27,7 @@ concurrency:
 
 permissions:
   contents: write
+  actions: write  # 쓰레드가 안 올라갔을 때 '쓰레드 다시 올리기'를 바로 시작한다(빠지면 시작 요청이 거절됨)
   issues: write   # 자동 점검 경고를 이슈로 남긴다(이메일 알림)
   id-token: write # 쓰레드 토큰을 Cloudflare Worker 에서 받을 때 GitHub 신원 증명(OIDC)을 쓴다
 
@@ -219,6 +220,6 @@ jobs:
               echo "$k 아직 안 올라감 → 다시 올리기 시작"
               curl -sf -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
                 "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/threads.yml/dispatches" \
-                -d "{\"ref\":\"main\",\"inputs\":{\"kind\":\"$k\",\"attempt\":\"1\"}}" || echo "시작 요청 실패"
+                -d "{\"ref\":\"main\",\"inputs\":{\"kind\":\"$k\",\"attempt\":\"1\"}}" -w " %{http_code}\n" -o /tmp/disp.txt || { echo "시작 요청 실패"; cat /tmp/disp.txt; }
             fi
           done
