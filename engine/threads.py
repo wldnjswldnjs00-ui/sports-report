@@ -122,6 +122,24 @@ def _wait_live(urls: list[str], minutes: int = 10) -> bool:
     return False
 
 
+def _publish_container(uid: str, cid: str, token: str) -> None:
+    """만든 묶음을 게시. 쓰레드는 만든 직후 '없는 미디어'라고 답할 때가 있어 잠깐 기다렸다가 몇 번 다시 시도한다."""
+    time.sleep(10)
+    last = None
+    for i in range(5):
+        try:
+            http("POST", f"{API}/{uid}/threads_publish", params={"creation_id": cid, "access_token": token}, retries=2)
+            return
+        except Exception as e:  # noqa: BLE001
+            last = e
+            r = getattr(e, "response", None)
+            body = r.text if r is not None else ""
+            if not any(k in body for k in ("4279009", "does not exist", "is_transient\":true", "2207027")):
+                raise
+            time.sleep(15 * (i + 1))
+    raise last
+
+
 class _Skip(Exception):
     """이미 올라가 있어 게시 과정을 건너뛴다."""
 
@@ -209,7 +227,7 @@ def post() -> bool:
         step = "묶음 처리 대기"
         _ready(cid, 180)
         step = "게시"
-        http("POST", f"{API}/{uid}/threads_publish", params={"creation_id": cid, "access_token": token}, retries=3)
+        _publish_container(uid, cid, token)
     except _Skip:
         pass
     except Exception as e:  # noqa: BLE001
@@ -474,7 +492,7 @@ def _publish(uid: str, token: str, urls: list[str], text: str, what: str, check_
         step = "처리 대기"
         ready(cid, 180)
         step = "게시"
-        http("POST", f"{API}/{uid}/threads_publish", params={"creation_id": cid, "access_token": token}, retries=3)
+        _publish_container(uid, cid, token)
         return True
     except Exception as e:  # noqa: BLE001
         rr = getattr(e, "response", None)
