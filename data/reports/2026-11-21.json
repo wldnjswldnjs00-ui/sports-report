@@ -1,9 +1,9 @@
 {
  "date": "2026-11-21",
  "generated_at": "2026-11-20T00:37:02+09:00",
- "updated_at": "2026-11-20T00:37:02+09:00",
+ "updated_at": "2026-11-20T19:09:49+09:00",
  "model_version": "aurora-1.0.0",
- "calibration_alpha": 0.04,
+ "calibration_alpha": 0.0,
  "demo": false,
  "sources": {
   "betman": "실패: ConnectTimeout",
