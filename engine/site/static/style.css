@@ -1418,3 +1418,5 @@ a.g-link:hover { border-color: var(--ink-3); background: var(--card-2); }
 .ad-tp { max-width: 800px; }
 .ad-tp .ad-label { text-align: center; }
 .ad-tp.tp-off { display: none; }
+.ad-alt { display: none; }
+.no-tp .ad-alt { display: block; }

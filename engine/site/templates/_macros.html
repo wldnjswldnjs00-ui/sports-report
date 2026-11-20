@@ -9,8 +9,11 @@
 {% macro ad(name) %}
 {% set cp = cfg.COUPANG_BANNER_ID and cfg.COUPANG_TRACKING %}
 {% if name.endswith('mid') and cfg.TENPING_CLIENT %}
-{# 잘 보이는 가운데 자리는 텐핑(클릭만으로 수익), 쿠팡은 아래 자리 #}
+{# 잘 보이는 가운데 자리는 텐핑(클릭만으로 수익, 휴대폰 전용). PC 에서는 같은 자리에 쿠팡 #}
 {{ tenping_ad() }}
+{% if cp %}<aside class="ad ad-cp ad-alt" aria-label="광고"><span class="ad-label">광고 · 쿠팡 파트너스 활동의 일환으로 일정액의 수수료를 받을 수 있습니다</span>
+<iframe class="ad-cp-frame" src="https://ads-partners.coupang.com/widgets.html?id={{ cfg.COUPANG_BANNER_ID|int }}&amp;template={{ cfg.COUPANG_TEMPLATE|urlencode }}&amp;trackingCode={{ cfg.COUPANG_TRACKING|urlencode }}&amp;subId=&amp;width=680&amp;height=140&amp;tsource=" width="680" height="140" loading="lazy" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" title="쿠팡 추천 상품"></iframe>
+</aside>{% endif %}
 {% elif cp and (not (cfg.ADSENSE_CLIENT and cfg.ADSENSE_SLOT) or name.endswith('bottom')) %}
 {# 쿠팡 배너: 애드센스와 같이 쓰면 하단 자리만, 쿠팡만 있으면 모든 광고 자리 #}
 <aside class="ad ad-cp" aria-label="광고"><span class="ad-label">광고 · 쿠팡 파트너스 활동의 일환으로 일정액의 수수료를 받을 수 있습니다</span>
