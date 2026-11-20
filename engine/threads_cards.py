@@ -406,20 +406,27 @@ def card_kh_quote(d: str, text: str, n: str = "") -> str:
 
 
 def render(cards: list[str], out_dir: Path, prefix: str) -> list[Path]:
+    """카드 HTML → JPEG. 러너에 깔린 크롬으로 그리다가 어디서든 실패하면 playwright 크롬을 받아 처음부터 다시 그린다."""
+    import os
+    exe = os.getenv("CHROMIUM_PATH") or None
+    try:
+        return _render(cards, out_dir, prefix, exe)
+    except Exception:  # noqa: BLE001
+        if not exe:
+            raise
+        import subprocess
+        import sys
+        subprocess.run([sys.executable, "-m", "playwright", "install", "--with-deps", "chromium"], check=False,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return _render(cards, out_dir, prefix, None)
+
+
+def _render(cards: list[str], out_dir: Path, prefix: str, exe: str | None) -> list[Path]:
     from playwright.sync_api import sync_playwright
     out_dir.mkdir(parents=True, exist_ok=True)
     paths = []
     with sync_playwright() as p:
-        import os
-        exe = os.getenv("CHROMIUM_PATH") or None  # GitHub 러너에 미리 깔린 크롬(없으면 playwright 가 받은 크롬)
-        try:
-            b = p.chromium.launch(executable_path=exe, args=["--no-sandbox"] if exe else None)
-        except Exception:  # noqa: BLE001 - 미리 깔린 크롬이 안 맞으면 playwright 크롬을 받아서 다시
-            import subprocess
-            import sys
-            subprocess.run([sys.executable, "-m", "playwright", "install", "--with-deps", "chromium"], check=False,
-                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            b = p.chromium.launch()
+        b = p.chromium.launch(executable_path=exe, args=["--no-sandbox"] if exe else None)
         pg = b.new_page(viewport={"width": W, "height": H})
         for i, c in enumerate(cards, 1):
             # 빈 페이지(about:blank)에서는 로컬 글꼴 파일이 막히므로 파일로 저장해서 연다
