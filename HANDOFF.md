@@ -119,3 +119,4 @@
 - [x] (2026-11-20) 프로토 용어 사전 `/용어/` + 10쪽(정배·역배·승무패·핸디캡·언더오버·배당률·환급률·폴더·단폴·프로토 승부식). '○○ 뜻' 검색용, 베트맨 지난 회차 기록으로 리그별 표 매일 재계산(engine/site/glossary.py). DefinedTerm·FAQ 구조화 데이터, 꼬리말·가이드에서 연결, IndexNow 고정 목록에 추가. 참고: GitHub coreyhaines31/marketingskills programmatic-seo 'Glossary' 플레이북
 - 참고: GitHub goenning/google-indexing-script(구글 48시간 색인)는 gsc.py 와 같은 Indexing API 방식이고 공식 지원은 채용·라이브 방송 페이지뿐
 - [x] (2026-11-20) Worker 슬래시 규칙이 긴 확장자(.webmanifest)를 페이지로 오인해 301 → 확장자 길이 16자까지 허용으로 수정
+- [x] (2026-11-20) 상대전적 허브(/vs/) A안: 리그 탭 + 한 줄 표(팀A 승 무 패 팀B, 승·무·패 막대, 8개 + 더 보기) + 팀 검색. 팀별 기록(/teams/)에도 팀 검색(노하우는 원래 있음)

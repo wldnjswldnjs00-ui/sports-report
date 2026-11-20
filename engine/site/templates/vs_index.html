@@ -6,10 +6,41 @@
   <p class="kicker">HEAD TO HEAD</p><h1>상대전적</h1>
   <p class="lede">리그별로 맞대결이 많은 조합과 곧 열리는 맞대결입니다. 경기가 끝날 때마다 자동으로 기록이 더해집니다.</p>
 </section>
-{% for lg, lst in hub %}
-<section class="wrap block">
-  <h2 class="sub">{{ lg }} <small class="muted">{{ lst|length }}</small></h2>
-  <ul class="vs-hub">{% for v in lst %}<li><a href="{{ v.url }}">{{ v.a }} <i>vs</i> {{ v.b }}<small>{{ v.games|length }}경기{% if v.next %} · 곧 경기{% endif %}</small></a></li>{% endfor %}</ul>
+<section class="wrap block" data-h2h>
+  <label class="kh-search h2h-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" placeholder="팀 이름으로 찾기" aria-label="상대전적 팀 검색" data-h2h-q></label>
+  <div class="h2h-tabs" role="tablist">{% for lg, lst in hub %}<button type="button" role="tab" data-lg="{{ loop.index0 }}" class="{{ 'on' if loop.first }}">{{ lg }}<small>{{ lst|length }}</small></button>{% endfor %}</div>
+  <p class="h2h-none muted" hidden>찾는 팀의 맞대결이 아직 없습니다.</p>
+  {% for lg, lst in hub %}
+  <div class="h2h-list" data-pane="{{ loop.index0 }}"{% if not loop.first %} hidden{% endif %}>
+    <h2 class="sr">{{ lg }} 상대전적</h2>
+    {% for v in lst %}{% set st = v.st or {} %}{% set n = st.n or v.games|length %}
+    <a class="h2h-row{% if loop.index > 8 %} more{% endif %}" href="{{ v.url }}" data-q="{{ (v.a ~ ' ' ~ v.b)|lower }}">
+      <span class="h2h-a">{{ v.a }}</span>
+      <span class="h2h-mid"><b><span class="win">{{ st.aw or 0 }}</span>{% if st.d %} <span class="draw">{{ st.d }}</span>{% endif %} <span class="loss">{{ st.bw or 0 }}</span></b>
+        <span class="h2h-bar">{% if n %}<i class="w" style="width:{{ ((st.aw or 0) / n * 100)|round(1) }}%"></i><i class="d" style="width:{{ ((st.d or 0) / n * 100)|round(1) }}%"></i><i class="l" style="width:{{ ((st.bw or 0) / n * 100)|round(1) }}%"></i>{% endif %}</span></span>
+      <span class="h2h-b">{{ v.b }}</span>
+      <span class="h2h-n">{{ n }}경기{% if v.next %}<em>곧 경기</em>{% endif %}</span>
+    </a>
+    {% endfor %}
+    {% if lst|length > 8 %}<button type="button" class="h2h-more" data-more>{{ lg }} 맞대결 {{ lst|length - 8 }}개 더 보기</button>{% endif %}
+  </div>
+  {% endfor %}
 </section>
-{% endfor %}
+<script>
+(function(){
+  var root=document.querySelector("[data-h2h]"); if(!root) return;
+  var tabs=root.querySelectorAll(".h2h-tabs button"), panes=root.querySelectorAll(".h2h-list"), q=root.querySelector("[data-h2h-q]"), none=root.querySelector(".h2h-none"), cur="0";
+  function show(i){ cur=i; tabs.forEach(function(t){t.classList.toggle("on",t.dataset.lg===i);}); panes.forEach(function(p){p.hidden=p.dataset.pane!==i;}); }
+  tabs.forEach(function(t){ t.addEventListener("click",function(){ if(q.value){q.value="";filter();} show(t.dataset.lg); }); });
+  root.querySelectorAll("[data-more]").forEach(function(b){ b.addEventListener("click",function(){ b.parentNode.classList.add("open"); b.remove(); }); });
+  function filter(){
+    var s=q.value.trim().toLowerCase().replace(/\s+/g,""), hit=0;
+    root.classList.toggle("searching",!!s);
+    panes.forEach(function(p){ var any=0; p.querySelectorAll(".h2h-row").forEach(function(r){ var ok=!s||r.dataset.q.replace(/\s+/g,"").indexOf(s)>=0; r.classList.toggle("hit",!!s&&ok); r.hidden=!!s&&!ok; if(s&&ok) any++; }); if(s) p.hidden=!any; hit+=any; });
+    none.hidden=!s||hit>0;
+    if(!s) show(cur);
+  }
+  q.addEventListener("input",filter);
+})();
+</script>
 {% endblock %}

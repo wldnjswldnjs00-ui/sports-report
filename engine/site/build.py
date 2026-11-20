@@ -825,6 +825,7 @@ def build() -> None:
         unit = {"soccer": "골", "baseball": "점", "basketball": "점", "volleyball": "세트"}.get(v["sport"], "점")
         notes.append(f"평균 점수 차는 {sum(margins) / len(margins):.1f}{unit}, 두 팀 합계는 경기당 {st['tot']:.1f}{unit}입니다.")
         st["notes"] = notes
+        v["st"] = st  # 상대전적 허브 한 줄 표(승·무·패)
         # 품질 기준: 맞대결 4경기 이상이거나 다가오는 경기가 있는 조합만 검색에 내보낸다(얇은 페이지 대량 노출 방지)
         thin = len(g0) < 4 and not nxt
         page("vs.html", v["url"], v=v, st=st, nxt=nxt, page_title=title, page_desc=desc[:155], lastmod=g0[0]["date"] if g0 else None,

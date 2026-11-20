@@ -6,7 +6,9 @@
   <p class="kicker">TEAMS</p><h1>팀별 기록</h1>
   <p class="lede">베트맨에 발매된 경기의 결과로 팀마다 최근 전적과 배당 기록을 정리합니다. 새 팀이 발매되면 자동으로 추가됩니다.</p>
 </section>
-<section class="wrap block">
+<section class="wrap block" data-tsearch>
+  <label class="kh-search h2h-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" placeholder="팀 이름으로 찾기" aria-label="팀 검색" data-t-q></label>
+  <p class="h2h-none muted" hidden>찾는 팀이 아직 없습니다.</p>
   <div class="filters tm-jump">{% for g in groups %}<a class="chip" href="#sp-{{ g.sport }}">{{ SPORT_LABEL[g.sport] }}</a>{% endfor %}</div>
   {% for g in groups %}
   <h2 class="sub" id="sp-{{ g.sport }}">{{ SPORT_LABEL[g.sport] }}</h2>
@@ -18,4 +20,17 @@
   {% endfor %}
   {% endfor %}
 </section>
+<script>
+(function(){
+  var root=document.querySelector("[data-tsearch]"); if(!root) return;
+  var q=root.querySelector("[data-t-q]"), none=root.querySelector(".h2h-none"), lgs=root.querySelectorAll(".tm-lg"), heads=root.querySelectorAll("h2.sub"), jump=root.querySelector(".tm-jump");
+  var init=[].map.call(lgs,function(d){return d.open;});
+  q.addEventListener("input",function(){
+    var s=q.value.trim().toLowerCase().replace(/\s+/g,""), hit=0;
+    lgs.forEach(function(d,i){ var any=0; d.querySelectorAll(".teams a").forEach(function(a){ var ok=!s||a.textContent.toLowerCase().replace(/\s+/g,"").indexOf(s)>=0; a.hidden=!ok; if(ok) any++; }); d.hidden=!!s&&!any; d.open=s?any>0:init[i]; hit+=s?any:0; });
+    heads.forEach(function(h){ var n=h.nextElementSibling, vis=false; while(n&&n.classList.contains("tm-lg")){ if(!n.hidden) vis=true; n=n.nextElementSibling; } h.hidden=!!s&&!vis; });
+    jump.hidden=!!s; none.hidden=!s||hit>0;
+  });
+})();
+</script>
 {% endblock %}
