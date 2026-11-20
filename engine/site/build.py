@@ -376,7 +376,11 @@ def _jsonld(*objs) -> list[str]:
 
 def _org() -> dict:
     return {"@type": "Organization", "@id": config.SITE_URL + "/#org", "name": config.SITE_NAME,
-            "url": config.SITE_URL + "/", "logo": config.SITE_URL + "/static/og.png"}
+            "alternateName": [config.SITE_DOMAIN_DISPLAY, "스포츠분석닷kr"],
+            "description": "축구·야구·농구·배구 경기를 무료로 분석하는 국내 스포츠 분석 사이트. 베트맨 프로토 승부식 발매 경기의 확률·예상 스코어·상대전적을 매일 자동으로 공개한다.",
+            "url": config.SITE_URL + "/", "logo": config.SITE_URL + "/static/og.png",
+            "sameAs": [u for u in (config.THREADS_URL, "https://github.com/wldnjswldnjs00-ui/sports-report") if u],
+            "knowsAbout": ["스포츠 분석", "프로토 승부식", "NBA", "KBO", "KBL", "V리그", "EPL", "K리그", "MLB"]}
 
 
 def _crumbs(items: list[tuple[str, str]]) -> dict:
@@ -987,7 +991,9 @@ def build() -> None:
     page("performance.html", "/performance/", brk=perf_brk)
     page("tool.html", "/tool/", jsonld=_jsonld({'@context': 'https://schema.org', '@type': 'FAQPage', 'mainEntity': [{'@type': 'Question', 'name': '켈리 기준(Kelly Criterion)이란 무엇인가요?', 'acceptedAnswer': {'@type': 'Answer', 'text': '가진 자금 중 몇 %를 걸어야 장기적으로 자금이 가장 빨리 불어나는지 알려주는 공식입니다. 1956년 벨 연구소의 존 L. 켈리 주니어가 발표했습니다. 베팅 비율 = (적중 확률 × 배당 − 1) ÷ (배당 − 1).'}}, {'@type': 'Question', 'name': '왜 켈리 금액의 1/4만 거나요?', 'acceptedAnswer': {'@type': 'Answer', 'text': '스포츠 경기의 적중 확률은 추정값이라 오차가 있습니다. 1/4 켈리는 성장 속도를 약 44%로 낮추는 대신 자금 변동을 1/4로 줄여 안전합니다. 이 계산기는 1/4 켈리에 시드의 10%와 1회 100,000원 상한을 둡니다.'}}, {'@type': 'Question', 'name': '켈리 기준으로 시드를 키우면 어디까지 커지나요?', 'acceptedAnswer': {'@type': 'Answer', 'text': '시드 × 베팅 비율이 베트맨 1회차 구매 한도 100,000원에 닿을 때까지는 거는 금액이 시드와 함께 커져 복리로 불어납니다(예: 비율 5%면 시드 200만 원까지). 그 뒤로는 한 회차 금액이 10만 원에서 멈추므로 기대 수익은 회차 수(1주일 약 3회차)만큼만 늘어납니다.'}}, {'@type': 'Question', 'name': '켈리 크리테온과 켈리 기준은 같은 말인가요?', 'acceptedAnswer': {'@type': 'Answer', 'text': "네, 모두 Kelly Criterion을 가리킵니다. 영어 발음은 '크라이테리언'에 가깝고, 우리말로는 '켈리 기준'이 가장 많이 쓰입니다."}}]}))
     for name in ("method", "guide", "about", "privacy", "terms", "contact", "responsible", "odds", "support"):
-        page(f"{name}.html", f"/{name}/")
+        extra = {"jsonld": _jsonld({"@context": "https://schema.org", "@type": "AboutPage", "url": config.SITE_URL + "/about/",
+                                    "name": "스포츠분석.kr 소개", "mainEntity": {"@context": "https://schema.org", **_org()}})} if name == "about" else {}
+        page(f"{name}.html", f"/{name}/", **extra)
 
     # 쓰레드 프로필 링크 전용 주소: 방문 통계에서 /t/ 조회수 = 쓰레드에서 넘어온 수. 바로 첫 화면으로 보낸다(검색 제외)
     _write(config.DIST / "t" / "index.html",

@@ -120,3 +120,4 @@
 - 참고: GitHub goenning/google-indexing-script(구글 48시간 색인)는 gsc.py 와 같은 Indexing API 방식이고 공식 지원은 채용·라이브 방송 페이지뿐
 - [x] (2026-11-20) Worker 슬래시 규칙이 긴 확장자(.webmanifest)를 페이지로 오인해 301 → 확장자 길이 16자까지 허용으로 수정
 - [x] (2026-11-20) 상대전적 허브(/vs/) A안: 리그 탭 + 한 줄 표(팀A 승 무 패 팀B, 승·무·패 막대, 8개 + 더 보기) + 팀 검색. 팀별 기록(/teams/)에도 팀 검색(노하우는 원래 있음)
+- [x] (2026-11-20) AI 개요('국내 스포츠 분석 사이트' 같은 질문)용 정체성 신호: 소개 페이지 제목·첫 문장·한눈에 표, 꼬리말 문구, Organization 설명·alternateName·sameAs(쓰레드·GitHub)·knowsAbout, AboutPage 구조화 데이터, llms.txt
