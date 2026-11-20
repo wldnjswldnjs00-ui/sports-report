@@ -430,6 +430,28 @@ export default {
     if (path === "/api/tt") {
       try { return await ttApi(request, env); } catch (e) { return json({ ok: false, err: String(e && e.message || e).slice(0, 160) }, 500); } // 원인 확인용(비밀 값 없음)
     }
+    // 쓰레드 카드 이미지 바로 올리기: GitHub 실행(신원 증명)이 그림을 KV 에 넣고 바로 /timg/ 주소로 쓴다(사이트 배포를 기다리지 않음)
+    if (path === "/api/img" && request.method === "POST") {
+      try {
+        if (!env.PUSH) return json({ ok: false, reason: "off" }, 503);
+        const who = await verifyGithub((request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, ""));
+        if (!who) return json({ ok: false }, 401);
+        const name = url.searchParams.get("name") || "";
+        if (!/^[A-Za-z0-9._-]{1,100}\.jpg$/.test(name)) return json({ ok: false, reason: "name" }, 400);
+        const buf = await request.arrayBuffer();
+        if (!buf.byteLength || buf.byteLength > 3e6) return json({ ok: false, reason: "size" }, 400);
+        await env.PUSH.put("img:" + name, buf, { expirationTtl: 4 * 86400 });
+        return json({ ok: true, url: SITE + "/timg/" + name });
+      } catch (e) { return json({ ok: false, err: String(e && e.message || e).slice(0, 120) }, 500); }
+    }
+    if (path.startsWith("/timg/")) {
+      const name = path.slice(6);
+      if (env.PUSH && /^[A-Za-z0-9._-]{1,100}\.jpg$/.test(name)) {
+        const buf = await env.PUSH.get("img:" + name, "arrayBuffer");
+        if (buf) return new Response(buf, { headers: { "Content-Type": "image/jpeg", "Cache-Control": "public, max-age=86400" } });
+      }
+      return new Response("not found", { status: 404 });
+    }
     if (path.startsWith("/api/push/")) {
       try { return await api(request, env, path); } catch (e) { return json({ ok: false }, 500); }
     }

@@ -110,6 +110,42 @@ def _token() -> str:
     return threads_token.current()
 
 
+def _host_images(files: list[str]) -> list[str] | None:
+    """카드 이미지를 Cloudflare Worker(KV)에 바로 올려 주소를 받는다(사이트 배포를 기다리지 않아 실행 시간 절약).
+    GitHub 신원 증명이 없거나 하나라도 실패하면 None(그때는 사이트 배포 주소를 쓴다)."""
+    try:
+        from . import threads_token
+        jwt = threads_token._oidc()
+        if not jwt:
+            return None
+        urls = []
+        for f in files:
+            data = (IMG_DIR / f).read_bytes()
+            r = http("POST", config.SITE_URL + "/api/img", params={"name": f}, data=data, retries=2,
+                     headers={"Authorization": f"Bearer {jwt}", "Content-Type": "image/jpeg", "User-Agent": "sports-report-actions"})
+            u = (r.json() or {}).get("url") if r.status_code == 200 else None
+            if not u:
+                return None
+            urls.append(u)
+        # 바로 열리는지 확인하고, 다른 지역 서버까지 퍼지도록 잠깐 기다린다
+        if not _wait_live(urls, minutes=2):
+            return None
+        time.sleep(20)
+        return urls
+    except Exception as e:  # noqa: BLE001
+        log.info("카드 이미지 바로 올리기 실패(사이트 배포 주소로): %s", type(e).__name__)
+        return None
+
+
+def _media_urls(files: list[str]) -> list[str] | None:
+    """게시에 쓸 이미지 주소: Worker 에 바로 올린 주소, 안 되면 사이트에 배포된 주소(배포될 때까지 기다림)."""
+    hosted = _host_images(files)
+    if hosted:
+        return hosted
+    urls = [f"{config.SITE_URL}/threads/{f}" for f in files]
+    return urls if _wait_live(urls) else None
+
+
 def _wait_live(urls: list[str], minutes: int = 10) -> bool:
     """사이트 배포가 끝나 이미지가 열릴 때까지 기다린다."""
     end = time.time() + minutes * 60
@@ -180,8 +216,8 @@ def post() -> bool:
         token = cands[0]  # 확인만 막혔을 수 있으니 사용자 ID 로 게시는 시도한다
     if not uid.isdigit():
         uid = me
-    urls = [f"{config.SITE_URL}/threads/{f}" for f in pend["files"]]
-    if not _wait_live(urls):
+    urls = _media_urls(pend["files"])
+    if not urls:
         log.warning("Threads: 카드 이미지가 사이트에 아직 없음(배포 지연) — 게시하지 않음")
         return False
     if _already_up(uid, token, pend["text"]):
@@ -273,8 +309,8 @@ def post_knowhow() -> bool:
         log.warning("Threads 노하우: 토큰 확인 실패")
         return False
     uid, token = au
-    urls = [f"{config.SITE_URL}/threads/{f}" for f in pend["files"]]
-    if not _wait_live(urls):
+    urls = _media_urls(pend["files"])
+    if not urls:
         log.warning("Threads 노하우: 카드 이미지가 사이트에 아직 없음 — 다음 실행에 맡김")
         return False
     if not _publish(uid, token, urls, pend["text"], "노하우"):
@@ -421,8 +457,8 @@ def post_result() -> bool:
         log.warning("Threads 결과: 토큰 확인 실패")
         return False
     uid, token = au
-    urls = [f"{config.SITE_URL}/threads/{f}" for f in pend["files"]]
-    if not _wait_live(urls):
+    urls = _media_urls(pend["files"])
+    if not urls:
         log.warning("Threads 결과: 카드 이미지가 사이트에 아직 없음 — 다음 실행에 맡김")
         return False
     if not _publish(uid, token, urls, pend["text"], "결과"):
@@ -852,8 +888,8 @@ def redo_knowhow_post() -> bool:
         log.warning("노하우 다시 올리기: 토큰 확인 실패")
         return False
     uid, token = au
-    urls = [f"{config.SITE_URL}/threads/{f}" for f in rd["files"]]
-    if not _wait_live(urls):
+    urls = _media_urls(rd["files"])
+    if not urls:
         log.warning("노하우 다시 올리기: 새 카드가 사이트에 아직 없음")
         return False
     if not rd.get("deleted"):
@@ -1051,8 +1087,8 @@ def post_preview() -> bool:
             st["poll"] = {**pend["poll"], "id": pid if pid != "posted" else None, "day": pend["day"]}
             write_json(STATE, st)
     if not done:
-        urls = [f"{config.SITE_URL}/threads/{f}" for f in pend["files"]]
-        if not _wait_live(urls):
+        urls = _media_urls(pend["files"])
+        if not urls:
             log.warning("Threads 미리보기: 카드 이미지가 사이트에 아직 없음")
             return False
         if not _publish(uid, token, urls, pend["text"], "미리보기"):

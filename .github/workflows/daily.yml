@@ -222,7 +222,8 @@ jobs:
         env:
           GSC_SA_JSON: ${{ secrets.GSC_SA_JSON }}
         run: |
-          python -m engine build >/dev/null
+          # 앞 단계 '사이트 빌드 검증'에서 만든 dist 를 그대로 쓴다(다시 빌드하지 않아 실행 시간 절약)
+          [ -f dist/data/urls.json ] || python -m engine build >/dev/null
           python -m engine indexnow
           git add data/state/gsc.json data/state/indexnow.json 2>/dev/null || true
           if git diff --cached --quiet; then exit 0; fi
