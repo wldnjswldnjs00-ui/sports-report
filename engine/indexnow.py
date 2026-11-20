@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from datetime import date, timedelta
 from urllib.parse import quote, urlparse
 
@@ -24,7 +25,9 @@ def recent_urls() -> list[str]:
     hot = read_json(config.DIST / "data" / "hot.json", []) or []
     today = config.now_kst()
     days = {(today + timedelta(days=i)).strftime("%Y-%m-%d") for i in (-1, 0, 1)}
-    pick = list(dict.fromkeys([u for u in hot if u in urls] + [u for u in FIXED if u in urls]
+    # 가장 새 회차 두 개(발매 직후 '프로토 ○○회차' 검색에 먼저 잡히게)
+    rounds = sorted({u for u in urls if re.fullmatch(r"/rounds/\d{6}/", u)}, reverse=True)[:2]
+    pick = list(dict.fromkeys(rounds + [u for u in hot if u in urls] + [u for u in FIXED if u in urls]
                               + [u for u in urls if any(d in u for d in days)]))
     return [config.SITE_URL + quote(u) for u in pick][:500]
 

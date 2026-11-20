@@ -344,6 +344,46 @@ async function tpost(env, it) {
   return true;
 }
 
+// ───────── 새 회차 발매 감지(10분마다, 무료) ─────────
+// 베트맨 발매 목록에 처음 보는 프로토 승부식 회차가 생기면 바로 '매일 분석'(slot=release)을 시작해
+// 회차·경기 페이지를 먼저 만들고 검색엔진(IndexNow)에 알린다. 발매 직후 아무 페이지도 없을 때 먼저 잡히게.
+const BETMAN = "https://www.betman.co.kr";
+async function releaseWatch(env, now) {
+  if (!env.PUSH || !env.GH_TOKEN) return;
+  const kst = new Date(now + 9 * 3600e3), h = kst.getUTCHours(), mi = kst.getUTCMinutes();
+  if (h < 6 || mi % 10 !== 0) return; // KST 06~24시, 10분마다
+  const ua = { "User-Agent": "Mozilla/5.0 (compatible; sports-report/1.0; +" + SITE + ")", "Accept-Language": "ko-KR,ko;q=0.9" };
+  let home;
+  try { home = await fetch(BETMAN + "/", { headers: ua, redirect: "follow" }); }
+  catch (e) { return env.PUSH.put("relchk", JSON.stringify({ at: new Date(now).toISOString(), err: "접속 실패 " + String(e).slice(0, 80) })).catch(() => null); }
+  const ck = (home.headers.get("set-cookie") || "").split(/,(?=\s*[A-Za-z0-9_]+=)/).map((c) => c.split(";")[0].trim()).filter(Boolean).join("; ");
+  const r = await fetch(BETMAN + "/buyPsblGame/inqBuyAbleGameInfoList.do", {
+    method: "POST",
+    headers: { ...ua, "Content-Type": "application/json; charset=UTF-8", "X-Requested-With": "XMLHttpRequest",
+      Accept: "application/json, text/javascript, */*; q=0.01", Origin: BETMAN,
+      Referer: BETMAN + "/main/mainPage/gamebuy/buyableNClosedIFR.do?isIFR=Y", ...(ck ? { Cookie: ck } : {}) },
+    body: JSON.stringify({ _sbmInfo: { debugMode: "false" } }),
+  });
+  const txt = await r.text();
+  const mark = (v) => env.PUSH.put("relchk", JSON.stringify({ at: new Date(now).toISOString(), ...v })).catch(() => null);
+  if (!r.ok || txt.trimStart().startsWith("<")) return mark({ status: r.status, err: "응답이 JSON 아님" });
+  let games;
+  try { games = JSON.parse(txt).protoGames; } catch (e) { return mark({ status: r.status, err: "해석 실패" }); }
+  if (!Array.isArray(games)) return mark({ status: r.status, err: "목록 없음" });
+  const seen = games.filter((g) => g && g.gmId === "G101" && g.gmTs).map((g) => String(g.gmTs));
+  await mark({ status: r.status, seen });
+  if (!seen.length) return;
+  const known = (await env.PUSH.get("rel", "json")) || [];
+  const fresh = seen.filter((t) => !known.includes(t));
+  if (!fresh.length) return;
+  if (known.length) { // 처음 한 번은 기준만 저장(이미 있는 회차로 실행하지 않음)
+    const ok = await dispatch("release", env);
+    if (!ok) return; // 실패하면 저장하지 않아 10분 뒤 다시
+    await note(env, "새 회차 발매 " + fresh.join(","));
+  }
+  await env.PUSH.put("rel", JSON.stringify([...new Set([...known, ...seen])].sort().slice(-30)));
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -367,7 +407,8 @@ export default {
       // 예약 실행이 살아 있는지 확인용(비밀 값 없음): 마지막 깨어남 시각과 마지막 시작 기록
       const hb = env.PUSH ? await env.PUSH.get("hb") : null;
       const log = env.PUSH ? await env.PUSH.get("cronlog", "json") : null;
-      return json({ ok: true, cron_last: hb, last: log, kv: !!env.PUSH, gh: !!env.GH_TOKEN, names: Object.keys(env).sort() }); // 이름만(값 없음)
+      const rel = env.PUSH ? await env.PUSH.get("relchk", "json") : null;
+      return json({ ok: true, cron_last: hb, last: log, release_check: rel, kv: !!env.PUSH, gh: !!env.GH_TOKEN, names: Object.keys(env).sort() }); // 이름만(값 없음)
     }
     if (path === "/api/tt") {
       try { return await ttApi(request, env); } catch (e) { return json({ ok: false, err: String(e && e.message || e).slice(0, 160) }, 500); } // 원인 확인용(비밀 값 없음)
@@ -387,5 +428,6 @@ export default {
     }
     ctx.waitUntil(ttRefresh(env).catch(() => null)); // 7일마다 쓰레드 토큰 연장(지났을 때만)
     ctx.waitUntil(tq(env, event.scheduledTime).catch(() => null)); // 쓰레드 예약 게시(대기열이 있을 때만)
+    ctx.waitUntil(releaseWatch(env, event.scheduledTime).catch(() => null)); // 새 회차 발매 → 바로 페이지 만들기
   },
 };
