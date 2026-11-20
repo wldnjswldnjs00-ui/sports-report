@@ -127,3 +127,10 @@
 - (11/20 밤) 저녁 쓰레드 누락 원인 3개 수정: ① daily.yml 에서 actions: write 가 빠져 '쓰레드 다시 올리기' 시작이 403 → 복구(지우지 말 것) ② 베트맨이 막혀 경기 0개면 다시 올리기에서 THREADS_COLLECT=1 로 경기를 다시 받아 카드 생성 ③ 쓰레드가 묶음 직후 '없는 미디어'로 거절 → `_publish_container` 가 기다렸다 최대 5번 다시. 노하우 다시 올리기(kh-redo)는 쓰레드 앱에 threads_delete 권한이 없어 멈춰 둠.
 - (11/21) 무료 시간 절약·안정화: 코드 커밋마다 돌던 전체 실행(push: engine/**) 제거, 베트맨 실패 시 5분 기다렸다 재실행 제거(쓰레드 시각은 '다시 올리기'가 경기를 다시 받음), 다시 올리기 간격 90초·최대 6번. 테스트 단계는 실패해도 갱신이 멈추지 않게. `tests/test_automation.py` 가 권한(actions: write)·시각표 일치·긴 sleep 을 검사하니 workflow 를 바꾸면 꼭 테스트를 돌릴 것.
 - (11/21) 새 회차 발매 즉시 페이지: Worker `releaseWatch` 가 KST 06~24시 10분마다 베트맨 발매 목록을 보고 처음 보는 G101 회차가 생기면 daily.yml 을 slot=release 로 시작(KV rel 에 본 회차 저장, 결과는 /api/status 의 release_check). IndexNow 는 가장 새 회차 페이지 2개를 맨 앞에 보낸다.
+- (11/21) 주인 손 뗌 대비 무인 운영 정리:
+  - 50일마다 '🔔 50일 점검 알림: 쓰레드 토큰' 이슈(이메일, health.remind). 토큰 만료 12일 전·자동 연장 오류도 알림(threads_token.json 에 expires 기록).
+  - `engine/budget.py`: 무료 시간 주기(매달 20일, UTC)마다 실제 사용 분을 timing API 로 더해 data/state/minutes.json. 70%·속도 초과면 save(예비 시각 30 0·0 4·0 9·0 13 은 쓰레드 빠진 게 없으면 건너뜀), 90% 면 minimal(다시 올리기 2번). 80% 넘으면 알림.
+  - 카드 그리기는 러너에 깔린 크롬(.github/scripts/chrome.sh), 안 되면 playwright 크롬을 받아 다시.
+  - Worker: 발매 목록은 protoGames 부분만 해석(CPU 10ms 한도), GitHub 토큰 만료일(ghexp)을 /api/status 에 → health 가 14일 전 알림. Worker 예약이 3시간 넘게 멈추면 알림.
+  - health: 어제 쓰레드 4개 중 2개 이상 빠지면 알림(kh_days 기록).
+  - 저장소는 압축 기준 하루 약 2.5MB 늘어남(연 1GB 안팎) — 몇 년은 문제없음.

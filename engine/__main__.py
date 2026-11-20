@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import logging
 import sys
 
@@ -18,7 +19,7 @@ from . import config
 def main(argv=None) -> int:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
     ap = argparse.ArgumentParser(prog="engine")
-    ap.add_argument("cmd", choices=["run", "collect", "grade", "build", "demo", "indexnow", "threads", "health"])
+    ap.add_argument("cmd", choices=["run", "collect", "grade", "build", "demo", "indexnow", "threads", "health", "budget"])
     ap.add_argument("--date", default=None)
     ap.add_argument("--refresh", action="store_true", help="해외 배당 캐시 무시")
     ap.add_argument("--days", type=int, default=21)
@@ -58,6 +59,9 @@ def main(argv=None) -> int:
             print("DEMO=1 환경변수가 필요합니다.", file=sys.stderr)
             return 2
         pipeline.demo(a.days)
+    elif a.cmd == "budget":
+        from . import budget
+        print("skip" if budget.should_skip(os.getenv("SLOT", "")) else "run")
     elif a.cmd == "health":
         from .health import check
         check()

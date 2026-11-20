@@ -46,13 +46,13 @@ jobs:
         id: due
         run: |
           # 다시 올리기는 처음 실행에서 카드를 준비해야 '해야 할 일'이 생긴다
-          if [ "$KIND" = "kh-redo" ]; then pip install -q playwright==1.47.0 && python -m playwright install --with-deps chromium >/dev/null && python -m engine threads --kh-redo-prepare; fi
+          if [ "$KIND" = "kh-redo" ]; then source .github/scripts/chrome.sh && python -m engine threads --kh-redo-prepare; fi
           echo "due=$(python -m engine threads --due "$KIND")" >> "$GITHUB_OUTPUT"
       - name: 카드 준비
         if: steps.due.outputs.due == 'yes'
         continue-on-error: true
         run: |
-          pip install -q playwright==1.47.0 && python -m playwright install --with-deps chromium >/dev/null
+          source .github/scripts/chrome.sh
           case "$KIND" in
             analysis) THREADS_COLLECT=1 python -m engine threads --prepare ;;
             result)   python -m engine threads --result-prepare ;;
@@ -99,7 +99,9 @@ jobs:
             const still = execSync(`python -m engine threads --due ${process.env.KIND}`).toString().trim();
             const n = Number(process.env.ATTEMPT || "1");
             if (still !== "yes") { core.info("게시 완료"); return; }
-            if (n >= 6) { core.warning("6번 시도 후에도 게시되지 않음 — 다음 정해진 시각이 이어받음"); return; }
+            let maxN = 6;
+            try { if (JSON.parse(require("fs").readFileSync("data/state/minutes.json", "utf8")).mode === "minimal") maxN = 2; } catch (e) {}
+            if (n >= maxN) { core.warning(`${maxN}번 시도 후에도 게시되지 않음 — 다음 정해진 시각이 이어받음`); return; }
             await new Promise((r) => setTimeout(r, 90000));
             await github.rest.actions.createWorkflowDispatch({ owner: context.repo.owner, repo: context.repo.repo,
               workflow_id: "threads.yml", ref: "main", inputs: { kind: process.env.KIND, attempt: String(n + 1) } });

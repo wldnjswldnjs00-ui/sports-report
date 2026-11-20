@@ -58,3 +58,24 @@ class AutomationTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class BudgetTest(unittest.TestCase):
+    def test_cycle_contains_now(self):
+        from datetime import datetime, timezone
+        from engine import budget
+        s, e = budget._cycle()
+        now = datetime.now(timezone.utc)
+        self.assertTrue(s <= now < e)
+        self.assertGreaterEqual((e - s).days, 28)
+
+    def test_essential_slots_never_skipped(self):
+        from engine import budget
+        for slot in ("0 21 * * *", "0 22 * * *", "0 2 * * *", "0 6 * * *", "0 10 * * *", "5 14 * * *", "release"):
+            self.assertNotIn(slot, budget.OPTIONAL)
+
+    def test_chrome_setup_used(self):
+        for wf in ("daily.yml", "threads.yml"):
+            src = (WF / wf).read_text(encoding="utf-8")
+            self.assertNotIn("playwright install", src, wf)  # 내려받기는 chrome.sh 안에서 미리 깔린 크롬이 없을 때만
+        self.assertTrue((ROOT / ".github" / "scripts" / "chrome.sh").exists())

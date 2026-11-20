@@ -43,6 +43,8 @@ async function dispatch(slot, env) {
       },
       body: JSON.stringify({ ref: "main", inputs: { slot } }),
     });
+    const exp = r.headers.get("github-authentication-token-expiration"); // 토큰 만료일(있으면) → /api/status 로 점검
+    if (exp && env.PUSH) await env.PUSH.put("ghexp", exp).catch(() => null);
     if (r.status === 204) { console.log(`시작함: ${slot}`); return true; }
     const body = await r.text();
     console.log(`실패 ${r.status} (${slot}): ${body.slice(0, 300)}`);
@@ -367,8 +369,21 @@ async function releaseWatch(env, now) {
   const txt = await r.text();
   const mark = (v) => env.PUSH.put("relchk", JSON.stringify({ at: new Date(now).toISOString(), ...v })).catch(() => null);
   if (!r.ok || txt.trimStart().startsWith("<")) return mark({ status: r.status, err: "응답이 JSON 아님" });
+  // 무료 요금제는 한 번에 CPU 10ms: 응답 전체(토토 경기까지 큼) 대신 protoGames 부분만 잘라 해석한다
   let games;
-  try { games = JSON.parse(txt).protoGames; } catch (e) { return mark({ status: r.status, err: "해석 실패" }); }
+  try {
+    const i = txt.indexOf('"protoGames":');
+    if (i < 0) throw new Error("no protoGames");
+    let j = i + 13, depth = 0, inStr = false;
+    for (; j < txt.length; j++) {
+      const ch = txt[j];
+      if (inStr) { if (ch === "\\") j++; else if (ch === '"') inStr = false; continue; }
+      if (ch === '"') inStr = true;
+      else if (ch === "[" || ch === "{") depth++;
+      else if (ch === "]" || ch === "}") { depth--; if (depth === 0) { j++; break; } }
+    }
+    games = JSON.parse(txt.slice(i + 13, j));
+  } catch (e) { return mark({ status: r.status, err: "해석 실패" }); }
   if (!Array.isArray(games)) return mark({ status: r.status, err: "목록 없음" });
   const seen = games.filter((g) => g && g.gmId === "G101" && g.gmTs).map((g) => String(g.gmTs));
   await mark({ status: r.status, seen });
@@ -408,7 +423,8 @@ export default {
       const hb = env.PUSH ? await env.PUSH.get("hb") : null;
       const log = env.PUSH ? await env.PUSH.get("cronlog", "json") : null;
       const rel = env.PUSH ? await env.PUSH.get("relchk", "json") : null;
-      return json({ ok: true, cron_last: hb, last: log, release_check: rel, kv: !!env.PUSH, gh: !!env.GH_TOKEN, names: Object.keys(env).sort() }); // 이름만(값 없음)
+      const ghexp = env.PUSH ? await env.PUSH.get("ghexp") : null;
+      return json({ ok: true, cron_last: hb, last: log, release_check: rel, gh_token_expires: ghexp, kv: !!env.PUSH, gh: !!env.GH_TOKEN, names: Object.keys(env).sort() }); // 이름만(값 없음)
     }
     if (path === "/api/tt") {
       try { return await ttApi(request, env); } catch (e) { return json({ ok: false, err: String(e && e.message || e).slice(0, 160) }, 500); } // 원인 확인용(비밀 값 없음)

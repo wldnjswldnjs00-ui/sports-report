@@ -53,11 +53,21 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - run: pip install -r requirements.txt
+      - name: 패키지 설치(네트워크가 잠깐 끊겨도 다시)
+        run: for i in 1 2 3; do pip install -r requirements.txt && break; sleep 15; done
+      - name: 무료 실행 시간 확인(한도에 가까우면 예비 시각은 건너뜀)
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          d=$(python -m engine budget | tail -1)
+          echo "결정: $d"
+          if [ "$d" = "skip" ]; then echo "SKIP=1" >> "$GITHUB_ENV"; fi
       - name: 테스트
         continue-on-error: true  # 테스트 하나가 깨져도 사이트 갱신·쓰레드는 멈추지 않게(문제는 자동 점검이 알림)
         run: python -m unittest -q
       - name: 수집·분석·채점
+        if: env.SKIP != '1'
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
           FOOTBALL_DATA_KEY: ${{ secrets.FOOTBALL_DATA_KEY }}
@@ -83,32 +93,32 @@ jobs:
           # 쓰레드 시각이면 끝에서 '쓰레드 다시 올리기'가 경기를 다시 받아 오고, 아니면 다음 정해진 시각이 이어받는다.
       - name: 쓰레드 카드 준비(저녁 19:00·아침 07:00, 빠지면 22:00·09:30 실행이 대신. 같은 글은 한 번만)
         id: tprep
-        if: always() && (env.SLOT == '0 10 * * *' || env.SLOT == '0 13 * * *' || env.SLOT == '0 22 * * *' || env.SLOT == '30 0 * * *' || contains(github.event.head_commit.message, '[threads-now]'))
+        if: always() && env.SKIP != '1' && (env.SLOT == '0 10 * * *' || env.SLOT == '0 13 * * *' || env.SLOT == '0 22 * * *' || env.SLOT == '30 0 * * *' || contains(github.event.head_commit.message, '[threads-now]'))
         continue-on-error: true
         env:
           THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
           THREADS_SLOT: ${{ contains(github.event.head_commit.message, '[threads-now]') && 'night' || '' }}
         run: |
           if [ -z "$THREADS_TOKEN" ]; then echo "토큰 없음"; exit 0; fi
-          pip install -q playwright==1.47.0 && python -m playwright install --with-deps chromium >/dev/null
+          source .github/scripts/chrome.sh
           python -m engine threads --prepare
       - name: 쓰레드 노하우 카드 묶음 준비(15:00, 빠지면 22:00)
-        if: always() && (env.SLOT == '0 6 * * *' || env.SLOT == '0 13 * * *' || contains(github.event.head_commit.message, '[threads-kh]'))
+        if: always() && env.SKIP != '1' && (env.SLOT == '0 6 * * *' || env.SLOT == '0 13 * * *' || contains(github.event.head_commit.message, '[threads-kh]'))
         continue-on-error: true
         env:
           THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
         run: |
           if [ -z "$THREADS_TOKEN" ]; then echo "토큰 없음"; exit 0; fi
-          python -c "import playwright" 2>/dev/null || { pip install -q playwright==1.47.0 && python -m playwright install --with-deps chromium >/dev/null; }
+          source .github/scripts/chrome.sh
           python -m engine threads --knowhow-prepare
       - name: 쓰레드 전날 결과 카드 준비(11:00, 결과가 덜 나왔으면 13:00·18:00 실행이 대신. 하루 한 번)
-        if: always() && (env.SLOT == '0 2 * * *' || env.SLOT == '0 4 * * *' || env.SLOT == '0 9 * * *' || contains(github.event.head_commit.message, '[threads-result]'))
+        if: always() && env.SKIP != '1' && (env.SLOT == '0 2 * * *' || env.SLOT == '0 4 * * *' || env.SLOT == '0 9 * * *' || contains(github.event.head_commit.message, '[threads-result]'))
         continue-on-error: true
         env:
           THREADS_TOKEN: ${{ secrets.THREADS_TOKEN }}
         run: |
           if [ -z "$THREADS_TOKEN" ]; then echo "토큰 없음"; exit 0; fi
-          python -c "import playwright" 2>/dev/null || { pip install -q playwright==1.47.0 && python -m playwright install --with-deps chromium >/dev/null; }
+          source .github/scripts/chrome.sh
           python -m engine threads --result-prepare
       - name: 자동 점검(커밋 전에 실행해 연속 실패 기록을 남김, 문제가 이어지면 GitHub 이슈로 알림 → 이메일)
         if: always()
@@ -182,7 +192,7 @@ jobs:
             sleep $((i * 5))
           done
       - name: 검색엔진에 새 페이지 알림(IndexNow·구글 서치 콘솔)
-        if: steps.commit.outputs.pushed == '1'
+        if: env.SKIP != '1' && (steps.commit.outputs.pushed == '1')
         continue-on-error: true
         env:
           GSC_SA_JSON: ${{ secrets.GSC_SA_JSON }}

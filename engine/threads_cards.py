@@ -411,8 +411,15 @@ def render(cards: list[str], out_dir: Path, prefix: str) -> list[Path]:
     paths = []
     with sync_playwright() as p:
         import os
-        exe = os.getenv("CHROMIUM_PATH") or None  # 미리 깔린 크롬을 쓸 때만(GitHub Actions 는 playwright install 기본 경로)
-        b = p.chromium.launch(executable_path=exe, args=["--no-sandbox"] if exe else None)
+        exe = os.getenv("CHROMIUM_PATH") or None  # GitHub 러너에 미리 깔린 크롬(없으면 playwright 가 받은 크롬)
+        try:
+            b = p.chromium.launch(executable_path=exe, args=["--no-sandbox"] if exe else None)
+        except Exception:  # noqa: BLE001 - 미리 깔린 크롬이 안 맞으면 playwright 크롬을 받아서 다시
+            import subprocess
+            import sys
+            subprocess.run([sys.executable, "-m", "playwright", "install", "--with-deps", "chromium"], check=False,
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            b = p.chromium.launch()
         pg = b.new_page(viewport={"width": W, "height": H})
         for i, c in enumerate(cards, 1):
             # 빈 페이지(about:blank)에서는 로컬 글꼴 파일이 막히므로 파일로 저장해서 연다

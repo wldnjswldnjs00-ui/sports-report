@@ -278,6 +278,7 @@ def post_knowhow() -> bool:
     st = read_json(STATE, {}) or {}
     st["kh"] = [x for x in (st.get("kh") or []) if x != pend["slug"]][-1000:] + [pend["slug"]]
     st["kh_day"] = pend["day"]
+    st["kh_days"] = sorted(set((st.get("kh_days") or []) + [pend["day"]]))[-30:]  # 점검용: 노하우가 올라간 날
     st.pop("pending_kh", None)
     write_json(STATE, st)
     log.info("Threads 노하우 게시 완료: %s", pend["title"])

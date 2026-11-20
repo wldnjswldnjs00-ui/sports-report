@@ -80,12 +80,51 @@ def problems() -> list[str]:
     if posted:
         first = st.setdefault("threads_first", posted[0][:10])
         days = (date.fromisoformat(config.today_kst()) - date.fromisoformat(first)).days
+        exp = tk.get("expires")
+        left = (exp / 1000 - config.now_kst().timestamp()) / 86400 if exp else None
+        if left is not None and left <= 12:
+            out.append(f"쓰레드 토큰이 {max(left, 0):.0f}일 뒤 만료됩니다(자동 연장이 되지 않고 있음). Meta 개발자 화면에서 새 장기 토큰을 만들어 "
+                       "GitHub Secrets 의 `THREADS_TOKEN` 값을 바꿔 주세요. 바꾸면 다음 실행부터 자동으로 이어서 연장됩니다.")
         if tk.get("src") == "worker" and tk.get("err"):
             out.append(f"쓰레드 토큰 자동 연장에 오류가 있습니다: {tk['err'][:120]}. 토큰이 만료되기 전에 Meta 개발자 화면에서 새 토큰을 만들어 "
                        "GitHub Secrets 의 `THREADS_TOKEN` 값을 바꿔 주세요.")
         elif tk.get("src") != "worker" and days >= 53:
             out.append("쓰레드 토큰 자동 연장(Cloudflare Worker)을 쓰지 못하고 있어, 첫 토큰이 곧(60일) 만료됩니다. "
                        "Meta 개발자 화면에서 새 토큰을 만들어 GitHub Secrets 의 `THREADS_TOKEN` 값을 바꿔 주세요.")
+    # Cloudflare Worker(정해진 시각에 실행을 시작하는 시계) 상태
+    try:
+        ws = http("GET", config.SITE_URL + "/api/status", retries=2, headers={"User-Agent": "sports-report-actions"}).json()
+        hb = ws.get("cron_last")
+        if hb:
+            age_h = (datetime.now(datetime.fromisoformat(hb.replace("Z", "+00:00")).tzinfo) - datetime.fromisoformat(hb.replace("Z", "+00:00"))).total_seconds() / 3600
+            if age_h > 3:
+                out.append(f"Cloudflare 예약 실행이 {age_h:.0f}시간째 멈춰 있습니다. GitHub 예비 확인(지킴이)이 대신 돌리고 있지만 늦을 수 있습니다.")
+        exp = ws.get("gh_token_expires")
+        if exp:
+            ed = datetime.strptime(exp[:10], "%Y-%m-%d").date()
+            left = (ed - date.fromisoformat(config.today_kst())).days
+            if left <= 14:
+                out.append(f"Cloudflare 가 실행을 시작할 때 쓰는 GitHub 토큰이 {ed.isoformat()}에 만료됩니다({left}일 남음). "
+                           "GitHub → Settings → Developer settings → Personal access tokens 에서 같은 권한으로 새로 만들어 "
+                           "Cloudflare Worker 의 비밀 값 `GH_TOKEN` 을 바꿔 주세요. 그 전까지는 GitHub 예비 확인이 대신 돌립니다.")
+    except Exception as e:  # noqa: BLE001
+        log.info("Worker 상태 확인 건너뜀: %s", type(e).__name__)
+    mn = read_json(config.STATE / "minutes.json", {}) or {}
+    if mn.get("used") and mn.get("limit") and mn["used"] >= mn["limit"] * 0.8:
+        out.append(f"GitHub Actions 무료 실행 시간을 이번 주기(매달 20일부터) {mn['used']:.0f}분 / {mn['limit']}분 썼습니다. 절약 모드({mn.get('mode')})로 "
+                   "필수 시각(쓰레드·채점)만 돌리고 있습니다. 다음 20일에 자동으로 평소대로 돌아갑니다.")
+    # 어제 쓰레드 글 4개(07 아침·11 결과·15 노하우·19 저녁)가 다 올라갔는지(다시 올리기까지 다 실패한 경우만 남는다)
+    if th.get("posted") and os.getenv("THREADS_TOKEN"):
+        y = date.fromisoformat(config.today_kst()) - timedelta(days=1)
+        want = {f"{y.isoformat()}:morning": "07시 아침 분석", f"{(y + timedelta(days=1)).isoformat()}:night": "19시 저녁 분석",
+                f"{(y - timedelta(days=1)).isoformat()}:result": "11시 전날 결과"}
+        miss = [v for k, v in want.items() if k not in th["posted"]]
+        if th.get("kh_days") is not None and y.isoformat() not in th["kh_days"]:
+            miss.append("15시 노하우")
+        # 결과는 경기가 덜 끝난 날 건너뛸 수 있고, 베트맨 휴장일엔 분석 글이 없을 수 있어 2개 이상 빠질 때만 알린다
+        if len(miss) >= 2:
+            out.append(f"어제({y.isoformat()}) 쓰레드 글 중 {', '.join(miss)}이 올라가지 않았습니다(다시 올리기까지 실패). "
+                       "Actions 의 '매일 분석'·'쓰레드 다시 올리기' 기록에 원인이 남아 있습니다.")
     from .sources import odds_api
     rem = odds_api._remaining()
     if rem is not None and rem < odds_api._days_left() * odds_api.DAILY_NEED * 0.5:
@@ -102,7 +141,45 @@ def _gh(method: str, path: str, **kw):
                 headers={"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json"}, **kw)
 
 
+OWNER = "wldnjswldnjs00-ui"
+REMIND_DAYS = 50
+
+
+def remind() -> None:
+    """50일마다 쓰레드 토큰 확인 알림 이슈를 연다(저장소 주인에게 이메일). 이전 알림은 닫는다."""
+    st = read_json(STATE, {}) or {}
+    today = date.fromisoformat(config.today_kst())
+    last = st.get("remind_at")
+    if last and (today - date.fromisoformat(last)).days < REMIND_DAYS:
+        return
+    tk = read_json(config.STATE / "threads_token.json", {}) or {}
+    exp = tk.get("expires")
+    exp_s = datetime.fromtimestamp(exp / 1000, config.KST).strftime("%Y-%m-%d") if exp else "알 수 없음"
+    auto = "정상(7일마다 자동 연장)" if tk.get("src") == "worker" and not tk.get("err") else f"확인 필요({tk.get('err') or tk.get('src') or '기록 없음'})"
+    body = (f"@{OWNER} {REMIND_DAYS}일마다 보내는 쓰레드 토큰 확인 알림입니다.\n\n"
+            f"- 자동 연장: {auto}\n- 지금 토큰 만료일: {exp_s}\n\n"
+            "자동 연장이 '정상'이면 아무것도 하지 않아도 됩니다. '확인 필요'이거나 만료일이 2주 안이면 "
+            "Meta 개발자 화면에서 새 장기 토큰을 만들어 GitHub 저장소 Settings → Secrets → `THREADS_TOKEN` 값만 바꿔 주세요. "
+            "나머지는 자동으로 이어집니다.\n\n"
+            f"_다음 알림: {(today + timedelta(days=REMIND_DAYS)).isoformat()}. 이 이슈는 다음 알림 때 자동으로 닫힙니다._")
+    try:
+        r = _gh("GET", "/issues", params={"state": "open", "labels": "token-reminder", "per_page": 10})
+        if r is None:
+            return
+        for old in r.json() or []:
+            _gh("PATCH", f"/issues/{old['number']}", json={"state": "closed"})
+        rr = _gh("POST", "/issues", json={"title": f"🔔 {REMIND_DAYS}일 점검 알림: 쓰레드 토큰 ({today.isoformat()})", "body": body,
+                                          "labels": ["token-reminder"]})
+        if rr is not None and rr.status_code < 300:
+            st = read_json(STATE, {}) or {}
+            st["remind_at"] = today.isoformat()
+            write_json(STATE, st)
+    except Exception as e:  # noqa: BLE001
+        log.warning("토큰 알림 실패: %s", type(e).__name__)
+
+
 def check() -> list[str]:
+    remind()
     ps = problems()
     for p in ps:
         log.warning("점검: %s", p)

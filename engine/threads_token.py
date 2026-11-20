@@ -29,10 +29,13 @@ def _oidc() -> str | None:
     return (r.json() or {}).get("value")
 
 
-def _note(src: str, err: str = "") -> None:
-    """어디서 토큰을 받았는지만 기록(값은 저장하지 않음). 자동 점검이 연장 실패를 알아챌 때 쓴다."""
+def _note(src: str, err: str = "", expires=None) -> None:
+    """어디서 토큰을 받았는지·만료 시각만 기록(값은 저장하지 않음). 자동 점검이 연장 실패·만료 임박을 알아챌 때 쓴다."""
     try:
-        write_json(config.STATE / "threads_token.json", {"src": src, "err": err[:200], "at": config.now_kst().isoformat(timespec="minutes")})
+        d = {"src": src, "err": err[:200], "at": config.now_kst().isoformat(timespec="minutes")}
+        if expires:
+            d["expires"] = int(expires)  # 밀리초(Worker 기준)
+        write_json(config.STATE / "threads_token.json", d)
     except Exception:  # noqa: BLE001
         pass
 
@@ -53,7 +56,7 @@ def current() -> str:
             if d.get("token"):
                 if d.get("error"):
                     log.warning("Worker 토큰 연장 오류 기록 있음: %s", str(d["error"])[:160])
-                _note("worker", str(d.get("error") or ""))
+                _note("worker", str(d.get("error") or ""), d.get("expires"))
                 _cached = d["token"]
                 return _cached
             log.info("Worker 토큰 응답 %s: Secrets 토큰 사용", r.status_code)
