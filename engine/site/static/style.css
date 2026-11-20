@@ -1423,13 +1423,13 @@ a.g-link:hover { border-color: var(--ink-3); background: var(--card-2); }
 
 /* 첫 화면 문구: 세 줄이 하나씩 위로 올라가고 마지막 '데이터와 수학으로, 분석을 똑똑하게'에서 멈춘다(한 번만) */
 .sl-roll { display: block; height: 1.95em; overflow: hidden; }
-.sl-track { display: block; animation: sl-up 6.2s cubic-bezier(.7, 0, .2, 1) .5s both; }
+.sl-track { display: block; animation: sl-up 7.5s cubic-bezier(.7, 0, .2, 1) .3s both; }  /* 한 줄당 2초씩 보이고 0.5초에 넘어감 */
 .sl-track > span { display: block; height: 1.95em; padding-top: .45em; line-height: 1.5; white-space: nowrap; }
 .sl-track b { font-weight: 700; color: var(--ink); }
 @keyframes sl-up {
-  0%, 17% { transform: translateY(0); }
-  25%, 42% { transform: translateY(-1.95em); }
-  50%, 67% { transform: translateY(-3.9em); }
-  75%, 100% { transform: translateY(-5.85em); }
+  0%, 26.7% { transform: translateY(0); }
+  33.3%, 60% { transform: translateY(-1.95em); }
+  66.7%, 93.3% { transform: translateY(-3.9em); }
+  100% { transform: translateY(-5.85em); }
 }
 @media (prefers-reduced-motion: reduce) { .sl-track { animation: none; transform: translateY(-5.85em); } }

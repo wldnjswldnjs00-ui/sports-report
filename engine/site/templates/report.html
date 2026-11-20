@@ -31,9 +31,9 @@
   </div>
   <div class="wrap hero-copy">
     <p class="slogan"><span class="sr">데이터와 수학으로, 분석을 똑똑하게</span><span class="sl-roll" aria-hidden="true"><span class="sl-track">
-      <span>올인하지 말고 <b>수학적으로</b></span>
-      <span>감으로 하지 말고 <b>데이터로</b></span>
-      <span>도박이 아닌 <b>확률 게임으로</b></span>
+      <span>올인하지 말고 <em>수학적으로</em></span>
+      <span>감으로 하지 말고 <em>데이터로</em></span>
+      <span>도박이 아닌 <em>확률 게임으로</em></span>
       <span>데이터와 수학으로, 분석을 <em>똑똑하게</em></span>
     </span></span></p>
     <p class="kicker">{% if is_home %}TODAY{% else %}REPORT{% endif %} · {{ r.date|kdate }}{% set rts = r.markets|map(attribute='round')|select|unique|list %}{% if rts %} · 프로토 승부식 {% for ts in rts|sort %}<a href="/rounds/{{ ts }}/">{{ round_label(ts) }}</a>{{ ' · ' if not loop.last }}{% endfor %}{% endif %}</p>
