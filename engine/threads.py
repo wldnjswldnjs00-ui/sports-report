@@ -404,6 +404,16 @@ def post_result() -> bool:
     return True
 
 
+def _same_post(a, b) -> bool:
+    """같은 글인가: 첫 줄(제목)로 비교한다. 쓰레드는 해시태그를 바꿔 돌려줄 수 있어 전체 글은 다를 수 있다.
+    제목 없이 태그만 있는 글(분석 글)은 전체 글로 비교."""
+    a, b = (a or "").strip(), (b or "").strip()
+    fa, fb = a.split("\n")[0].strip(), b.split("\n")[0].strip()
+    if fb and not fb.startswith("#"):
+        return fa == fb
+    return a == b
+
+
 def _already_up(uid: str, token: str, text: str, hours: int = 2) -> bool:
     """같은 글이 최근 몇 시간 안에 이미 올라가 있는가(게시는 됐는데 기록 저장이 실패한 경우 두 번 올리지 않게)."""
     try:
@@ -418,7 +428,7 @@ def _already_up(uid: str, token: str, text: str, hours: int = 2) -> bool:
             ts = datetime.strptime(d["timestamp"], "%Y-%m-%dT%H:%M:%S%z")
         except Exception:  # noqa: BLE001
             continue
-        if (d.get("text") or "").strip() == text.strip() and (now - ts).total_seconds() < hours * 3600:
+        if _same_post(d.get("text"), text) and (now - ts).total_seconds() < hours * 3600:
             return True
     return False
 
@@ -827,9 +837,10 @@ def redo_knowhow_post() -> bool:
                 return (datetime.now(timezone.utc) - datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S%z")).total_seconds() < 30 * 3600
             except Exception:  # noqa: BLE001
                 return False
-        olds = [d for d in data if (d.get("text") or "").strip() == rd["text"].strip() and recent(str(d.get("timestamp", "")))]
+        olds = [d for d in data if _same_post(d.get("text"), rd["text"]) and recent(str(d.get("timestamp", "")))]
         if not olds:
-            log.warning("노하우 다시 올리기: 지울 옛 글을 찾지 못함 — 두 번 올라가지 않게 멈춤")
+            log.warning("노하우 다시 올리기: 지울 옛 글을 찾지 못함 — 두 번 올라가지 않게 멈춤. 최근 글: %s",
+                        [(str(d.get("timestamp"))[:16], (d.get("text") or "")[:30]) for d in data[:6]])
             return False
         for d in olds:
             try:
