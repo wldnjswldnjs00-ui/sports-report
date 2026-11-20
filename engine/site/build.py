@@ -377,7 +377,7 @@ def _jsonld(*objs) -> list[str]:
 def _org() -> dict:
     return {"@type": "Organization", "@id": config.SITE_URL + "/#org", "name": config.SITE_NAME,
             "alternateName": [config.SITE_DOMAIN_DISPLAY, "스포츠분석닷kr"],
-            "description": "축구·야구·농구·배구 경기를 무료로 분석하는 국내 스포츠 분석 사이트. 베트맨 프로토 승부식 발매 경기의 확률·예상 스코어·상대전적을 매일 자동으로 공개한다.",
+            "description": "축구·야구·농구·배구 경기를 무료로 분석하는 스포츠 분석 사이트. 베트맨 프로토 승부식 발매 경기의 확률·예상 스코어·상대전적을 매일 자동으로 공개한다.",
             "url": config.SITE_URL + "/", "logo": config.SITE_URL + "/static/og.png",
             "sameAs": [u for u in (config.THREADS_URL, "https://github.com/wldnjswldnjs00-ui/sports-report") if u],
             "knowsAbout": ["스포츠 분석", "프로토 승부식", "NBA", "KBO", "KBL", "V리그", "EPL", "K리그", "MLB"]}
