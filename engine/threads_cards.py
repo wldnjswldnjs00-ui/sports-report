@@ -197,7 +197,7 @@ def card_cta(d: str) -> str:
             '<div class="url"><span class="lockic">🔗</span>스포츠분석<b>.kr</b></div>'
             '<p class="free">모든 분석과 조합은 <b>무료</b> · 회원가입 없이 바로</p>'
             '<p>프로필 링크를 누르면 바로 이동합니다</p>'
-            '<p>매일 밤 10시 · 아침 7시 업데이트</p>'
+            '<p>매일 자동 업데이트 · 경기 일정과 분석 모두 무료</p>'
             '<div class="care"><b>잃어도 괜찮은 소액으로, 재미로만 즐기세요.</b><br>분석은 참고용이며 적중을 보장하지 않습니다. 만 19세 이상 · 베트맨 공식 채널에서만<br>도박 문제 상담 1336 (24시간 무료)</div></div>')
 
 
@@ -273,6 +273,36 @@ def build(rep: dict, slot: str = "night", exclude: set[str] | None = None) -> tu
             shown += [_key(l) for l in c["legs"]]
     out.append(card_cta(d))
     return out, shown
+
+
+PV_CSS = """
+.pv-list{display:flex;flex-direction:column;gap:22px;margin-top:8px}
+.pv-g{background:#fff;border:2px solid #e3e9e6;border-radius:30px;padding:30px 36px}
+.pv-meta{font:600 26px PT;color:#7b8581}
+.pv-meta b{color:#121414;font:700 30px JO;margin-right:12px}
+.pv-teams{font:800 46px/1.3 JO,PT;letter-spacing:-1px;margin:14px 0 18px;word-break:keep-all}
+.pv-teams i{font:500 30px PT;font-style:normal;color:#9aa3a0;margin:0 12px}
+.pv-row{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.pv-odds{display:flex;gap:22px;font:700 32px JO;color:#3f4744}
+.pv-odds i{font:600 24px PT;font-style:normal;color:#9aa3a0;margin-right:6px}
+.pv-lock{font:700 26px PT;color:#fff;background:#ff3d7f;border-radius:999px;padding:10px 22px;white-space:nowrap}
+"""
+CSS += PV_CSS
+
+
+def card_preview(d: str, title: str, sub: str, games: list[dict]) -> str:
+    """빅매치 미리보기: 경기 시간·리그·팀·베트맨 배당. 모델 픽은 사이트에서(가림)."""
+    items = []
+    for g in games[:3]:
+        od = g.get("odds") or {}
+        keys = ["H", "D", "A"] if g.get("mk") == "1X2" else ["H", "A"]
+        lab = {"H": "승", "D": "무", "A": "패"}
+        odds = "".join(f'<span><i>{lab[k]}</i>{od[k]:.2f}</span>' for k in keys if od.get(k))
+        items.append(f'<div class="pv-g"><div class="pv-meta"><b>{_e(g["kickoff"][11:16])}</b>{_e(g.get("league", ""))}</div>'
+                     f'<div class="pv-teams">{_e(g["home"])}<i>vs</i>{_e(g["away"])}</div>'
+                     f'<div class="pv-row"><div class="pv-odds">{odds}</div><span class="pv-lock">🔒 픽은 사이트에서</span></div></div>')
+    return (f'<div class="card">{_top(d)}<div class="body"><h1>{_e(title)}</h1><p class="sub">{_e(sub)}</p>'
+            f'<div class="pv-list">{"".join(items)}</div></div></div>')
 
 
 def card_result(d: str, res: dict) -> str:

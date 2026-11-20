@@ -32,7 +32,7 @@ class AutomationTest(unittest.TestCase):
         src = (WF / "threads.yml").read_text(encoding="utf-8")
         self.assertIn("workflow_dispatch:", src)
         self.assertRegex(src[src.index("\npermissions:"):src.index("\njobs:")], r"\n  actions: write")
-        for kind in ("analysis)", "result)", "kh)"):
+        for kind in ("analysis)", "result)", "kh)", "preview)"):
             self.assertIn(kind, src)
 
     def test_worker_slots_are_handled(self):
@@ -79,3 +79,15 @@ class BudgetTest(unittest.TestCase):
             src = (WF / wf).read_text(encoding="utf-8")
             self.assertNotIn("playwright install", src, wf)  # 내려받기는 chrome.sh 안에서 미리 깔린 크롬이 없을 때만
         self.assertTrue((ROOT / ".github" / "scripts" / "chrome.sh").exists())
+
+
+class PreviewTest(unittest.TestCase):
+    def test_slots_cover_day_without_overlap(self):
+        from engine import threads as TH
+        spans = sorted(TH.PV_SLOTS.items())
+        for (s1, (a1, b1)), (s2, (a2, b2)) in zip(spans, spans[1:]):
+            self.assertEqual(b1, a2)          # 칸 사이에 빈 시간이 없다
+            self.assertGreaterEqual(a1 - s1, 3)  # 킥오프 3시간 이상 전에 올라간다
+        src = (WF / "daily.yml").read_text(encoding="utf-8")
+        self.assertIn("--pv-prepare", src)
+        self.assertIn("--pv-post", src)

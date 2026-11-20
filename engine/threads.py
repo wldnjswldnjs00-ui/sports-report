@@ -13,11 +13,12 @@
 from __future__ import annotations
 
 import html
+import json
 import logging
 import re
 import os
 import time
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 from . import config
 from .util import http, read_json, write_json
@@ -122,14 +123,17 @@ def _wait_live(urls: list[str], minutes: int = 10) -> bool:
     return False
 
 
-def _publish_container(uid: str, cid: str, token: str) -> None:
+def _publish_container(uid: str, cid: str, token: str):
     """만든 묶음을 게시. 쓰레드는 만든 직후 '없는 미디어'라고 답할 때가 있어 잠깐 기다렸다가 몇 번 다시 시도한다."""
     time.sleep(10)
     last = None
     for i in range(5):
         try:
-            http("POST", f"{API}/{uid}/threads_publish", params={"creation_id": cid, "access_token": token}, retries=2)
-            return
+            r = http("POST", f"{API}/{uid}/threads_publish", params={"creation_id": cid, "access_token": token}, retries=2)
+            try:
+                return (r.json() or {}).get("id")
+            except Exception:  # noqa: BLE001
+                return None
         except Exception as e:  # noqa: BLE001
             last = e
             r = getattr(e, "response", None)
@@ -428,6 +432,7 @@ def post_result() -> bool:
     st.pop("pending_result", None)
     write_json(STATE, st)
     log.info("Threads 결과 게시 완료(%s)", pend["day"])
+    reply_poll_result()
     return True
 
 
@@ -890,6 +895,209 @@ def redo_knowhow_post() -> bool:
     return True
 
 
+# ───────── 빅매치 미리보기(09:30·13:00 투표·17:00·22:00) ─────────
+# 경기마다 '킥오프보다 3시간 이상 앞선 칸 중 가장 늦은 칸'에 들어간다. 칸 → (오늘 0시 기준 킥오프 시작·끝 시각)
+PV_SLOTS = {9: (12.5, 17.0), 13: (17.0, 21.0), 17: (21.0, 25.0), 22: (25.0, 36.5)}
+PV_TITLE = {9: ("오늘 낮 빅매치", "오후 경기 미리보기"), 13: ("오늘 저녁 빅매치", "저녁 경기 미리보기"),
+            17: ("오늘 밤 빅매치", "밤 경기 미리보기"), 22: ("새벽·내일 아침 빅매치", "새벽·아침 경기 미리보기")}
+_LG_W = {"잉글랜드 프리미어리그": 100, "UEFA 챔피언스리그": 98, "NBA": 95, "KBO": 92, "스페인 라리가": 90, "KBL": 88,
+         "이탈리아 세리에A": 86, "KOVO 남자": 85, "KOVO 여자": 84, "독일 분데스리가": 83, "K리그1": 82, "MLB": 80,
+         "프랑스 리그1": 75, "UEFA 유로파리그": 74, "WKBL": 70, "K리그2": 62, "잉글랜드 챔피언십": 60}
+# 사람들이 많이 찾는 팀(같은 리그 안에서 먼저 고른다)
+_BIG_TEAMS = ("맨체스터 시티", "맨체스터 유나이티드", "리버풀", "아스널", "첼시", "토트넘", "뉴캐슬", "애스턴 빌라",
+              "레알 마드리드", "바르셀로나", "아틀레티코", "인테르", "AC밀란", "유벤투스", "나폴리", "바이에른", "도르트문트", "레버쿠젠",
+              "파리 생제르맹", "PSG", "레이커스", "워리어스", "셀틱스", "닉스", "썬더", "너기츠", "벅스", "히트", "울산", "전북", "FC서울", "포항")
+_SPORT_TAG = {"soccer": "#해외축구", "basketball": "#농구", "volleyball": "#배구", "baseball": "#야구"}
+
+
+def pv_slot(now=None):
+    """지금 시각이 속한 미리보기 칸(칸 시각부터 3시간 동안). 없으면 None."""
+    h = (now or config.now_kst()).hour
+    for s_ in PV_SLOTS:
+        if s_ <= h < s_ + 3:
+            return s_
+    return None
+
+
+def _lg_weight(m: dict) -> int:
+    lg = str(m.get("league") or "")
+    if "대한민국" in (str(m.get("home")) + str(m.get("away"))):
+        return 101  # 한국 국가대표 경기
+    return _LG_W.get(lg, 40)
+
+
+def big_matches(slot: int, n: int = 3) -> list[dict]:
+    """그 칸에 들어갈 빅매치(리그 비중 → 배당이 팽팽한 순). 오늘·다음 구매일 리포트에서 모은다."""
+    lo, hi = PV_SLOTS[slot]
+    base = datetime.fromisoformat(config.today_kst() + "T00:00:00+09:00")
+    t0, t1 = base + timedelta(hours=lo), base + timedelta(hours=hi)
+    seen: dict = {}
+    for f in sorted(config.REPORTS.glob("*.json"))[-3:]:
+        if f.stem < config.today_kst():
+            continue
+        for m in (read_json(f) or {}).get("markets") or []:
+            try:
+                ko = datetime.fromisoformat(m["kickoff"])
+            except (KeyError, ValueError, TypeError):
+                continue
+            if not (t0 <= ko < t1) or m.get("pool", "proto") != "proto":
+                continue
+            k = (m.get("home"), m.get("away"), m["kickoff"][:16])
+            big = sum(any(b in str(t) for b in _BIG_TEAMS) for t in (m.get("home"), m.get("away")))
+            g = seen.setdefault(k, {"home": m.get("home"), "away": m.get("away"), "kickoff": m["kickoff"], "league": m.get("league"),
+                                    "sport": m.get("sport"), "odds": None, "mk": None, "w": _lg_weight(m) + 12 * big})
+            if m.get("market") in ("1X2", "WL") and m.get("odds") and g["mk"] != "1X2":
+                g["odds"], g["mk"] = m["odds"], m["market"]
+    games = [g for g in seen.values() if g["odds"]]
+
+    def tight(g):  # 양쪽 배당 차이가 작을수록 볼만한 경기
+        o = g["odds"]
+        return abs((o.get("H") or 9) - (o.get("A") or 9))
+    games.sort(key=lambda g: (-g["w"], tight(g), g["kickoff"]))
+    # 같은 리그만 3개 몰리지 않게: 리그가 다른 경기를 먼저
+    out, lgs = [], set()
+    for g in games:
+        if g["league"] not in lgs or len(out) + (len(games) - len(out)) <= n:
+            out.append(g)
+            lgs.add(g["league"])
+        if len(out) >= n:
+            break
+    for g in games:
+        if len(out) >= n:
+            break
+        if g not in out:
+            out.append(g)
+    return sorted(out, key=lambda g: g["kickoff"])  # 카드에는 시작 시각 순
+
+
+def _pv_text(slot: int, games: list[dict]) -> str:
+    tags = []
+    for g in games:
+        t = "#NBA" if g["league"] == "NBA" else "#KBL" if g["league"] == "KBL" else _SPORT_TAG.get(g["sport"], "#스포츠")
+        if g["sport"] == "soccer" and str(g["league"]).startswith("K리그"):
+            t = "#K리그"
+        tags.append(t)
+    tags = list(dict.fromkeys(tags)) + ["#프로토", "#프로토분석", "#스포츠분석", "#만19세이상"]
+    return f"{PV_TITLE[slot][0]} · 분석은 프로필 링크에서\n" + " ".join(dict.fromkeys(tags))
+
+
+def prepare_preview(force: bool = False) -> bool:
+    """지금 칸의 빅매치 카드를 만든다(13시 칸은 투표 글 정보도 함께). 경기가 없으면 아무것도 하지 않는다."""
+    if not (os.getenv("THREADS_TOKEN", "").strip() or force):
+        return False
+    slot = int(os.getenv("PV_SLOT") or 0) or pv_slot()
+    if not slot:
+        return False
+    today = config.today_kst()
+    st = read_json(STATE, {}) or {}
+    key = f"{today}:pv{slot:02d}"
+    if key in (st.get("posted") or []):
+        return False
+    games = big_matches(slot)
+    if not games:
+        log.info("Threads 미리보기: %s 칸에 들어갈 경기 없음", slot)
+        return False
+    from . import threads_cards as TC
+    title, sub_ = PV_TITLE[slot]
+    cards = [TC.card_preview(today, title, sub_ + " · 배당은 베트맨", games), TC.card_cta(today)]
+    paths = TC.render(cards, IMG_DIR, f"{today}-pv{slot:02d}")
+    pend = {"day": today, "slot": slot, "key": key, "files": [p_.name for p_ in paths], "text": _pv_text(slot, games)}
+    if slot == 13:
+        g = games[0]
+        opts = [f"{g['home']} 승"[:25]] + (["무승부"] if g["mk"] == "1X2" else []) + [f"{g['away']} 승"[:25]]
+        pend["poll"] = {"q": f"오늘 {g['kickoff'][11:16]} {g['league']}\n{g['home']} vs {g['away']}\n누가 이길까요? 🤔\n\n분석은 프로필 링크에서 · #프로토 #만19세이상",
+                        "opts": opts, "home": g["home"], "away": g["away"], "kickoff": g["kickoff"], "mk": g["mk"]}
+    st = read_json(STATE, {}) or {}
+    st["pending_pv"] = pend
+    write_json(STATE, st)
+    log.info("Threads 미리보기 준비(%s칸): %s", slot, " / ".join(f"{g['home']}-{g['away']}" for g in games))
+    return True
+
+
+def _post_poll(uid: str, token: str, pl: dict):
+    """투표 글(글자만). 성공하면 글 id, 안 되면 None(그때는 카드 글로 대신 올린다)."""
+    opt = {"option_a": pl["opts"][0], "option_b": pl["opts"][1]}
+    if len(pl["opts"]) > 2:
+        opt["option_c"] = pl["opts"][2]
+    try:
+        cid = http("POST", f"{API}/{uid}/threads", params={"media_type": "TEXT", "text": pl["q"], "poll_attachment": json.dumps(opt, ensure_ascii=False),
+                                                           "access_token": token}, retries=2).json()["id"]
+        return _publish_container(uid, cid, token) or "posted"
+    except Exception as e:  # noqa: BLE001
+        r = getattr(e, "response", None)
+        log.warning("Threads 투표 글 실패(카드 글로 대신): %s", ((r.text if r is not None else str(e))[:200]).replace(token, "***"))
+        return None
+
+
+def post_preview() -> bool:
+    st = read_json(STATE, {}) or {}
+    pend = st.get("pending_pv")
+    if not pend or pend["day"] != config.today_kst() or pend["key"] in (st.get("posted") or []):
+        return False
+    if pv_slot() != pend["slot"] and not os.getenv("PV_SLOT"):
+        log.info("Threads 미리보기: 칸 시간이 지나 올리지 않음(%s)", pend["key"])
+        return False
+    au = _auth()
+    if not au:
+        log.warning("Threads 미리보기: 토큰 확인 실패")
+        return False
+    uid, token = au
+    done = False
+    if pend.get("poll") and not _already_up(uid, token, pend["poll"]["q"]):
+        pid = _post_poll(uid, token, pend["poll"])
+        if pid:
+            done = True
+            st = read_json(STATE, {}) or {}
+            st["poll"] = {**pend["poll"], "id": pid if pid != "posted" else None, "day": pend["day"]}
+            write_json(STATE, st)
+    if not done:
+        urls = [f"{config.SITE_URL}/threads/{f}" for f in pend["files"]]
+        if not _wait_live(urls):
+            log.warning("Threads 미리보기: 카드 이미지가 사이트에 아직 없음")
+            return False
+        if not _publish(uid, token, urls, pend["text"], "미리보기"):
+            return False
+    st = read_json(STATE, {}) or {}
+    st["posted"] = (st.get("posted") or [])[-60:] + [pend["key"]]
+    st.pop("pending_pv", None)
+    write_json(STATE, st)
+    log.info("Threads 미리보기 게시 완료(%s)", pend["key"])
+    return True
+
+
+def reply_poll_result() -> None:
+    """어제 투표 글에 실제 결과를 답글로(실패해도 조용히 넘어간다)."""
+    try:
+        st = read_json(STATE, {}) or {}
+        pl = st.get("poll") or {}
+        y = (date.fromisoformat(config.today_kst()) - timedelta(days=1)).isoformat()
+        if not pl.get("id") or pl.get("replied") or pl.get("day") not in (y, config.today_kst()):
+            return
+        res = None
+        for f in sorted(config.REPORTS.glob("*.json"))[-4:]:
+            rep = read_json(f) or {}
+            outs = rep.get("outcomes") or {}
+            for m in rep.get("markets") or []:
+                if m.get("home") == pl["home"] and m.get("away") == pl["away"] and m.get("market") == pl.get("mk") and outs.get(m["id"]) in ("H", "D", "A"):
+                    res = outs[m["id"]]
+        if not res:
+            return
+        lab = {"H": f"{pl['home']} 승", "D": "무승부", "A": f"{pl['away']} 승"}[res]
+        au = _auth()
+        if not au:
+            return
+        uid, token = au
+        cid = http("POST", f"{API}/{uid}/threads", params={"media_type": "TEXT", "reply_to_id": pl["id"],
+                                                          "text": f"결과: {lab} ✅\n오늘 분석도 이미 올라와 있습니다 · 프로필 링크", "access_token": token}, retries=2).json()["id"]
+        _publish_container(uid, cid, token)
+        st = read_json(STATE, {}) or {}
+        st["poll"] = {**pl, "replied": True}
+        write_json(STATE, st)
+        log.info("Threads 투표 결과 답글 완료")
+    except Exception as e:  # noqa: BLE001
+        log.info("Threads 투표 결과 답글 건너뜀: %s", type(e).__name__)
+
+
 def due(kind: str) -> bool:
     """이 글이 지금 올라가 있어야 하는데 아직 안 올라갔는가(바로 다시 올릴지 판단).
     kind: analysis(아침·저녁 분석) · result(전날 결과) · kh(노하우). 토큰이 없으면 언제나 False."""
@@ -909,6 +1117,11 @@ def due(kind: str) -> bool:
         if f"{day}:result" in posted:
             return False
         return bool(st.get("pending_result")) or result_stats(day) is not None  # 결과가 덜 나온 날은 13·18시가 이어받음
+    if kind == "preview":
+        slot = pv_slot()
+        if not slot or f"{today}:pv{slot:02d}" in posted:
+            return False
+        return bool(st.get("pending_pv")) or bool(big_matches(slot))
     if kind == "kh-redo":
         rd = st.get("kh_redo") or {}
         return rd.get("day") == today and not rd.get("done")

@@ -117,6 +117,6 @@ def should_skip(slot: str) -> bool:
     if m == "normal" or slot not in OPTIONAL:
         return False
     from . import threads as TH
-    if any(TH.due(k) for k in ("analysis", "result", "kh")):
+    if any(TH.due(k) for k in ("analysis", "result", "kh", "preview")):
         return False
     return True

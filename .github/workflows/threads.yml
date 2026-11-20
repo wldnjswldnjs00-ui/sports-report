@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       kind:
-        description: "analysis | result | kh | kh-redo"
+        description: "analysis | result | kh | kh-redo | preview"
         required: true
       attempt:
         description: "몇 번째 시도"
@@ -58,6 +58,7 @@ jobs:
             result)   python -m engine threads --result-prepare ;;
             kh)       python -m engine threads --knowhow-prepare ;;
             kh-redo)  python -m engine threads --kh-redo-prepare ;;
+            preview)  python -m engine threads --pv-prepare ;;
           esac
       - name: 커밋(사이트에 카드 이미지 배포)
         id: commit
@@ -82,6 +83,7 @@ jobs:
             result)   python -m engine threads --result-post ;;
             kh)       python -m engine threads --knowhow ;;
             kh-redo)  python -m engine threads --kh-redo-post ;;
+            preview)  python -m engine threads --pv-post ;;
           esac
           git add data/state
           if git diff --cached --quiet; then exit 0; fi
