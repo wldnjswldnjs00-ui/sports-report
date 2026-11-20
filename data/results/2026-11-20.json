@@ -451,6 +451,22 @@
    "raw": "1.5:1",
    "code": "0",
    "market": "HANDICAP"
+  },
+  "betman:G101:260138:4662": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "0:1",
+   "code": "2",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260138:4684": {
+   "status": "FT",
+   "outcome": "O",
+   "src": "betman",
+   "raw": "184:0",
+   "code": "2",
+   "market": "OU"
   }
  }
 }

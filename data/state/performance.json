@@ -1,50 +1,50 @@
 {
- "updated": "2026-11-20T22:01:17+09:00",
+ "updated": "2026-11-20T23:05:46+09:00",
  "picks": {
   "all": {
    "n": 109,
    "hit_rate": 0.6514,
-   "expected": 0.6797,
-   "brier": 0.2267,
-   "logloss": 0.6452
+   "expected": 0.6802,
+   "brier": 0.2273,
+   "logloss": 0.6466
   },
   "30d": {
    "n": 109,
    "hit_rate": 0.6514,
-   "expected": 0.6797,
-   "brier": 0.2267,
-   "logloss": 0.6452
+   "expected": 0.6802,
+   "brier": 0.2273,
+   "logloss": 0.6466
   }
  },
  "calibration": [
   {
    "bucket": "30-40%",
    "n": 7,
-   "expected": 0.3724,
+   "expected": 0.3705,
    "actual": 0.2857
   },
   {
    "bucket": "40-50%",
    "n": 29,
-   "expected": 0.4534,
+   "expected": 0.4515,
    "actual": 0.3448
   },
   {
    "bucket": "50-60%",
-   "n": 153,
-   "expected": 0.5335,
-   "actual": 0.5556
+   "n": 155,
+   "expected": 0.5334,
+   "actual": 0.5484
   },
   {
    "bucket": "60-70%",
    "n": 31,
-   "expected": 0.6479,
+   "expected": 0.648,
    "actual": 0.6129
   },
   {
    "bucket": "70-80%",
    "n": 22,
-   "expected": 0.7486,
+   "expected": 0.7505,
    "actual": 0.5909
   },
   {
