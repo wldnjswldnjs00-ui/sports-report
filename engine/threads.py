@@ -57,7 +57,6 @@ def caption(rep: dict, slot: str) -> str:
         if lg and lg not in leagues:
             leagues.append(lg)
     tags += ["#" + lg for lg in leagues[:5]]
-    tags += ["#만19세이상"]
     return " ".join(dict.fromkeys(tags))
 
 
@@ -438,7 +437,7 @@ def prepare_result(force: bool = False) -> bool:
     cards.append(TC.card_link("오늘 분석도", "이미 올라와 있습니다"))
     paths = TC.render(cards, IMG_DIR, f"{day}-result")
     st["pending_result"] = {"day": day, "files": [p.name for p in paths],
-                            "text": "어제 결과 · 매일 같은 기준으로 모든 픽을 기록합니다\n#프로토 #승부식 #프로토분석 #스포츠토토 #베트맨 #스포츠분석 #만19세이상"}
+                            "text": "어제 결과 · 매일 같은 기준으로 모든 픽을 기록합니다\n#프로토 #승부식 #프로토분석 #스포츠토토 #베트맨 #스포츠분석"}
     write_json(STATE, st)
     log.info("Threads 결과 카드 준비(%s): %d/%d, 30일 %.0f%%", day, res["hit"], res["n"], res["r30"] * 100)
     return True
@@ -852,7 +851,7 @@ def _kh_cards(a: dict, today: str):
         cards.append(TC.card_kh_quote(today, t, "정리" if k == 1 else ""))
     cards.append(TC.card_link("전체 글과 다른 노하우는", "여기서 무료로"))
     tags = ["#프로토", "#프로토분석", "#스포츠분석"] + ([f"#{a['league'].replace(' ', '')}"] if a.get("league") else [])
-    return cards, f"{hook}\n{' '.join(tags)} #만19세이상"
+    return cards, f"{hook}\n{' '.join(tags)}"
 
 
 def redo_knowhow_prepare() -> bool:
@@ -1006,6 +1005,31 @@ def big_matches(slot: int, n: int = 3) -> list[dict]:
     return sorted(out, key=lambda g: g["kickoff"])  # 카드에는 시작 시각 순
 
 
+def poll_match():
+    """그날 투표할 경기: 오늘 12:30 ~ 내일 12:00 시작 경기 중 가장 인기 있는 것(리그 비중·인기 팀). 마땅한 게 없으면 None.
+    (경기, 칸) — 16시 전에 시작하면 09:30 칸, 아니면 13:00 칸(어느 쪽이든 킥오프 3시간 이상 전)."""
+    base = datetime.fromisoformat(config.today_kst() + "T00:00:00+09:00")
+    cands = []
+    for s_ in PV_SLOTS:
+        cands += big_matches(s_, n=10)
+    cands = [g for g in cands if base + timedelta(hours=12.5) <= datetime.fromisoformat(g["kickoff"]) < base + timedelta(hours=36)]
+    if not cands:
+        return None
+    best = max(cands, key=lambda g: (g["w"], -abs((g["odds"].get("H") or 9) - (g["odds"].get("A") or 9))))
+    if best["w"] < 80:  # 호주 A리그 같은 덜 알려진 리그만 있는 날은 투표 대신 카드
+        return None
+    ko = datetime.fromisoformat(best["kickoff"])
+    return best, (9 if ko < base + timedelta(hours=16) else 13)
+
+
+def _topic(g: dict) -> str:
+    if g["league"] in ("NBA", "KBL", "WKBL"):
+        return "#" + g["league"]
+    if g["sport"] == "soccer" and str(g["league"]).startswith("K리그"):
+        return "#K리그"
+    return _SPORT_TAG.get(g["sport"], "#스포츠")
+
+
 def _pv_text(slot: int, games: list[dict]) -> str:
     tags = []
     for g in games:
@@ -1013,7 +1037,7 @@ def _pv_text(slot: int, games: list[dict]) -> str:
         if g["sport"] == "soccer" and str(g["league"]).startswith("K리그"):
             t = "#K리그"
         tags.append(t)
-    tags = list(dict.fromkeys(tags)) + ["#프로토", "#프로토분석", "#스포츠분석", "#만19세이상"]
+    tags = list(dict.fromkeys(tags)) + ["#프로토", "#프로토분석", "#스포츠분석"]
     return f"{PV_TITLE[slot][0]} · 분석은 프로필 링크에서\n" + " ".join(dict.fromkeys(tags))
 
 
@@ -1030,6 +1054,9 @@ def prepare_preview(force: bool = False) -> bool:
     if key in (st.get("posted") or []):
         return False
     games = big_matches(slot)
+    pm = poll_match()
+    if not games and pm and pm[1] == slot:
+        games = [pm[0]]  # 이 칸이 투표 칸이면 칸 안에 다른 경기가 없어도 투표는 올린다
     if not games:
         log.info("Threads 미리보기: %s 칸에 들어갈 경기 없음", slot)
         return False
@@ -1038,10 +1065,11 @@ def prepare_preview(force: bool = False) -> bool:
     cards = [TC.card_preview(today, title, sub_ + " · 배당은 베트맨", games), TC.card_cta(today)]
     paths = TC.render(cards, IMG_DIR, f"{today}-pv{slot:02d}")
     pend = {"day": today, "slot": slot, "key": key, "files": [p_.name for p_ in paths], "text": _pv_text(slot, games)}
-    if slot == 13:
-        g = games[0]
+    if pm and pm[1] == slot and (st.get("poll") or {}).get("day") != today:
+        g = pm[0]
         opts = [f"{g['home']} 승"[:25]] + (["무승부"] if g["mk"] == "1X2" else []) + [f"{g['away']} 승"[:25]]
-        pend["poll"] = {"q": f"오늘 {g['kickoff'][11:16]} {g['league']}\n{g['home']} vs {g['away']}\n누가 이길까요? 🤔\n\n분석은 프로필 링크에서 · #프로토 #만19세이상",
+        day_word = "오늘" if g["kickoff"][:10] == today else "내일"
+        pend["poll"] = {"q": f"{_topic(g)} {day_word} {g['kickoff'][11:16]} {g['league']}\n{g['home']} vs {g['away']}\n누가 이길까요? 🤔\n\n분석은 프로필 링크에서",
                         "opts": opts, "home": g["home"], "away": g["away"], "kickoff": g["kickoff"], "mk": g["mk"]}
     st = read_json(STATE, {}) or {}
     st["pending_pv"] = pend
