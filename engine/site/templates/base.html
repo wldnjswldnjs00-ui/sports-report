@@ -147,6 +147,8 @@
 (function(){var tp=document.querySelectorAll('.ad-tp');if(!tp.length)return;
 function chk(end){tp.forEach(function(a){if(a.classList.contains('tp-off'))return;var l=a.querySelector('.ad-label'),h=a.offsetHeight-(l?l.offsetHeight:0);
 var t=(a.innerText||'').replace(/광고/,'');if((h>=24&&/이용할 수 없습니다|환경에서는 이용/.test(t))||(end&&h<24))a.classList.add('tp-off')})}
-[4000,8000].forEach(function(ms){setTimeout(function(){chk(false)},ms)});setTimeout(function(){chk(true)},15000)})();</script>{% endif %}
+[4000,8000].forEach(function(ms){setTimeout(function(){chk(false)},ms)});setTimeout(function(){chk(true)},15000);
+/* 크롬이 무거운 광고(영상 등)를 지우면 '광고가 삭제되었습니다' 회색 칸이 남는다 → 그 알림을 받으면 텐핑 칸을 거둔다(가운데 자리는 쿠팡으로) */
+try{if(window.ReportingObserver)new ReportingObserver(function(rs){rs.forEach(function(r){if(r.body&&/HeavyAd/i.test(r.body.id||"")){tp.forEach(function(a){a.classList.add('tp-off')})}})},{types:['intervention'],buffered:true}).observe()}catch(e){}})();</script>{% endif %}
 </body>
 </html>
