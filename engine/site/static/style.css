@@ -1444,7 +1444,7 @@ a.g-link:hover { border-color: var(--ink-3); background: var(--card-2); }
 .sc-list { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--card); overflow: hidden; }
 .sc-list li { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-top: 1px solid var(--line); min-width: 0; }
 .sc-list li:first-child { border-top: 0; }
-.sc-list time { flex: 0 0 auto; font: 700 14px var(--en); color: var(--ink-2); width: 44px; }
+.sc-list time { flex: 0 0 auto; font: 700 13px var(--en); color: var(--ink-2); min-width: 42px; white-space: nowrap; font-variant-numeric: tabular-nums; }  /* 시간이 두 줄로 꺾이지 않게 */
 .sc-teams { flex: 1 1 auto; min-width: 0; font-weight: 600; word-break: keep-all; }
 .sc-teams a { color: inherit; }
 .sc-teams i { font-style: normal; color: var(--ink-3); font-weight: 400; margin: 0 2px; }
@@ -1464,6 +1464,7 @@ a.g-link:hover { border-color: var(--ink-3); background: var(--card-2); }
   .sc-list li { flex-wrap: wrap; gap: 4px 10px; }
   .sc-teams { flex-basis: calc(100% - 60px); }
   .sc-odds { margin-left: 54px; }
+  .sc-list time { font-size: 12px; }
 }
 
 /* 쓰레드에서 온 사람용 '가린 경기 공개' */
