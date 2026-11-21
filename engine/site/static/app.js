@@ -359,7 +359,17 @@
         var grid = $(".combo-grid:not(.nd-grid)", pn);
         if (grid && !grid.children.length) {
           grid.remove();
-          if (!$(".none", pn) && !$(".nd-grid", pn)) { var pz = doc.createElement("p"); pz.className = "none"; pz.textContent = "오늘 조합은 모두 시작했습니다. 다음 조합은 오후 7시에 올라옵니다."; pn.appendChild(pz); }
+          if (!$(".none", pn) && !$(".nd-grid", pn)) {
+            // 예: "오늘 안정형 조합은 모든 경기가 시작되었습니다. 다음 조합은 오늘 오후 7시에 업로드됩니다."
+            var tb = doc.getElementById(pn.getAttribute("aria-labelledby") || "");
+            var lb = tb ? (tb.firstChild && tb.firstChild.textContent || tb.textContent).replace(/\d+/g, "").trim() : "";
+            // 이름이 '조합'·'폴더'로 끝나면 그대로(역배 조합·로또폴더·단폴더), 아니면 '○○형 조합'
+            var what = !lb ? "조합" : /(조합|폴더)$/.test(lb) ? lb : lb + " 조합";
+            var when = new Date().getHours() < 19 ? "오늘" : "내일";
+            var pz = doc.createElement("p"); pz.className = "none";
+            pz.textContent = "오늘 " + what + (/폴더$/.test(what) ? "는" : "은") + " 모든 경기가 시작되었습니다. 다음 조합은 " + when + " 오후 7시에 업로드됩니다.";
+            pn.appendChild(pz);
+          }
         }
         var tab = doc.getElementById(pn.getAttribute("aria-labelledby") || "");
         var sm = tab && $("small", tab);
