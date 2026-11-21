@@ -1488,3 +1488,6 @@ a.g-link:hover { border-color: var(--ink-3); background: var(--card-2); }
 .slip-tab.is-mini { padding: 10px; gap: 0; }
 .slip-tab.is-mini span { max-width: 0; opacity: 0; }
 main { padding-bottom: 72px; }
+.kh-cta { display: block; margin: 26px 0 10px; padding: 18px 20px; border-radius: var(--r); background: var(--card); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
+.kh-cta b { display: block; font-size: 17px; }
+.kh-cta span { display: block; margin-top: 4px; color: var(--ink-2); font-size: 14px; }

@@ -124,6 +124,18 @@
     <ul class="kh-list">{% for x in kl %}<li><a href="/knowhow/{{ x.slug }}/"><b>{{ x.title }}</b><span>{{ x.lead }}</span></a></li>{% endfor %}</ul>
   </section>
   {% endif %}
+  {% if rel %}
+  <section class="block">
+    <h2 class="sub">{{ g.league if rel[0].league == g.league else '이어서 볼' }} 다른 경기</h2>
+    <ol class="sc-list rel-list">
+      {% for x in rel %}{% set xm = x.main %}
+      <li><time datetime="{{ x.kickoff }}">{{ x.kickoff|ktime }}</time>
+        <span class="sc-teams"><a href="{{ x.url }}">{{ x.home }} <i>vs</i> {{ x.away }}</a>{% if x.league != g.league %}<small> {{ x.league }}</small>{% endif %}</span>
+        {% if xm and xm.analysis %}<span class="th-pk"><span class="bub on {{ (outcome(xm, xm.analysis.pick))|tone }}">{{ outcome(xm, xm.analysis.pick) }}</span><b>{{ xm.analysis.pick_prob|pct }}</b></span>{% endif %}</li>
+      {% endfor %}
+    </ol>
+  </section>
+  {% endif %}
   <nav class="daynav"><a href="/reports/{{ r.date }}/">← {{ r.date|kdate }} 전체 경기</a><a href="/tool/">조합 계산기 →</a></nav>
 </article>
 {% endblock %}

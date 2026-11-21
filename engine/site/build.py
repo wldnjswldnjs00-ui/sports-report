@@ -424,7 +424,8 @@ def _sched_url(league: str, sport: str):
     """리그 → (일정 페이지 주소, 키워드)."""
     from . import schedule as SC
     c = SC.cat_of({"league": league, "sport": sport})
-    return (f"/schedule/{c}/", SC.CATS[c]["kw"]) if c in SC.CATS and c not in ("basketball",) else None
+    # 언제나 만들어지는 일정 페이지만(야구·WKBL 등은 경기가 있을 때만 생겨 비시즌에 끊긴 링크가 된다)
+    return (f"/schedule/{c}/", SC.CATS[c]["kw"]) if c in SC.CATS and SC.CATS[c]["always"] else None
 
 
 _TP_SKIP = ("/privacy/", "/terms/", "/contact/", "/support/", "/responsible/", "/about/", "/404", "/t/", "/stories/", "/tool/")
@@ -864,7 +865,11 @@ def build() -> None:
                 mog = OGP.match(config.DIST, g, _round_label((g.get("main") or g["markets"][0]).get("round"))) if i < 4 else None
                 # 같은 경기가 여러 날짜 리포트에 나오면 가장 최근 리포트의 페이지를 대표 주소로(중복 페이지 방지)
                 canon_url = murl.get((g["home"], g["away"], g["kickoff"][:10])) or g["url"]
-                page("match.html", g["url"], og_image=mog, g=g, r=r, outs=outs, lastmod=r["date"], jsonld=ld, page_title=title, page_desc=desc[:155],
+                # 같은 리그 다른 경기(시작 시각이 가까운 순, 최대 5) → 다 읽은 뒤 다음으로 볼 경기
+                rel = sorted((x for x in ms if x is not g and x["league"] == g["league"]), key=lambda x: abs((datetime.fromisoformat(x["kickoff"]) - kd).total_seconds()))[:5]
+                if len(rel) < 3:
+                    rel += [x for x in sorted(ms, key=lambda x: x["kickoff"]) if x is not g and x not in rel and x["kickoff"] >= g["kickoff"]][:5 - len(rel)]
+                page("match.html", g["url"], og_image=mog, g=g, r=r, outs=outs, lastmod=r["date"], jsonld=ld, page_title=title, page_desc=desc[:155], rel=rel,
                      canonical=canon_url)
     write_json(config.DIST / "data" / "hot.json", hot)  # 검색엔진 알림(IndexNow)에서 먼저 보낼 빅매치
     page("archive.html", "/reports/")
