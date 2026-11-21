@@ -251,7 +251,7 @@ def build(rep: dict, slot: str = "night", exclude: set[str] | None = None) -> tu
         """5개 중 3개 또는 2개를 가린다(경기가 적으면 최소 1개는 보이게)."""
         return max(0, min(3 if three else 2, len(items) - 1))
 
-    out.append(card_cover(d, rep, slot))
+    # 표지 카드는 빼고 첫 장부터 경기(쓰레드에서 표지 첫 장 글의 조회가 가장 낮았음, 11/21)
     tops = list(rep.get("top_picks") or [])
     if slot == "morning":
         tops = sorted(tops + list(rep.get("handi_picks") or []) + list(rep.get("ou_picks") or []), key=lambda l: -l["p"])

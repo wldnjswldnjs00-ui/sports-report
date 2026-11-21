@@ -49,15 +49,22 @@ def day_for(slot: str) -> str:
 
 
 def caption(rep: dict, slot: str) -> str:
-    """글 본문은 태그만. 그날 나온 리그를 태그로 붙인다."""
-    tags = ["#프로토", "#승부식", "#프로토분석", "#스포츠토토", "#베트맨", "#스포츠분석"]
-    leagues = []
-    for m in rep.get("markets") or []:
-        lg = str(m.get("league") or "").replace(" ", "")
-        if lg and lg not in leagues:
-            leagues.append(lg)
-    tags += ["#" + lg for lg in leagues[:5]]
-    return " ".join(dict.fromkeys(tags))
+    """글 첫 줄은 질문 한 줄(답글이 달리게), 태그는 주제 하나만(쓰레드는 맨 앞 태그만 주제로 쓴다)."""
+    tops = list(rep.get("top_picks") or [])
+    day_word = "내일" if slot == "night" else "오늘"
+    if tops:
+        # 카드에서 가린 픽을 본문에서 알려주지 않도록 경기 이름은 빼고 숫자로만 묻는다
+        t = tops[0]
+        n70 = sum(1 for x in tops if x.get("p", 0) >= 0.7)
+        head = (f"{day_word} 확률 70% 넘는 픽이 {n70}개 나왔어요" if n70 >= 2
+                else f"{day_word} 확률 1위 픽은 {t['p'] * 100:.0f}%")
+        return f"{head}\n어느 경기일지 맞혀 보세요 👀\n{_topic(t)}"
+    return f"{day_word} 프로토 승부식 분석, 어느 경기부터 보세요?\n#프로토"
+
+
+def _reply_text(rep: dict) -> str:
+    n = (rep.get("stats") or {}).get("combos", 0)
+    return f"가린 경기까지 전체 픽{f'과 추천 조합 {n}개' if n else ''}는 프로필 링크에서 볼 수 있어요 🔗"
 
 
 def _prune() -> None:
@@ -97,7 +104,7 @@ def prepare(slot: str | None = None, force: bool = False) -> bool:
     cards, shown = TC.build(rep, slot, exclude)
     _prune()
     paths = TC.render(cards, IMG_DIR, f"{day}-{slot}")
-    st["pending"] = {"day": day, "slot": slot, "files": [p.name for p in paths], "used": shown, "text": caption(rep, slot)}
+    st["pending"] = {"day": day, "slot": slot, "files": [p.name for p in paths], "used": shown, "text": caption(rep, slot), "reply": _reply_text(rep)}
     write_json(STATE, st)
     log.info("Threads 카드 %d장 준비(%s %s)", len(paths), day, slot)
     return True
@@ -177,6 +184,17 @@ def _publish_container(uid: str, cid: str, token: str):
                 raise
             time.sleep(15 * (i + 1))
     raise last
+
+
+def _reply(uid: str, token: str, parent: str, text: str) -> None:
+    """내 글에 답글 하나(대화로 보여 노출에 유리). 실패해도 본 글에는 영향 없음."""
+    if not parent or parent is True or not text:
+        return
+    try:
+        cid = http("POST", f"{API}/{uid}/threads", params={"media_type": "TEXT", "reply_to_id": parent, "text": text, "access_token": token}, retries=2).json()["id"]
+        _publish_container(uid, cid, token)
+    except Exception as e:  # noqa: BLE001
+        log.info("Threads 답글 건너뜀: %s", type(e).__name__)
 
 
 class _Skip(Exception):
@@ -266,7 +284,8 @@ def post() -> bool:
         step = "묶음 처리 대기"
         _ready(cid, 180)
         step = "게시"
-        _publish_container(uid, cid, token)
+        pid = _publish_container(uid, cid, token)
+        _reply(uid, token, pid, pend.get("reply") or "")
     except _Skip:
         pass
     except Exception as e:  # noqa: BLE001
@@ -312,7 +331,7 @@ def post_knowhow() -> bool:
     if not urls:
         log.warning("Threads 노하우: 카드 이미지가 사이트에 아직 없음 — 다음 실행에 맡김")
         return False
-    if not _publish(uid, token, urls, pend["text"], "노하우"):
+    if not _publish(uid, token, urls, pend["text"], "노하우", reply="전체 글과 다른 노하우는 프로필 링크에서 무료로 볼 수 있어요 🔗"):
         return False
     st = read_json(STATE, {}) or {}
     st["kh"] = [x for x in (st.get("kh") or []) if x != pend["slug"]][-1000:] + [pend["slug"]]
@@ -437,7 +456,8 @@ def prepare_result(force: bool = False) -> bool:
     cards.append(TC.card_link("오늘 분석도", "이미 올라와 있습니다"))
     paths = TC.render(cards, IMG_DIR, f"{day}-result")
     st["pending_result"] = {"day": day, "files": [p.name for p in paths],
-                            "text": "어제 결과 · 매일 같은 기준으로 모든 픽을 기록합니다\n#프로토 #승부식 #프로토분석 #스포츠토토 #베트맨 #스포츠분석"}
+                            "text": f"어제 배당 1.50 이상 픽 {res['hi_hit']}/{res['hi_n']} 적중\n오늘은 몇 개나 맞을까요?\n#프로토",
+                            "reply": "오늘 분석도 이미 올라와 있어요. 프로필 링크에서 볼 수 있어요 🔗"}
     write_json(STATE, st)
     log.info("Threads 결과 카드 준비(%s): %d/%d, 30일 %.0f%%", day, res["hit"], res["n"], res["r30"] * 100)
     return True
@@ -460,7 +480,7 @@ def post_result() -> bool:
     if not urls:
         log.warning("Threads 결과: 카드 이미지가 사이트에 아직 없음 — 다음 실행에 맡김")
         return False
-    if not _publish(uid, token, urls, pend["text"], "결과"):
+    if not _publish(uid, token, urls, pend["text"], "결과", reply=pend.get("reply", "")):
         return False
     st = read_json(STATE, {}) or {}
     st["posted"] = (st.get("posted") or [])[-30:] + [key]
@@ -500,7 +520,7 @@ def _already_up(uid: str, token: str, text: str, hours: int = 2) -> bool:
     return False
 
 
-def _publish(uid: str, token: str, urls: list[str], text: str, what: str, check_dup: bool = True) -> bool:
+def _publish(uid: str, token: str, urls: list[str], text: str, what: str, check_dup: bool = True, reply: str = ""):
     """이미지 한 장이면 단독, 여러 장이면 묶음(캐러셀)으로 게시."""
     if check_dup and _already_up(uid, token, text):
         log.info("Threads %s: 이미 올라가 있어 기록만 남김", what)
@@ -533,8 +553,9 @@ def _publish(uid: str, token: str, urls: list[str], text: str, what: str, check_
         step = "처리 대기"
         ready(cid, 180)
         step = "게시"
-        _publish_container(uid, cid, token)
-        return True
+        pid = _publish_container(uid, cid, token)
+        _reply(uid, token, pid, reply)
+        return pid or True
     except Exception as e:  # noqa: BLE001
         rr = getattr(e, "response", None)
         log.warning("Threads %s 게시 실패(%s): %s", what, step, ((rr.text if rr is not None else str(e))[:300]).replace(token, "***"))
@@ -851,7 +872,8 @@ def _kh_cards(a: dict, today: str):
         cards.append(TC.card_kh_quote(today, t, "정리" if k == 1 else ""))
     cards.append(TC.card_link("전체 글과 다른 노하우는", "여기서 무료로"))
     tags = ["#프로토", "#프로토분석", "#스포츠분석"] + ([f"#{a['league'].replace(' ', '')}"] if a.get("league") else [])
-    return cards, f"{hook}\n{' '.join(tags)}"
+    topic = {"soccer": "#해외축구", "basketball": "#농구", "baseball": "#야구", "volleyball": "#배구"}.get(a.get("sport") or "", "#프로토")
+    return cards, f"{hook}\n{topic}"
 
 
 def redo_knowhow_prepare() -> bool:
@@ -1031,14 +1053,11 @@ def _topic(g: dict) -> str:
 
 
 def _pv_text(slot: int, games: list[dict]) -> str:
-    tags = []
-    for g in games:
-        t = "#NBA" if g["league"] == "NBA" else "#KBL" if g["league"] == "KBL" else _SPORT_TAG.get(g["sport"], "#스포츠")
-        if g["sport"] == "soccer" and str(g["league"]).startswith("K리그"):
-            t = "#K리그"
-        tags.append(t)
-    tags = list(dict.fromkeys(tags)) + ["#프로토", "#프로토분석", "#스포츠분석"]
-    return f"{PV_TITLE[slot][0]} · 분석은 프로필 링크에서\n" + " ".join(dict.fromkeys(tags))
+    """첫 줄은 가장 팽팽한 경기로 질문, 태그는 주제 하나."""
+    g = min(games, key=lambda x: abs((x["odds"].get("H") or 9) - (x["odds"].get("A") or 9)))
+    o = g["odds"]
+    return (f"{g['home']} vs {g['away']}, {g['kickoff'][11:16]} 시작\n"
+            f"배당 {o.get('H', 0):.2f} / {o.get('A', 0):.2f}{'로 팽팽해요' if abs((o.get('H') or 9) - (o.get('A') or 9)) < 0.6 else ''}. 어느 쪽이세요?\n{_topic(g)}")
 
 
 def prepare_preview(force: bool = False) -> bool:
@@ -1064,7 +1083,8 @@ def prepare_preview(force: bool = False) -> bool:
     title, sub_ = PV_TITLE[slot]
     cards = [TC.card_preview(today, title, sub_ + " · 배당은 베트맨", games), TC.card_cta(today)]
     paths = TC.render(cards, IMG_DIR, f"{today}-pv{slot:02d}")
-    pend = {"day": today, "slot": slot, "key": key, "files": [p_.name for p_ in paths], "text": _pv_text(slot, games)}
+    pend = {"day": today, "slot": slot, "key": key, "files": [p_.name for p_ in paths], "text": _pv_text(slot, games),
+            "reply": "모델 픽과 확률은 프로필 링크에서 공개해요 🔗"}
     if pm and pm[1] == slot and (st.get("poll") or {}).get("day") != today:
         g = pm[0]
         opts = [f"{g['home']} 승"[:25]] + (["무승부"] if g["mk"] == "1X2" else []) + [f"{g['away']} 승"[:25]]
@@ -1119,7 +1139,7 @@ def post_preview() -> bool:
         if not urls:
             log.warning("Threads 미리보기: 카드 이미지가 사이트에 아직 없음")
             return False
-        if not _publish(uid, token, urls, pend["text"], "미리보기"):
+        if not _publish(uid, token, urls, pend["text"], "미리보기", reply=pend.get("reply", "")):
             return False
     st = read_json(STATE, {}) or {}
     st["posted"] = (st.get("posted") or [])[-60:] + [pend["key"]]
