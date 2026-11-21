@@ -59815,7 +59815,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 애스턴 빌라, 결과는 무승부.",
+    "r": "발행 당시 이변 위험이 46로 이미 높았다. 추정 확률이 52%에 그친 박빙 경기였다.",
+    "e": "해외 배당이 비슷했던 유럽 축구 경기에서는 53% 적중했다. 이번은 나머지 47%에 해당한다.",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:4981",
@@ -60160,7 +60167,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 선덜랜드 핸디 선택이 맞았다.",
+    "r": "추정 확률 44%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 유럽 축구 경기에서는 47% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:4982",
@@ -60502,7 +60516,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 선덜랜드 핸디 선택이 맞았다.",
+    "r": "추정 확률 67%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 유럽 축구 경기에서는 72% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:4983",
@@ -60830,7 +60851,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 언더 선택이 맞았다.",
+    "r": "추정 확률 51%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 유럽 축구 경기에서는 51% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:4985",
@@ -62445,7 +62473,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 첼시, 결과는 리즈 유나이티드.",
+    "r": "발행 당시 이변 위험이 55로 이미 높았다. 추정 확률이 44%에 그친 박빙 경기였다.",
+    "e": "해외 배당이 비슷했던 유럽 축구 경기에서는 46% 적중했다. 이번은 나머지 54%에 해당한다.",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:4991",
@@ -62843,7 +62878,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 리즈 유나이티드 핸디 선택이 맞았다.",
+    "r": "추정 확률 51%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 유럽 축구 경기에서는 54% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:4992",
@@ -63208,7 +63250,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 리즈 유나이티드 핸디 선택이 맞았다.",
+    "r": "추정 확률 72%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 유럽 축구 경기에서는 77% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:4993",
@@ -63579,7 +63628,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 언더, 결과는 오버.",
+    "r": "발행 당시 이변 위험이 49로 이미 높았다. 추정 확률이 51%에 그친 박빙 경기였다.",
+    "e": "해외 배당이 비슷했던 유럽 축구 경기에서는 51% 적중했다. 이번은 나머지 49%에 해당한다.",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:4995",
@@ -70580,7 +70636,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 아스널, 결과는 무승부.",
+    "r": "추정 확률 60%는 40%의 빗나갈 몫을 포함한다. 이번이 그 경우였다.",
+    "e": "해외 배당이 비슷했던 유럽 축구 경기에서는 68% 적중했다. 이번은 나머지 32%에 해당한다.",
+    "o2": "판단 과정에 오류는 없었다. 확률이 허용한 범위의 결과로 기록한다."
+   }
   },
   {
    "id": "betman:G101:260138:5026",
@@ -70961,7 +71024,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 아스널 핸디, 결과는 뉴캐슬 유나이티드 핸디.",
+    "r": "발행 당시 이변 위험이 63로 이미 높았다. 추정 확률이 37%에 그친 박빙 경기였다.",
+    "e": "해외 배당이 비슷했던 유럽 축구 경기에서는 37% 적중했다. 이번은 나머지 63%에 해당한다.",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5027",
@@ -71308,7 +71378,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 뉴캐슬 유나이티드 핸디 선택이 맞았다.",
+    "r": "추정 확률 59%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 유럽 축구 경기에서는 63% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5028",
@@ -71642,7 +71719,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 오버 선택이 맞았다.",
+    "r": "추정 확률 50%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 유럽 축구 경기에서는 49% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5030",
@@ -75940,7 +76024,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 필라델피아 76s 선택이 맞았다.",
+    "r": "추정 확률 80%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 NBA 경기에서는 81% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5050",
@@ -76267,7 +76358,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 밀워키 벅스 핸디 선택이 맞았다.",
+    "r": "추정 확률 52%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 NBA 경기에서는 59% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5051",
@@ -76593,7 +76691,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 언더, 결과는 오버.",
+    "r": "발행 당시 이변 위험이 50로 이미 높았다. 추정 확률이 50%에 그친 박빙 경기였다.",
+    "e": "해외 배당이 비슷했던 NBA 경기에서는 50% 적중했다. 이번은 나머지 50%에 해당한다.",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5053",
@@ -122601,7 +122706,7 @@
       "upset_risk": 25,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:4888",
@@ -123114,7 +123219,7 @@
       "upset_risk": 25,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 3,
@@ -124722,7 +124827,7 @@
       "upset_risk": 49,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:4731",
@@ -124929,7 +125034,7 @@
       "upset_risk": 46,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 4,
@@ -125181,7 +125286,7 @@
       "upset_risk": 50,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 4,
@@ -125307,7 +125412,7 @@
       "upset_risk": 49,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 4,
@@ -125406,7 +125511,7 @@
       "upset_risk": 46,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:4719",
@@ -125559,7 +125664,7 @@
       "upset_risk": 49,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:4826",
@@ -125712,7 +125817,7 @@
       "upset_risk": 50,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 4,
@@ -125838,7 +125943,7 @@
       "upset_risk": 46,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:4711",
@@ -125991,7 +126096,7 @@
       "upset_risk": 50,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:5028",
@@ -126018,7 +126123,7 @@
       "upset_risk": 49,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 5,
@@ -126033,8 +126138,8 @@
     "key": "betman:G101:260138:4715:A+betman:G101:260138:4723:A+betman:G101:260138:4735:A+betman:G101:260138:4983:U+betman:G101:260138:5028:O",
     "strategy": "aggressive",
     "rank": 11,
-    "result": "pending",
-    "return": null
+    "result": "win",
+    "return": 153200
    },
    {
     "legs": [
@@ -126144,7 +126249,7 @@
       "upset_risk": 46,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:4711",
@@ -126434,7 +126539,7 @@
       "upset_risk": 47,
       "single": true,
       "dog": true,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:4730",
@@ -126533,7 +126638,7 @@
       "upset_risk": 54,
       "single": true,
       "dog": true,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 2,
@@ -126605,7 +126710,7 @@
       "upset_risk": 54,
       "single": true,
       "dog": true,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 2,
@@ -126677,7 +126782,7 @@
       "upset_risk": 47,
       "single": true,
       "dog": true,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 2,
@@ -127048,7 +127153,7 @@
       "upset_risk": 54,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:4719",
@@ -127174,7 +127279,7 @@
       "upset_risk": 47,
       "single": true,
       "dog": true,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:4877",
@@ -127381,7 +127486,7 @@
       "upset_risk": 63,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:4703",
@@ -127507,7 +127612,7 @@
       "upset_risk": 54,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:4710",
@@ -127714,7 +127819,7 @@
       "upset_risk": 63,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:4980",
@@ -127741,7 +127846,7 @@
       "upset_risk": 47,
       "single": true,
       "dog": true,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 5,
@@ -127840,7 +127945,7 @@
       "upset_risk": 63,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:4703",
@@ -127894,7 +127999,7 @@
       "upset_risk": 47,
       "single": true,
       "dog": true,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:4990",
@@ -127921,7 +128026,7 @@
       "upset_risk": 54,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 6,
@@ -128136,7 +128241,7 @@
    "single": false,
    "dog": true,
    "kelly": 0.0018,
-   "result": null
+   "result": "miss"
   },
   {
    "market_id": "betman:G101:260138:4747",
@@ -132100,7 +132205,22 @@
   "betman:G101:260138:4874": "O",
   "betman:G101:260138:4876": "D",
   "betman:G101:260138:4877": "A",
-  "betman:G101:260138:4878": "U"
+  "betman:G101:260138:4878": "U",
+  "betman:G101:260138:4980": "D",
+  "betman:G101:260138:4981": "A",
+  "betman:G101:260138:4982": "A",
+  "betman:G101:260138:4983": "U",
+  "betman:G101:260138:4990": "A",
+  "betman:G101:260138:4991": "A",
+  "betman:G101:260138:4992": "A",
+  "betman:G101:260138:4993": "O",
+  "betman:G101:260138:5025": "D",
+  "betman:G101:260138:5026": "H",
+  "betman:G101:260138:5027": "H",
+  "betman:G101:260138:5028": "O",
+  "betman:G101:260138:5049": "H",
+  "betman:G101:260138:5050": "A",
+  "betman:G101:260138:5051": "O"
  },
  "headline": "오늘 프로토 86경기. 기준 경기는 리즈 유나이티드 원정승(72%). 이후 37경기도 미리 분석했습니다."
 }
