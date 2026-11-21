@@ -1465,3 +1465,26 @@ a.g-link:hover { border-color: var(--ink-3); background: var(--card-2); }
   .sc-teams { flex-basis: calc(100% - 60px); }
   .sc-odds { margin-left: 54px; }
 }
+
+/* 쓰레드에서 온 사람용 '가린 경기 공개' */
+.th-reveal { margin-top: 18px; }
+.th-list li { gap: 10px; }
+.th-list .sc-teams small { display: block; font-weight: 500; font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+.th-pk { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; }
+.th-pk b { font: 700 15px var(--en); min-width: 40px; text-align: right; }
+/* 휴대폰 첫 화면에 픽이 보이게: 3D 무대를 낮추고 숫자 칸을 한 줄로 */
+@media (max-width: 560px) {
+  .hero-stage { height: 170px; }
+  .hero { padding-bottom: 6px; }
+  .block.tp-wrap { padding-top: 4px; }
+  .tp-wrap .block-head h2 { font-size: 22px; }
+  .stat-row { flex-wrap: nowrap; gap: 8px; }
+  .stat-row li { flex: 1 1 0; padding: 9px 12px; }
+  .stat-row b { font-size: 21px; }
+  .stat-row span { font-size: 11px; }
+}
+/* '내 조합' 버튼: 스크롤하는 동안 작게(숫자를 가리지 않게), 페이지 끝은 버튼 높이만큼 여백 */
+.slip-tab span { transition: max-width .25s var(--ease), opacity .2s; max-width: 80px; overflow: hidden; white-space: nowrap; }
+.slip-tab.is-mini { padding: 10px; gap: 0; }
+.slip-tab.is-mini span { max-width: 0; opacity: 0; }
+main { padding-bottom: 72px; }

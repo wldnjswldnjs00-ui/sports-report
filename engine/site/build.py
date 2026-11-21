@@ -753,7 +753,25 @@ def build() -> None:
     next_guess = {"date": tomorrow, "rounds": guess_rounds}
     home_og = OGP.report(config.DIST, "/", latest, f"{_kdate(latest['date'])} 프로토 분석",
                          "TODAY · 프로토 승부식 " + " · ".join(_rounds(latest))) if latest and latest.get("markets") else None
-    page("report.html", "/", og_image=home_og, r=latest, is_home=True, next_day=(next_rep or {}).get("date"), nxt=next_rep, next_guess=next_guess, lastmod=(latest or {}).get("date"),
+    # 쓰레드 빅매치 카드에 올린 경기(오늘 칸 전부)의 모델 픽 → 쓰레드에서 온 사람에게 첫 화면 맨 위에 공개
+    th_big = []
+    try:
+        from .. import threads as TH
+        seen_k = {(t.get("home"), t.get("away")) for t in ((latest or {}).get("top_picks") or [])[:5] + ((latest or {}).get("upsets") or [])[:5]}
+        cand = [g for s_ in TH.PV_SLOTS for g in TH.big_matches(s_)]
+        allm = [m for rr in reports[:2] for m in rr.get("markets") or []]
+        for g in cand:
+            if (g["home"], g["away"]) in seen_k:
+                continue
+            ms = [m for m in allm if m.get("home") == g["home"] and m.get("away") == g["away"] and m.get("analysis") and m["kickoff"][:16] == g["kickoff"][:16]]
+            m = next((x for x in ms if x.get("market") in ("1X2", "WL")), ms[0] if ms else None)
+            if m:
+                seen_k.add((g["home"], g["away"]))
+                th_big.append({"m": m, "url": murl.get((m["home"], m["away"], m["kickoff"][:10]))})
+        th_big = th_big[:6]
+    except Exception:  # noqa: BLE001
+        log.exception("쓰레드 빅매치 공개 목록 실패(첫 화면은 계속)")
+    page("report.html", "/", og_image=home_og, th_big=th_big, r=latest, is_home=True, next_day=(next_rep or {}).get("date"), nxt=next_rep, next_guess=next_guess, lastmod=(latest or {}).get("date"),
          matches=_matches(latest) if latest else [], leagues_top=_leagues_of(latest) if latest else [],
          jsonld=_jsonld(site_ld) + report_ld(latest, "/"))
     # 경기 분석: 최근 리포트들에서 아직 시작하지 않은 경기 전부(같은 경기는 최신 리포트 것), 시작 날짜별로 묶는다
@@ -1096,9 +1114,9 @@ def build() -> None:
     # 쓰레드 프로필 링크 전용 주소: 방문 통계에서 /t/ 조회수 = 쓰레드에서 넘어온 수. 바로 첫 화면으로 보낸다(검색 제외)
     _write(config.DIST / "t" / "index.html",
            '<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="robots" content="noindex">'
-           f'<link rel="canonical" href="{config.SITE_URL}/"><meta http-equiv="refresh" content="2;url=/">'
+           f'<link rel="canonical" href="{config.SITE_URL}/"><meta http-equiv="refresh" content="2;url=/?from=threads">'
            '<title>스포츠분석.kr</title><style>body{margin:0;background:#0f1117;color:#8a90a6;font:14px sans-serif;display:grid;place-items:center;height:100vh}</style></head>'
-           '<body>스포츠분석.kr로 이동합니다…<script>addEventListener("load",function(){setTimeout(function(){location.replace("/")},500)})</script></body></html>')
+           '<body>스포츠분석.kr로 이동합니다…<script>addEventListener("load",function(){setTimeout(function(){location.replace("/?from=threads")},500)})</script></body></html>')
     _write(config.DIST / "404.html", env.get_template("404.html").render(**ctx, path="/404"))
     write_json(config.DIST / "data" / "today.json", _slip_payload(latest))
     # 알림 내용(서비스 워커가 알림 신호를 받으면 이 파일을 읽어 띄운다)

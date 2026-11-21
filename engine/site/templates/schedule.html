@@ -6,8 +6,7 @@
 <section class="wrap page-head">
   <p class="kicker"><a href="/schedule/">경기 일정</a> · {{ SPORT_LABEL[sc.sport] }}</p>
   <h1>{{ kw }} <small class="sc-tz">한국 시간</small></h1>
-  <p class="lede">{% if sc.n %}{{ sc.days[0][1] }}부터 {{ sc.days[-1][1] }}까지 열리는 {{ kw }}입니다. 모두 {{ sc.n }}경기이고 리그별로는 {% for lg, n in sc.leagues %}{{ lg }} {{ n }}경기{% if not loop.last %}, {% endif %}{% endfor %}입니다.{% else %}지금은 발매된 {{ sc.short }} 경기가 없습니다. 베트맨에 새 경기가 올라오면 이 {{ kw }}에 바로 추가됩니다.{% endif %} 시간은 모두 한국 시간이고, 경기를 누르면 그 경기의 분석(확률·예상 스코어·최근 흐름)으로 넘어갑니다.</p>
-  {% if og_image %}<img class="sc-card" src="{{ og_image }}" alt="{{ kw }} 요약 이미지: {% if sc.n %}{{ sc.days[0][1] }} {{ sc.n }}경기{% else %}발매 대기{% endif %}" width="1200" height="630" loading="lazy">{% endif %}
+  <p class="lede">{% if sc.n %}{{ sc.days[0][1] }}부터 {{ sc.n }}경기 · 시간은 모두 한국 시간 · 경기를 누르면 분석으로 넘어갑니다.{% else %}지금은 발매된 {{ sc.short }} 경기가 없습니다. 베트맨에 새 경기가 올라오면 이 {{ kw }}에 바로 추가됩니다.{% endif %}</p>
 </section>
 
 {% for d, dl, lgs in sc.days %}
@@ -31,6 +30,8 @@
 
 <section class="wrap block sc-info">
   <h2>{{ kw }} 보는 법</h2>
+  {% if sc.n %}<p>{{ sc.days[0][1] }}부터 {{ sc.days[-1][1] }}까지 열리는 {{ kw }}은 모두 {{ sc.n }}경기이고, 리그별로는 {% for lg, n in sc.leagues %}{{ lg }} {{ n }}경기{% if not loop.last %}, {% endif %}{% endfor %}입니다.</p>{% endif %}
+  {% if og_image %}<img class="sc-card" src="{{ og_image }}" alt="{{ kw }} 요약 이미지: {% if sc.n %}{{ sc.days[0][1] }} {{ sc.n }}경기{% else %}발매 대기{% endif %}" width="1200" height="630" loading="lazy">{% endif %}
   <p>이 {{ kw }}은 베트맨 프로토 승부식에 발매된 경기를 기준으로 매일 자동으로 갱신됩니다. 대상은 {{ sc.ex }} 등이고, 발매가 열리는 대로 앞으로 2~3일치가 올라옵니다. 경기 시간은 현지 시간이 아니라 한국 시간으로 바꿔 적었으니 따로 계산할 필요가 없습니다.</p>
   {% if sc.key in ('soccer', 'kleague') %}<p>유럽 리그 경기는 한국 시간으로 보통 저녁 8시부터 다음 날 새벽 5시 사이에 열립니다. 새벽 경기는 날짜가 바뀌므로, {{ kw }}에서 날짜 제목을 함께 확인하세요. 유럽 서머타임이 끝나는 10월 말부터는 같은 현지 시각이라도 한국 시간으로 1시간 늦게 시작합니다.</p>
   {% elif sc.key == 'nba' %}<p>NBA 경기는 미국 현지 저녁 경기가 많아 한국 시간으로는 보통 오전 8시~낮 12시에 시작합니다. 같은 날 여러 경기가 1~2시간 간격으로 이어지므로 {{ kw }}에서 시간 순서대로 확인하면 편합니다.</p>

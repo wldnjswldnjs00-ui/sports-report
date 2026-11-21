@@ -25,6 +25,26 @@
   <p class="stamp">{{ r.updated_at|kdt }} KST 기준 · 경기 시작 전 분석을 그대로 보관합니다</p>
 </section>
 {% else %}
+{% set rv = (r.top_picks or [])[:5] + (r.upsets or [])[:5] %}
+{% if rv or th_big %}
+{# 쓰레드에서 온 사람(프로필 링크 /t/ 또는 쓰레드 주소에서 넘어옴)에게만 맨 위에: 카드에 가렸던 경기의 픽을 바로 공개 #}
+<section class="wrap block th-reveal" data-th-reveal hidden>
+  <header class="block-head"><h2>쓰레드에서 가린 경기, 여기서 공개</h2><p>오늘 카드에 올린 경기의 모델 픽입니다. 경기를 누르면 자세한 분석으로 넘어갑니다.</p></header>
+  <ol class="sc-list th-list">
+  {% for t in rv %}{% set tm = mk.get(t.market_id) %}{% set tu = match_url(tm) if tm else None %}
+    <li data-ko="{{ t.kickoff }}"><time datetime="{{ t.kickoff }}">{{ t.kickoff|ktime }}</time>
+      <span class="sc-teams">{% if tu %}<a href="{{ tu }}">{{ t.home }} <i>vs</i> {{ t.away }}</a>{% else %}{{ t.home }} <i>vs</i> {{ t.away }}{% endif %}<small>{{ t.league }}{% if loop.index > (r.top_picks or [])[:5]|length %} · 역배 후보{% endif %}</small></span>
+      <span class="th-pk"><span class="bub on {{ (outcome(t, t.outcome))|tone }}">{{ outcome(t, t.outcome) }}</span><b>{{ t.p|pct }}</b></span></li>
+  {% endfor %}
+  {% for b in th_big %}{% set bm = b.m %}
+    <li data-ko="{{ bm.kickoff }}"><time datetime="{{ bm.kickoff }}">{{ bm.kickoff|ktime }}</time>
+      <span class="sc-teams">{% if b.url %}<a href="{{ b.url }}">{{ bm.home }} <i>vs</i> {{ bm.away }}</a>{% else %}{{ bm.home }} <i>vs</i> {{ bm.away }}{% endif %}<small>{{ bm.league }} · 빅매치</small></span>
+      <span class="th-pk"><span class="bub on {{ (outcome(bm, bm.analysis.pick))|tone }}">{{ outcome(bm, bm.analysis.pick) }}</span><b>{{ bm.analysis.pick_prob|pct }}</b></span></li>
+  {% endfor %}
+  </ol>
+  {{ tenping_ad() }}
+</section>
+{% endif %}
 <section class="hero">
   <div class="hero-stage" data-stage data-balls='{{ balls|tojson }}' aria-hidden="true">
     <canvas class="stage-canvas"></canvas>

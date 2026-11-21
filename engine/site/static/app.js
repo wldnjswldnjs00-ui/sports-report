@@ -45,6 +45,17 @@
     requestAnimationFrame(step);
   }
 
+  /* 쓰레드에서 온 사람: 카드에 가렸던 경기의 픽을 첫 화면 맨 위에(같은 내용의 '적중 확률 높은 경기' 줄은 숨겨 두 번 보이지 않게) */
+  (function () {
+    var rv = $("[data-th-reveal]");
+    if (!rv) return;
+    var fromTh = /[?&]from=threads/.test(location.search) || /threads\.(net|com)/.test(document.referrer || "");
+    if (!fromTh) return;
+    rv.hidden = false;
+    var tp = $(".tp-wrap"); if (tp) tp.hidden = true;
+    try { history.replaceState(null, "", location.pathname + location.hash); } catch (e) {}
+  })();
+
   /* 스크롤 등장 */
   if ("IntersectionObserver" in window && !reduce) {
     // 아주 긴 섹션(경기가 많은 날의 경기 목록)은 8%가 한 화면에 다 들어올 수 없다 → 비율이 아니라 '조금이라도 보이면'으로 판단
@@ -505,6 +516,16 @@
   }
   if (slipEl) {
     $("[data-slip-open]").addEventListener("click", function () { slipEl.classList.toggle("is-open"); });
+    // 스크롤하는 동안 버튼을 작게(오른쪽 끝 배당 숫자를 가리지 않게), 멈추면 1.2초 뒤 다시 원래 크기
+    (function () {
+      var tab = $(".slip-tab"), tm = null;
+      if (!tab) return;
+      window.addEventListener("scroll", function () {
+        tab.classList.add("is-mini");
+        clearTimeout(tm);
+        tm = setTimeout(function () { tab.classList.remove("is-mini"); }, 1200);
+      }, { passive: true });
+    })();
     $("[data-slip-close]").addEventListener("click", function () { slipEl.classList.remove("is-open"); });
     $("[data-slip-clear]").addEventListener("click", function () { slip.ids = []; save(); toast("비웠습니다."); });
     doc.addEventListener("keydown", function (e) { if (e.key === "Escape") slipEl.classList.remove("is-open"); });
