@@ -1,78 +1,78 @@
 {
- "updated": "2026-11-22T07:00:47+09:00",
+ "updated": "2026-11-22T09:30:45+09:00",
  "picks": {
   "all": {
-   "n": 184,
-   "hit_rate": 0.625,
-   "expected": 0.6663,
-   "brier": 0.2243,
-   "logloss": 0.6396
+   "n": 254,
+   "hit_rate": 0.6535,
+   "expected": 0.6669,
+   "brier": 0.2185,
+   "logloss": 0.627
   },
   "30d": {
-   "n": 184,
-   "hit_rate": 0.625,
-   "expected": 0.6663,
-   "brier": 0.2243,
-   "logloss": 0.6396
+   "n": 254,
+   "hit_rate": 0.6535,
+   "expected": 0.6669,
+   "brier": 0.2185,
+   "logloss": 0.627
   }
  },
  "calibration": [
   {
    "bucket": "30-40%",
-   "n": 22,
-   "expected": 0.3748,
-   "actual": 0.2727
+   "n": 31,
+   "expected": 0.3776,
+   "actual": 0.2581
   },
   {
    "bucket": "40-50%",
-   "n": 52,
-   "expected": 0.4459,
-   "actual": 0.4038
+   "n": 81,
+   "expected": 0.446,
+   "actual": 0.358
   },
   {
    "bucket": "50-60%",
-   "n": 250,
-   "expected": 0.5359,
-   "actual": 0.532
+   "n": 312,
+   "expected": 0.5392,
+   "actual": 0.5577
   },
   {
    "bucket": "60-70%",
-   "n": 51,
-   "expected": 0.6501,
-   "actual": 0.6471
+   "n": 66,
+   "expected": 0.6454,
+   "actual": 0.6515
   },
   {
    "bucket": "70-80%",
-   "n": 29,
-   "expected": 0.7476,
-   "actual": 0.6207
+   "n": 42,
+   "expected": 0.745,
+   "actual": 0.6905
   },
   {
    "bucket": "80-90%",
-   "n": 25,
-   "expected": 0.8517,
-   "actual": 0.88
+   "n": 34,
+   "expected": 0.8496,
+   "actual": 0.8235
   },
   {
    "bucket": "90-100%",
-   "n": 4,
-   "expected": 0.9096,
-   "actual": 0.75
+   "n": 7,
+   "expected": 0.9089,
+   "actual": 0.8571
   }
  ],
  "strategies": {
   "safe": {
    "all": {
-    "n": 41,
-    "win_rate": 0.4634,
-    "expected": 0.5696,
-    "roi": -0.3415
+    "n": 46,
+    "win_rate": 0.5217,
+    "expected": 0.5671,
+    "roi": -0.2489
    },
    "30d": {
-    "n": 41,
-    "win_rate": 0.4634,
-    "expected": 0.5696,
-    "roi": -0.3415
+    "n": 46,
+    "win_rate": 0.5217,
+    "expected": 0.5671,
+    "roi": -0.2489
    }
   },
   "single": {
@@ -91,16 +91,16 @@
   },
   "balanced": {
    "all": {
-    "n": 51,
-    "win_rate": 0.098,
-    "expected": 0.2438,
-    "roi": -0.6937
+    "n": 52,
+    "win_rate": 0.1154,
+    "expected": 0.2421,
+    "roi": -0.6177
    },
    "30d": {
-    "n": 51,
-    "win_rate": 0.098,
-    "expected": 0.2438,
-    "roi": -0.6937
+    "n": 52,
+    "win_rate": 0.1154,
+    "expected": 0.2421,
+    "roi": -0.6177
    }
   },
   "aggressive": {
@@ -179,8 +179,8 @@
   },
   {
    "date": "2026-11-21",
-   "n": 68,
-   "hit": 41
+   "n": 138,
+   "hit": 92
   }
  ]
 }
