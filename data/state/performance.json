@@ -1,45 +1,45 @@
 {
- "updated": "2026-11-22T19:01:05+09:00",
+ "updated": "2026-11-22T22:00:44+09:00",
  "picks": {
   "all": {
-   "n": 274,
-   "hit_rate": 0.6496,
-   "expected": 0.6666,
-   "brier": 0.221,
-   "logloss": 0.633
+   "n": 275,
+   "hit_rate": 0.6473,
+   "expected": 0.6665,
+   "brier": 0.2217,
+   "logloss": 0.6345
   },
   "30d": {
-   "n": 274,
-   "hit_rate": 0.6496,
-   "expected": 0.6666,
-   "brier": 0.221,
-   "logloss": 0.633
+   "n": 275,
+   "hit_rate": 0.6473,
+   "expected": 0.6665,
+   "brier": 0.2217,
+   "logloss": 0.6345
   }
  },
  "calibration": [
   {
    "bucket": "30-40%",
-   "n": 34,
-   "expected": 0.3789,
-   "actual": 0.2647
+   "n": 35,
+   "expected": 0.3781,
+   "actual": 0.2571
   },
   {
    "bucket": "40-50%",
-   "n": 84,
-   "expected": 0.4469,
-   "actual": 0.369
+   "n": 85,
+   "expected": 0.4474,
+   "actual": 0.3647
   },
   {
    "bucket": "50-60%",
-   "n": 340,
-   "expected": 0.5394,
-   "actual": 0.5559
+   "n": 346,
+   "expected": 0.5391,
+   "actual": 0.5607
   },
   {
    "bucket": "60-70%",
-   "n": 70,
+   "n": 71,
    "expected": 0.6459,
-   "actual": 0.6714
+   "actual": 0.662
   },
   {
    "bucket": "70-80%",
@@ -91,16 +91,16 @@
   },
   "balanced": {
    "all": {
-    "n": 58,
-    "win_rate": 0.1034,
-    "expected": 0.243,
-    "roi": -0.6572
+    "n": 62,
+    "win_rate": 0.0968,
+    "expected": 0.2413,
+    "roi": -0.6794
    },
    "30d": {
-    "n": 58,
-    "win_rate": 0.1034,
-    "expected": 0.243,
-    "roi": -0.6572
+    "n": 62,
+    "win_rate": 0.0968,
+    "expected": 0.2413,
+    "roi": -0.6794
    }
   },
   "aggressive": {
@@ -119,16 +119,16 @@
   },
   "upset": {
    "all": {
-    "n": 48,
-    "win_rate": 0.1042,
-    "expected": 0.1141,
-    "roi": -0.2494
+    "n": 51,
+    "win_rate": 0.098,
+    "expected": 0.1144,
+    "roi": -0.2935
    },
    "30d": {
-    "n": 48,
-    "win_rate": 0.1042,
-    "expected": 0.1141,
-    "roi": -0.2494
+    "n": 51,
+    "win_rate": 0.098,
+    "expected": 0.1144,
+    "roi": -0.2935
    }
   },
   "lotto": {
@@ -184,7 +184,7 @@
   },
   {
    "date": "2026-11-22",
-   "n": 20,
+   "n": 21,
    "hit": 12
   }
  ]
