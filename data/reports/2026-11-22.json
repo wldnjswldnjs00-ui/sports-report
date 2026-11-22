@@ -20504,7 +20504,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. AFC아약스 선택이 맞았다.",
+    "r": "추정 확률 82%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5199",
@@ -20766,7 +20773,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. AFC아약스 핸디 선택이 맞았다.",
+    "r": "추정 확률 62%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5200",
@@ -21030,7 +21044,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. AFC아약스 핸디 선택이 맞았다.",
+    "r": "추정 확률 44%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5201",
@@ -21288,7 +21309,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. ADO덴하흐 핸디 선택이 맞았다.",
+    "r": "추정 확률 74%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5202",
@@ -21573,7 +21601,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 오버, 결과는 언더.",
+    "r": "발행 당시 이변 위험이 43로 이미 높았다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5204",
@@ -21844,7 +21879,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. AZ알크마르 선택이 맞았다.",
+    "r": "추정 확률 53%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5205",
@@ -22139,7 +22181,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 스파르타 로테르담 핸디, 결과는 AZ알크마르 핸디.",
+    "r": "발행 당시 이변 위험이 54로 이미 높았다. 추정 확률이 45%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5206",
@@ -22398,7 +22447,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 언더, 결과는 오버.",
+    "r": "발행 당시 이변 위험이 45로 이미 높았다. 추정 확률이 54%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5208",
@@ -22668,7 +22724,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 브라이턴&호브 앨비언, 결과는 헐 시티.",
+    "r": "추정 확률 62%는 38%의 빗나갈 몫을 포함한다. 이번이 그 경우였다.",
+    "e": "",
+    "o2": "판단 과정에 오류는 없었다. 확률이 허용한 범위의 결과로 기록한다."
+   }
   },
   {
    "id": "betman:G101:260138:5209",
@@ -22963,7 +23026,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 브라이턴&호브 앨비언 핸디, 결과는 헐 시티 핸디.",
+    "r": "발행 당시 이변 위험이 60로 이미 높았다. 추정 확률이 40%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5210",
@@ -23225,7 +23295,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 헐 시티 핸디 선택이 맞았다.",
+    "r": "추정 확률 61%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5211",
@@ -23483,7 +23560,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 오버, 결과는 언더.",
+    "r": "발행 당시 이변 위험이 41로 이미 높았다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5213",
@@ -23784,7 +23868,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 볼로냐, 결과는 무승부.",
+    "r": "추정 확률 59%는 41%의 빗나갈 몫을 포함한다. 이번이 그 경우였다.",
+    "e": "",
+    "o2": "판단 과정에 오류는 없었다. 확률이 허용한 범위의 결과로 기록한다."
+   }
   },
   {
    "id": "betman:G101:260138:5214",
@@ -24079,7 +24170,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 우디네세 핸디 선택이 맞았다.",
+    "r": "추정 확률 41%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5215",
@@ -24338,7 +24436,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 오버, 결과는 언더.",
+    "r": "발행 당시 이변 위험이 49로 이미 높았다. 추정 확률이 52%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5217",
@@ -24641,7 +24746,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 제노아 선택이 맞았다.",
+    "r": "추정 확률 39%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5218",
@@ -24934,7 +25046,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 US사수올로 핸디, 결과는 제노아 핸디.",
+    "r": "추정 확률 61%는 39%의 빗나갈 몫을 포함한다. 이번이 그 경우였다.",
+    "e": "",
+    "o2": "판단 과정에 오류는 없었다. 확률이 허용한 범위의 결과로 기록한다."
+   }
   },
   {
    "id": "betman:G101:260138:5219",
@@ -25220,7 +25339,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 오버, 결과는 언더.",
+    "r": "발행 당시 이변 위험이 48로 이미 높았다. 추정 확률이 52%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5221",
@@ -25490,7 +25616,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 파리FC 선택이 맞았다.",
+    "r": "추정 확률 73%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5222",
@@ -25784,7 +25917,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 파리FC 핸디 선택이 맞았다.",
+    "r": "추정 확률 49%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5223",
@@ -26079,7 +26219,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 앙제SCO 핸디, 결과는 파리FC 핸디.",
+    "r": "발행 당시 이변 위험이 52로 이미 높았다. 추정 확률이 45%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5224",
@@ -26364,7 +26511,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 앙제SCO 핸디, 결과는 파리FC 핸디.",
+    "r": "추정 확률 85%는 15%의 빗나갈 몫을 포함한다. 이번이 그 경우였다.",
+    "e": "",
+    "o2": "판단 과정에 오류는 없었다. 확률이 허용한 범위의 결과로 기록한다."
+   }
   },
   {
    "id": "betman:G101:260138:5225",
@@ -26649,7 +26803,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 언더, 결과는 오버.",
+    "r": "발행 당시 이변 위험이 43로 이미 높았다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5227",
@@ -26952,7 +27113,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 아우크스부르크 선택이 맞았다.",
+    "r": "추정 확률 38%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5228",
@@ -27214,7 +27382,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 아우크스부르크 핸디 선택이 맞았다.",
+    "r": "추정 확률 60%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5229",
@@ -27476,7 +27651,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 아우크스부르크 핸디 선택이 맞았다.",
+    "r": "추정 확률 83%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5230",
@@ -27735,7 +27917,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 언더, 결과는 오버.",
+    "r": "발행 당시 이변 위험이 46로 이미 높았다. 추정 확률이 53%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5232",
@@ -28007,7 +28196,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 레알 소시에다드, 결과는 라싱 산탄데르.",
+    "r": "발행 당시 이변 위험이 54로 이미 높았다. 추정 확률이 44%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5233",
@@ -28301,7 +28497,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 라싱 산탄데르 핸디 선택이 맞았다.",
+    "r": "추정 확률 54%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5234",
@@ -28560,7 +28763,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 오버 선택이 맞았다.",
+    "r": "추정 확률 52%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5236",
@@ -28862,7 +29072,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 고어헤드 이글스, 결과는 포르튀나 시타르트.",
+    "r": "발행 당시 이변 위험이 48로 이미 높았다. 추정 확률이 51%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5237",
@@ -29165,7 +29382,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 포르튀나 시타르트 핸디 선택이 맞았다.",
+    "r": "추정 확률 44%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5238",
@@ -29450,7 +29674,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 언더 선택이 맞았다.",
+    "r": "추정 확률 58%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5240",
@@ -29753,7 +29984,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 스타드 렌, 결과는 무승부.",
+    "r": "발행 당시 이변 위험이 63로 이미 높았다. 추정 확률이 38%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5241",
@@ -30015,7 +30253,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 로리앙 핸디 선택이 맞았다.",
+    "r": "추정 확률 61%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5242",
@@ -30301,7 +30546,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 언더 선택이 맞았다.",
+    "r": "추정 확률 52%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5244",
@@ -30584,7 +30836,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 리버풀 선택이 맞았다.",
+    "r": "추정 확률 54%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5245",
@@ -30861,7 +31120,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 맨체스터 유나이티드 핸디, 결과는 리버풀 핸디.",
+    "r": "발행 당시 이변 위험이 55로 이미 높았다. 추정 확률이 43%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5246",
@@ -31136,7 +31402,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 맨체스터 유나이티드 핸디, 결과는 리버풀 핸디.",
+    "r": "추정 확률 68%는 32%의 빗나갈 몫을 포함한다. 이번이 그 경우였다.",
+    "e": "",
+    "o2": "판단 과정에 오류는 없었다. 확률이 허용한 범위의 결과로 기록한다."
+   }
   },
   {
    "id": "betman:G101:260138:5247",
@@ -31407,7 +31680,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 언더, 결과는 오버.",
+    "r": "발행 당시 이변 위험이 43로 이미 높았다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5249",
@@ -31708,7 +31988,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 베르더 브레멘 선택이 맞았다.",
+    "r": "추정 확률 62%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5250",
@@ -32003,7 +32290,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 함부르크 핸디, 결과는 베르더 브레멘 핸디.",
+    "r": "발행 당시 이변 위험이 61로 이미 높았다. 추정 확률이 38%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5251",
@@ -32296,7 +32590,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 함부르크 핸디, 결과는 베르더 브레멘 핸디.",
+    "r": "추정 확률 62%는 38%의 빗나갈 몫을 포함한다. 이번이 그 경우였다.",
+    "e": "",
+    "o2": "판단 과정에 오류는 없었다. 확률이 허용한 범위의 결과로 기록한다."
+   }
   },
   {
    "id": "betman:G101:260138:5252",
@@ -32554,7 +32855,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 언더, 결과는 오버.",
+    "r": "추정 확률 59%는 41%의 빗나갈 몫을 포함한다. 이번이 그 경우였다.",
+    "e": "",
+    "o2": "판단 과정에 오류는 없었다. 확률이 허용한 범위의 결과로 기록한다."
+   }
   },
   {
    "id": "betman:G101:260138:5254",
@@ -32824,7 +33132,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. AC밀란 선택이 맞았다.",
+    "r": "추정 확률 62%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5255",
@@ -33119,7 +33434,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 프로시노네 핸디, 결과는 AC밀란 핸디.",
+    "r": "발행 당시 이변 위험이 60로 이미 높았다. 추정 확률이 39%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5256",
@@ -33405,7 +33727,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 오버 선택이 맞았다.",
+    "r": "추정 확률 51%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5258",
@@ -33676,7 +34005,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 오사수나 선택이 맞았다.",
+    "r": "추정 확률 51%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5259",
@@ -33971,7 +34307,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 말라가 핸디, 결과는 핸디 무.",
+    "r": "발행 당시 이변 위험이 52로 이미 높았다. 추정 확률이 49%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5260",
@@ -34230,7 +34573,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 언더 선택이 맞았다.",
+    "r": "추정 확률 52%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5262",
@@ -34500,7 +34850,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 인테르나치오날레 밀라노, 결과는 무승부.",
+    "r": "발행 당시 이변 위험이 40로 이미 높았다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5263",
@@ -34795,7 +35152,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 인테르나치오날레 밀라노 핸디, 결과는 아탈란타BC 핸디.",
+    "r": "발행 당시 이변 위험이 62로 이미 높았다. 추정 확률이 39%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5264",
@@ -35054,7 +35418,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 언더, 결과는 오버.",
+    "r": "발행 당시 이변 위험이 47로 이미 높았다. 추정 확률이 52%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5266",
@@ -35355,7 +35726,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 올랭피크드 마르세유, 결과는 르망FC.",
+    "r": "추정 확률 66%는 34%의 빗나갈 몫을 포함한다. 이번이 그 경우였다.",
+    "e": "",
+    "o2": "판단 과정에 오류는 없었다. 확률이 허용한 범위의 결과로 기록한다."
+   }
   },
   {
    "id": "betman:G101:260138:5267",
@@ -35650,7 +36028,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 올랭피크드 마르세유 핸디, 결과는 르망FC 핸디.",
+    "r": "발행 당시 이변 위험이 56로 이미 높았다. 추정 확률이 44%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5268",
@@ -35912,7 +36297,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 르망FC 핸디 선택이 맞았다.",
+    "r": "추정 확률 59%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5269",
@@ -36170,7 +36562,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 르망FC 핸디 선택이 맞았다.",
+    "r": "추정 확률 93%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5270",
@@ -36428,7 +36827,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 언더, 결과는 오버.",
+    "r": "발행 당시 이변 위험이 42로 이미 높았다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5272",
@@ -36729,7 +37135,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 아틀레티코 마드리드 선택이 맞았다.",
+    "r": "추정 확률 63%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5273",
@@ -37024,7 +37437,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 아틀레티코 마드리드 핸디 선택이 맞았다.",
+    "r": "추정 확률 37%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5274",
@@ -37283,7 +37703,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 언더, 결과는 오버.",
+    "r": "발행 당시 이변 위험이 48로 이미 높았다. 추정 확률이 52%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5276",
@@ -37605,7 +38032,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 디트로이트 피스톤스, 결과는 애틀랜타 호크스.",
+    "r": "발행 당시 이변 위험이 47로 이미 높았다. 추정 확률이 53%에 그친 박빙 경기였다.",
+    "e": "해외 배당이 비슷했던 NBA 경기에서는 52% 적중했다. 이번은 나머지 48%에 해당한다.",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5277",
@@ -37913,7 +38347,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 애틀랜타 호크스 핸디 선택이 맞았다.",
+    "r": "추정 확률 51%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 NBA 경기에서는 52% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5278",
@@ -38221,7 +38662,14 @@
     },
     "h2h": null
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 언더 선택이 맞았다.",
+    "r": "추정 확률 51%대로 나온 결과다.",
+    "e": "해외 배당이 비슷했던 NBA 경기에서는 51% 적중했다. 기록과 같은 결과다.",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5280",
@@ -38514,7 +38962,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 내슈빌SC, 결과는 FC신시내티.",
+    "r": "추정 확률 65%는 35%의 빗나갈 몫을 포함한다. 이번이 그 경우였다.",
+    "e": "",
+    "o2": "판단 과정에 오류는 없었다. 확률이 허용한 범위의 결과로 기록한다."
+   }
   },
   {
    "id": "betman:G101:260138:5281",
@@ -38801,7 +39256,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 내슈빌SC 핸디, 결과는 FC신시내티 핸디.",
+    "r": "발행 당시 이변 위험이 58로 이미 높았다. 추정 확률이 43%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
+   }
   },
   {
    "id": "betman:G101:260138:5282",
@@ -39083,7 +39545,14 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "review": {
+    "hit": true,
+    "o1": "적중. 언더 선택이 맞았다.",
+    "r": "추정 확률 53%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
+   }
   },
   {
    "id": "betman:G101:260138:5284",
@@ -47205,7 +47674,7 @@
       "upset_risk": 23,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:5123",
@@ -47277,7 +47746,7 @@
       "upset_risk": 14,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:5133",
@@ -47319,8 +47788,8 @@
     "key": "betman:G101:260138:5133:A+betman:G101:260138:5229:H",
     "strategy": "safe",
     "rank": 1,
-    "result": "pending",
-    "return": null
+    "result": "win",
+    "return": 12000
    },
    {
     "legs": [
@@ -47520,7 +47989,7 @@
       "upset_risk": 28,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 2,
@@ -47535,8 +48004,8 @@
     "key": "betman:G101:260138:5147:H+betman:G101:260138:5246:A",
     "strategy": "safe",
     "rank": 7,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -47565,7 +48034,7 @@
       "upset_risk": 23,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:5164",
@@ -47691,7 +48160,7 @@
       "upset_risk": 28,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:5133",
@@ -47790,7 +48259,7 @@
       "upset_risk": 16,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 2,
@@ -47805,8 +48274,8 @@
     "key": "betman:G101:260138:5192:H+betman:G101:260138:5198:H",
     "strategy": "safe",
     "rank": 2,
-    "result": "pending",
-    "return": null
+    "result": "win",
+    "return": 12500
    },
    {
     "legs": [
@@ -47862,7 +48331,7 @@
       "upset_risk": 6,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 2,
@@ -47877,8 +48346,8 @@
     "key": "betman:G101:260138:5182:H+betman:G101:260138:5224:A",
     "strategy": "safe",
     "rank": 3,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -47981,7 +48450,7 @@
       "upset_risk": 37,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 1,
@@ -47996,8 +48465,8 @@
     "key": "betman:G101:260138:5213:H",
     "strategy": "single",
     "rank": 1,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    }
   ],
   "balanced": [
@@ -48181,7 +48650,7 @@
       "upset_risk": 37,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 3,
@@ -48196,8 +48665,8 @@
     "key": "betman:G101:260138:5107:H+betman:G101:260138:5156:A+betman:G101:260138:5225:U",
     "strategy": "balanced",
     "rank": 3,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -48280,7 +48749,7 @@
       "upset_risk": 30,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:5266",
@@ -48307,7 +48776,7 @@
       "upset_risk": 34,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 4,
@@ -48478,7 +48947,7 @@
       "upset_risk": 30,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:5132",
@@ -48604,7 +49073,7 @@
       "upset_risk": 28,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:5251",
@@ -48631,7 +49100,7 @@
       "upset_risk": 30,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:5132",
@@ -48730,7 +49199,7 @@
       "upset_risk": 30,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:5280",
@@ -48757,7 +49226,7 @@
       "upset_risk": 33,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:5225",
@@ -48784,7 +49253,7 @@
       "upset_risk": 37,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 4,
@@ -48883,7 +49352,7 @@
       "upset_risk": 35,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:5210",
@@ -48910,7 +49379,7 @@
       "upset_risk": 37,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 4,
@@ -48982,7 +49451,7 @@
       "upset_risk": 28,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:5132",
@@ -49252,7 +49721,7 @@
       "upset_risk": 33,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:5272",
@@ -49279,7 +49748,7 @@
       "upset_risk": 38,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:5199",
@@ -49306,7 +49775,7 @@
       "upset_risk": 35,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 3,
@@ -49321,8 +49790,8 @@
     "key": "betman:G101:260138:5199:H+betman:G101:260138:5266:H+betman:G101:260138:5272:A",
     "strategy": "balanced",
     "rank": 2,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    }
   ],
   "aggressive": [
@@ -49632,7 +50101,7 @@
       "upset_risk": 38,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:5112",
@@ -49713,7 +50182,7 @@
       "upset_risk": 48,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:5104",
@@ -49839,7 +50308,7 @@
       "upset_risk": 48,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:5256",
@@ -49866,7 +50335,7 @@
       "upset_risk": 48,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:5274",
@@ -49893,7 +50362,7 @@
       "upset_risk": 48,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 5,
@@ -49992,7 +50461,7 @@
       "upset_risk": 37,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:5218",
@@ -50019,7 +50488,7 @@
       "upset_risk": 35,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:5129",
@@ -50061,8 +50530,8 @@
     "key": "betman:G101:260138:5107:H+betman:G101:260138:5129:O+betman:G101:260138:5156:A+betman:G101:260138:5218:H+betman:G101:260138:5225:U",
     "strategy": "aggressive",
     "rank": 1,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -50118,7 +50587,7 @@
       "upset_risk": 46,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:5129",
@@ -50397,7 +50866,7 @@
       "upset_risk": 37,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:5165",
@@ -50451,7 +50920,7 @@
       "upset_risk": 48,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 5,
@@ -50802,7 +51271,7 @@
       "upset_risk": 37,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:5218",
@@ -50829,7 +51298,7 @@
       "upset_risk": 35,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:5210",
@@ -50856,7 +51325,7 @@
       "upset_risk": 37,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:5260",
@@ -50883,7 +51352,7 @@
       "upset_risk": 48,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 5,
@@ -50898,8 +51367,8 @@
     "key": "betman:G101:260138:5107:H+betman:G101:260138:5210:H+betman:G101:260138:5218:H+betman:G101:260138:5225:U+betman:G101:260138:5260:U",
     "strategy": "aggressive",
     "rank": 1,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -50982,7 +51451,7 @@
       "upset_risk": 46,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:5104",
@@ -51155,7 +51624,7 @@
       "upset_risk": 49,
       "single": true,
       "dog": true,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 2,
@@ -51227,7 +51696,7 @@
       "upset_risk": 60,
       "single": true,
       "dog": true,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 2,
@@ -51326,7 +51795,7 @@
       "upset_risk": 63,
       "single": true,
       "dog": true,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 3,
@@ -51425,7 +51894,7 @@
       "upset_risk": 63,
       "single": true,
       "dog": true,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 3,
@@ -51524,7 +51993,7 @@
       "upset_risk": 62,
       "single": false,
       "dog": true,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 3,
@@ -51596,7 +52065,7 @@
       "upset_risk": 60,
       "single": true,
       "dog": true,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 2,
@@ -51668,7 +52137,7 @@
       "upset_risk": 60,
       "single": true,
       "dog": true,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 2,
@@ -51713,7 +52182,7 @@
       "upset_risk": 62,
       "single": false,
       "dog": true,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:5172",
@@ -51785,7 +52254,7 @@
       "upset_risk": 54,
       "single": true,
       "dog": true,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:5172",
@@ -52201,7 +52670,7 @@
       "upset_risk": 48,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:5256",
@@ -52228,7 +52697,7 @@
       "upset_risk": 48,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:5274",
@@ -52255,7 +52724,7 @@
       "upset_risk": 48,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      }
     ],
     "size": 8,
@@ -52354,7 +52823,7 @@
       "upset_risk": 38,
       "single": false,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260138:5124",
@@ -52435,7 +52904,7 @@
       "upset_risk": 48,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:5104",
@@ -52642,7 +53111,7 @@
       "upset_risk": 48,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260138:5104",
@@ -52696,7 +53165,7 @@
       "upset_risk": 48,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 8,
@@ -52876,7 +53345,7 @@
       "upset_risk": 46,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 6,
@@ -55752,7 +56221,74 @@
   "betman:G101:260138:5193": "D",
   "betman:G101:260138:5194": "A",
   "betman:G101:260138:5195": "A",
-  "betman:G101:260138:5196": "O"
+  "betman:G101:260138:5196": "O",
+  "betman:G101:260138:5198": "H",
+  "betman:G101:260138:5199": "H",
+  "betman:G101:260138:5200": "H",
+  "betman:G101:260138:5201": "A",
+  "betman:G101:260138:5202": "U",
+  "betman:G101:260138:5204": "A",
+  "betman:G101:260138:5205": "A",
+  "betman:G101:260138:5206": "O",
+  "betman:G101:260138:5208": "H",
+  "betman:G101:260138:5209": "H",
+  "betman:G101:260138:5210": "H",
+  "betman:G101:260138:5211": "U",
+  "betman:G101:260138:5213": "D",
+  "betman:G101:260138:5214": "A",
+  "betman:G101:260138:5215": "U",
+  "betman:G101:260138:5217": "A",
+  "betman:G101:260138:5218": "A",
+  "betman:G101:260138:5219": "U",
+  "betman:G101:260138:5221": "H",
+  "betman:G101:260138:5222": "H",
+  "betman:G101:260138:5223": "H",
+  "betman:G101:260138:5224": "H",
+  "betman:G101:260138:5225": "O",
+  "betman:G101:260138:5227": "H",
+  "betman:G101:260138:5228": "H",
+  "betman:G101:260138:5229": "H",
+  "betman:G101:260138:5230": "O",
+  "betman:G101:260138:5232": "H",
+  "betman:G101:260138:5233": "H",
+  "betman:G101:260138:5234": "O",
+  "betman:G101:260138:5236": "A",
+  "betman:G101:260138:5237": "A",
+  "betman:G101:260138:5238": "U",
+  "betman:G101:260138:5240": "D",
+  "betman:G101:260138:5241": "H",
+  "betman:G101:260138:5242": "U",
+  "betman:G101:260138:5244": "H",
+  "betman:G101:260138:5245": "H",
+  "betman:G101:260138:5246": "H",
+  "betman:G101:260138:5247": "O",
+  "betman:G101:260138:5249": "H",
+  "betman:G101:260138:5250": "H",
+  "betman:G101:260138:5251": "H",
+  "betman:G101:260138:5252": "O",
+  "betman:G101:260138:5254": "H",
+  "betman:G101:260138:5255": "H",
+  "betman:G101:260138:5256": "O",
+  "betman:G101:260138:5258": "H",
+  "betman:G101:260138:5259": "D",
+  "betman:G101:260138:5260": "U",
+  "betman:G101:260138:5262": "D",
+  "betman:G101:260138:5263": "H",
+  "betman:G101:260138:5264": "O",
+  "betman:G101:260138:5266": "A",
+  "betman:G101:260138:5267": "A",
+  "betman:G101:260138:5268": "A",
+  "betman:G101:260138:5269": "A",
+  "betman:G101:260138:5270": "O",
+  "betman:G101:260138:5272": "A",
+  "betman:G101:260138:5273": "A",
+  "betman:G101:260138:5274": "O",
+  "betman:G101:260138:5276": "H",
+  "betman:G101:260138:5277": "H",
+  "betman:G101:260138:5278": "U",
+  "betman:G101:260138:5280": "A",
+  "betman:G101:260138:5281": "A",
+  "betman:G101:260138:5282": "U"
  },
  "headline": "오늘 프로토 40경기. 기준 경기는 ADO덴하흐 원정승(74%). 이후 8경기도 미리 분석했습니다."
 }
