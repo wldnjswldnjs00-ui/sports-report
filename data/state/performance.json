@@ -1,26 +1,26 @@
 {
- "updated": "2026-11-22T18:00:43+09:00",
+ "updated": "2026-11-22T19:01:05+09:00",
  "picks": {
   "all": {
    "n": 274,
    "hit_rate": 0.6496,
-   "expected": 0.6665,
-   "brier": 0.2209,
-   "logloss": 0.6328
+   "expected": 0.6666,
+   "brier": 0.221,
+   "logloss": 0.633
   },
   "30d": {
    "n": 274,
    "hit_rate": 0.6496,
-   "expected": 0.6665,
-   "brier": 0.2209,
-   "logloss": 0.6328
+   "expected": 0.6666,
+   "brier": 0.221,
+   "logloss": 0.633
   }
  },
  "calibration": [
   {
    "bucket": "30-40%",
    "n": 34,
-   "expected": 0.3788,
+   "expected": 0.3789,
    "actual": 0.2647
   },
   {
@@ -31,26 +31,26 @@
   },
   {
    "bucket": "50-60%",
-   "n": 339,
-   "expected": 0.5391,
-   "actual": 0.5575
+   "n": 340,
+   "expected": 0.5394,
+   "actual": 0.5559
   },
   {
    "bucket": "60-70%",
-   "n": 71,
-   "expected": 0.645,
-   "actual": 0.6761
+   "n": 70,
+   "expected": 0.6459,
+   "actual": 0.6714
   },
   {
    "bucket": "70-80%",
    "n": 44,
-   "expected": 0.7439,
+   "expected": 0.7436,
    "actual": 0.6818
   },
   {
    "bucket": "80-90%",
    "n": 38,
-   "expected": 0.8506,
+   "expected": 0.8505,
    "actual": 0.7895
   },
   {
@@ -63,16 +63,16 @@
  "strategies": {
   "safe": {
    "all": {
-    "n": 51,
-    "win_rate": 0.4706,
-    "expected": 0.5643,
-    "roi": -0.3226
+    "n": 52,
+    "win_rate": 0.4615,
+    "expected": 0.5652,
+    "roi": -0.3356
    },
    "30d": {
-    "n": 51,
-    "win_rate": 0.4706,
-    "expected": 0.5643,
-    "roi": -0.3226
+    "n": 52,
+    "win_rate": 0.4615,
+    "expected": 0.5652,
+    "roi": -0.3356
    }
   },
   "single": {
@@ -91,16 +91,16 @@
   },
   "balanced": {
    "all": {
-    "n": 56,
-    "win_rate": 0.1071,
-    "expected": 0.2407,
-    "roi": -0.645
+    "n": 58,
+    "win_rate": 0.1034,
+    "expected": 0.243,
+    "roi": -0.6572
    },
    "30d": {
-    "n": 56,
-    "win_rate": 0.1071,
-    "expected": 0.2407,
-    "roi": -0.645
+    "n": 58,
+    "win_rate": 0.1034,
+    "expected": 0.243,
+    "roi": -0.6572
    }
   },
   "aggressive": {
