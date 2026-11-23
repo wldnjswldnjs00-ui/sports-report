@@ -1,19 +1,19 @@
 {
- "updated": "2026-11-23T18:00:47+09:00",
+ "updated": "2026-11-23T19:00:40+09:00",
  "picks": {
   "all": {
    "n": 323,
    "hit_rate": 0.6347,
    "expected": 0.6659,
    "brier": 0.2248,
-   "logloss": 0.6409
+   "logloss": 0.641
   },
   "30d": {
    "n": 323,
    "hit_rate": 0.6347,
    "expected": 0.6659,
    "brier": 0.2248,
-   "logloss": 0.6409
+   "logloss": 0.641
   }
  },
  "calibration": [
@@ -26,7 +26,7 @@
   {
    "bucket": "40-50%",
    "n": 103,
-   "expected": 0.447,
+   "expected": 0.4471,
    "actual": 0.3786
   },
   {
@@ -38,7 +38,7 @@
   {
    "bucket": "60-70%",
    "n": 89,
-   "expected": 0.6424,
+   "expected": 0.6426,
    "actual": 0.6292
   },
   {

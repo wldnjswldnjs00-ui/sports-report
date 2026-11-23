@@ -1,7 +1,7 @@
 {
  "date": "2026-11-23",
  "generated_at": "2026-11-22T19:02:40+09:00",
- "updated_at": "2026-11-23T18:00:55+09:00",
+ "updated_at": "2026-11-23T19:00:48+09:00",
  "model_version": "aurora-1.0.0",
  "calibration_alpha": 0.07,
  "demo": false,
@@ -39,9 +39,9 @@
    "single": true,
    "analysis": {
     "p": {
-     "H": 0.6486,
-     "D": 0.1704,
-     "A": 0.181
+     "H": 0.6569,
+     "D": 0.1653,
+     "A": 0.1778
     },
     "p_betman": {
      "H": 0.6517,
@@ -55,9 +55,9 @@
      "A": 0.3302
     },
     "pick": "H",
-    "pick_prob": 0.6486,
+    "pick_prob": 0.6569,
     "pick_odds": 1.43,
-    "ev": -0.0724,
+    "ev": -0.0606,
     "value_key": "A",
     "value_ev": -0.0211,
     "confidence": 55,
@@ -344,9 +344,9 @@
    "single": true,
    "analysis": {
     "p": {
-     "H": 0.3696,
-     "D": 0.1969,
-     "A": 0.4335
+     "H": 0.3669,
+     "D": 0.1947,
+     "A": 0.4384
     },
     "p_betman": {
      "H": 0.4082,
@@ -356,9 +356,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "A",
-    "pick_prob": 0.4335,
+    "pick_prob": 0.4384,
     "pick_odds": 2.35,
-    "ev": 0.0187,
+    "ev": 0.0303,
     "value_key": "H",
     "value_ev": -0.1247,
     "confidence": 55,
@@ -642,8 +642,8 @@
    "single": true,
    "analysis": {
     "p": {
-     "O": 0.5274,
-     "U": 0.4726
+     "O": 0.5295,
+     "U": 0.4705
     },
     "p_betman": {
      "O": 0.5,
@@ -652,9 +652,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "O",
-    "pick_prob": 0.5274,
+    "pick_prob": 0.5295,
     "pick_odds": 1.74,
-    "ev": -0.0824,
+    "ev": -0.0787,
     "value_key": "O",
     "value_ev": -0.13,
     "confidence": 53,
@@ -5008,9 +5008,9 @@
    "single": true,
    "analysis": {
     "p": {
-     "H": 0.6648,
-     "D": 0.1631,
-     "A": 0.1722
+     "H": 0.6685,
+     "D": 0.1601,
+     "A": 0.1714
     },
     "p_betman": {
      "H": 0.6837,
@@ -5024,9 +5024,9 @@
      "A": 0.2452
     },
     "pick": "H",
-    "pick_prob": 0.6648,
+    "pick_prob": 0.6685,
     "pick_odds": 1.37,
-    "ev": -0.0892,
+    "ev": -0.0841,
     "value_key": "A",
     "value_ev": -0.0992,
     "confidence": 55,
@@ -5308,9 +5308,9 @@
    "single": true,
    "analysis": {
     "p": {
-     "H": 0.4516,
-     "D": 0.2358,
-     "A": 0.3126
+     "H": 0.4546,
+     "D": 0.2361,
+     "A": 0.3092
     },
     "p_betman": {
      "H": 0.434,
@@ -5320,9 +5320,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "H",
-    "pick_prob": 0.4516,
+    "pick_prob": 0.4546,
     "pick_odds": 2.05,
-    "ev": -0.0742,
+    "ev": -0.0681,
     "value_key": "H",
     "value_ev": -0.1185,
     "confidence": 55,
@@ -5601,8 +5601,8 @@
    "single": true,
    "analysis": {
     "p": {
-     "O": 0.4796,
-     "U": 0.5204
+     "O": 0.4791,
+     "U": 0.5209
     },
     "p_betman": {
      "O": 0.482,
@@ -5611,9 +5611,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "U",
-    "pick_prob": 0.5204,
+    "pick_prob": 0.5209,
     "pick_odds": 1.69,
-    "ev": -0.1205,
+    "ev": -0.1198,
     "value_key": "U",
     "value_ev": -0.1264,
     "confidence": 54,
@@ -6855,15 +6855,15 @@
    },
    "venue": "인천도원시립체육관",
    "flow": {
-    "changes": 1,
-    "at": "202611231650",
+    "changes": 2,
+    "at": "202611231801",
     "from": {
      "H": 1.17,
      "A": 3.39
     },
     "to": {
-     "H": 1.2,
-     "A": 3.16
+     "H": 1.24,
+     "A": 2.92
     },
     "pts": [
      [
@@ -6879,14 +6879,21 @@
        "H": 1.2,
        "A": 3.16
       }
+     ],
+     [
+      "202611231801",
+      {
+       "H": 1.24,
+       "A": 2.92
+      }
      ]
     ]
    },
    "single": true,
    "analysis": {
     "p": {
-     "H": 0.7449,
-     "A": 0.2551
+     "H": 0.732,
+     "A": 0.268
     },
     "p_betman": {
      "H": 0.7843,
@@ -6898,9 +6905,9 @@
      "A": 0.2356
     },
     "pick": "H",
-    "pick_prob": 0.7449,
+    "pick_prob": 0.732,
     "pick_odds": 1.2,
-    "ev": -0.1061,
+    "ev": -0.1216,
     "value_key": "H",
     "value_ev": -0.0859,
     "confidence": 55,
@@ -7135,7 +7142,11 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "odds_close": {
+    "H": 1.24,
+    "A": 2.92
+   }
   },
   {
    "id": "betman:G101:260139:5318",
@@ -7159,8 +7170,8 @@
    "single": true,
    "analysis": {
     "p": {
-     "H": 0.5143,
-     "A": 0.4857
+     "H": 0.5181,
+     "A": 0.4819
     },
     "p_betman": {
      "H": 0.4964,
@@ -7169,9 +7180,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "H",
-    "pick_prob": 0.5143,
+    "pick_prob": 0.5181,
     "pick_odds": 1.75,
-    "ev": -0.0999,
+    "ev": -0.0932,
     "value_key": "H",
     "value_ev": -0.1103,
     "confidence": 55,
@@ -7404,7 +7415,11 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "odds_close": {
+    "H": 1.75,
+    "A": 1.73
+   }
   },
   {
    "id": "betman:G101:260139:5319",
@@ -7425,15 +7440,15 @@
    },
    "venue": "인천도원시립체육관",
    "flow": {
-    "changes": 1,
-    "at": "202611231457",
+    "changes": 2,
+    "at": "202611231801",
     "from": {
      "U": 1.74,
      "O": 1.74
     },
     "to": {
-     "U": 1.69,
-     "O": 1.79
+     "U": 1.74,
+     "O": 1.74
     },
     "pts": [
      [
@@ -7449,14 +7464,21 @@
        "U": 1.69,
        "O": 1.79
       }
+     ],
+     [
+      "202611231801",
+      {
+       "U": 1.74,
+       "O": 1.74
+      }
      ]
     ]
    },
    "single": true,
    "analysis": {
     "p": {
-     "O": 0.5013,
-     "U": 0.4987
+     "O": 0.5131,
+     "U": 0.4869
     },
     "p_betman": {
      "O": 0.482,
@@ -7465,9 +7487,9 @@
     "p_ref": null,
     "p_elo": null,
     "pick": "O",
-    "pick_prob": 0.5013,
+    "pick_prob": 0.5131,
     "pick_odds": 1.79,
-    "ev": -0.1027,
+    "ev": -0.0815,
     "value_key": "U",
     "value_ev": -0.1264,
     "confidence": 54,
@@ -7699,7 +7721,11 @@
      ]
     }
    },
-   "preview": false
+   "preview": false,
+   "odds_close": {
+    "O": 1.74,
+    "U": 1.74
+   }
   },
   {
    "id": "betman:G101:260139:5321",
@@ -12083,23 +12109,23 @@
    "market": "1X2",
    "line": null,
    "odds": {
-    "H": 2.16,
-    "D": 3.1,
-    "A": 2.65
+    "H": 2.18,
+    "D": 2.95,
+    "A": 2.75
    },
    "venue": "지테크커뮤니티스타디움",
    "flow": {
-    "changes": 1,
-    "at": "202611231635",
+    "changes": 2,
+    "at": "202611231853",
     "from": {
      "H": 2.1,
      "D": 3.3,
      "A": 2.6
     },
     "to": {
-     "H": 2.16,
-     "D": 3.1,
-     "A": 2.65
+     "H": 2.18,
+     "D": 2.95,
+     "A": 2.75
     },
     "pts": [
      [
@@ -12117,19 +12143,27 @@
        "D": 3.1,
        "A": 2.65
       }
+     ],
+     [
+      "202611231853",
+      {
+       "H": 2.18,
+       "D": 2.95,
+       "A": 2.75
+      }
      ]
     ]
    },
    "single": true,
    "x": {
     "h2h": {
-     "H": 0.4279,
      "A": 0.2963,
+     "H": 0.4279,
      "D": 0.2758
     },
     "h2h_odds": {
-     "H": 2.32,
      "A": 3.35,
+     "H": 2.32,
      "D": 3.6
     },
     "spread": [
@@ -12143,8 +12177,8 @@
    },
    "ref_event": "aa77e2a08a1a003b0bbb62a5f8e8ae42",
    "ref_odds": {
-    "H": 2.32,
     "A": 3.35,
+    "H": 2.32,
     "D": 3.6
    },
    "ref_kind": "직접",
@@ -12155,13 +12189,13 @@
      "A": 0.2931
     },
     "p_betman": {
-     "H": 0.4088,
-     "D": 0.2687,
-     "A": 0.3224
+     "H": 0.4052,
+     "D": 0.2853,
+     "A": 0.3095
     },
     "p_ref": {
-     "H": 0.4279,
      "A": 0.2963,
+     "H": 0.4279,
      "D": 0.2758
     },
     "p_elo": {
@@ -12171,10 +12205,10 @@
     },
     "pick": "H",
     "pick_prob": 0.4213,
-    "pick_odds": 2.16,
-    "ev": -0.09,
+    "pick_odds": 2.18,
+    "ev": -0.0815,
     "value_key": "H",
-    "value_ev": -0.09,
+    "value_ev": -0.0815,
     "confidence": 61,
     "upset_risk": 58,
     "data_score": 100,
@@ -12187,24 +12221,24 @@
      "혼전",
      "이변 주의"
     ],
-    "payout_rate": 0.8599,
+    "payout_rate": 0.8611,
     "hist": {
      "H": {
       "hit": 0.4385,
       "n": 2693,
-      "roi": -0.0528,
+      "roi": -0.0441,
       "bucket": "유럽 축구"
      },
      "D": {
       "hit": 0.3049,
       "n": 2693,
-      "roi": -0.0548,
+      "roi": -0.1005,
       "bucket": "유럽 축구"
      },
      "A": {
       "hit": 0.2566,
       "n": 2693,
-      "roi": -0.32,
+      "roi": -0.2944,
       "bucket": "유럽 축구"
      }
     },
@@ -12220,13 +12254,13 @@
     },
     "intl": null,
     "ref_odds": {
-     "H": 2.32,
      "A": 3.35,
+     "H": 2.32,
      "D": 3.6
     },
     "x_odds": {
-     "H": 2.32,
      "A": 3.35,
+     "H": 2.32,
      "D": 3.6
     },
     "x_kind": "직접",
@@ -12473,13 +12507,13 @@
    "single": true,
    "x": {
     "h2h": {
-     "H": 0.4279,
      "A": 0.2963,
+     "H": 0.4279,
      "D": 0.2758
     },
     "h2h_odds": {
-     "H": 2.32,
      "A": 3.35,
+     "H": 2.32,
      "D": 3.6
     },
     "spread": [
@@ -12809,13 +12843,13 @@
    "single": true,
    "x": {
     "h2h": {
-     "H": 0.4279,
      "A": 0.2963,
+     "H": 0.4279,
      "D": 0.2758
     },
     "h2h_odds": {
-     "H": 2.32,
      "A": 3.35,
+     "H": 2.32,
      "D": 3.6
     },
     "spread": [
@@ -13134,21 +13168,48 @@
    "market": "OU",
    "line": 2.5,
    "odds": {
-    "O": 1.63,
-    "U": 1.87
+    "O": 1.59,
+    "U": 1.92
    },
    "venue": "지테크커뮤니티스타디움",
-   "flow": null,
+   "flow": {
+    "changes": 1,
+    "at": "202611231853",
+    "from": {
+     "U": 1.87,
+     "O": 1.63
+    },
+    "to": {
+     "U": 1.92,
+     "O": 1.59
+    },
+    "pts": [
+     [
+      "",
+      {
+       "U": 1.87,
+       "O": 1.63
+      }
+     ],
+     [
+      "202611231853",
+      {
+       "U": 1.92,
+       "O": 1.59
+      }
+     ]
+    ]
+   },
    "single": true,
    "x": {
     "h2h": {
-     "H": 0.4279,
      "A": 0.2963,
+     "H": 0.4279,
      "D": 0.2758
     },
     "h2h_odds": {
-     "H": 2.32,
      "A": 3.35,
+     "H": 2.32,
      "D": 3.6
     },
     "spread": [
@@ -13172,8 +13233,8 @@
      "U": 0.4887
     },
     "p_betman": {
-     "O": 0.5428,
-     "U": 0.4572
+     "O": 0.5589,
+     "U": 0.4411
     },
     "p_ref": {
      "O": 0.5064,
@@ -13182,10 +13243,10 @@
     "p_elo": null,
     "pick": "O",
     "pick_prob": 0.5113,
-    "pick_odds": 1.63,
-    "ev": -0.1666,
+    "pick_odds": 1.59,
+    "ev": -0.1871,
     "value_key": "U",
-    "value_ev": -0.0861,
+    "value_ev": -0.0616,
     "confidence": 59,
     "upset_risk": 49,
     "data_score": 70,
@@ -13196,18 +13257,18 @@
     "flags": [
      "이변 주의"
     ],
-    "payout_rate": 0.8709,
+    "payout_rate": 0.8697,
     "hist": {
      "O": {
       "hit": 0.527,
       "n": 2979,
-      "roi": -0.141,
+      "roi": -0.1621,
       "bucket": "유럽 축구"
      },
      "U": {
       "hit": 0.473,
       "n": 2979,
-      "roi": -0.1155,
+      "roi": -0.0918,
       "bucket": "유럽 축구"
      }
     },
@@ -17414,12 +17475,12 @@
    "single": false,
    "x": {
     "h2h": {
-     "A": 0.1943,
-     "H": 0.8057
+     "H": 0.8057,
+     "A": 0.1943
     },
     "h2h_odds": {
-     "A": 5.1,
-     "H": 1.23
+     "H": 1.23,
+     "A": 5.1
     },
     "spread": [
      -10.5,
@@ -17432,8 +17493,8 @@
    },
    "ref_event": "a5184238c27b9c3bfca29220f9d5d14a",
    "ref_odds": {
-    "A": 5.1,
-    "H": 1.23
+    "H": 1.23,
+    "A": 5.1
    },
    "ref_kind": "직접",
    "analysis": {
@@ -17446,8 +17507,8 @@
      "A": 0.0749
     },
     "p_ref": {
-     "A": 0.1943,
-     "H": 0.8057
+     "H": 0.8057,
+     "A": 0.1943
     },
     "p_elo": {
      "H": 0.7513,
@@ -17494,12 +17555,12 @@
     },
     "intl": null,
     "ref_odds": {
-     "A": 5.1,
-     "H": 1.23
+     "H": 1.23,
+     "A": 5.1
     },
     "x_odds": {
-     "A": 5.1,
-     "H": 1.23
+     "H": 1.23,
+     "A": 5.1
     },
     "x_kind": "직접",
     "elo": {
@@ -17752,12 +17813,12 @@
    "single": false,
    "x": {
     "h2h": {
-     "A": 0.1943,
-     "H": 0.8057
+     "H": 0.8057,
+     "A": 0.1943
     },
     "h2h_odds": {
-     "A": 5.1,
-     "H": 1.23
+     "H": 1.23,
+     "A": 5.1
     },
     "spread": [
      -10.5,
@@ -18078,12 +18139,12 @@
    "single": false,
    "x": {
     "h2h": {
-     "A": 0.1943,
-     "H": 0.8057
+     "H": 0.8057,
+     "A": 0.1943
     },
     "h2h_odds": {
-     "A": 5.1,
-     "H": 1.23
+     "H": 1.23,
+     "A": 5.1
     },
     "spread": [
      -10.5,
@@ -18404,12 +18465,12 @@
    "single": false,
    "x": {
     "h2h": {
-     "A": 0.1667,
-     "H": 0.8333
+     "H": 0.8333,
+     "A": 0.1667
     },
     "h2h_odds": {
-     "A": 5.9,
-     "H": 1.18
+     "H": 1.18,
+     "A": 5.9
     },
     "spread": [
      -12.0,
@@ -18422,8 +18483,8 @@
    },
    "ref_event": "a72a1703f7a92b80768255d1d977a761",
    "ref_odds": {
-    "A": 5.9,
-    "H": 1.18
+    "H": 1.18,
+    "A": 5.9
    },
    "ref_kind": "직접",
    "analysis": {
@@ -18436,8 +18497,8 @@
      "A": 0.0501
     },
     "p_ref": {
-     "A": 0.1667,
-     "H": 0.8333
+     "H": 0.8333,
+     "A": 0.1667
     },
     "p_elo": {
      "H": 0.8132,
@@ -18484,12 +18545,12 @@
     },
     "intl": null,
     "ref_odds": {
-     "A": 5.9,
-     "H": 1.18
+     "H": 1.18,
+     "A": 5.9
     },
     "x_odds": {
-     "A": 5.9,
-     "H": 1.18
+     "H": 1.18,
+     "A": 5.9
     },
     "x_kind": "직접",
     "elo": {
@@ -18724,12 +18785,12 @@
    "single": false,
    "x": {
     "h2h": {
-     "A": 0.1667,
-     "H": 0.8333
+     "H": 0.8333,
+     "A": 0.1667
     },
     "h2h_odds": {
-     "A": 5.9,
-     "H": 1.18
+     "H": 1.18,
+     "A": 5.9
     },
     "spread": [
      -12.0,
@@ -19033,12 +19094,12 @@
    "single": false,
    "x": {
     "h2h": {
-     "A": 0.1667,
-     "H": 0.8333
+     "H": 0.8333,
+     "A": 0.1667
     },
     "h2h_odds": {
-     "A": 5.9,
-     "H": 1.18
+     "H": 1.18,
+     "A": 5.9
     },
     "spread": [
      -12.0,
@@ -56182,6 +56243,321 @@
    {
     "legs": [
      {
+      "market_id": "betman:G101:260139:5316",
+      "match": "2026-11-23|신한은행 에스버드|하나은행",
+      "league": "WKBL",
+      "sport": "basketball",
+      "date": "2026-11-23",
+      "home": "신한은행 에스버드",
+      "away": "하나은행",
+      "market": "WL",
+      "line": null,
+      "game_no": 5316,
+      "round": "260139",
+      "kickoff": "2026-11-23T19:00+09:00",
+      "outcome": "H",
+      "p": 0.7449,
+      "odds": 1.2,
+      "x_odds": null,
+      "x_kind": null,
+      "ev": -0.10611999999999999,
+      "confidence": 55,
+      "xev": -1.1102230246251565e-16,
+      "xo": 1.2,
+      "upset_risk": 22,
+      "single": true,
+      "dog": false,
+      "result": null
+     },
+     {
+      "market_id": "betman:G101:260139:5352",
+      "match": "2026-11-24|브렌트퍼드|에버턴",
+      "league": "잉글랜드 프리미어리그",
+      "sport": "soccer",
+      "date": "2026-11-24",
+      "home": "브렌트퍼드",
+      "away": "에버턴",
+      "market": "HANDICAP",
+      "line": -2.0,
+      "game_no": 5352,
+      "round": "260139",
+      "kickoff": "2026-11-24T05:00+09:00",
+      "outcome": "A",
+      "p": 0.7535,
+      "odds": 1.11,
+      "x_odds": 1.29,
+      "x_kind": "환산",
+      "ev": -0.16361499999999995,
+      "confidence": 85,
+      "xev": -0.027985000000000038,
+      "xo": 1.29,
+      "upset_risk": 21,
+      "single": true,
+      "dog": false,
+      "result": null
+     }
+    ],
+    "size": 2,
+    "joint_p": 0.5613,
+    "total_odds": 1.33,
+    "ev": -0.2535,
+    "xev": -0.1311,
+    "payout": 13300,
+    "stake": 10000,
+    "confidence": 70,
+    "kelly": 0.0,
+    "key": "betman:G101:260139:5316:H+betman:G101:260139:5352:A",
+    "strategy": "safe",
+    "rank": 2,
+    "result": "pending",
+    "return": null
+   },
+   {
+    "legs": [
+     {
+      "market_id": "betman:G101:260139:5316",
+      "match": "2026-11-23|신한은행 에스버드|하나은행",
+      "league": "WKBL",
+      "sport": "basketball",
+      "date": "2026-11-23",
+      "home": "신한은행 에스버드",
+      "away": "하나은행",
+      "market": "WL",
+      "line": null,
+      "game_no": 5316,
+      "round": "260139",
+      "kickoff": "2026-11-23T19:00+09:00",
+      "outcome": "H",
+      "p": 0.7449,
+      "odds": 1.2,
+      "x_odds": null,
+      "x_kind": null,
+      "ev": -0.10611999999999999,
+      "confidence": 55,
+      "xev": -1.1102230246251565e-16,
+      "xo": 1.2,
+      "upset_risk": 22,
+      "single": true,
+      "dog": false,
+      "result": null
+     },
+     {
+      "market_id": "betman:G101:260139:5308",
+      "match": "2026-11-23|밴쿠버 화이트캡스FC|레알 솔트레이크",
+      "league": "미국 메이저리그사커",
+      "sport": "soccer",
+      "date": "2026-11-23",
+      "home": "밴쿠버 화이트캡스FC",
+      "away": "레알 솔트레이크",
+      "market": "1X2",
+      "line": null,
+      "game_no": 5308,
+      "round": "260139",
+      "kickoff": "2026-11-23T10:30+09:00",
+      "outcome": "H",
+      "p": 0.6648,
+      "odds": 1.37,
+      "x_odds": null,
+      "x_kind": null,
+      "ev": -0.08922399999999997,
+      "confidence": 55,
+      "xev": 0.0,
+      "xo": 1.37,
+      "upset_risk": 33,
+      "single": true,
+      "dog": false,
+      "result": "hit"
+     }
+    ],
+    "size": 2,
+    "joint_p": 0.4952,
+    "total_odds": 1.64,
+    "ev": -0.1879,
+    "xev": -0.1859,
+    "payout": 16400,
+    "stake": 10000,
+    "confidence": 55,
+    "kelly": 0.0,
+    "key": "betman:G101:260139:5308:H+betman:G101:260139:5316:H",
+    "strategy": "safe",
+    "rank": 5,
+    "result": "pending",
+    "return": null
+   },
+   {
+    "legs": [
+     {
+      "market_id": "betman:G101:260139:5341",
+      "match": "2026-11-24|S알이티하드|파흐타코르",
+      "league": "AFC 챔피언스리그 엘리트",
+      "sport": "soccer",
+      "date": "2026-11-24",
+      "home": "S알이티하드",
+      "away": "파흐타코르",
+      "market": "1X2",
+      "line": null,
+      "game_no": 5341,
+      "round": "260139",
+      "kickoff": "2026-11-24T03:15+09:00",
+      "outcome": "H",
+      "p": 0.7217,
+      "odds": 1.26,
+      "x_odds": null,
+      "x_kind": null,
+      "ev": -0.09065800000000002,
+      "confidence": 55,
+      "xev": 0.0,
+      "xo": 1.26,
+      "upset_risk": 24,
+      "single": true,
+      "dog": false,
+      "result": null
+     },
+     {
+      "market_id": "betman:G101:260139:5308",
+      "match": "2026-11-23|밴쿠버 화이트캡스FC|레알 솔트레이크",
+      "league": "미국 메이저리그사커",
+      "sport": "soccer",
+      "date": "2026-11-23",
+      "home": "밴쿠버 화이트캡스FC",
+      "away": "레알 솔트레이크",
+      "market": "1X2",
+      "line": null,
+      "game_no": 5308,
+      "round": "260139",
+      "kickoff": "2026-11-23T10:30+09:00",
+      "outcome": "H",
+      "p": 0.6648,
+      "odds": 1.37,
+      "x_odds": null,
+      "x_kind": null,
+      "ev": -0.08922399999999997,
+      "confidence": 55,
+      "xev": 0.0,
+      "xo": 1.37,
+      "upset_risk": 33,
+      "single": true,
+      "dog": false,
+      "result": "hit"
+     }
+    ],
+    "size": 2,
+    "joint_p": 0.4798,
+    "total_odds": 1.72,
+    "ev": -0.1748,
+    "xev": -0.1718,
+    "payout": 17200,
+    "stake": 10000,
+    "confidence": 55,
+    "kelly": 0.0,
+    "key": "betman:G101:260139:5308:H+betman:G101:260139:5341:H",
+    "strategy": "safe",
+    "rank": 6,
+    "result": "pending",
+    "return": null
+   },
+   {
+    "legs": [
+     {
+      "market_id": "betman:G101:260139:5347",
+      "match": "2026-11-24|AC몬차|ACF피오렌티나",
+      "league": "이탈리아 세리에A",
+      "sport": "soccer",
+      "date": "2026-11-24",
+      "home": "AC몬차",
+      "away": "ACF피오렌티나",
+      "market": "HANDICAP",
+      "line": 2.0,
+      "game_no": 5347,
+      "round": "260139",
+      "kickoff": "2026-11-24T04:45+09:00",
+      "outcome": "H",
+      "p": 0.7618,
+      "odds": 1.24,
+      "x_odds": null,
+      "x_kind": null,
+      "ev": -0.05536799999999997,
+      "confidence": 55,
+      "xev": 0.0,
+      "xo": 1.24,
+      "upset_risk": 22,
+      "single": true,
+      "dog": false,
+      "result": null
+     },
+     {
+      "market_id": "betman:G101:260139:5316",
+      "match": "2026-11-23|신한은행 에스버드|하나은행",
+      "league": "WKBL",
+      "sport": "basketball",
+      "date": "2026-11-23",
+      "home": "신한은행 에스버드",
+      "away": "하나은행",
+      "market": "WL",
+      "line": null,
+      "game_no": 5316,
+      "round": "260139",
+      "kickoff": "2026-11-23T19:00+09:00",
+      "outcome": "H",
+      "p": 0.7449,
+      "odds": 1.2,
+      "x_odds": null,
+      "x_kind": null,
+      "ev": -0.10611999999999999,
+      "confidence": 55,
+      "xev": -1.1102230246251565e-16,
+      "xo": 1.2,
+      "upset_risk": 22,
+      "single": true,
+      "dog": false,
+      "result": null
+     },
+     {
+      "market_id": "betman:G101:260139:5321",
+      "match": "2026-11-23|네프치 페르가나|알힐랄SFC",
+      "league": "AFC 챔피언스리그 엘리트",
+      "sport": "soccer",
+      "date": "2026-11-23",
+      "home": "네프치 페르가나",
+      "away": "알힐랄SFC",
+      "market": "1X2",
+      "line": null,
+      "game_no": 5321,
+      "round": "260139",
+      "kickoff": "2026-11-23T22:45+09:00",
+      "outcome": "A",
+      "p": 0.7433,
+      "odds": 1.26,
+      "x_odds": null,
+      "x_kind": null,
+      "ev": -0.063442,
+      "confidence": 55,
+      "xev": 0.0,
+      "xo": 1.26,
+      "upset_risk": 24,
+      "single": true,
+      "dog": false,
+      "result": null
+     }
+    ],
+    "size": 3,
+    "joint_p": 0.4218,
+    "total_odds": 1.87,
+    "ev": -0.2112,
+    "xev": -0.2092,
+    "payout": 18700,
+    "stake": 10000,
+    "confidence": 55,
+    "kelly": 0.0,
+    "key": "betman:G101:260139:5316:H+betman:G101:260139:5321:A+betman:G101:260139:5347:H",
+    "strategy": "safe",
+    "rank": 7,
+    "result": "pending",
+    "return": null
+   },
+   {
+    "legs": [
+     {
       "market_id": "betman:G101:260139:5357",
       "match": "2026-11-24|레반테|엘체",
       "league": "스페인 라리가",
@@ -56246,74 +56622,6 @@
     "key": "betman:G101:260139:5352:A+betman:G101:260139:5357:A",
     "strategy": "safe",
     "rank": 1
-   },
-   {
-    "legs": [
-     {
-      "market_id": "betman:G101:260139:5316",
-      "match": "2026-11-23|신한은행 에스버드|하나은행",
-      "league": "WKBL",
-      "sport": "basketball",
-      "date": "2026-11-23",
-      "home": "신한은행 에스버드",
-      "away": "하나은행",
-      "market": "WL",
-      "line": null,
-      "game_no": 5316,
-      "round": "260139",
-      "kickoff": "2026-11-23T19:00+09:00",
-      "outcome": "H",
-      "p": 0.7449,
-      "odds": 1.2,
-      "x_odds": null,
-      "x_kind": null,
-      "ev": -0.10611999999999999,
-      "confidence": 55,
-      "xev": -1.1102230246251565e-16,
-      "xo": 1.2,
-      "upset_risk": 22,
-      "single": true,
-      "dog": false
-     },
-     {
-      "market_id": "betman:G101:260139:5352",
-      "match": "2026-11-24|브렌트퍼드|에버턴",
-      "league": "잉글랜드 프리미어리그",
-      "sport": "soccer",
-      "date": "2026-11-24",
-      "home": "브렌트퍼드",
-      "away": "에버턴",
-      "market": "HANDICAP",
-      "line": -2.0,
-      "game_no": 5352,
-      "round": "260139",
-      "kickoff": "2026-11-24T05:00+09:00",
-      "outcome": "A",
-      "p": 0.7535,
-      "odds": 1.11,
-      "x_odds": 1.29,
-      "x_kind": "환산",
-      "ev": -0.16361499999999995,
-      "confidence": 85,
-      "xev": -0.027985000000000038,
-      "xo": 1.29,
-      "upset_risk": 21,
-      "single": true,
-      "dog": false
-     }
-    ],
-    "size": 2,
-    "joint_p": 0.5613,
-    "total_odds": 1.33,
-    "ev": -0.2535,
-    "xev": -0.1311,
-    "payout": 13300,
-    "stake": 10000,
-    "confidence": 70,
-    "kelly": 0.0,
-    "key": "betman:G101:260139:5316:H+betman:G101:260139:5352:A",
-    "strategy": "safe",
-    "rank": 2
    },
    {
     "legs": [
@@ -56386,190 +56694,28 @@
    {
     "legs": [
      {
-      "market_id": "betman:G101:260139:5316",
-      "match": "2026-11-23|신한은행 에스버드|하나은행",
-      "league": "WKBL",
-      "sport": "basketball",
-      "date": "2026-11-23",
-      "home": "신한은행 에스버드",
-      "away": "하나은행",
-      "market": "WL",
-      "line": null,
-      "game_no": 5316,
-      "round": "260139",
-      "kickoff": "2026-11-23T19:00+09:00",
-      "outcome": "H",
-      "p": 0.7449,
-      "odds": 1.2,
-      "x_odds": null,
-      "x_kind": null,
-      "ev": -0.10611999999999999,
-      "confidence": 55,
-      "xev": -1.1102230246251565e-16,
-      "xo": 1.2,
-      "upset_risk": 22,
-      "single": true,
-      "dog": false
-     },
-     {
-      "market_id": "betman:G101:260139:5308",
-      "match": "2026-11-23|밴쿠버 화이트캡스FC|레알 솔트레이크",
-      "league": "미국 메이저리그사커",
-      "sport": "soccer",
-      "date": "2026-11-23",
-      "home": "밴쿠버 화이트캡스FC",
-      "away": "레알 솔트레이크",
-      "market": "1X2",
-      "line": null,
-      "game_no": 5308,
-      "round": "260139",
-      "kickoff": "2026-11-23T10:30+09:00",
-      "outcome": "H",
-      "p": 0.6648,
-      "odds": 1.37,
-      "x_odds": null,
-      "x_kind": null,
-      "ev": -0.08922399999999997,
-      "confidence": 55,
-      "xev": 0.0,
-      "xo": 1.37,
-      "upset_risk": 33,
-      "single": true,
-      "dog": false
-     }
-    ],
-    "size": 2,
-    "joint_p": 0.4952,
-    "total_odds": 1.64,
-    "ev": -0.1879,
-    "xev": -0.1859,
-    "payout": 16400,
-    "stake": 10000,
-    "confidence": 55,
-    "kelly": 0.0,
-    "key": "betman:G101:260139:5308:H+betman:G101:260139:5316:H",
-    "strategy": "safe",
-    "rank": 5
-   },
-   {
-    "legs": [
-     {
-      "market_id": "betman:G101:260139:5341",
-      "match": "2026-11-24|S알이티하드|파흐타코르",
-      "league": "AFC 챔피언스리그 엘리트",
+      "market_id": "betman:G101:260139:5357",
+      "match": "2026-11-24|레반테|엘체",
+      "league": "스페인 라리가",
       "sport": "soccer",
       "date": "2026-11-24",
-      "home": "S알이티하드",
-      "away": "파흐타코르",
-      "market": "1X2",
-      "line": null,
-      "game_no": 5341,
-      "round": "260139",
-      "kickoff": "2026-11-24T03:15+09:00",
-      "outcome": "H",
-      "p": 0.7217,
-      "odds": 1.26,
-      "x_odds": null,
-      "x_kind": null,
-      "ev": -0.09065800000000002,
-      "confidence": 55,
-      "xev": 0.0,
-      "xo": 1.26,
-      "upset_risk": 24,
-      "single": true,
-      "dog": false
-     },
-     {
-      "market_id": "betman:G101:260139:5308",
-      "match": "2026-11-23|밴쿠버 화이트캡스FC|레알 솔트레이크",
-      "league": "미국 메이저리그사커",
-      "sport": "soccer",
-      "date": "2026-11-23",
-      "home": "밴쿠버 화이트캡스FC",
-      "away": "레알 솔트레이크",
-      "market": "1X2",
-      "line": null,
-      "game_no": 5308,
-      "round": "260139",
-      "kickoff": "2026-11-23T10:30+09:00",
-      "outcome": "H",
-      "p": 0.6648,
-      "odds": 1.37,
-      "x_odds": null,
-      "x_kind": null,
-      "ev": -0.08922399999999997,
-      "confidence": 55,
-      "xev": 0.0,
-      "xo": 1.37,
-      "upset_risk": 33,
-      "single": true,
-      "dog": false
-     }
-    ],
-    "size": 2,
-    "joint_p": 0.4798,
-    "total_odds": 1.72,
-    "ev": -0.1748,
-    "xev": -0.1718,
-    "payout": 17200,
-    "stake": 10000,
-    "confidence": 55,
-    "kelly": 0.0,
-    "key": "betman:G101:260139:5308:H+betman:G101:260139:5341:H",
-    "strategy": "safe",
-    "rank": 6
-   },
-   {
-    "legs": [
-     {
-      "market_id": "betman:G101:260139:5347",
-      "match": "2026-11-24|AC몬차|ACF피오렌티나",
-      "league": "이탈리아 세리에A",
-      "sport": "soccer",
-      "date": "2026-11-24",
-      "home": "AC몬차",
-      "away": "ACF피오렌티나",
+      "home": "레반테",
+      "away": "엘체",
       "market": "HANDICAP",
-      "line": 2.0,
-      "game_no": 5347,
+      "line": -2.0,
+      "game_no": 5357,
       "round": "260139",
-      "kickoff": "2026-11-24T04:45+09:00",
-      "outcome": "H",
-      "p": 0.7618,
-      "odds": 1.24,
+      "kickoff": "2026-11-24T05:00+09:00",
+      "outcome": "A",
+      "p": 0.7858,
+      "odds": 1.15,
       "x_odds": null,
       "x_kind": null,
-      "ev": -0.05536799999999997,
+      "ev": -0.09633000000000003,
       "confidence": 55,
       "xev": 0.0,
-      "xo": 1.24,
-      "upset_risk": 22,
-      "single": true,
-      "dog": false
-     },
-     {
-      "market_id": "betman:G101:260139:5316",
-      "match": "2026-11-23|신한은행 에스버드|하나은행",
-      "league": "WKBL",
-      "sport": "basketball",
-      "date": "2026-11-23",
-      "home": "신한은행 에스버드",
-      "away": "하나은행",
-      "market": "WL",
-      "line": null,
-      "game_no": 5316,
-      "round": "260139",
-      "kickoff": "2026-11-23T19:00+09:00",
-      "outcome": "H",
-      "p": 0.7449,
-      "odds": 1.2,
-      "x_odds": null,
-      "x_kind": null,
-      "ev": -0.10611999999999999,
-      "confidence": 55,
-      "xev": -1.1102230246251565e-16,
-      "xo": 1.2,
-      "upset_risk": 22,
+      "xo": 1.15,
+      "upset_risk": 15,
       "single": true,
       "dog": false
      },
@@ -56598,18 +56744,44 @@
       "upset_risk": 24,
       "single": true,
       "dog": false
+     },
+     {
+      "market_id": "betman:G101:260139:5341",
+      "match": "2026-11-24|S알이티하드|파흐타코르",
+      "league": "AFC 챔피언스리그 엘리트",
+      "sport": "soccer",
+      "date": "2026-11-24",
+      "home": "S알이티하드",
+      "away": "파흐타코르",
+      "market": "1X2",
+      "line": null,
+      "game_no": 5341,
+      "round": "260139",
+      "kickoff": "2026-11-24T03:15+09:00",
+      "outcome": "H",
+      "p": 0.7217,
+      "odds": 1.26,
+      "x_odds": null,
+      "x_kind": null,
+      "ev": -0.09065800000000002,
+      "confidence": 55,
+      "xev": 0.0,
+      "xo": 1.26,
+      "upset_risk": 24,
+      "single": true,
+      "dog": false
      }
     ],
     "size": 3,
-    "joint_p": 0.4218,
-    "total_odds": 1.87,
-    "ev": -0.2112,
-    "xev": -0.2092,
-    "payout": 18700,
+    "joint_p": 0.4215,
+    "total_odds": 1.82,
+    "ev": -0.2328,
+    "xev": -0.2304,
+    "payout": 18200,
     "stake": 10000,
     "confidence": 55,
     "kelly": 0.0,
-    "key": "betman:G101:260139:5316:H+betman:G101:260139:5321:A+betman:G101:260139:5347:H",
+    "key": "betman:G101:260139:5321:A+betman:G101:260139:5341:H+betman:G101:260139:5357:A",
     "strategy": "safe",
     "rank": 7
    },
@@ -61956,10 +62128,10 @@
    "kickoff": "2026-11-24T05:00+09:00",
    "outcome": "O",
    "p": 0.5113,
-   "odds": 1.63,
+   "odds": 1.59,
    "x_odds": 1.97,
    "x_kind": "환산",
-   "ev": -0.1665810000000001,
+   "ev": -0.187033,
    "confidence": 59,
    "xev": 0.007260999999999962,
    "xo": 1.97,
@@ -62050,32 +62222,6 @@
    "dog": false
   },
   {
-   "market_id": "betman:G101:260139:5316",
-   "match": "2026-11-23|신한은행 에스버드|하나은행",
-   "league": "WKBL",
-   "sport": "basketball",
-   "date": "2026-11-23",
-   "home": "신한은행 에스버드",
-   "away": "하나은행",
-   "market": "WL",
-   "line": null,
-   "game_no": 5316,
-   "round": "260139",
-   "kickoff": "2026-11-23T19:00+09:00",
-   "outcome": "H",
-   "p": 0.7449,
-   "odds": 1.2,
-   "x_odds": null,
-   "x_kind": null,
-   "ev": -0.10611999999999999,
-   "confidence": 55,
-   "xev": -1.1102230246251565e-16,
-   "xo": 1.2,
-   "upset_risk": 22,
-   "single": true,
-   "dog": false
-  },
-  {
    "market_id": "betman:G101:260139:5321",
    "match": "2026-11-23|네프치 페르가나|알힐랄SFC",
    "league": "AFC 챔피언스리그 엘리트",
@@ -62152,6 +62298,32 @@
    "upset_risk": 38,
    "single": true,
    "dog": false
+  },
+  {
+   "market_id": "betman:G101:260139:5338",
+   "match": "2026-11-24|에어포스 알쿠와알자위야|알가라파SC",
+   "league": "AFC 챔피언스리그 엘리트",
+   "sport": "soccer",
+   "date": "2026-11-24",
+   "home": "에어포스 알쿠와알자위야",
+   "away": "알가라파SC",
+   "market": "HANDICAP",
+   "line": -1.0,
+   "game_no": 5338,
+   "round": "260139",
+   "kickoff": "2026-11-24T03:15+09:00",
+   "outcome": "A",
+   "p": 0.5966,
+   "odds": 1.59,
+   "x_odds": null,
+   "x_kind": null,
+   "ev": -0.05140599999999995,
+   "confidence": 55,
+   "xev": 0.0,
+   "xo": 1.59,
+   "upset_risk": 41,
+   "single": true,
+   "dog": false
   }
  ],
  "caution": [
@@ -62162,6 +62334,19 @@
   "betman:G101:260139:5292"
  ],
  "odds_moves": [
+  {
+   "market_id": "betman:G101:260139:5316",
+   "home": "신한은행 에스버드",
+   "away": "하나은행",
+   "market": "WL",
+   "line": null,
+   "kickoff": "2026-11-23T19:00+09:00",
+   "outcome": "A",
+   "from": 3.39,
+   "to": 2.92,
+   "chg": -0.1386,
+   "n": 2
+  },
   {
    "market_id": "betman:G101:260139:5401",
    "home": "새크라멘토 킹스",
@@ -62189,6 +62374,19 @@
    "n": 1
   },
   {
+   "market_id": "betman:G101:260139:5350",
+   "home": "브렌트퍼드",
+   "away": "에버턴",
+   "market": "1X2",
+   "line": null,
+   "kickoff": "2026-11-24T05:00+09:00",
+   "outcome": "D",
+   "from": 3.3,
+   "to": 2.95,
+   "chg": -0.1061,
+   "n": 2
+  },
+  {
    "market_id": "betman:G101:260139:5458",
    "home": "갈라타사라이",
    "away": "애스턴 빌라",
@@ -62212,32 +62410,6 @@
    "from": 3.6,
    "to": 3.35,
    "chg": -0.0694,
-   "n": 1
-  },
-  {
-   "market_id": "betman:G101:260139:5316",
-   "home": "신한은행 에스버드",
-   "away": "하나은행",
-   "market": "WL",
-   "line": null,
-   "kickoff": "2026-11-23T19:00+09:00",
-   "outcome": "A",
-   "from": 3.39,
-   "to": 3.16,
-   "chg": -0.0678,
-   "n": 1
-  },
-  {
-   "market_id": "betman:G101:260139:5350",
-   "home": "브렌트퍼드",
-   "away": "에버턴",
-   "market": "1X2",
-   "line": null,
-   "kickoff": "2026-11-24T05:00+09:00",
-   "outcome": "D",
-   "from": 3.3,
-   "to": 3.1,
-   "chg": -0.0606,
    "n": 1
   },
   {
@@ -62280,19 +62452,6 @@
    "n": 1
   },
   {
-   "market_id": "betman:G101:260139:5319",
-   "home": "신한은행 에스버드",
-   "away": "하나은행",
-   "market": "OU",
-   "line": 139.5,
-   "kickoff": "2026-11-23T19:00+09:00",
-   "outcome": "U",
-   "from": 1.74,
-   "to": 1.69,
-   "chg": -0.0287,
-   "n": 1
-  },
-  {
    "market_id": "betman:G101:260139:5356",
    "home": "레반테",
    "away": "엘체",
@@ -62303,6 +62462,19 @@
    "from": 3.65,
    "to": 3.55,
    "chg": -0.0274,
+   "n": 1
+  },
+  {
+   "market_id": "betman:G101:260139:5353",
+   "home": "브렌트퍼드",
+   "away": "에버턴",
+   "market": "OU",
+   "line": 2.5,
+   "kickoff": "2026-11-24T05:00+09:00",
+   "outcome": "O",
+   "from": 1.63,
+   "to": 1.59,
+   "chg": -0.0245,
    "n": 1
   },
   {
@@ -62410,19 +62582,6 @@
    "n": 1
   },
   {
-   "market_id": "betman:G101:260139:5350",
-   "home": "브렌트퍼드",
-   "away": "에버턴",
-   "market": "1X2",
-   "line": null,
-   "kickoff": "2026-11-24T05:00+09:00",
-   "outcome": "A",
-   "from": 2.6,
-   "to": 2.65,
-   "chg": 0.0192,
-   "n": 1
-  },
-  {
    "market_id": "betman:G101:260139:5355",
    "home": "레반테",
    "away": "엘체",
@@ -62436,16 +62595,16 @@
    "n": 1
   },
   {
-   "market_id": "betman:G101:260139:5316",
-   "home": "신한은행 에스버드",
-   "away": "하나은행",
-   "market": "WL",
-   "line": null,
-   "kickoff": "2026-11-23T19:00+09:00",
-   "outcome": "H",
-   "from": 1.17,
-   "to": 1.2,
-   "chg": 0.0256,
+   "market_id": "betman:G101:260139:5353",
+   "home": "브렌트퍼드",
+   "away": "에버턴",
+   "market": "OU",
+   "line": 2.5,
+   "kickoff": "2026-11-24T05:00+09:00",
+   "outcome": "U",
+   "from": 1.87,
+   "to": 1.92,
+   "chg": 0.0267,
    "n": 1
   },
   {
@@ -62462,19 +62621,6 @@
    "n": 1
   },
   {
-   "market_id": "betman:G101:260139:5350",
-   "home": "브렌트퍼드",
-   "away": "에버턴",
-   "market": "1X2",
-   "line": null,
-   "kickoff": "2026-11-24T05:00+09:00",
-   "outcome": "H",
-   "from": 2.1,
-   "to": 2.16,
-   "chg": 0.0286,
-   "n": 1
-  },
-  {
    "market_id": "betman:G101:260139:5401",
    "home": "새크라멘토 킹스",
    "away": "샌안토니오 스퍼스",
@@ -62488,17 +62634,17 @@
    "n": 1
   },
   {
-   "market_id": "betman:G101:260139:5319",
-   "home": "신한은행 에스버드",
-   "away": "하나은행",
-   "market": "OU",
-   "line": 139.5,
-   "kickoff": "2026-11-23T19:00+09:00",
-   "outcome": "O",
-   "from": 1.74,
-   "to": 1.79,
-   "chg": 0.0287,
-   "n": 1
+   "market_id": "betman:G101:260139:5350",
+   "home": "브렌트퍼드",
+   "away": "에버턴",
+   "market": "1X2",
+   "line": null,
+   "kickoff": "2026-11-24T05:00+09:00",
+   "outcome": "H",
+   "from": 2.1,
+   "to": 2.18,
+   "chg": 0.0381,
+   "n": 2
   },
   {
    "market_id": "betman:G101:260139:5458",
@@ -62512,6 +62658,32 @@
    "to": 1.54,
    "chg": 0.0405,
    "n": 1
+  },
+  {
+   "market_id": "betman:G101:260139:5350",
+   "home": "브렌트퍼드",
+   "away": "에버턴",
+   "market": "1X2",
+   "line": null,
+   "kickoff": "2026-11-24T05:00+09:00",
+   "outcome": "A",
+   "from": 2.6,
+   "to": 2.75,
+   "chg": 0.0577,
+   "n": 2
+  },
+  {
+   "market_id": "betman:G101:260139:5316",
+   "home": "신한은행 에스버드",
+   "away": "하나은행",
+   "market": "WL",
+   "line": null,
+   "kickoff": "2026-11-23T19:00+09:00",
+   "outcome": "H",
+   "from": 1.17,
+   "to": 1.24,
+   "chg": 0.0598,
+   "n": 2
   },
   {
    "market_id": "betman:G101:260139:5457",
@@ -62708,7 +62880,7 @@
   "matches": 17,
   "upcoming": 46,
   "legs": 54,
-  "combos": 50
+  "combos": 51
  },
  "outcomes": {
   "betman:G101:260139:5288": "A",
