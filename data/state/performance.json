@@ -1,19 +1,19 @@
 {
- "updated": "2026-11-23T13:00:47+09:00",
+ "updated": "2026-11-23T18:00:47+09:00",
  "picks": {
   "all": {
-   "n": 322,
-   "hit_rate": 0.6366,
-   "expected": 0.6657,
-   "brier": 0.2239,
-   "logloss": 0.639
+   "n": 323,
+   "hit_rate": 0.6347,
+   "expected": 0.6659,
+   "brier": 0.2248,
+   "logloss": 0.6409
   },
   "30d": {
-   "n": 322,
-   "hit_rate": 0.6366,
-   "expected": 0.6657,
-   "brier": 0.2239,
-   "logloss": 0.639
+   "n": 323,
+   "hit_rate": 0.6347,
+   "expected": 0.6659,
+   "brier": 0.2248,
+   "logloss": 0.6409
   }
  },
  "calibration": [
@@ -26,26 +26,26 @@
   {
    "bucket": "40-50%",
    "n": 103,
-   "expected": 0.4468,
+   "expected": 0.447,
    "actual": 0.3786
   },
   {
    "bucket": "50-60%",
-   "n": 395,
-   "expected": 0.5391,
-   "actual": 0.557
+   "n": 397,
+   "expected": 0.539,
+   "actual": 0.5592
   },
   {
    "bucket": "60-70%",
    "n": 89,
-   "expected": 0.6421,
+   "expected": 0.6424,
    "actual": 0.6292
   },
   {
    "bucket": "70-80%",
-   "n": 49,
-   "expected": 0.743,
-   "actual": 0.7143
+   "n": 50,
+   "expected": 0.7422,
+   "actual": 0.7
   },
   {
    "bucket": "80-90%",
@@ -91,44 +91,44 @@
   },
   "balanced": {
    "all": {
-    "n": 69,
-    "win_rate": 0.087,
-    "expected": 0.2367,
-    "roi": -0.7119
+    "n": 70,
+    "win_rate": 0.0857,
+    "expected": 0.2376,
+    "roi": -0.716
    },
    "30d": {
-    "n": 69,
-    "win_rate": 0.087,
-    "expected": 0.2367,
-    "roi": -0.7119
+    "n": 70,
+    "win_rate": 0.0857,
+    "expected": 0.2376,
+    "roi": -0.716
    }
   },
   "aggressive": {
    "all": {
-    "n": 74,
-    "win_rate": 0.0811,
-    "expected": 0.066,
-    "roi": -0.1547
+    "n": 75,
+    "win_rate": 0.0933,
+    "expected": 0.0665,
+    "roi": -0.0644
    },
    "30d": {
-    "n": 74,
-    "win_rate": 0.0811,
-    "expected": 0.066,
-    "roi": -0.1547
+    "n": 75,
+    "win_rate": 0.0933,
+    "expected": 0.0665,
+    "roi": -0.0644
    }
   },
   "upset": {
    "all": {
-    "n": 55,
-    "win_rate": 0.0909,
+    "n": 56,
+    "win_rate": 0.1071,
     "expected": 0.1135,
-    "roi": -0.3449
+    "roi": -0.2041
    },
    "30d": {
-    "n": 55,
-    "win_rate": 0.0909,
+    "n": 56,
+    "win_rate": 0.1071,
     "expected": 0.1135,
-    "roi": -0.3449
+    "roi": -0.2041
    }
   },
   "lotto": {
@@ -189,7 +189,7 @@
   },
   {
    "date": "2026-11-23",
-   "n": 6,
+   "n": 7,
    "hit": 4
   }
  ]
