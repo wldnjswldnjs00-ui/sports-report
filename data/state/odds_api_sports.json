@@ -1,8 +1,9 @@
 {
- "date": "2026-11-23",
+ "date": "2026-11-24",
  "keys": [
   "americanfootball_ncaaf",
   "americanfootball_ncaaf_championship_winner",
+  "americanfootball_ncaaf_fcs",
   "americanfootball_nfl",
   "americanfootball_nfl_super_bowl_winner",
   "aussierules_afl",
@@ -24,8 +25,10 @@
   "handball_germany_bundesliga",
   "icehockey_ahl",
   "icehockey_liiga",
+  "icehockey_mestis",
   "icehockey_nhl",
   "icehockey_nhl_championship_winner",
+  "icehockey_sweden_allsvenskan",
   "icehockey_sweden_hockey_league",
   "mma_mixed_martial_arts",
   "politics_us_presidential_election_winner",
@@ -54,6 +57,7 @@
   "soccer_germany_dfb_pokal",
   "soccer_germany_liga3",
   "soccer_greece_super_league",
+  "soccer_italy_coppa_italia",
   "soccer_italy_serie_a",
   "soccer_italy_serie_b",
   "soccer_japan_j_league",
@@ -75,12 +79,12 @@
   "soccer_uefa_europa_conference_league",
   "soccer_uefa_europa_league",
   "soccer_uefa_nations_league",
-  "soccer_usa_mls",
-  "tennis_atp_finals"
+  "soccer_usa_mls"
  ],
  "titles": {
   "americanfootball_ncaaf": "NCAAF",
   "americanfootball_ncaaf_championship_winner": "NCAAF Championship Winner",
+  "americanfootball_ncaaf_fcs": "NCAAF FCS",
   "americanfootball_nfl": "NFL",
   "americanfootball_nfl_super_bowl_winner": "NFL Super Bowl Winner",
   "aussierules_afl": "AFL",
@@ -102,8 +106,10 @@
   "handball_germany_bundesliga": "Handball-Bundesliga",
   "icehockey_ahl": "AHL",
   "icehockey_liiga": "Liiga",
+  "icehockey_mestis": "Mestis",
   "icehockey_nhl": "NHL",
   "icehockey_nhl_championship_winner": "NHL Championship Winner",
+  "icehockey_sweden_allsvenskan": "HockeyAllsvenskan",
   "icehockey_sweden_hockey_league": "SHL",
   "mma_mixed_martial_arts": "MMA",
   "politics_us_presidential_election_winner": "US Presidential Elections Winner",
@@ -132,6 +138,7 @@
   "soccer_germany_dfb_pokal": "DFB-Pokal",
   "soccer_germany_liga3": "3. Liga - Germany",
   "soccer_greece_super_league": "Super League - Greece",
+  "soccer_italy_coppa_italia": "Coppa Italia",
   "soccer_italy_serie_a": "Serie A - Italy",
   "soccer_italy_serie_b": "Serie B - Italy",
   "soccer_japan_j_league": "J League",
@@ -153,7 +160,6 @@
   "soccer_uefa_europa_conference_league": "UEFA Europa Conference League",
   "soccer_uefa_europa_league": "UEFA Europa League",
   "soccer_uefa_nations_league": "UEFA Nations League",
-  "soccer_usa_mls": "MLS",
-  "tennis_atp_finals": "ATP Finals"
+  "soccer_usa_mls": "MLS"
  }
 }

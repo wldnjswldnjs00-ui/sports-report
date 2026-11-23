@@ -7146,6 +7146,13 @@
    "odds_close": {
     "H": 1.24,
     "A": 2.92
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 신한은행 에스버드 선택이 맞았다.",
+    "r": "추정 확률 73%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -7419,6 +7426,13 @@
    "odds_close": {
     "H": 1.75,
     "A": 1.73
+   },
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 신한은행 에스버드 핸디, 결과는 하나은행 핸디.",
+    "r": "발행 당시 이변 위험이 49로 이미 높았다. 추정 확률이 52%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
    }
   },
   {
@@ -7725,6 +7739,13 @@
    "odds_close": {
     "O": 1.74,
     "U": 1.74
+   },
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 오버, 결과는 언더.",
+    "r": "발행 당시 이변 위험이 48로 이미 높았다. 추정 확률이 51%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
    }
   },
   {
@@ -56267,7 +56288,7 @@
       "upset_risk": 22,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260139:5352",
@@ -56339,7 +56360,7 @@
       "upset_risk": 22,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260139:5308",
@@ -56381,8 +56402,8 @@
     "key": "betman:G101:260139:5308:H+betman:G101:260139:5316:H",
     "strategy": "safe",
     "rank": 5,
-    "result": "pending",
-    "return": null
+    "result": "win",
+    "return": 16400
    },
    {
     "legs": [
@@ -56510,7 +56531,7 @@
       "upset_risk": 22,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260139:5321",
@@ -59180,7 +59201,7 @@
       "upset_risk": 49,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260139:5290",
@@ -59459,7 +59480,7 @@
       "upset_risk": 49,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260139:5290",
@@ -59558,7 +59579,7 @@
       "upset_risk": 49,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260139:5310",
@@ -59627,8 +59648,8 @@
     "key": "betman:G101:260139:5310:U+betman:G101:260139:5318:H+betman:G101:260139:5338:A+betman:G101:260139:5343:U",
     "strategy": "aggressive",
     "rank": 2,
-    "result": "pending",
-    "return": null
+    "result": "lose",
+    "return": 0
    },
    {
     "legs": [
@@ -60741,7 +60762,7 @@
       "upset_risk": 49,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260139:5290",
@@ -61002,7 +61023,7 @@
       "upset_risk": 49,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260139:5290",
@@ -61335,7 +61356,7 @@
       "upset_risk": 49,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "miss"
      },
      {
       "market_id": "betman:G101:260139:5290",
@@ -62924,7 +62945,10 @@
   "betman:G101:260139:5310": "U",
   "betman:G101:260139:5312": "H",
   "betman:G101:260139:5313": "H",
-  "betman:G101:260139:5314": "U"
+  "betman:G101:260139:5314": "U",
+  "betman:G101:260139:5316": "H",
+  "betman:G101:260139:5318": "A",
+  "betman:G101:260139:5319": "U"
  },
  "headline": "오늘 17경기 분석 완료. 가장 단단한 선택은 에버턴 원정승, 추정 75%. 이후 46경기도 미리 분석했습니다.",
  "last_attempt": "2026-11-23T22:01:11+09:00"
