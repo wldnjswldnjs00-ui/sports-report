@@ -6,8 +6,8 @@
  "calibration_alpha": 0.07,
  "demo": false,
  "sources": {
-  "betman": "210개 수집",
-  "odds_api": "34개 매칭",
+  "betman": "실패: ConnectionError",
+  "odds_api": "0개 매칭",
   "form": "210개 마켓",
   "bbook": "161개 마켓",
   "selfcheck": {
@@ -56581,7 +56581,8 @@
       "xo": 1.15,
       "upset_risk": 15,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260139:5352",
@@ -56607,7 +56608,8 @@
       "xo": 1.29,
       "upset_risk": 21,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 2,
@@ -56621,7 +56623,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260139:5352:A+betman:G101:260139:5357:A",
     "strategy": "safe",
-    "rank": 1
+    "rank": 1,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -56649,7 +56653,8 @@
       "xo": 1.15,
       "upset_risk": 15,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260139:5347",
@@ -56675,7 +56680,8 @@
       "xo": 1.24,
       "upset_risk": 22,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 2,
@@ -56689,7 +56695,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260139:5347:H+betman:G101:260139:5357:A",
     "strategy": "safe",
-    "rank": 3
+    "rank": 3,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -56717,7 +56725,8 @@
       "xo": 1.15,
       "upset_risk": 15,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260139:5321",
@@ -56743,7 +56752,8 @@
       "xo": 1.26,
       "upset_risk": 24,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260139:5341",
@@ -56769,7 +56779,8 @@
       "xo": 1.26,
       "upset_risk": 24,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 3,
@@ -56783,7 +56794,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260139:5321:A+betman:G101:260139:5341:H+betman:G101:260139:5357:A",
     "strategy": "safe",
-    "rank": 7
+    "rank": 7,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -56811,7 +56824,8 @@
       "xo": 1.24,
       "upset_risk": 22,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260139:5321",
@@ -56837,7 +56851,8 @@
       "xo": 1.26,
       "upset_risk": 24,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260139:5341",
@@ -56863,7 +56878,8 @@
       "xo": 1.26,
       "upset_risk": 24,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 3,
@@ -56877,7 +56893,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260139:5321:A+betman:G101:260139:5341:H+betman:G101:260139:5347:H",
     "strategy": "safe",
-    "rank": 8
+    "rank": 8,
+    "result": "pending",
+    "return": null
    }
   ],
   "single": [
@@ -56907,7 +56925,8 @@
       "xo": 1.59,
       "upset_risk": 41,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 1,
@@ -56921,7 +56940,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260139:5338:A",
     "strategy": "single",
-    "rank": 1
+    "rank": 1,
+    "result": "pending",
+    "return": null
    }
   ],
   "balanced": [
@@ -62905,5 +62926,6 @@
   "betman:G101:260139:5313": "H",
   "betman:G101:260139:5314": "U"
  },
- "headline": "오늘 17경기 분석 완료. 가장 단단한 선택은 에버턴 원정승, 추정 75%. 이후 46경기도 미리 분석했습니다."
+ "headline": "오늘 17경기 분석 완료. 가장 단단한 선택은 에버턴 원정승, 추정 75%. 이후 46경기도 미리 분석했습니다.",
+ "last_attempt": "2026-11-23T22:01:11+09:00"
 }
