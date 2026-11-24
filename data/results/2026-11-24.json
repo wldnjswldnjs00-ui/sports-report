@@ -423,6 +423,84 @@
    "raw": "183:0",
    "code": "2",
    "market": "OU"
+  },
+  "betman:G101:260139:5425": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "3:1",
+   "code": "0",
+   "market": "1X2",
+   "home_score": 3.0,
+   "away_score": 1.0
+  },
+  "betman:G101:260139:5426": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "4:1",
+   "code": "0",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260139:5427": {
+   "status": "FT",
+   "outcome": "O",
+   "src": "betman",
+   "raw": "4:0",
+   "code": "2",
+   "market": "OU"
+  },
+  "betman:G101:260139:5429": {
+   "status": "FT",
+   "outcome": "D",
+   "src": "betman",
+   "raw": "1:1",
+   "code": "1",
+   "market": "1X2",
+   "home_score": 1.0,
+   "away_score": 1.0
+  },
+  "betman:G101:260139:5430": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "2:1",
+   "code": "0",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260139:5431": {
+   "status": "FT",
+   "outcome": "U",
+   "src": "betman",
+   "raw": "2:0",
+   "code": "0",
+   "market": "OU"
+  },
+  "betman:G101:260139:5433": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "3:1",
+   "code": "0",
+   "market": "1X2",
+   "home_score": 3.0,
+   "away_score": 1.0
+  },
+  "betman:G101:260139:5434": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "2:1",
+   "code": "0",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260139:5435": {
+   "status": "FT",
+   "outcome": "O",
+   "src": "betman",
+   "raw": "4:0",
+   "code": "2",
+   "market": "OU"
   }
  }
 }

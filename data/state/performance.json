@@ -1,19 +1,19 @@
 {
- "updated": "2026-11-24T23:05:48+09:00",
+ "updated": "2026-11-25T06:00:49+09:00",
  "picks": {
   "all": {
-   "n": 358,
-   "hit_rate": 0.6229,
-   "expected": 0.6673,
-   "brier": 0.2275,
-   "logloss": 0.6464
+   "n": 362,
+   "hit_rate": 0.6243,
+   "expected": 0.6664,
+   "brier": 0.2277,
+   "logloss": 0.6467
   },
   "30d": {
-   "n": 358,
-   "hit_rate": 0.6229,
-   "expected": 0.6673,
-   "brier": 0.2275,
-   "logloss": 0.6464
+   "n": 362,
+   "hit_rate": 0.6243,
+   "expected": 0.6664,
+   "brier": 0.2277,
+   "logloss": 0.6467
   }
  },
  "calibration": [
@@ -25,21 +25,21 @@
   },
   {
    "bucket": "40-50%",
-   "n": 113,
-   "expected": 0.4468,
-   "actual": 0.3982
+   "n": 115,
+   "expected": 0.4466,
+   "actual": 0.4
   },
   {
    "bucket": "50-60%",
-   "n": 442,
+   "n": 448,
    "expected": 0.5385,
-   "actual": 0.5475
+   "actual": 0.5491
   },
   {
    "bucket": "60-70%",
-   "n": 98,
-   "expected": 0.6428,
-   "actual": 0.602
+   "n": 99,
+   "expected": 0.6427,
+   "actual": 0.596
   },
   {
    "bucket": "70-80%",
@@ -77,30 +77,30 @@
   },
   "single": {
    "all": {
-    "n": 8,
-    "win_rate": 0.625,
-    "expected": 0.5793,
-    "roi": 0.0388
+    "n": 9,
+    "win_rate": 0.6667,
+    "expected": 0.5775,
+    "roi": 0.0978
    },
    "30d": {
-    "n": 8,
-    "win_rate": 0.625,
-    "expected": 0.5793,
-    "roi": 0.0388
+    "n": 9,
+    "win_rate": 0.6667,
+    "expected": 0.5775,
+    "roi": 0.0978
    }
   },
   "balanced": {
    "all": {
-    "n": 86,
-    "win_rate": 0.0698,
-    "expected": 0.2416,
-    "roi": -0.7688
+    "n": 87,
+    "win_rate": 0.069,
+    "expected": 0.2419,
+    "roi": -0.7715
    },
    "30d": {
-    "n": 86,
-    "win_rate": 0.0698,
-    "expected": 0.2416,
-    "roi": -0.7688
+    "n": 87,
+    "win_rate": 0.069,
+    "expected": 0.2419,
+    "roi": -0.7715
    }
   },
   "aggressive": {
@@ -194,8 +194,8 @@
   },
   {
    "date": "2026-11-24",
-   "n": 22,
-   "hit": 12
+   "n": 26,
+   "hit": 15
   }
  ]
 }
