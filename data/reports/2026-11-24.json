@@ -14962,6 +14962,13 @@
    "odds_close": {
     "H": 2.86,
     "A": 1.25
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 대한항공 점보스 선택이 맞았다.",
+    "r": "추정 확률 71%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -15271,6 +15278,13 @@
    "odds_close": {
     "H": 1.98,
     "A": 1.55
+   },
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 대한항공 점보스 핸디, 결과는 OK저축은행 읏맨 핸디.",
+    "r": "발행 당시 이변 위험이 46로 이미 높았다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
    }
   },
   {
@@ -15579,6 +15593,13 @@
    "odds_close": {
     "O": 1.59,
     "U": 1.92
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 오버 선택이 맞았다.",
+    "r": "추정 확률 53%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -15847,6 +15868,13 @@
    "odds_close": {
     "H": 3.67,
     "A": 1.14
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. GS칼텍스 서울Kixx 선택이 맞았다.",
+    "r": "추정 확률 81%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -16130,6 +16158,13 @@
    "odds_close": {
     "H": 1.56,
     "A": 1.97
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 정관장 레드스파크스 핸디 선택이 맞았다.",
+    "r": "추정 확률 67%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -16392,6 +16427,13 @@
    "odds_close": {
     "O": 1.69,
     "U": 1.79
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 오버 선택이 맞았다.",
+    "r": "추정 확률 53%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -50700,7 +50742,7 @@
       "upset_risk": 22,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260139:5381",
@@ -50799,7 +50841,7 @@
       "upset_risk": 32,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 2,
@@ -50843,7 +50885,8 @@
       "xo": 1.13,
       "upset_risk": 15,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260139:5532",
@@ -50869,7 +50912,8 @@
       "xo": 1.13,
       "upset_risk": 14,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 2,
@@ -50883,7 +50927,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260139:5532:H+betman:G101:260139:5550:H",
     "strategy": "safe",
-    "rank": 1
+    "rank": 1,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -50911,7 +50957,8 @@
       "xo": 1.12,
       "upset_risk": 14,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260139:5459",
@@ -50937,7 +50984,8 @@
       "xo": 1.19,
       "upset_risk": 18,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 2,
@@ -50951,7 +50999,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260139:5459:H+betman:G101:260139:5515:A",
     "strategy": "safe",
-    "rank": 2
+    "rank": 2,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -50979,7 +51029,8 @@
       "xo": 1.19,
       "upset_risk": 19,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260139:5465",
@@ -51005,7 +51056,8 @@
       "xo": 1.17,
       "upset_risk": 18,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 2,
@@ -51019,7 +51071,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260139:5465:H+betman:G101:260139:5556:H",
     "strategy": "safe",
-    "rank": 3
+    "rank": 3,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -51047,7 +51101,8 @@
       "xo": 1.13,
       "upset_risk": 15,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260139:5504",
@@ -51073,7 +51128,8 @@
       "xo": 1.29,
       "upset_risk": 25,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 2,
@@ -51087,7 +51143,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260139:5504:H+betman:G101:260139:5550:H",
     "strategy": "safe",
-    "rank": 4
+    "rank": 4,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -51115,7 +51173,8 @@
       "xo": 1.29,
       "upset_risk": 25,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260139:5497",
@@ -51141,7 +51200,8 @@
       "xo": 1.23,
       "upset_risk": 23,
       "single": false,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 2,
@@ -51155,7 +51215,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260139:5497:H+betman:G101:260139:5504:H",
     "strategy": "safe",
-    "rank": 5
+    "rank": 5,
+    "result": "pending",
+    "return": null
    },
    {
     "legs": [
@@ -51183,7 +51245,8 @@
       "xo": 1.14,
       "upset_risk": 16,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      },
      {
       "market_id": "betman:G101:260139:5381",
@@ -51209,7 +51272,8 @@
       "xo": 1.45,
       "upset_risk": 35,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": "miss"
      }
     ],
     "size": 2,
@@ -51223,7 +51287,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260139:5381:A+betman:G101:260139:5559:A",
     "strategy": "safe",
-    "rank": 6
+    "rank": 6,
+    "result": "lose",
+    "return": 0
    }
   ],
   "single": [
@@ -51253,7 +51319,8 @@
       "xo": 1.57,
       "upset_risk": 43,
       "single": true,
-      "dog": false
+      "dog": false,
+      "result": null
      }
     ],
     "size": 1,
@@ -51267,7 +51334,9 @@
     "kelly": 0.0,
     "key": "betman:G101:260139:5427:O",
     "strategy": "single",
-    "rank": 1
+    "rank": 1,
+    "result": "pending",
+    "return": null
    }
   ],
   "balanced": [
@@ -51793,7 +51862,7 @@
       "upset_risk": 22,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      },
      {
       "market_id": "betman:G101:260139:5381",
@@ -52018,7 +52087,7 @@
       "upset_risk": 24,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 2,
@@ -53937,7 +54006,7 @@
       "upset_risk": 50,
       "single": true,
       "dog": false,
-      "result": null
+      "result": "hit"
      }
     ],
     "size": 4,
@@ -55940,7 +56009,8 @@
    "upset_risk": 18,
    "single": true,
    "dog": true,
-   "kelly": 0.0093
+   "kelly": 0.0093,
+   "result": "miss"
   },
   {
    "market_id": "betman:G101:260139:5409",
@@ -55967,7 +56037,8 @@
    "upset_risk": 40,
    "single": true,
    "dog": true,
-   "kelly": 0.0121
+   "kelly": 0.0121,
+   "result": "miss"
   },
   {
    "market_id": "betman:G101:260139:5376",
@@ -55994,7 +56065,8 @@
    "upset_risk": 18,
    "single": false,
    "dog": true,
-   "kelly": 0.0058
+   "kelly": 0.0058,
+   "result": "miss"
   },
   {
    "market_id": "betman:G101:260139:5381",
@@ -56021,7 +56093,8 @@
    "upset_risk": 35,
    "single": true,
    "dog": false,
-   "kelly": 0.0213
+   "kelly": 0.0213,
+   "result": "miss"
   },
   {
    "market_id": "betman:G101:260139:5372",
@@ -56048,7 +56121,8 @@
    "upset_risk": 21,
    "single": false,
    "dog": true,
-   "kelly": 0.0025
+   "kelly": 0.0025,
+   "result": "hit"
   },
   {
    "market_id": "betman:G101:260139:5397",
@@ -56075,7 +56149,8 @@
    "upset_risk": 15,
    "single": true,
    "dog": true,
-   "kelly": 0.0016
+   "kelly": 0.0016,
+   "result": "miss"
   },
   {
    "market_id": "betman:G101:260139:5410",
@@ -56102,7 +56177,8 @@
    "upset_risk": 55,
    "single": true,
    "dog": false,
-   "kelly": 0.0042
+   "kelly": 0.0042,
+   "result": "miss"
   },
   {
    "market_id": "betman:G101:260139:5401",
@@ -56129,7 +56205,8 @@
    "upset_risk": 21,
    "single": true,
    "dog": true,
-   "kelly": 0.001
+   "kelly": 0.001,
+   "result": "miss"
   }
  ],
  "upsets": [
@@ -59476,7 +59553,13 @@
   "betman:G101:260139:5411": "U",
   "betman:G101:260139:5413": "H",
   "betman:G101:260139:5414": "D",
-  "betman:G101:260139:5415": "O"
+  "betman:G101:260139:5415": "O",
+  "betman:G101:260139:5417": "A",
+  "betman:G101:260139:5418": "H",
+  "betman:G101:260139:5419": "O",
+  "betman:G101:260139:5421": "A",
+  "betman:G101:260139:5422": "H",
+  "betman:G101:260139:5423": "O"
  },
  "headline": "오늘 프로토 40경기. 기준 경기는 레알 마드리드 홈승(74%). 이후 13경기도 미리 분석했습니다."
 }
