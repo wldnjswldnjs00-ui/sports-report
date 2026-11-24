@@ -1,19 +1,19 @@
 {
- "updated": "2026-11-24T19:00:45+09:00",
+ "updated": "2026-11-24T22:00:48+09:00",
  "picks": {
   "all": {
-   "n": 351,
-   "hit_rate": 0.6211,
-   "expected": 0.667,
-   "brier": 0.2281,
-   "logloss": 0.6477
+   "n": 354,
+   "hit_rate": 0.6215,
+   "expected": 0.6668,
+   "brier": 0.2283,
+   "logloss": 0.648
   },
   "30d": {
-   "n": 351,
-   "hit_rate": 0.6211,
-   "expected": 0.667,
-   "brier": 0.2281,
-   "logloss": 0.6477
+   "n": 354,
+   "hit_rate": 0.6215,
+   "expected": 0.6668,
+   "brier": 0.2283,
+   "logloss": 0.648
   }
  },
  "calibration": [
@@ -21,31 +21,31 @@
    "bucket": "30-40%",
    "n": 44,
    "expected": 0.3794,
-   "actual": 0.3182
+   "actual": 0.2955
   },
   {
    "bucket": "40-50%",
-   "n": 111,
-   "expected": 0.4474,
-   "actual": 0.4054
+   "n": 113,
+   "expected": 0.4468,
+   "actual": 0.3982
   },
   {
    "bucket": "50-60%",
-   "n": 436,
-   "expected": 0.5386,
-   "actual": 0.5459
+   "n": 440,
+   "expected": 0.5385,
+   "actual": 0.5455
   },
   {
    "bucket": "60-70%",
-   "n": 94,
-   "expected": 0.6429,
-   "actual": 0.5957
+   "n": 96,
+   "expected": 0.6423,
+   "actual": 0.6042
   },
   {
    "bucket": "70-80%",
-   "n": 60,
-   "expected": 0.7441,
-   "actual": 0.6833
+   "n": 61,
+   "expected": 0.7434,
+   "actual": 0.6721
   },
   {
    "bucket": "80-90%",
@@ -91,16 +91,16 @@
   },
   "balanced": {
    "all": {
-    "n": 85,
-    "win_rate": 0.0706,
-    "expected": 0.2413,
-    "roi": -0.7661
+    "n": 86,
+    "win_rate": 0.0698,
+    "expected": 0.2416,
+    "roi": -0.7688
    },
    "30d": {
-    "n": 85,
-    "win_rate": 0.0706,
-    "expected": 0.2413,
-    "roi": -0.7661
+    "n": 86,
+    "win_rate": 0.0698,
+    "expected": 0.2416,
+    "roi": -0.7688
    }
   },
   "aggressive": {
@@ -147,9 +147,9 @@
   }
  },
  "value": {
-  "n": 34,
-  "hit_rate": 0.4118,
-  "roi": 0.0115
+  "n": 35,
+  "hit_rate": 0.4,
+  "roi": -0.0174
  },
  "daily": [
   {
@@ -194,8 +194,8 @@
   },
   {
    "date": "2026-11-24",
-   "n": 15,
-   "hit": 7
+   "n": 18,
+   "hit": 9
   }
  ]
 }
