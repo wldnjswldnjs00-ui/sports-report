@@ -189,6 +189,110 @@
    "raw": "230:0",
    "code": "0",
    "market": "OU"
+  },
+  "betman:G101:260139:5389": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "119:123",
+   "code": "2",
+   "market": "WL",
+   "home_score": 119.0,
+   "away_score": 123.0
+  },
+  "betman:G101:260139:5390": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "122.5:123",
+   "code": "2",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260139:5391": {
+   "status": "FT",
+   "outcome": "O",
+   "src": "betman",
+   "raw": "242:0",
+   "code": "2",
+   "market": "OU"
+  },
+  "betman:G101:260139:5393": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "116:104",
+   "code": "0",
+   "market": "WL",
+   "home_score": 116.0,
+   "away_score": 104.0
+  },
+  "betman:G101:260139:5394": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "103.5:104",
+   "code": "2",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260139:5395": {
+   "status": "FT",
+   "outcome": "U",
+   "src": "betman",
+   "raw": "220:0",
+   "code": "0",
+   "market": "OU"
+  },
+  "betman:G101:260139:5397": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "109:94",
+   "code": "0",
+   "market": "WL",
+   "home_score": 109.0,
+   "away_score": 94.0
+  },
+  "betman:G101:260139:5398": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "96.5:94",
+   "code": "0",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260139:5399": {
+   "status": "FT",
+   "outcome": "U",
+   "src": "betman",
+   "raw": "203:0",
+   "code": "0",
+   "market": "OU"
+  },
+  "betman:G101:260139:5401": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "107:123",
+   "code": "2",
+   "market": "WL",
+   "home_score": 107.0,
+   "away_score": 123.0
+  },
+  "betman:G101:260139:5402": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "114.5:123",
+   "code": "2",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260139:5403": {
+   "status": "FT",
+   "outcome": "O",
+   "src": "betman",
+   "raw": "230:0",
+   "code": "2",
+   "market": "OU"
   }
  }
 }
