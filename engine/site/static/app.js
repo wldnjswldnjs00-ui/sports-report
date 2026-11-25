@@ -352,6 +352,19 @@
         var t = Date.parse(el.dataset.ko || "");
         if (t && t <= now) el.remove();
       });
+      // 조합은 공개 때 고정: 경기가 시작돼도 빼지 않고 그 경기에 '진행 중'만 붙인다. 담기 버튼은 첫 경기 시작 뒤 숨김
+      $$("[data-leg-ko]").forEach(function (li) {
+        var t = Date.parse(li.dataset.legKo || "");
+        if (t && t <= now && !li.classList.contains("is-started")) {
+          li.classList.add("is-started");
+          var b = doc.createElement("small"); b.className = "leg-live"; b.textContent = "진행 중"; li.appendChild(b);
+        }
+      });
+      $$("[data-ko-first]").forEach(function (c) {
+        var t = Date.parse(c.dataset.koFirst || "");
+        var btn = $(".combo-add", c);
+        if (t && t <= now && btn) btn.hidden = true;
+      });
       // 비게 된 묶음 정리
       var rail = $("[data-rail]");
       if (rail && !rail.children.length) { var w = rail.closest("section"); if (w) w.remove(); }

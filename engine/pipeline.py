@@ -177,14 +177,22 @@ def collect(day: str, refresh_ref: bool = False) -> dict[str, Any]:
 
     proto = [m for m in primary if m.get("analysis") and m["pool"] == "proto"]
     combos = C.all_combos(proto)
-    # 이미 발행된 조합 중 경기가 시작된 것은 유지(사후 교체 방지)
-    for name, old_list in (prev.get("combos") or {}).items():
-        locked = [c for c in old_list if any(datetime.fromisoformat(l["kickoff"]) <= now for l in c["legs"])]
-        if locked:
-            keys = {c["key"] for c in locked}
-            fresh = [c for c in combos.get(name, []) if c["key"] not in keys]
-            top_n = C.STRATEGIES[name]["top"]
-            combos[name] = (locked[:top_n] + fresh)[:top_n]  # 고정된 조합 우선, 전략별 개수는 그대로
+    # 조합은 처음 공개할 때 고정한다: 같은 날 리포트에 이미 낸 조합은 경기 구성·배당·확률을 그대로 두고
+    # 지금 배당만 따로 붙인다(odds_now·total_now). 공개 때 비어 있던 전략만 새로 채운다.
+    # 사람들이 본 조합 = 채점하는 조합이 되도록(배당이 움직여도 조합이 바뀌지 않게).
+    if prev.get("date") == day and any((prev.get("combos") or {}).values()):
+        now_odds = {m["id"]: m.get("odds") or {} for m in analyzed}
+        for name, old_list in (prev.get("combos") or {}).items():
+            if not old_list:
+                continue
+            for c in old_list:
+                cur = 1.0
+                for l in c["legs"]:
+                    o = (now_odds.get(l["market_id"]) or {}).get(l["outcome"])
+                    l["odds_now"] = o if o else l.get("odds_now", l["odds"])
+                    cur *= l["odds_now"] or l["odds"]
+                c["total_now"] = round(cur, 2)
+            combos[name] = old_list
     value = C.value_legs(proto)
     upcoming = [m for m in analyzed if m.get("analysis") and m["pool"] == "proto" and datetime.fromisoformat(m["kickoff"]) > now]
     upsets = C.upset_legs(upcoming)

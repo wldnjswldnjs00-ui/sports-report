@@ -36,19 +36,19 @@
 {% endmacro %}
 
 {% macro leg_row(l) %}
-    <li>
+    <li data-leg-ko="{{ l.kickoff }}">
       <span class="leg-no">{{ l.game_no or '' }}</span>
       <span class="leg-match"><span class="tm">{{ l.home }}</span> <span class="tm"><i>vs</i> {{ l.away }}</span></span>
       <span class="bub on {{ (outcome(l, l.outcome))|tone }}">{{ outcome(l, l.outcome) }}</span>
-      <span class="leg-odds">{{ l.odds|odds }}</span>
+      <span class="leg-odds">{{ l.odds|odds }}{% if l.odds_now and (l.odds_now - l.odds)|abs >= 0.01 %}<small class="leg-now" title="지금 베트맨 배당">지금 {{ l.odds_now|odds }}</small>{% endif %}</span>
     </li>
 {% endmacro %}
 
 {% macro combo_card(c, r) %}
-<article class="combo" data-combo data-key="{{ c.key }}" data-ko="{{ c.legs|map(attribute='kickoff')|min }}">
+<article class="combo" data-combo data-key="{{ c.key }}" data-ko-first="{{ c.legs|map(attribute='kickoff')|min }}">
   <header class="combo-head">
     <span class="combo-odds" title="종합배당"><b>×{{ c.total_odds|odds }}</b></span>
-    <span class="combo-size">{{ c.size }}폴더</span>
+    <span class="combo-size">{{ c.size }}폴더</span>{% if c.total_now and (c.total_now - c.total_odds)|abs >= 0.01 %}<span class="combo-now" title="지금 베트맨 배당으로 계산한 종합배당">지금 ×{{ c.total_now|odds }}</span>{% endif %}
     {{ result_tag(c.result) }}
   </header>
   <div class="perf" aria-hidden="true"></div>
