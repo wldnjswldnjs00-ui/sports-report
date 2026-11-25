@@ -84278,7 +84278,7 @@
       "upset_risk": 35,
       "single": true,
       "dog": false,
-      "result": "hit",
+      "result": null,
       "odds_now": 1.31
      },
      {
@@ -89525,7 +89525,8 @@
    "upset_risk": 46,
    "single": true,
    "dog": false,
-   "kelly": 0.0047
+   "kelly": 0.0047,
+   "result": "miss"
   },
   {
    "market_id": "betman:G101:260140:5605",
@@ -89552,7 +89553,8 @@
    "upset_risk": 57,
    "single": true,
    "dog": true,
-   "kelly": 0.0014
+   "kelly": 0.0014,
+   "result": "miss"
   }
  ],
  "upsets": [
@@ -93002,10 +93004,8 @@
   "betman:G101:260140:5657": "A",
   "betman:G101:260140:5659": "A",
   "betman:G101:260140:5660": "U",
-  "betman:G101:260140:5662": "A",
   "betman:G101:260140:5663": "H",
   "betman:G101:260140:5664": "O",
-  "betman:G101:260140:5666": "A",
   "betman:G101:260140:5667": "A",
   "betman:G101:260140:5668": "U",
   "betman:G101:260140:5670": "D",

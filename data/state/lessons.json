@@ -8,13 +8,13 @@
  "flow_with": {
   "n": 151,
   "hit": 0.543,
-  "expected": 0.5499,
-  "gap": 0.0069
+  "expected": 0.5488,
+  "gap": 0.0057
  },
  "high_risk": {
-  "n": 705,
-  "hit": 0.4936,
-  "expected": 0.508,
-  "gap": 0.0143
+  "n": 704,
+  "hit": 0.4943,
+  "expected": 0.5079,
+  "gap": 0.0136
  }
 }
