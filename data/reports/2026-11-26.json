@@ -59110,7 +59110,8 @@
    "upset_risk": 25,
    "single": true,
    "dog": true,
-   "kelly": 0.003
+   "kelly": 0.003,
+   "result": "miss"
   },
   {
    "market_id": "betman:G101:260140:5801",
@@ -59137,7 +59138,8 @@
    "upset_risk": 41,
    "single": false,
    "dog": false,
-   "kelly": 0.0095
+   "kelly": 0.0095,
+   "result": "hit"
   },
   {
    "market_id": "betman:G101:260140:5848",
@@ -59164,7 +59166,8 @@
    "upset_risk": 45,
    "single": false,
    "dog": false,
-   "kelly": 0.0037
+   "kelly": 0.0037,
+   "result": null
   }
  ],
  "upsets": [
@@ -61838,7 +61841,6 @@
   "betman:G101:260140:5840": "A",
   "betman:G101:260140:5841": "U",
   "betman:G101:260140:5843": "H",
-  "betman:G101:260140:5844": "A",
   "betman:G101:260140:5845": "O"
  },
  "headline": "오늘 프로토 60경기. 기준 경기는 아라라트 아르메니아 원정승(74%). 이후 3경기도 미리 분석했습니다."

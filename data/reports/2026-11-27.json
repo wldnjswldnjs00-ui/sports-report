@@ -6,7 +6,7 @@
  "calibration_alpha": 0.04,
  "demo": false,
  "sources": {
-  "betman": "8개 수집",
+  "betman": "실패: ConnectionError",
   "odds_api": "0개 매칭",
   "form": "8개 마켓",
   "bbook": "8개 마켓",
@@ -1707,5 +1707,6 @@
   "combos": 2
  },
  "outcomes": {},
- "headline": "오늘 3경기 분석 완료. 가장 단단한 선택은 푸에르토리코_남자 원정승, 추정 70%."
+ "headline": "오늘 3경기 분석 완료. 가장 단단한 선택은 푸에르토리코_남자 원정승, 추정 70%.",
+ "last_attempt": "2026-11-26T23:06:09+09:00"
 }
