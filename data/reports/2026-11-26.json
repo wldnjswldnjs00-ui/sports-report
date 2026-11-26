@@ -6,8 +6,8 @@
  "calibration_alpha": 0.06,
  "demo": false,
  "sources": {
-  "betman": "225개 수집",
-  "odds_api": "24개 매칭",
+  "betman": "실패: ConnectionError",
+  "odds_api": "0개 매칭",
   "form": "225개 마켓",
   "bbook": "201개 마켓",
   "selfcheck": {
@@ -57764,7 +57764,8 @@
    "upset_risk": 25,
    "single": true,
    "dog": true,
-   "kelly": 0.003
+   "kelly": 0.003,
+   "result": null
   },
   {
    "market_id": "betman:G101:260140:5801",
@@ -57791,7 +57792,8 @@
    "upset_risk": 41,
    "single": false,
    "dog": false,
-   "kelly": 0.0095
+   "kelly": 0.0095,
+   "result": null
   }
  ],
  "upsets": [
@@ -59977,5 +59979,6 @@
   "combos": 51
  },
  "outcomes": {},
- "headline": "오늘 프로토 60경기. 기준 경기는 휴스턴 로케츠 홈승(73%). 이후 3경기도 미리 분석했습니다."
+ "headline": "오늘 프로토 60경기. 기준 경기는 휴스턴 로케츠 홈승(73%). 이후 3경기도 미리 분석했습니다.",
+ "last_attempt": "2026-11-26T13:01:07+09:00"
 }
