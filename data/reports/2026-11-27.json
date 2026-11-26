@@ -6,7 +6,7 @@
  "calibration_alpha": 0.05,
  "demo": false,
  "sources": {
-  "betman": "8개 수집",
+  "betman": "실패: ConnectionError",
   "odds_api": "0개 매칭",
   "form": "8개 마켓",
   "bbook": "8개 마켓",
@@ -2240,5 +2240,6 @@
   "combos": 2
  },
  "outcomes": {},
- "headline": "오늘 3경기 분석 완료. 가장 단단한 선택은 파나마_남자 홈승, 추정 60%."
+ "headline": "오늘 3경기 분석 완료. 가장 단단한 선택은 파나마_남자 홈승, 추정 60%.",
+ "last_attempt": "2026-11-27T08:31:24+09:00"
 }
