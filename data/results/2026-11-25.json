@@ -1333,6 +1333,32 @@
    "raw": "1:0",
    "code": "0",
    "market": "OU"
+  },
+  "betman:G101:260140:5795": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "111:104",
+   "code": "0",
+   "market": "WL",
+   "home_score": 111.0,
+   "away_score": 104.0
+  },
+  "betman:G101:260140:5796": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "109.5:104",
+   "code": "0",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260140:5797": {
+   "status": "FT",
+   "outcome": "U",
+   "src": "betman",
+   "raw": "215:0",
+   "code": "0",
+   "market": "OU"
   }
  }
 }
