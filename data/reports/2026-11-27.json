@@ -1,12 +1,12 @@
 {
  "date": "2026-11-27",
  "generated_at": "2026-11-26T19:01:11+09:00",
- "updated_at": "2026-11-26T22:01:08+09:00",
+ "updated_at": "2026-11-27T07:01:02+09:00",
  "model_version": "aurora-1.0.0",
- "calibration_alpha": 0.04,
+ "calibration_alpha": 0.05,
  "demo": false,
  "sources": {
-  "betman": "실패: ConnectionError",
+  "betman": "8개 수집",
   "odds_api": "0개 매칭",
   "form": "8개 마켓",
   "bbook": "8개 마켓",
@@ -366,31 +366,58 @@
    "market": "WL",
    "line": null,
    "odds": {
-    "H": 2.59,
-    "A": 1.31
+    "H": 1.53,
+    "A": 2.02
    },
    "venue": "파나마시티(파나마)",
-   "flow": null,
+   "flow": {
+    "changes": 1,
+    "at": "202611262227",
+    "from": {
+     "H": 2.59,
+     "A": 1.31
+    },
+    "to": {
+     "H": 1.53,
+     "A": 2.02
+    },
+    "pts": [
+     [
+      "",
+      {
+       "H": 2.59,
+       "A": 1.31
+      }
+     ],
+     [
+      "202611262227",
+      {
+       "H": 1.53,
+       "A": 2.02
+      }
+     ]
+    ]
+   },
    "single": false,
    "analysis": {
     "p": {
-     "H": 0.3031,
-     "A": 0.6969
+     "H": 0.6009,
+     "A": 0.3991
     },
     "p_betman": {
-     "H": 0.2937,
-     "A": 0.7063
+     "H": 0.5863,
+     "A": 0.4137
     },
     "p_ref": null,
     "p_elo": null,
-    "pick": "A",
-    "pick_prob": 0.6969,
-    "pick_odds": 1.31,
-    "ev": -0.0871,
-    "value_key": "A",
-    "value_ev": -0.0909,
+    "pick": "H",
+    "pick_prob": 0.6009,
+    "pick_odds": 1.53,
+    "ev": -0.0807,
+    "value_key": "H",
+    "value_ev": -0.1108,
     "confidence": 55,
-    "upset_risk": 29,
+    "upset_risk": 42,
     "data_score": 35,
     "sources": [
      "베트맨 배당(해외 배당 없음)",
@@ -399,7 +426,7 @@
     "flags": [
      "해외 배당 없음"
     ],
-    "payout_rate": 0.87,
+    "payout_rate": 0.8706,
     "hist": null,
     "pair": null,
     "intl": null,
@@ -408,9 +435,9 @@
     "x_kind": null,
     "elo": null,
     "bhist": {
-     "hit": 0.7073,
-     "n": 41,
-     "imp": 0.6641,
+     "hit": 0.675,
+     "n": 40,
+     "imp": 0.569,
      "group": "국제 농구"
     }
    },
@@ -419,12 +446,12 @@
     "A": 1.31
    },
    "oreo": {
-    "o1": "푸에르토리코_남자 승 예측. 확률은 70%로 본다.",
-    "r": "푸에르토리코_남자는 최근 3경기 1승 2패, 상대는 1승 1패.",
-    "e": "베트맨 배당이 비슷했던 국제 농구 41경기 중 71%가 이렇게 끝났다. 푸에르토리코_남자 2연패 중.",
-    "o2": "안정형 조합의 기준 경기로 무난하다."
+    "o1": "파나마_남자 승 예측. 다만 60%라 거의 반반이다.",
+    "r": "파나마_남자는 최근 2경기 1승 1패, 상대는 1승 2패.",
+    "e": "베트맨 배당이 비슷했던 국제 농구 40경기 중 68%가 이렇게 끝났다.",
+    "o2": "한쪽으로 크게 기울지 않아 밸런스형에 어울린다."
    },
-   "narrative": "푸에르토리코_남자 승 예측. 확률은 70%로 본다. 푸에르토리코_남자는 최근 3경기 1승 2패, 상대는 1승 1패. 베트맨 배당이 비슷했던 국제 농구 41경기 중 71%가 이렇게 끝났다. 푸에르토리코_남자 2연패 중. 안정형 조합의 기준 경기로 무난하다.",
+   "narrative": "파나마_남자 승 예측. 다만 60%라 거의 반반이다. 파나마_남자는 최근 2경기 1승 1패, 상대는 1승 2패. 베트맨 배당이 비슷했던 국제 농구 40경기 중 68%가 이렇게 끝났다. 한쪽으로 크게 기울지 않아 밸런스형에 어울린다.",
    "form": {
     "home": {
      "games": [
@@ -517,32 +544,59 @@
    "home": "파나마_남자",
    "away": "푸에르토리코_남자",
    "market": "HANDICAP",
-   "line": 5.5,
+   "line": -2.5,
    "odds": {
-    "H": 1.73,
-    "A": 1.75
+    "H": 1.74,
+    "A": 1.74
    },
    "venue": "파나마시티(파나마)",
-   "flow": null,
+   "flow": {
+    "changes": 1,
+    "at": "202611262227",
+    "from": {
+     "H": 1.73,
+     "A": 1.75
+    },
+    "to": {
+     "H": 1.74,
+     "A": 1.74
+    },
+    "pts": [
+     [
+      "",
+      {
+       "H": 1.73,
+       "A": 1.75
+      }
+     ],
+     [
+      "202611262227",
+      {
+       "H": 1.74,
+       "A": 1.74
+      }
+     ]
+    ]
+   },
    "single": false,
    "analysis": {
     "p": {
-     "H": 0.5134,
-     "A": 0.4866
+     "H": 0.5112,
+     "A": 0.4888
     },
     "p_betman": {
-     "H": 0.5036,
-     "A": 0.4964
+     "H": 0.5,
+     "A": 0.5
     },
     "p_ref": null,
     "p_elo": null,
     "pick": "H",
-    "pick_prob": 0.5134,
-    "pick_odds": 1.73,
-    "ev": -0.1119,
+    "pick_prob": 0.5112,
+    "pick_odds": 1.74,
+    "ev": -0.1106,
     "value_key": "H",
-    "value_ev": -0.1292,
-    "confidence": 54,
+    "value_ev": -0.13,
+    "confidence": 53,
     "upset_risk": 50,
     "data_score": 35,
     "sources": [
@@ -564,7 +618,7 @@
     "bhist": {
      "hit": 0.5319,
      "n": 141,
-     "imp": 0.5029,
+     "imp": 0.5,
      "group": "국제 농구"
     }
    },
@@ -671,32 +725,59 @@
    "home": "파나마_남자",
    "away": "푸에르토리코_남자",
    "market": "OU",
-   "line": 168.5,
+   "line": 162.5,
    "odds": {
-    "O": 1.73,
-    "U": 1.75
+    "O": 1.74,
+    "U": 1.74
    },
    "venue": "파나마시티(파나마)",
-   "flow": null,
+   "flow": {
+    "changes": 1,
+    "at": "202611262227",
+    "from": {
+     "U": 1.75,
+     "O": 1.73
+    },
+    "to": {
+     "U": 1.74,
+     "O": 1.74
+    },
+    "pts": [
+     [
+      "",
+      {
+       "U": 1.75,
+       "O": 1.73
+      }
+     ],
+     [
+      "202611262227",
+      {
+       "U": 1.74,
+       "O": 1.74
+      }
+     ]
+    ]
+   },
    "single": false,
    "analysis": {
     "p": {
-     "O": 0.517,
-     "U": 0.483
+     "O": 0.5148,
+     "U": 0.4852
     },
     "p_betman": {
-     "O": 0.5036,
-     "U": 0.4964
+     "O": 0.5,
+     "U": 0.5
     },
     "p_ref": null,
     "p_elo": null,
     "pick": "O",
-    "pick_prob": 0.517,
-    "pick_odds": 1.73,
-    "ev": -0.1056,
+    "pick_prob": 0.5148,
+    "pick_odds": 1.74,
+    "ev": -0.1042,
     "value_key": "O",
-    "value_ev": -0.1292,
-    "confidence": 54,
+    "value_ev": -0.13,
+    "confidence": 53,
     "upset_risk": 50,
     "data_score": 35,
     "sources": [
@@ -718,7 +799,7 @@
     "bhist": {
      "hit": 0.5423,
      "n": 142,
-     "imp": 0.5029,
+     "imp": 0.5,
      "group": "국제 농구"
     }
    },
@@ -727,12 +808,12 @@
     "U": 1.75
    },
    "oreo": {
-    "o1": "기준점 168.5 오버 예측(52%). 박빙이다.",
+    "o1": "기준점 162.5 오버 예측(51%). 박빙이다.",
     "r": "해외 배당이 없어 베트맨 배당에서 발행처 몫을 걷어낸 확률로 봤다.",
     "e": "베트맨 배당이 비슷했던 국제 농구 142경기 중 54%가 이렇게 끝났다.",
     "o2": "뒤집힐 여지가 꽤 있다. 넣는다면 폴더 수와 금액을 줄인다."
    },
-   "narrative": "기준점 168.5 오버 예측(52%). 박빙이다. 해외 배당이 없어 베트맨 배당에서 발행처 몫을 걷어낸 확률로 봤다. 베트맨 배당이 비슷했던 국제 농구 142경기 중 54%가 이렇게 끝났다. 뒤집힐 여지가 꽤 있다. 넣는다면 폴더 수와 금액을 줄인다.",
+   "narrative": "기준점 162.5 오버 예측(51%). 박빙이다. 해외 배당이 없어 베트맨 배당에서 발행처 몫을 걷어낸 확률로 봤다. 베트맨 배당이 비슷했던 국제 농구 142경기 중 54%가 이렇게 끝났다. 뒤집힐 여지가 꽤 있다. 넣는다면 폴더 수와 금액을 줄인다.",
    "form": {
     "home": {
      "games": [
@@ -1512,7 +1593,7 @@
       "single": false,
       "dog": true,
       "result": null,
-      "odds_now": 2.59
+      "odds_now": 1.53
      },
      {
       "market_id": "betman:G101:260140:6088",
@@ -1557,7 +1638,7 @@
     "rank": 1,
     "result": "pending",
     "return": null,
-    "total_now": 7.51
+    "total_now": 4.44
    }
   ],
   "lotto": []
@@ -1579,16 +1660,16 @@
   "game_no": 6080,
   "round": "260140",
   "kickoff": "2026-11-27T10:40+09:00",
-  "outcome": "A",
-  "p": 0.6969,
-  "odds": 1.31,
+  "outcome": "H",
+  "p": 0.6009,
+  "odds": 1.53,
   "x_odds": null,
   "x_kind": null,
-  "ev": -0.08706100000000006,
+  "ev": -0.080623,
   "confidence": 55,
-  "xev": 0.0,
-  "xo": 1.31,
-  "upset_risk": 29,
+  "xev": -1.1102230246251565e-16,
+  "xo": 1.53,
+  "upset_risk": 42,
   "single": false,
   "dog": false
  },
@@ -1606,16 +1687,16 @@
    "game_no": 6080,
    "round": "260140",
    "kickoff": "2026-11-27T10:40+09:00",
-   "outcome": "A",
-   "p": 0.6969,
-   "odds": 1.31,
+   "outcome": "H",
+   "p": 0.6009,
+   "odds": 1.53,
    "x_odds": null,
    "x_kind": null,
-   "ev": -0.08706100000000006,
+   "ev": -0.080623,
    "confidence": 55,
-   "xev": 0.0,
-   "xo": 1.31,
-   "upset_risk": 29,
+   "xev": -1.1102230246251565e-16,
+   "xo": 1.53,
+   "upset_risk": 42,
    "single": false,
    "dog": false
   },
@@ -1646,8 +1727,89 @@
    "dog": false
   }
  ],
- "caution": [],
- "odds_moves": [],
+ "caution": [
+  "betman:G101:260140:6080"
+ ],
+ "odds_moves": [
+  {
+   "market_id": "betman:G101:260140:6080",
+   "home": "파나마_남자",
+   "away": "푸에르토리코_남자",
+   "market": "WL",
+   "line": null,
+   "kickoff": "2026-11-27T10:40+09:00",
+   "outcome": "H",
+   "from": 2.59,
+   "to": 1.53,
+   "chg": -0.4093,
+   "n": 1
+  },
+  {
+   "market_id": "betman:G101:260140:6081",
+   "home": "파나마_남자",
+   "away": "푸에르토리코_남자",
+   "market": "HANDICAP",
+   "line": -2.5,
+   "kickoff": "2026-11-27T10:40+09:00",
+   "outcome": "A",
+   "from": 1.75,
+   "to": 1.74,
+   "chg": -0.0057,
+   "n": 1
+  },
+  {
+   "market_id": "betman:G101:260140:6082",
+   "home": "파나마_남자",
+   "away": "푸에르토리코_남자",
+   "market": "OU",
+   "line": 162.5,
+   "kickoff": "2026-11-27T10:40+09:00",
+   "outcome": "U",
+   "from": 1.75,
+   "to": 1.74,
+   "chg": -0.0057,
+   "n": 1
+  },
+  {
+   "market_id": "betman:G101:260140:6081",
+   "home": "파나마_남자",
+   "away": "푸에르토리코_남자",
+   "market": "HANDICAP",
+   "line": -2.5,
+   "kickoff": "2026-11-27T10:40+09:00",
+   "outcome": "H",
+   "from": 1.73,
+   "to": 1.74,
+   "chg": 0.0058,
+   "n": 1
+  },
+  {
+   "market_id": "betman:G101:260140:6082",
+   "home": "파나마_남자",
+   "away": "푸에르토리코_남자",
+   "market": "OU",
+   "line": 162.5,
+   "kickoff": "2026-11-27T10:40+09:00",
+   "outcome": "O",
+   "from": 1.73,
+   "to": 1.74,
+   "chg": 0.0058,
+   "n": 1
+  },
+  {
+   "market_id": "betman:G101:260140:6080",
+   "home": "파나마_남자",
+   "away": "푸에르토리코_남자",
+   "market": "WL",
+   "line": null,
+   "kickoff": "2026-11-27T10:40+09:00",
+   "outcome": "A",
+   "from": 1.31,
+   "to": 2.02,
+   "chg": 0.542,
+   "n": 1
+  }
+ ],
  "pending": [
   {
    "sport": "basketball",
@@ -1659,9 +1821,44 @@
   {
    "sport": "basketball",
    "league": "FIBA 남자농구 월드컵예선",
+   "home": "아르헨티나_남자",
+   "away": "바하마_남자",
+   "kickoff": "2026-11-27T09:40+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "FIBA 남자농구 월드컵예선",
+   "home": "파나마_남자",
+   "away": "푸에르토리코_남자",
+   "kickoff": "2026-11-27T10:40+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "FIBA 남자농구 월드컵예선",
    "home": "요르단_남자",
    "away": "뉴질랜드_남자",
    "kickoff": "2026-11-27T15:00+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "FIBA 남자농구 월드컵예선",
+   "home": "요르단_남자",
+   "away": "뉴질랜드_남자",
+   "kickoff": "2026-11-27T15:00+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "호주 A리그",
+   "home": "맥아서FC",
+   "away": "멜버른 시티",
+   "kickoff": "2026-11-27T17:40+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "FIBA 남자농구 월드컵예선",
+   "home": "이란_남자",
+   "away": "호주_남자",
+   "kickoff": "2026-11-27T18:00+09:00"
   },
   {
    "sport": "basketball",
@@ -1693,10 +1890,346 @@
   },
   {
    "sport": "basketball",
+   "league": "WKBL",
+   "home": "삼성생명 블루밍스",
+   "away": "신한은행 에스버드",
+   "kickoff": "2026-11-27T19:00+09:00"
+  },
+  {
+   "sport": "volleyball",
+   "league": "KOVO 남자",
+   "home": "대한항공 점보스",
+   "away": "KB손해보험 스타즈",
+   "kickoff": "2026-11-27T19:00+09:00"
+  },
+  {
+   "sport": "volleyball",
+   "league": "KOVO 여자",
+   "home": "흥국생명 핑크스파이더스",
+   "away": "GS칼텍스 서울Kixx",
+   "kickoff": "2026-11-27T19:00+09:00"
+  },
+  {
+   "sport": "basketball",
    "league": "FIBA 남자농구 월드컵예선",
    "home": "시리아_남자",
    "away": "필리핀_남자",
    "kickoff": "2026-11-27T21:00+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "FIBA 남자농구 월드컵예선",
+   "home": "시리아_남자",
+   "away": "필리핀_남자",
+   "kickoff": "2026-11-27T21:00+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "FIBA 남자농구 월드컵예선",
+   "home": "에스토니아_남자",
+   "away": "프랑스_남자",
+   "kickoff": "2026-11-28T02:00+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "FIBA 남자농구 월드컵예선",
+   "home": "라트비아_남자",
+   "away": "독일_남자",
+   "kickoff": "2026-11-28T02:30+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "FIBA 남자농구 월드컵예선",
+   "home": "스웨덴_남자",
+   "away": "헝가리_남자",
+   "kickoff": "2026-11-28T03:00+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "네덜란드 에레디비시",
+   "home": "흐로닝언",
+   "away": "빌럼II",
+   "kickoff": "2026-11-28T04:00+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "FIBA 남자농구 월드컵예선",
+   "home": "네덜란드_남자",
+   "away": "이스라엘_남자",
+   "kickoff": "2026-11-28T04:00+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "FIBA 남자농구 월드컵예선",
+   "home": "슬로베니아_남자",
+   "away": "핀란드_남자",
+   "kickoff": "2026-11-28T04:00+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "독일 분데스리가",
+   "home": "베르더 브레멘",
+   "away": "묀헨글라트바흐",
+   "kickoff": "2026-11-28T04:30+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "이탈리아 세리에A",
+   "home": "베네치아",
+   "away": "볼로냐",
+   "kickoff": "2026-11-28T04:45+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "프랑스 리그1",
+   "home": "스타드 브레스투아29",
+   "away": "파리FC",
+   "kickoff": "2026-11-28T04:45+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "FIBA 남자농구 월드컵예선",
+   "home": "폴란드_남자",
+   "away": "크로아티아_남자",
+   "kickoff": "2026-11-28T04:45+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "잉글랜드 챔피언십",
+   "home": "사우샘프턴",
+   "away": "미들즈브러",
+   "kickoff": "2026-11-28T05:00+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "잉글랜드 프리미어리그",
+   "home": "노팅엄 포리스트",
+   "away": "첼시",
+   "kickoff": "2026-11-28T05:00+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "스페인 라리가",
+   "home": "레반테",
+   "away": "라싱 산탄데르",
+   "kickoff": "2026-11-28T05:00+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "FIBA 남자농구 월드컵예선",
+   "home": "칠레_남자",
+   "away": "멕시코_남자",
+   "kickoff": "2026-11-28T07:40+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "FIBA 남자농구 월드컵예선",
+   "home": "브라질_남자",
+   "away": "미국_남자",
+   "kickoff": "2026-11-28T08:10+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "NBA",
+   "home": "뉴욕 닉스",
+   "away": "마이애미 히트",
+   "kickoff": "2026-11-28T09:00+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "NBA",
+   "home": "디트로이트 피스톤스",
+   "away": "밀워키 벅스",
+   "kickoff": "2026-11-28T09:30+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "NBA",
+   "home": "인디애나 페이서스",
+   "away": "필라델피아 76s",
+   "kickoff": "2026-11-28T09:30+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "NBA",
+   "home": "토론토 랩터스",
+   "away": "브루클린 네츠",
+   "kickoff": "2026-11-28T09:30+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "미국 메이저리그사커",
+   "home": "콜럼버스 크루",
+   "away": "인터 마이애미CF",
+   "kickoff": "2026-11-28T10:00+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "NBA",
+   "home": "보스턴 셀틱스",
+   "away": "애틀랜타 호크스",
+   "kickoff": "2026-11-28T10:00+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "FIBA 남자농구 월드컵예선",
+   "home": "콜롬비아_남자",
+   "away": "도미니카공화국_남자",
+   "kickoff": "2026-11-28T10:10+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "NBA",
+   "home": "미네소타 팀버울브스",
+   "away": "멤피스 그리즐리스",
+   "kickoff": "2026-11-28T10:30+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "NBA",
+   "home": "피닉스 선즈",
+   "away": "댈러스 매버릭스",
+   "kickoff": "2026-11-28T11:00+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "NBA",
+   "home": "샌안토니오 스퍼스",
+   "away": "LA 레이커스",
+   "kickoff": "2026-11-28T11:30+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "NBA",
+   "home": "유타 재즈",
+   "away": "덴버 너게츠",
+   "kickoff": "2026-11-28T11:30+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "NBA",
+   "home": "LA 클리퍼스",
+   "away": "뉴올리언스 펠리컨스",
+   "kickoff": "2026-11-28T11:30+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "NBA",
+   "home": "포틀랜드 트레일블레이저스",
+   "away": "골든스테이트 워리어스",
+   "kickoff": "2026-11-28T11:30+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "미국 메이저리그사커",
+   "home": "레알 솔트레이크",
+   "away": "밴쿠버 화이트캡스FC",
+   "kickoff": "2026-11-28T12:00+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "일본 J1리그",
+   "home": "시미즈 에스펄스",
+   "away": "우라와 레드",
+   "kickoff": "2026-11-28T14:00+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "일본 J1리그",
+   "home": "교토 상가FC",
+   "away": "세레소 오사카",
+   "kickoff": "2026-11-28T14:00+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "일본 J2리그",
+   "home": "RB오미야 아르디자",
+   "away": "FC이마바리",
+   "kickoff": "2026-11-28T14:00+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "K리그1",
+   "home": "FC서울",
+   "away": "대전 하나시티즌",
+   "kickoff": "2026-11-28T14:00+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "K리그1",
+   "home": "FC안양",
+   "away": "제주 SKFC",
+   "kickoff": "2026-11-28T14:00+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "K리그2",
+   "home": "용인FC",
+   "away": "파주 프런티어",
+   "kickoff": "2026-11-28T14:00+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "K리그2",
+   "home": "김해FC 2008",
+   "away": "성남FC",
+   "kickoff": "2026-11-28T14:00+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "WKBL",
+   "home": "BNK 썸",
+   "away": "KB 스타즈",
+   "kickoff": "2026-11-28T14:00+09:00"
+  },
+  {
+   "sport": "volleyball",
+   "league": "KOVO 남자",
+   "home": "OK저축은행 읏맨",
+   "away": "한국전력 빅스톰",
+   "kickoff": "2026-11-28T14:00+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "일본 J1리그",
+   "home": "가시마 앤틀러스",
+   "away": "파지아노 오카야마",
+   "kickoff": "2026-11-28T15:00+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "일본 J1리그",
+   "home": "비셀 고베",
+   "away": "제프 유나이티드",
+   "kickoff": "2026-11-28T15:00+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "일본 J1리그",
+   "home": "가시와 레이솔",
+   "away": "산프레체 히로시마",
+   "kickoff": "2026-11-28T16:00+09:00"
+  },
+  {
+   "sport": "basketball",
+   "league": "WKBL",
+   "home": "우리은행 우리WON",
+   "away": "하나은행",
+   "kickoff": "2026-11-28T16:00+09:00"
+  },
+  {
+   "sport": "volleyball",
+   "league": "KOVO 여자",
+   "home": "정관장 레드스파크스",
+   "away": "IBK기업은행 알토스",
+   "kickoff": "2026-11-28T16:00+09:00"
+  },
+  {
+   "sport": "soccer",
+   "league": "K리그1",
+   "home": "포항 스틸러스",
+   "away": "광주FC",
+   "kickoff": "2026-11-28T16:30+09:00"
   }
  ],
  "stats": {
@@ -1707,6 +2240,5 @@
   "combos": 2
  },
  "outcomes": {},
- "headline": "오늘 3경기 분석 완료. 가장 단단한 선택은 푸에르토리코_남자 원정승, 추정 70%.",
- "last_attempt": "2026-11-27T06:01:08+09:00"
+ "headline": "오늘 3경기 분석 완료. 가장 단단한 선택은 파나마_남자 홈승, 추정 60%."
 }
