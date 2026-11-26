@@ -207,6 +207,110 @@
    "raw": "227:0",
    "code": "0",
    "market": "OU"
+  },
+  "betman:G101:260140:5831": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "1:7",
+   "code": "2",
+   "market": "1X2",
+   "home_score": 1.0,
+   "away_score": 7.0
+  },
+  "betman:G101:260140:5832": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "2:7",
+   "code": "2",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260140:5833": {
+   "status": "FT",
+   "outcome": "O",
+   "src": "betman",
+   "raw": "8:0",
+   "code": "2",
+   "market": "OU"
+  },
+  "betman:G101:260140:5835": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "3:2",
+   "code": "0",
+   "market": "1X2",
+   "home_score": 3.0,
+   "away_score": 2.0
+  },
+  "betman:G101:260140:5836": {
+   "status": "FT",
+   "outcome": "D",
+   "src": "betman",
+   "raw": "2:2",
+   "code": "1",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260140:5837": {
+   "status": "FT",
+   "outcome": "O",
+   "src": "betman",
+   "raw": "5:0",
+   "code": "2",
+   "market": "OU"
+  },
+  "betman:G101:260140:5839": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "0:3",
+   "code": "2",
+   "market": "WL",
+   "home_score": 0.0,
+   "away_score": 3.0
+  },
+  "betman:G101:260140:5840": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "1.5:3",
+   "code": "2",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260140:5841": {
+   "status": "FT",
+   "outcome": "U",
+   "src": "betman",
+   "raw": "145:0",
+   "code": "0",
+   "market": "OU"
+  },
+  "betman:G101:260140:5843": {
+   "status": "FT",
+   "outcome": "H",
+   "src": "betman",
+   "raw": "3:1",
+   "code": "0",
+   "market": "WL",
+   "home_score": 3.0,
+   "away_score": 1.0
+  },
+  "betman:G101:260140:5844": {
+   "status": "FT",
+   "outcome": "A",
+   "src": "betman",
+   "raw": "0.5:1",
+   "code": "2",
+   "market": "HANDICAP"
+  },
+  "betman:G101:260140:5845": {
+   "status": "FT",
+   "outcome": "O",
+   "src": "betman",
+   "raw": "188:0",
+   "code": "2",
+   "market": "OU"
   }
  }
 }
