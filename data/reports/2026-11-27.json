@@ -6,8 +6,8 @@
  "calibration_alpha": 0.09,
  "demo": false,
  "sources": {
-  "betman": "428개 수집",
-  "odds_api": "49개 매칭",
+  "betman": "실패: ConnectionError",
+  "odds_api": "0개 매칭",
   "form": "428개 마켓",
   "bbook": "379개 마켓",
   "selfcheck": {
@@ -120436,7 +120436,8 @@
    "upset_risk": 48,
    "single": true,
    "dog": false,
-   "kelly": 0.0097
+   "kelly": 0.0097,
+   "result": null
   }
  ],
  "upsets": [
@@ -122025,5 +122026,6 @@
   "betman:G101:260141:6085": "A",
   "betman:G101:260141:6086": "U"
  },
- "headline": "오늘 24경기 분석 완료. 가장 단단한 선택은 첼시 원정승, 추정 78%. 이후 105경기도 미리 분석했습니다."
+ "headline": "오늘 24경기 분석 완료. 가장 단단한 선택은 첼시 원정승, 추정 78%. 이후 105경기도 미리 분석했습니다.",
+ "last_attempt": "2026-11-27T19:01:06+09:00"
 }

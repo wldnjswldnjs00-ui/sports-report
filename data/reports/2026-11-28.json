@@ -1,0 +1,45 @@
+{
+ "date": "2026-11-28",
+ "generated_at": "2026-11-27T19:02:41+09:00",
+ "updated_at": "2026-11-27T19:02:41+09:00",
+ "model_version": "aurora-1.0.0",
+ "calibration_alpha": 0.09,
+ "demo": false,
+ "sources": {
+  "betman": "실패: ConnectTimeout",
+  "odds_api": "0개 매칭",
+  "form": "0개 마켓",
+  "bbook": "0개 마켓",
+  "selfcheck": {
+   "fixed": 0,
+   "items": []
+  }
+ },
+ "markets": [],
+ "combos": {
+  "safe": [],
+  "single": [],
+  "balanced": [],
+  "aggressive": [],
+  "upset": [],
+  "lotto": []
+ },
+ "value_picks": [],
+ "upsets": [],
+ "handi_picks": [],
+ "ou_picks": [],
+ "top_pick": null,
+ "top_picks": [],
+ "caution": [],
+ "odds_moves": [],
+ "pending": [],
+ "stats": {
+  "markets": 0,
+  "matches": 0,
+  "upcoming": 0,
+  "legs": 0,
+  "combos": 0
+ },
+ "outcomes": {},
+ "headline": "발매 정보를 불러오는 중입니다. 잠시 후 다시 확인해 주세요."
+}
