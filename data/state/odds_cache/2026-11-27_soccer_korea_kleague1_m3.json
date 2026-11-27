@@ -10,11 +10,11 @@
    {
     "key": "leovegas_se",
     "title": "LeoVegas (SE)",
-    "last_update": "2026-11-27T00:30:45Z",
+    "last_update": "2026-11-27T08:59:58Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T08:59:58Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
@@ -32,7 +32,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T08:59:58Z",
       "outcomes": [
        {
         "name": "Over",
@@ -51,11 +51,11 @@
    {
     "key": "unibet_se",
     "title": "Unibet (SE)",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T09:00:30Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:30Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
@@ -73,7 +73,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:30Z",
       "outcomes": [
        {
         "name": "Over",
@@ -92,11 +92,11 @@
    {
     "key": "unibet_nl",
     "title": "Unibet (NL)",
-    "last_update": "2026-11-27T00:29:56Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:56Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
@@ -114,7 +114,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:56Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Over",
@@ -133,11 +133,11 @@
    {
     "key": "pmu_fr",
     "title": "PMU (FR)",
-    "last_update": "2026-11-27T00:30:47Z",
+    "last_update": "2026-11-27T08:59:52Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:47Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
@@ -155,7 +155,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:47Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Over",
@@ -174,11 +174,11 @@
    {
     "key": "unibet_fr",
     "title": "Unibet (FR)",
-    "last_update": "2026-11-27T00:29:55Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:55Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
@@ -199,11 +199,11 @@
    {
     "key": "betclic_fr",
     "title": "Betclic (FR)",
-    "last_update": "2026-11-27T00:29:45Z",
+    "last_update": "2026-11-27T08:58:58Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:45Z",
+      "last_update": "2026-11-27T08:58:58Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
@@ -224,11 +224,11 @@
    {
     "key": "betsson",
     "title": "Betsson",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T09:00:32Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:32Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
@@ -246,7 +246,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:32Z",
       "outcomes": [
        {
         "name": "Over",
@@ -265,11 +265,11 @@
    {
     "key": "nordicbet",
     "title": "Nordic Bet",
-    "last_update": "2026-11-27T00:30:49Z",
+    "last_update": "2026-11-27T08:59:22Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:49Z",
+      "last_update": "2026-11-27T08:59:22Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
@@ -287,7 +287,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:49Z",
+      "last_update": "2026-11-27T08:59:22Z",
       "outcomes": [
        {
         "name": "Over",
@@ -306,45 +306,45 @@
    {
     "key": "betonlineag",
     "title": "BetOnline.ag",
-    "last_update": "2026-11-27T00:30:20Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:20Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
-        "price": 2.62
+        "price": 2.6
        },
        {
         "name": "FC Seoul",
-        "price": 2.5
+        "price": 2.56
        },
        {
         "name": "Draw",
-        "price": 3.45
+        "price": 3.6
        }
       ]
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:20Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
-        "price": 1.92,
+        "price": 1.9,
         "point": 0.0
        },
        {
         "name": "FC Seoul",
-        "price": 1.83,
+        "price": 1.87,
         "point": 0.0
        }
       ]
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:20Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Over",
@@ -353,7 +353,7 @@
        },
        {
         "name": "Under",
-        "price": 1.92,
+        "price": 1.93,
         "point": 2.75
        }
       ]
@@ -363,11 +363,11 @@
    {
     "key": "winamax_de",
     "title": "Winamax (DE)",
-    "last_update": "2026-11-27T00:30:47Z",
+    "last_update": "2026-11-27T09:00:32Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:47Z",
+      "last_update": "2026-11-27T09:00:32Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
@@ -388,54 +388,54 @@
    {
     "key": "pinnacle",
     "title": "Pinnacle",
-    "last_update": "2026-11-27T00:30:45Z",
+    "last_update": "2026-11-27T09:00:31Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T09:00:31Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
-        "price": 2.63
+        "price": 2.65
        },
        {
         "name": "FC Seoul",
-        "price": 2.56
+        "price": 2.59
        },
        {
         "name": "Draw",
-        "price": 3.62
+        "price": 3.67
        }
       ]
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T09:00:31Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
-        "price": 1.96,
+        "price": 1.97,
         "point": -0.0
        },
        {
         "name": "FC Seoul",
-        "price": 1.91,
+        "price": 1.92,
         "point": 0.0
        }
       ]
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T09:00:31Z",
       "outcomes": [
        {
         "name": "Over",
-        "price": 1.9,
+        "price": 1.91,
         "point": 2.75
        },
        {
         "name": "Under",
-        "price": 1.95,
+        "price": 1.96,
         "point": 2.75
        }
       ]
@@ -445,11 +445,11 @@
    {
     "key": "winamax_fr",
     "title": "Winamax (FR)",
-    "last_update": "2026-11-27T00:29:57Z",
+    "last_update": "2026-11-27T08:59:57Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:56Z",
+      "last_update": "2026-11-27T08:59:57Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
@@ -470,11 +470,11 @@
    {
     "key": "codere_it",
     "title": "Codere (IT)",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T08:59:53Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:53Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
@@ -492,7 +492,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:53Z",
       "outcomes": [
        {
         "name": "Over",
@@ -511,11 +511,11 @@
    {
     "key": "onexbet",
     "title": "1xBet",
-    "last_update": "2026-11-27T00:30:22Z",
+    "last_update": "2026-11-27T08:58:47Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T08:58:47Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
@@ -533,7 +533,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T08:58:47Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
@@ -549,7 +549,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T08:58:47Z",
       "outcomes": [
        {
         "name": "Over",
@@ -568,11 +568,11 @@
    {
     "key": "marathonbet",
     "title": "Marathon Bet",
-    "last_update": "2026-11-27T00:30:26Z",
+    "last_update": "2026-11-27T09:00:34Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:26Z",
+      "last_update": "2026-11-27T09:00:34Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
@@ -590,7 +590,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:26Z",
+      "last_update": "2026-11-27T09:00:34Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
@@ -606,7 +606,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:26Z",
+      "last_update": "2026-11-27T09:00:34Z",
       "outcomes": [
        {
         "name": "Over",
@@ -625,11 +625,11 @@
    {
     "key": "williamhill",
     "title": "William Hill",
-    "last_update": "2026-11-27T00:30:23Z",
+    "last_update": "2026-11-27T08:59:52Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:23Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
@@ -647,7 +647,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:23Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Over",
@@ -666,33 +666,33 @@
    {
     "key": "betfair_ex_eu",
     "title": "Betfair",
-    "last_update": "2026-11-27T00:30:22Z",
+    "last_update": "2026-11-27T09:00:29Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T09:00:29Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
-        "price": 2.7
+        "price": 2.66
        },
        {
         "name": "FC Seoul",
-        "price": 2.6
+        "price": 2.66
        },
        {
         "name": "Draw",
-        "price": 3.65
+        "price": 3.7
        }
       ]
      },
      {
       "key": "h2h_lay",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T09:00:29Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
-        "price": 2.82
+        "price": 2.78
        },
        {
         "name": "FC Seoul",
@@ -709,11 +709,11 @@
    {
     "key": "coolbet",
     "title": "Coolbet",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
@@ -731,7 +731,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Daejeon Citizen",
@@ -747,7 +747,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Over",
@@ -757,6 +757,81 @@
        {
         "name": "Under",
         "price": 2.12,
+        "point": 2.5
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "matchbook",
+    "title": "Matchbook",
+    "last_update": "2026-11-27T09:00:32Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-11-27T09:00:32Z",
+      "outcomes": [
+       {
+        "name": "Daejeon Citizen",
+        "price": 2.64
+       },
+       {
+        "name": "FC Seoul",
+        "price": 2.6
+       },
+       {
+        "name": "Draw",
+        "price": 3.65
+       }
+      ]
+     },
+     {
+      "key": "h2h_lay",
+      "last_update": "2026-11-27T09:00:32Z",
+      "outcomes": [
+       {
+        "name": "Daejeon Citizen",
+        "price": 2.8
+       },
+       {
+        "name": "FC Seoul",
+        "price": 2.78
+       },
+       {
+        "name": "Draw",
+        "price": 4.0
+       }
+      ]
+     },
+     {
+      "key": "spreads",
+      "last_update": "2026-11-27T09:00:32Z",
+      "outcomes": [
+       {
+        "name": "Daejeon Citizen",
+        "price": 1.98,
+        "point": 0.0
+       },
+       {
+        "name": "FC Seoul",
+        "price": 1.91,
+        "point": 0.0
+       }
+      ]
+     },
+     {
+      "key": "totals",
+      "last_update": "2026-11-27T09:00:32Z",
+      "outcomes": [
+       {
+        "name": "Over",
+        "price": 1.73,
+        "point": 2.5
+       },
+       {
+        "name": "Under",
+        "price": 2.24,
         "point": 2.5
        }
       ]
@@ -776,11 +851,11 @@
    {
     "key": "pmu_fr",
     "title": "PMU (FR)",
-    "last_update": "2026-11-27T00:30:47Z",
+    "last_update": "2026-11-27T08:59:52Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:47Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "FC Anyang",
@@ -798,7 +873,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:47Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Over",
@@ -817,11 +892,11 @@
    {
     "key": "unibet_nl",
     "title": "Unibet (NL)",
-    "last_update": "2026-11-27T00:29:56Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:56Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "FC Anyang",
@@ -839,7 +914,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:56Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Over",
@@ -858,11 +933,11 @@
    {
     "key": "unibet_se",
     "title": "Unibet (SE)",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T09:00:30Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:30Z",
       "outcomes": [
        {
         "name": "FC Anyang",
@@ -880,7 +955,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:30Z",
       "outcomes": [
        {
         "name": "Over",
@@ -899,11 +974,11 @@
    {
     "key": "leovegas_se",
     "title": "LeoVegas (SE)",
-    "last_update": "2026-11-27T00:30:45Z",
+    "last_update": "2026-11-27T08:59:58Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T08:59:58Z",
       "outcomes": [
        {
         "name": "FC Anyang",
@@ -921,7 +996,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T08:59:58Z",
       "outcomes": [
        {
         "name": "Over",
@@ -940,11 +1015,11 @@
    {
     "key": "unibet_fr",
     "title": "Unibet (FR)",
-    "last_update": "2026-11-27T00:29:55Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:55Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "FC Anyang",
@@ -965,11 +1040,11 @@
    {
     "key": "nordicbet",
     "title": "Nordic Bet",
-    "last_update": "2026-11-27T00:30:49Z",
+    "last_update": "2026-11-27T08:59:22Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:49Z",
+      "last_update": "2026-11-27T08:59:22Z",
       "outcomes": [
        {
         "name": "FC Anyang",
@@ -987,7 +1062,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:49Z",
+      "last_update": "2026-11-27T08:59:22Z",
       "outcomes": [
        {
         "name": "Over",
@@ -1006,11 +1081,11 @@
    {
     "key": "betclic_fr",
     "title": "Betclic (FR)",
-    "last_update": "2026-11-27T00:29:45Z",
+    "last_update": "2026-11-27T08:58:58Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:45Z",
+      "last_update": "2026-11-27T08:58:58Z",
       "outcomes": [
        {
         "name": "FC Anyang",
@@ -1031,11 +1106,11 @@
    {
     "key": "betsson",
     "title": "Betsson",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T09:00:32Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:32Z",
       "outcomes": [
        {
         "name": "FC Anyang",
@@ -1053,7 +1128,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:32Z",
       "outcomes": [
        {
         "name": "Over",
@@ -1072,45 +1147,29 @@
    {
     "key": "betonlineag",
     "title": "BetOnline.ag",
-    "last_update": "2026-11-27T00:30:20Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:20Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "FC Anyang",
-        "price": 2.32
+        "price": 2.36
        },
        {
         "name": "Jeju United FC",
-        "price": 2.94
+        "price": 3.0
        },
        {
         "name": "Draw",
-        "price": 3.3
-       }
-      ]
-     },
-     {
-      "key": "spreads",
-      "last_update": "2026-11-27T00:30:20Z",
-      "outcomes": [
-       {
-        "name": "FC Anyang",
-        "price": 1.97,
-        "point": -0.25
-       },
-       {
-        "name": "Jeju United FC",
-        "price": 1.78,
-        "point": 0.25
+        "price": 3.4
        }
       ]
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:20Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Over",
@@ -1119,7 +1178,7 @@
        },
        {
         "name": "Under",
-        "price": 1.93,
+        "price": 1.97,
         "point": 2.5
        }
       ]
@@ -1129,11 +1188,11 @@
    {
     "key": "onexbet",
     "title": "1xBet",
-    "last_update": "2026-11-27T00:30:22Z",
+    "last_update": "2026-11-27T08:58:47Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:21Z",
+      "last_update": "2026-11-27T08:58:47Z",
       "outcomes": [
        {
         "name": "FC Anyang",
@@ -1151,7 +1210,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:21Z",
+      "last_update": "2026-11-27T08:58:47Z",
       "outcomes": [
        {
         "name": "FC Anyang",
@@ -1167,7 +1226,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:21Z",
+      "last_update": "2026-11-27T08:58:47Z",
       "outcomes": [
        {
         "name": "Over",
@@ -1186,45 +1245,45 @@
    {
     "key": "pinnacle",
     "title": "Pinnacle",
-    "last_update": "2026-11-27T00:30:45Z",
+    "last_update": "2026-11-27T09:00:31Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T09:00:31Z",
       "outcomes": [
        {
         "name": "FC Anyang",
-        "price": 2.36
+        "price": 2.38
        },
        {
         "name": "Jeju United FC",
-        "price": 3.0
+        "price": 3.04
        },
        {
         "name": "Draw",
-        "price": 3.45
+        "price": 3.49
        }
       ]
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T09:00:31Z",
       "outcomes": [
        {
         "name": "FC Anyang",
-        "price": 2.05,
+        "price": 2.06,
         "point": -0.25
        },
        {
         "name": "Jeju United FC",
-        "price": 1.83,
+        "price": 1.84,
         "point": 0.25
        }
       ]
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T09:00:31Z",
       "outcomes": [
        {
         "name": "Over",
@@ -1233,7 +1292,7 @@
        },
        {
         "name": "Under",
-        "price": 2.01,
+        "price": 2.02,
         "point": 2.5
        }
       ]
@@ -1243,11 +1302,11 @@
    {
     "key": "winamax_fr",
     "title": "Winamax (FR)",
-    "last_update": "2026-11-27T00:29:57Z",
+    "last_update": "2026-11-27T08:59:57Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:57Z",
+      "last_update": "2026-11-27T08:59:57Z",
       "outcomes": [
        {
         "name": "FC Anyang",
@@ -1268,11 +1327,11 @@
    {
     "key": "winamax_de",
     "title": "Winamax (DE)",
-    "last_update": "2026-11-27T00:30:47Z",
+    "last_update": "2026-11-27T09:00:32Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:47Z",
+      "last_update": "2026-11-27T09:00:32Z",
       "outcomes": [
        {
         "name": "FC Anyang",
@@ -1293,11 +1352,11 @@
    {
     "key": "marathonbet",
     "title": "Marathon Bet",
-    "last_update": "2026-11-27T00:30:26Z",
+    "last_update": "2026-11-27T09:00:34Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:26Z",
+      "last_update": "2026-11-27T09:00:34Z",
       "outcomes": [
        {
         "name": "FC Anyang",
@@ -1315,7 +1374,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:26Z",
+      "last_update": "2026-11-27T09:00:34Z",
       "outcomes": [
        {
         "name": "FC Anyang",
@@ -1331,7 +1390,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:26Z",
+      "last_update": "2026-11-27T09:00:34Z",
       "outcomes": [
        {
         "name": "Over",
@@ -1350,11 +1409,11 @@
    {
     "key": "williamhill",
     "title": "William Hill",
-    "last_update": "2026-11-27T00:30:23Z",
+    "last_update": "2026-11-27T08:59:52Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:23Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "FC Anyang",
@@ -1372,7 +1431,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:23Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Over",
@@ -1391,11 +1450,11 @@
    {
     "key": "coolbet",
     "title": "Coolbet",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "FC Anyang",
@@ -1413,7 +1472,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "FC Anyang",
@@ -1429,7 +1488,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Over",
@@ -1448,11 +1507,11 @@
    {
     "key": "betfair_ex_eu",
     "title": "Betfair",
-    "last_update": "2026-11-27T00:30:22Z",
+    "last_update": "2026-11-27T09:00:29Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T09:00:29Z",
       "outcomes": [
        {
         "name": "FC Anyang",
@@ -1470,19 +1529,94 @@
      },
      {
       "key": "h2h_lay",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T09:00:29Z",
       "outcomes": [
        {
         "name": "FC Anyang",
-        "price": 2.52
+        "price": 2.5
        },
        {
         "name": "Jeju United FC",
-        "price": 3.25
+        "price": 3.2
        },
        {
         "name": "Draw",
         "price": 3.8
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "matchbook",
+    "title": "Matchbook",
+    "last_update": "2026-11-27T09:00:32Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-11-27T09:00:32Z",
+      "outcomes": [
+       {
+        "name": "FC Anyang",
+        "price": 2.42
+       },
+       {
+        "name": "Jeju United FC",
+        "price": 3.0
+       },
+       {
+        "name": "Draw",
+        "price": 3.5
+       }
+      ]
+     },
+     {
+      "key": "h2h_lay",
+      "last_update": "2026-11-27T09:00:32Z",
+      "outcomes": [
+       {
+        "name": "FC Anyang",
+        "price": 2.54
+       },
+       {
+        "name": "Jeju United FC",
+        "price": 3.2
+       },
+       {
+        "name": "Draw",
+        "price": 3.75
+       }
+      ]
+     },
+     {
+      "key": "spreads",
+      "last_update": "2026-11-27T09:00:32Z",
+      "outcomes": [
+       {
+        "name": "FC Anyang",
+        "price": 2.04,
+        "point": -0.25
+       },
+       {
+        "name": "Jeju United FC",
+        "price": 1.84,
+        "point": 0.25
+       }
+      ]
+     },
+     {
+      "key": "totals",
+      "last_update": "2026-11-27T09:00:32Z",
+      "outcomes": [
+       {
+        "name": "Over",
+        "price": 1.86,
+        "point": 2.5
+       },
+       {
+        "name": "Under",
+        "price": 2.06,
+        "point": 2.5
        }
       ]
      }
@@ -1501,11 +1635,11 @@
    {
     "key": "pmu_fr",
     "title": "PMU (FR)",
-    "last_update": "2026-11-27T00:30:47Z",
+    "last_update": "2026-11-27T08:59:52Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:47Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
@@ -1523,7 +1657,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:47Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Over",
@@ -1542,11 +1676,11 @@
    {
     "key": "unibet_se",
     "title": "Unibet (SE)",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T09:00:30Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:30Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
@@ -1564,7 +1698,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:30Z",
       "outcomes": [
        {
         "name": "Over",
@@ -1583,11 +1717,11 @@
    {
     "key": "unibet_nl",
     "title": "Unibet (NL)",
-    "last_update": "2026-11-27T00:29:56Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:56Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
@@ -1605,7 +1739,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:56Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Over",
@@ -1624,11 +1758,11 @@
    {
     "key": "leovegas_se",
     "title": "LeoVegas (SE)",
-    "last_update": "2026-11-27T00:30:45Z",
+    "last_update": "2026-11-27T08:59:58Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T08:59:58Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
@@ -1646,7 +1780,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T08:59:58Z",
       "outcomes": [
        {
         "name": "Over",
@@ -1665,11 +1799,11 @@
    {
     "key": "betsson",
     "title": "Betsson",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T09:00:32Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:32Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
@@ -1687,7 +1821,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:32Z",
       "outcomes": [
        {
         "name": "Over",
@@ -1706,11 +1840,11 @@
    {
     "key": "unibet_fr",
     "title": "Unibet (FR)",
-    "last_update": "2026-11-27T00:29:55Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:55Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
@@ -1731,11 +1865,11 @@
    {
     "key": "nordicbet",
     "title": "Nordic Bet",
-    "last_update": "2026-11-27T00:30:49Z",
+    "last_update": "2026-11-27T08:59:22Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:49Z",
+      "last_update": "2026-11-27T08:59:22Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
@@ -1753,7 +1887,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:49Z",
+      "last_update": "2026-11-27T08:59:22Z",
       "outcomes": [
        {
         "name": "Over",
@@ -1772,11 +1906,11 @@
    {
     "key": "betclic_fr",
     "title": "Betclic (FR)",
-    "last_update": "2026-11-27T00:29:45Z",
+    "last_update": "2026-11-27T08:58:58Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:45Z",
+      "last_update": "2026-11-27T08:58:58Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
@@ -1797,11 +1931,11 @@
    {
     "key": "onexbet",
     "title": "1xBet",
-    "last_update": "2026-11-27T00:30:22Z",
+    "last_update": "2026-11-27T08:58:47Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T08:58:47Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
@@ -1819,7 +1953,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T08:58:47Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
@@ -1835,7 +1969,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T08:58:47Z",
       "outcomes": [
        {
         "name": "Over",
@@ -1854,45 +1988,45 @@
    {
     "key": "pinnacle",
     "title": "Pinnacle",
-    "last_update": "2026-11-27T00:30:45Z",
+    "last_update": "2026-11-27T09:00:31Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T09:00:31Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
-        "price": 2.86
+        "price": 2.89
        },
        {
         "name": "Sangju Sangmu FC",
-        "price": 2.44
+        "price": 2.47
        },
        {
         "name": "Draw",
-        "price": 3.47
+        "price": 3.51
        }
       ]
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T09:00:31Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
-        "price": 2.1,
+        "price": 2.11,
         "point": 0.0
        },
        {
         "name": "Sangju Sangmu FC",
-        "price": 1.79,
+        "price": 1.8,
         "point": -0.0
        }
       ]
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T09:00:31Z",
       "outcomes": [
        {
         "name": "Over",
@@ -1901,7 +2035,7 @@
        },
        {
         "name": "Under",
-        "price": 2.01,
+        "price": 2.02,
         "point": 2.5
        }
       ]
@@ -1911,11 +2045,11 @@
    {
     "key": "winamax_fr",
     "title": "Winamax (FR)",
-    "last_update": "2026-11-27T00:29:57Z",
+    "last_update": "2026-11-27T08:59:57Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:57Z",
+      "last_update": "2026-11-27T08:59:57Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
@@ -1936,11 +2070,11 @@
    {
     "key": "winamax_de",
     "title": "Winamax (DE)",
-    "last_update": "2026-11-27T00:30:47Z",
+    "last_update": "2026-11-27T09:00:32Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:47Z",
+      "last_update": "2026-11-27T09:00:32Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
@@ -1961,11 +2095,11 @@
    {
     "key": "marathonbet",
     "title": "Marathon Bet",
-    "last_update": "2026-11-27T00:30:26Z",
+    "last_update": "2026-11-27T09:00:34Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:26Z",
+      "last_update": "2026-11-27T09:00:34Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
@@ -1983,7 +2117,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:26Z",
+      "last_update": "2026-11-27T09:00:34Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
@@ -1999,7 +2133,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:26Z",
+      "last_update": "2026-11-27T09:00:34Z",
       "outcomes": [
        {
         "name": "Over",
@@ -2018,11 +2152,11 @@
    {
     "key": "williamhill",
     "title": "William Hill",
-    "last_update": "2026-11-27T00:30:23Z",
+    "last_update": "2026-11-27T08:59:52Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:23Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
@@ -2040,7 +2174,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:23Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Over",
@@ -2059,54 +2193,54 @@
    {
     "key": "betonlineag",
     "title": "BetOnline.ag",
-    "last_update": "2026-11-27T00:30:20Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:20Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
-        "price": 2.84
+        "price": 2.88
        },
        {
         "name": "Sangju Sangmu FC",
-        "price": 2.38
+        "price": 2.42
        },
        {
         "name": "Draw",
-        "price": 3.35
+        "price": 3.4
        }
       ]
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:20Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
-        "price": 2.05,
-        "point": 0.0
+        "price": 1.76,
+        "point": 0.25
        },
        {
         "name": "Sangju Sangmu FC",
-        "price": 1.71,
-        "point": 0.0
+        "price": 2.02,
+        "point": -0.25
        }
       ]
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:20Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Over",
-        "price": 1.78,
+        "price": 1.8,
         "point": 2.5
        },
        {
         "name": "Under",
-        "price": 1.93,
+        "price": 1.96,
         "point": 2.5
        }
       ]
@@ -2116,11 +2250,11 @@
    {
     "key": "coolbet",
     "title": "Coolbet",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
@@ -2138,7 +2272,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
@@ -2154,7 +2288,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Over",
@@ -2173,11 +2307,11 @@
    {
     "key": "betfair_ex_eu",
     "title": "Betfair",
-    "last_update": "2026-11-27T00:30:22Z",
+    "last_update": "2026-11-27T09:00:29Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T09:00:29Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
@@ -2185,7 +2319,7 @@
        },
        {
         "name": "Sangju Sangmu FC",
-        "price": 2.44
+        "price": 2.46
        },
        {
         "name": "Draw",
@@ -2195,7 +2329,7 @@
      },
      {
       "key": "h2h_lay",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T09:00:29Z",
       "outcomes": [
        {
         "name": "Bucheon FC 1995",
@@ -2203,11 +2337,86 @@
        },
        {
         "name": "Sangju Sangmu FC",
-        "price": 2.62
+        "price": 2.6
        },
        {
         "name": "Draw",
         "price": 3.8
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "matchbook",
+    "title": "Matchbook",
+    "last_update": "2026-11-27T09:00:32Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-11-27T09:00:32Z",
+      "outcomes": [
+       {
+        "name": "Bucheon FC 1995",
+        "price": 2.9
+       },
+       {
+        "name": "Sangju Sangmu FC",
+        "price": 2.46
+       },
+       {
+        "name": "Draw",
+        "price": 3.5
+       }
+      ]
+     },
+     {
+      "key": "h2h_lay",
+      "last_update": "2026-11-27T09:00:32Z",
+      "outcomes": [
+       {
+        "name": "Bucheon FC 1995",
+        "price": 3.15
+       },
+       {
+        "name": "Sangju Sangmu FC",
+        "price": 2.6
+       },
+       {
+        "name": "Draw",
+        "price": 3.85
+       }
+      ]
+     },
+     {
+      "key": "spreads",
+      "last_update": "2026-11-27T09:00:32Z",
+      "outcomes": [
+       {
+        "name": "Bucheon FC 1995",
+        "price": 2.12,
+        "point": 0.0
+       },
+       {
+        "name": "Sangju Sangmu FC",
+        "price": 1.8,
+        "point": 0.0
+       }
+      ]
+     },
+     {
+      "key": "totals",
+      "last_update": "2026-11-27T09:00:32Z",
+      "outcomes": [
+       {
+        "name": "Over",
+        "price": 1.87,
+        "point": 2.5
+       },
+       {
+        "name": "Under",
+        "price": 2.04,
+        "point": 2.5
        }
       ]
      }
@@ -2226,11 +2435,11 @@
    {
     "key": "pmu_fr",
     "title": "PMU (FR)",
-    "last_update": "2026-11-27T00:30:47Z",
+    "last_update": "2026-11-27T08:59:52Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:47Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2248,7 +2457,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:47Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Over",
@@ -2267,11 +2476,11 @@
    {
     "key": "unibet_se",
     "title": "Unibet (SE)",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T09:00:30Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:30Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2289,7 +2498,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:30Z",
       "outcomes": [
        {
         "name": "Over",
@@ -2308,11 +2517,11 @@
    {
     "key": "unibet_nl",
     "title": "Unibet (NL)",
-    "last_update": "2026-11-27T00:29:56Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:56Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2330,7 +2539,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:56Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Over",
@@ -2349,11 +2558,11 @@
    {
     "key": "leovegas_se",
     "title": "LeoVegas (SE)",
-    "last_update": "2026-11-27T00:30:45Z",
+    "last_update": "2026-11-27T08:59:58Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T08:59:58Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2371,7 +2580,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T08:59:58Z",
       "outcomes": [
        {
         "name": "Over",
@@ -2390,11 +2599,11 @@
    {
     "key": "betsson",
     "title": "Betsson",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T09:00:32Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:32Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2412,7 +2621,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:32Z",
       "outcomes": [
        {
         "name": "Over",
@@ -2431,11 +2640,11 @@
    {
     "key": "unibet_fr",
     "title": "Unibet (FR)",
-    "last_update": "2026-11-27T00:29:55Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:55Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2456,11 +2665,11 @@
    {
     "key": "nordicbet",
     "title": "Nordic Bet",
-    "last_update": "2026-11-27T00:30:49Z",
+    "last_update": "2026-11-27T08:59:22Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:49Z",
+      "last_update": "2026-11-27T08:59:22Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2478,7 +2687,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:49Z",
+      "last_update": "2026-11-27T08:59:22Z",
       "outcomes": [
        {
         "name": "Over",
@@ -2497,11 +2706,11 @@
    {
     "key": "betclic_fr",
     "title": "Betclic (FR)",
-    "last_update": "2026-11-27T00:29:45Z",
+    "last_update": "2026-11-27T08:58:58Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:45Z",
+      "last_update": "2026-11-27T08:58:58Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2522,11 +2731,11 @@
    {
     "key": "onexbet",
     "title": "1xBet",
-    "last_update": "2026-11-27T00:30:22Z",
+    "last_update": "2026-11-27T08:58:47Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T08:58:47Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2544,7 +2753,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T08:58:47Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2560,7 +2769,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T08:58:47Z",
       "outcomes": [
        {
         "name": "Over",
@@ -2579,29 +2788,29 @@
    {
     "key": "pinnacle",
     "title": "Pinnacle",
-    "last_update": "2026-11-27T00:30:45Z",
+    "last_update": "2026-11-27T09:00:31Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T09:00:30Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
-        "price": 3.82
+        "price": 3.87
        },
        {
         "name": "Pohang Steelers",
-        "price": 1.93
+        "price": 1.94
        },
        {
         "name": "Draw",
-        "price": 3.72
+        "price": 3.76
        }
       ]
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T09:00:30Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2610,23 +2819,23 @@
        },
        {
         "name": "Pohang Steelers",
-        "price": 1.94,
+        "price": 1.95,
         "point": -0.5
        }
       ]
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T09:00:30Z",
       "outcomes": [
        {
         "name": "Over",
-        "price": 1.94,
+        "price": 1.95,
         "point": 2.5
        },
        {
         "name": "Under",
-        "price": 1.91,
+        "price": 1.92,
         "point": 2.5
        }
       ]
@@ -2636,11 +2845,11 @@
    {
     "key": "winamax_fr",
     "title": "Winamax (FR)",
-    "last_update": "2026-11-27T00:29:57Z",
+    "last_update": "2026-11-27T08:59:57Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:57Z",
+      "last_update": "2026-11-27T08:59:57Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2661,11 +2870,11 @@
    {
     "key": "winamax_de",
     "title": "Winamax (DE)",
-    "last_update": "2026-11-27T00:30:47Z",
+    "last_update": "2026-11-27T09:00:32Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:47Z",
+      "last_update": "2026-11-27T09:00:32Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2686,11 +2895,11 @@
    {
     "key": "marathonbet",
     "title": "Marathon Bet",
-    "last_update": "2026-11-27T00:30:26Z",
+    "last_update": "2026-11-27T09:00:34Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:26Z",
+      "last_update": "2026-11-27T09:00:34Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2708,7 +2917,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:26Z",
+      "last_update": "2026-11-27T09:00:34Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2724,7 +2933,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:26Z",
+      "last_update": "2026-11-27T09:00:34Z",
       "outcomes": [
        {
         "name": "Over",
@@ -2743,11 +2952,11 @@
    {
     "key": "williamhill",
     "title": "William Hill",
-    "last_update": "2026-11-27T00:30:23Z",
+    "last_update": "2026-11-27T08:59:52Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:23Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2765,7 +2974,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:23Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Over",
@@ -2784,54 +2993,54 @@
    {
     "key": "betonlineag",
     "title": "BetOnline.ag",
-    "last_update": "2026-11-27T00:30:20Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:20Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
-        "price": 3.7
+        "price": 3.8
        },
        {
         "name": "Pohang Steelers",
-        "price": 1.93
+        "price": 1.95
        },
        {
         "name": "Draw",
-        "price": 3.55
+        "price": 3.6
        }
       ]
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:20Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
-        "price": 1.86,
+        "price": 1.88,
         "point": 0.5
        },
        {
         "name": "Pohang Steelers",
-        "price": 1.88,
+        "price": 1.89,
         "point": -0.5
        }
       ]
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:20Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Over",
-        "price": 1.88,
+        "price": 1.9,
         "point": 2.5
        },
        {
         "name": "Under",
-        "price": 1.83,
+        "price": 1.85,
         "point": 2.5
        }
       ]
@@ -2841,11 +3050,11 @@
    {
     "key": "coolbet",
     "title": "Coolbet",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2863,7 +3072,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2879,7 +3088,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Over",
@@ -2898,11 +3107,11 @@
    {
     "key": "betfair_ex_eu",
     "title": "Betfair",
-    "last_update": "2026-11-27T00:30:22Z",
+    "last_update": "2026-11-27T09:00:29Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T09:00:29Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2910,17 +3119,60 @@
        },
        {
         "name": "Pohang Steelers",
-        "price": 1.97
+        "price": 1.98
        },
        {
         "name": "Draw",
-        "price": 3.6
+        "price": 3.75
        }
       ]
      },
      {
       "key": "h2h_lay",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T09:00:29Z",
+      "outcomes": [
+       {
+        "name": "Gwangju FC",
+        "price": 4.2
+       },
+       {
+        "name": "Pohang Steelers",
+        "price": 2.06
+       },
+       {
+        "name": "Draw",
+        "price": 3.9
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "matchbook",
+    "title": "Matchbook",
+    "last_update": "2026-11-27T09:00:32Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-11-27T09:00:32Z",
+      "outcomes": [
+       {
+        "name": "Gwangju FC",
+        "price": 3.85
+       },
+       {
+        "name": "Pohang Steelers",
+        "price": 1.97
+       },
+       {
+        "name": "Draw",
+        "price": 3.75
+       }
+      ]
+     },
+     {
+      "key": "h2h_lay",
+      "last_update": "2026-11-27T09:00:32Z",
       "outcomes": [
        {
         "name": "Gwangju FC",
@@ -2932,7 +3184,39 @@
        },
        {
         "name": "Draw",
-        "price": 3.9
+        "price": 4.1
+       }
+      ]
+     },
+     {
+      "key": "spreads",
+      "last_update": "2026-11-27T09:00:32Z",
+      "outcomes": [
+       {
+        "name": "Gwangju FC",
+        "price": 1.92,
+        "point": 0.5
+       },
+       {
+        "name": "Pohang Steelers",
+        "price": 1.97,
+        "point": -0.5
+       }
+      ]
+     },
+     {
+      "key": "totals",
+      "last_update": "2026-11-27T09:00:32Z",
+      "outcomes": [
+       {
+        "name": "Over",
+        "price": 1.96,
+        "point": 2.5
+       },
+       {
+        "name": "Under",
+        "price": 1.93,
+        "point": 2.5
        }
       ]
      }
@@ -2951,11 +3235,11 @@
    {
     "key": "unibet_se",
     "title": "Unibet (SE)",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T09:00:30Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:30Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -2973,7 +3257,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:30Z",
       "outcomes": [
        {
         "name": "Over",
@@ -2992,11 +3276,11 @@
    {
     "key": "leovegas_se",
     "title": "LeoVegas (SE)",
-    "last_update": "2026-11-27T00:30:45Z",
+    "last_update": "2026-11-27T08:59:58Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T08:59:58Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3014,7 +3298,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T08:59:58Z",
       "outcomes": [
        {
         "name": "Over",
@@ -3033,11 +3317,11 @@
    {
     "key": "pmu_fr",
     "title": "PMU (FR)",
-    "last_update": "2026-11-27T00:30:47Z",
+    "last_update": "2026-11-27T08:59:52Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:47Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3055,7 +3339,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:47Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Over",
@@ -3074,11 +3358,11 @@
    {
     "key": "unibet_nl",
     "title": "Unibet (NL)",
-    "last_update": "2026-11-27T00:29:56Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:56Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3096,7 +3380,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:56Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Over",
@@ -3115,11 +3399,11 @@
    {
     "key": "betsson",
     "title": "Betsson",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T09:00:32Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:32Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3137,7 +3421,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:32Z",
       "outcomes": [
        {
         "name": "Over",
@@ -3156,11 +3440,11 @@
    {
     "key": "unibet_fr",
     "title": "Unibet (FR)",
-    "last_update": "2026-11-27T00:29:55Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:55Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3181,11 +3465,11 @@
    {
     "key": "nordicbet",
     "title": "Nordic Bet",
-    "last_update": "2026-11-27T00:30:49Z",
+    "last_update": "2026-11-27T08:59:22Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:49Z",
+      "last_update": "2026-11-27T08:59:22Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3203,7 +3487,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:49Z",
+      "last_update": "2026-11-27T08:59:22Z",
       "outcomes": [
        {
         "name": "Over",
@@ -3222,11 +3506,11 @@
    {
     "key": "betclic_fr",
     "title": "Betclic (FR)",
-    "last_update": "2026-11-27T00:29:45Z",
+    "last_update": "2026-11-27T08:58:58Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:45Z",
+      "last_update": "2026-11-27T08:58:58Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3247,11 +3531,11 @@
    {
     "key": "onexbet",
     "title": "1xBet",
-    "last_update": "2026-11-27T00:30:22Z",
+    "last_update": "2026-11-27T08:58:47Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T08:58:47Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3269,7 +3553,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T08:58:47Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3285,7 +3569,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T08:58:47Z",
       "outcomes": [
        {
         "name": "Over",
@@ -3304,11 +3588,11 @@
    {
     "key": "pinnacle",
     "title": "Pinnacle",
-    "last_update": "2026-11-27T00:30:45Z",
+    "last_update": "2026-11-27T09:00:31Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T09:00:31Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3326,7 +3610,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T09:00:31Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3342,7 +3626,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T09:00:31Z",
       "outcomes": [
        {
         "name": "Over",
@@ -3361,11 +3645,11 @@
    {
     "key": "marathonbet",
     "title": "Marathon Bet",
-    "last_update": "2026-11-27T00:30:26Z",
+    "last_update": "2026-11-27T09:00:34Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:26Z",
+      "last_update": "2026-11-27T09:00:34Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3383,7 +3667,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:26Z",
+      "last_update": "2026-11-27T09:00:34Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3399,7 +3683,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:26Z",
+      "last_update": "2026-11-27T09:00:34Z",
       "outcomes": [
        {
         "name": "Over",
@@ -3418,11 +3702,11 @@
    {
     "key": "williamhill",
     "title": "William Hill",
-    "last_update": "2026-11-27T00:30:23Z",
+    "last_update": "2026-11-27T08:59:52Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:23Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3440,7 +3724,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:23Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Over",
@@ -3459,11 +3743,11 @@
    {
     "key": "betonlineag",
     "title": "BetOnline.ag",
-    "last_update": "2026-11-27T00:30:20Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:20Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3481,7 +3765,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:20Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3497,7 +3781,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:20Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Over",
@@ -3516,11 +3800,11 @@
    {
     "key": "codere_it",
     "title": "Codere (IT)",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T08:59:53Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:53Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3538,16 +3822,16 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:53Z",
       "outcomes": [
        {
         "name": "Over",
-        "price": 1.56,
+        "price": 1.57,
         "point": 2.5
        },
        {
         "name": "Under",
-        "price": 2.18,
+        "price": 2.21,
         "point": 2.5
        }
       ]
@@ -3557,11 +3841,11 @@
    {
     "key": "coolbet",
     "title": "Coolbet",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3579,7 +3863,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3595,7 +3879,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Over",
@@ -3614,11 +3898,11 @@
    {
     "key": "winamax_de",
     "title": "Winamax (DE)",
-    "last_update": "2026-11-27T00:30:47Z",
+    "last_update": "2026-11-27T09:00:32Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:47Z",
+      "last_update": "2026-11-27T09:00:32Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3639,11 +3923,11 @@
    {
     "key": "winamax_fr",
     "title": "Winamax (FR)",
-    "last_update": "2026-11-27T00:29:57Z",
+    "last_update": "2026-11-27T08:59:57Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:56Z",
+      "last_update": "2026-11-27T08:59:57Z",
       "outcomes": [
        {
         "name": "Jeonbuk Hyundai Motors",
@@ -3656,6 +3940,49 @@
        {
         "name": "Draw",
         "price": 3.35
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "key": "betfair_ex_eu",
+    "title": "Betfair",
+    "last_update": "2026-11-27T09:00:29Z",
+    "markets": [
+     {
+      "key": "h2h",
+      "last_update": "2026-11-27T09:00:29Z",
+      "outcomes": [
+       {
+        "name": "Jeonbuk Hyundai Motors",
+        "price": 3.2
+       },
+       {
+        "name": "Ulsan Hyundai FC",
+        "price": 2.08
+       },
+       {
+        "name": "Draw",
+        "price": 3.75
+       }
+      ]
+     },
+     {
+      "key": "h2h_lay",
+      "last_update": "2026-11-27T09:00:29Z",
+      "outcomes": [
+       {
+        "name": "Jeonbuk Hyundai Motors",
+        "price": 3.9
+       },
+       {
+        "name": "Ulsan Hyundai FC",
+        "price": 2.3
+       },
+       {
+        "name": "Draw",
+        "price": 4.9
        }
       ]
      }
@@ -3674,11 +4001,11 @@
    {
     "key": "leovegas_se",
     "title": "LeoVegas (SE)",
-    "last_update": "2026-11-27T00:30:45Z",
+    "last_update": "2026-11-27T08:59:58Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T08:59:58Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -3696,7 +4023,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T08:59:58Z",
       "outcomes": [
        {
         "name": "Over",
@@ -3715,11 +4042,11 @@
    {
     "key": "pmu_fr",
     "title": "PMU (FR)",
-    "last_update": "2026-11-27T00:30:47Z",
+    "last_update": "2026-11-27T08:59:52Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:47Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -3737,7 +4064,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:47Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Over",
@@ -3756,11 +4083,11 @@
    {
     "key": "unibet_se",
     "title": "Unibet (SE)",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T09:00:30Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:30Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -3778,7 +4105,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:30Z",
       "outcomes": [
        {
         "name": "Over",
@@ -3797,11 +4124,11 @@
    {
     "key": "unibet_nl",
     "title": "Unibet (NL)",
-    "last_update": "2026-11-27T00:29:56Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:56Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -3819,7 +4146,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:56Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Over",
@@ -3838,11 +4165,11 @@
    {
     "key": "betsson",
     "title": "Betsson",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T09:00:32Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:32Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -3860,7 +4187,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T09:00:32Z",
       "outcomes": [
        {
         "name": "Over",
@@ -3879,11 +4206,11 @@
    {
     "key": "betclic_fr",
     "title": "Betclic (FR)",
-    "last_update": "2026-11-27T00:29:45Z",
+    "last_update": "2026-11-27T08:58:58Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:45Z",
+      "last_update": "2026-11-27T08:58:58Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -3904,11 +4231,11 @@
    {
     "key": "nordicbet",
     "title": "Nordic Bet",
-    "last_update": "2026-11-27T00:30:49Z",
+    "last_update": "2026-11-27T08:59:22Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:49Z",
+      "last_update": "2026-11-27T08:59:22Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -3926,7 +4253,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:49Z",
+      "last_update": "2026-11-27T08:59:22Z",
       "outcomes": [
        {
         "name": "Over",
@@ -3945,11 +4272,11 @@
    {
     "key": "unibet_fr",
     "title": "Unibet (FR)",
-    "last_update": "2026-11-27T00:29:55Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:55Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -3970,11 +4297,11 @@
    {
     "key": "onexbet",
     "title": "1xBet",
-    "last_update": "2026-11-27T00:30:22Z",
+    "last_update": "2026-11-27T08:58:47Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T08:58:47Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -3992,7 +4319,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T08:58:47Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -4008,7 +4335,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T08:58:47Z",
       "outcomes": [
        {
         "name": "Over",
@@ -4027,11 +4354,11 @@
    {
     "key": "winamax_de",
     "title": "Winamax (DE)",
-    "last_update": "2026-11-27T00:30:47Z",
+    "last_update": "2026-11-27T09:00:32Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:47Z",
+      "last_update": "2026-11-27T09:00:32Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -4052,11 +4379,11 @@
    {
     "key": "winamax_fr",
     "title": "Winamax (FR)",
-    "last_update": "2026-11-27T00:29:57Z",
+    "last_update": "2026-11-27T08:59:57Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:57Z",
+      "last_update": "2026-11-27T08:59:57Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -4077,11 +4404,11 @@
    {
     "key": "pinnacle",
     "title": "Pinnacle",
-    "last_update": "2026-11-27T00:30:45Z",
+    "last_update": "2026-11-27T09:00:31Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T09:00:31Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -4099,7 +4426,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T09:00:31Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -4115,7 +4442,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:45Z",
+      "last_update": "2026-11-27T09:00:31Z",
       "outcomes": [
        {
         "name": "Over",
@@ -4134,11 +4461,11 @@
    {
     "key": "marathonbet",
     "title": "Marathon Bet",
-    "last_update": "2026-11-27T00:30:26Z",
+    "last_update": "2026-11-27T09:00:34Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:26Z",
+      "last_update": "2026-11-27T09:00:34Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -4156,7 +4483,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:26Z",
+      "last_update": "2026-11-27T09:00:34Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -4172,7 +4499,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:26Z",
+      "last_update": "2026-11-27T09:00:34Z",
       "outcomes": [
        {
         "name": "Over",
@@ -4191,11 +4518,11 @@
    {
     "key": "williamhill",
     "title": "William Hill",
-    "last_update": "2026-11-27T00:30:23Z",
+    "last_update": "2026-11-27T08:59:52Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:23Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -4213,7 +4540,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:23Z",
+      "last_update": "2026-11-27T08:59:52Z",
       "outcomes": [
        {
         "name": "Over",
@@ -4232,11 +4559,11 @@
    {
     "key": "betonlineag",
     "title": "BetOnline.ag",
-    "last_update": "2026-11-27T00:30:20Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:20Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -4254,7 +4581,7 @@
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:30:20Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -4270,7 +4597,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:30:20Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Over",
@@ -4289,37 +4616,37 @@
    {
     "key": "betfair_ex_eu",
     "title": "Betfair",
-    "last_update": "2026-11-27T00:30:22Z",
+    "last_update": "2026-11-27T09:00:29Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T09:00:29Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
-        "price": 3.05
+        "price": 3.1
        },
        {
         "name": "Incheon United",
-        "price": 2.52
+        "price": 2.56
        },
        {
         "name": "Draw",
-        "price": 2.98
+        "price": 3.15
        }
       ]
      },
      {
       "key": "h2h_lay",
-      "last_update": "2026-11-27T00:30:22Z",
+      "last_update": "2026-11-27T09:00:29Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
-        "price": 3.75
+        "price": 3.45
        },
        {
         "name": "Incheon United",
-        "price": 2.98
+        "price": 2.74
        },
        {
         "name": "Draw",
@@ -4332,11 +4659,11 @@
    {
     "key": "codere_it",
     "title": "Codere (IT)",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T08:59:53Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:53Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -4354,16 +4681,16 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:53Z",
       "outcomes": [
        {
         "name": "Over",
-        "price": 2.29,
+        "price": 2.31,
         "point": 2.5
        },
        {
         "name": "Under",
-        "price": 1.51,
+        "price": 1.52,
         "point": 2.5
        }
       ]
@@ -4373,15 +4700,15 @@
    {
     "key": "coolbet",
     "title": "Coolbet",
-    "last_update": "2026-11-27T00:29:54Z",
+    "last_update": "2026-11-27T08:59:54Z",
     "markets": [
      {
       "key": "h2h",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
-        "price": 2.95
+        "price": 2.9
        },
        {
         "name": "Incheon United",
@@ -4389,13 +4716,13 @@
        },
        {
         "name": "Draw",
-        "price": 3.1
+        "price": 3.15
        }
       ]
      },
      {
       "key": "spreads",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Gangwon FC",
@@ -4411,7 +4738,7 @@
      },
      {
       "key": "totals",
-      "last_update": "2026-11-27T00:29:54Z",
+      "last_update": "2026-11-27T08:59:54Z",
       "outcomes": [
        {
         "name": "Over",
