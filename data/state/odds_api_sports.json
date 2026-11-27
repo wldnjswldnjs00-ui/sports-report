@@ -1,5 +1,5 @@
 {
- "date": "2026-11-27",
+ "date": "2026-11-28",
  "keys": [
   "americanfootball_ncaaf",
   "americanfootball_ncaaf_championship_winner",
@@ -7,7 +7,6 @@
   "americanfootball_nfl",
   "americanfootball_nfl_super_bowl_winner",
   "aussierules_afl",
-  "aussierules_aflw",
   "basketball_nba",
   "basketball_nba_championship_winner",
   "basketball_ncaab",
@@ -48,6 +47,7 @@
   "soccer_epl",
   "soccer_fa_cup",
   "soccer_france_ligue_one",
+  "soccer_france_ligue_two",
   "soccer_germany_bundesliga",
   "soccer_germany_bundesliga2",
   "soccer_germany_dfb_pokal",
@@ -73,7 +73,6 @@
   "soccer_switzerland_superleague",
   "soccer_turkey_super_league",
   "soccer_uefa_champs_league",
-  "soccer_uefa_europa_conference_league",
   "soccer_uefa_europa_league",
   "soccer_uefa_nations_league",
   "soccer_usa_mls"
@@ -85,7 +84,6 @@
   "americanfootball_nfl": "NFL",
   "americanfootball_nfl_super_bowl_winner": "NFL Super Bowl Winner",
   "aussierules_afl": "AFL",
-  "aussierules_aflw": "AFL Women's",
   "basketball_nba": "NBA",
   "basketball_nba_championship_winner": "NBA Championship Winner",
   "basketball_ncaab": "NCAAB",
@@ -126,6 +124,7 @@
   "soccer_epl": "EPL",
   "soccer_fa_cup": "FA Cup",
   "soccer_france_ligue_one": "Ligue 1 - France",
+  "soccer_france_ligue_two": "Ligue 2 - France",
   "soccer_germany_bundesliga": "Bundesliga - Germany",
   "soccer_germany_bundesliga2": "Bundesliga 2 - Germany",
   "soccer_germany_dfb_pokal": "DFB-Pokal",
@@ -151,7 +150,6 @@
   "soccer_switzerland_superleague": "Swiss Superleague",
   "soccer_turkey_super_league": "Turkey Super League",
   "soccer_uefa_champs_league": "UEFA Champions League",
-  "soccer_uefa_europa_conference_league": "UEFA Europa Conference League",
   "soccer_uefa_europa_league": "UEFA Europa League",
   "soccer_uefa_nations_league": "UEFA Nations League",
   "soccer_usa_mls": "MLS"
