@@ -5679,6 +5679,13 @@
    "odds_close": {
     "H": 1.75,
     "A": 1.73
+   },
+   "review": {
+    "hit": true,
+    "o1": "적중. 필리핀_남자 핸디 선택이 맞았다.",
+    "r": "추정 확률 50%대로 나온 결과다.",
+    "e": "",
+    "o2": "같은 조건의 경기에서 이 판단 기준을 유지한다."
    }
   },
   {
@@ -5885,6 +5892,13 @@
    "odds_close": {
     "O": 1.74,
     "U": 1.74
+   },
+   "review": {
+    "hit": false,
+    "o1": "빗나갔다. 선택은 오버, 결과는 언더.",
+    "r": "발행 당시 이변 위험이 50로 이미 높았다. 추정 확률이 52%에 그친 박빙 경기였다.",
+    "e": "",
+    "o2": "이런 경기는 축으로 쓰지 않고 폴더 수를 줄이는 쪽이 맞다."
    }
   },
   {
@@ -118568,7 +118582,7 @@
       "upset_risk": 50,
       "single": false,
       "dog": false,
-      "result": null,
+      "result": "miss",
       "odds_now": 1.74
      },
      {
@@ -119466,7 +119480,7 @@
       "upset_risk": 50,
       "single": false,
       "dog": false,
-      "result": null,
+      "result": "miss",
       "odds_now": 1.74
      },
      {
@@ -119538,8 +119552,8 @@
     "key": "betman:G101:260141:6111:O+betman:G101:260141:6115:O+betman:G101:260141:6129:U+betman:G101:260141:6145:H+betman:G101:260141:6149:H",
     "strategy": "aggressive",
     "rank": 9,
-    "result": "pending",
-    "return": null,
+    "result": "lose",
+    "return": 0,
     "total_now": 12.46
    },
    {
@@ -119653,7 +119667,7 @@
       "upset_risk": 50,
       "single": false,
       "dog": false,
-      "result": null,
+      "result": "miss",
       "odds_now": 1.74
      },
      {
@@ -119697,8 +119711,8 @@
     "key": "betman:G101:260141:6111:O+betman:G101:260141:6119:O+betman:G101:260141:6145:H+betman:G101:260141:6149:H+betman:G101:260141:6163:O",
     "strategy": "aggressive",
     "rank": 10,
-    "result": "pending",
-    "return": null,
+    "result": "lose",
+    "return": 0,
     "total_now": 12.86
    },
    {
@@ -119943,7 +119957,7 @@
       "upset_risk": 50,
       "single": false,
       "dog": false,
-      "result": null,
+      "result": "miss",
       "odds_now": 1.74
      },
      {
@@ -120015,8 +120029,8 @@
     "key": "betman:G101:260141:6082:O+betman:G101:260141:6111:O+betman:G101:260141:6115:O+betman:G101:260141:6119:O+betman:G101:260141:6163:O",
     "strategy": "aggressive",
     "rank": 12,
-    "result": "pending",
-    "return": null,
+    "result": "lose",
+    "return": 0,
     "total_now": 14.67
    }
   ],
@@ -120237,7 +120251,7 @@
       "upset_risk": 50,
       "single": false,
       "dog": false,
-      "result": null,
+      "result": "miss",
       "odds_now": 1.74
      },
      {
@@ -121237,7 +121251,7 @@
       "upset_risk": 50,
       "single": false,
       "dog": false,
-      "result": null,
+      "result": "miss",
       "odds_now": 1.74
      },
      {
@@ -121281,8 +121295,8 @@
     "key": "betman:G101:260141:6082:O+betman:G101:260141:6111:O+betman:G101:260141:6119:O+betman:G101:260141:6121:H+betman:G101:260141:6129:U+betman:G101:260141:6139:H+betman:G101:260141:6145:H+betman:G101:260141:6163:O",
     "strategy": "lotto",
     "rank": 5,
-    "result": "pending",
-    "return": null,
+    "result": "lose",
+    "return": 0,
     "total_now": 47.68
    },
    {
@@ -121396,7 +121410,7 @@
       "upset_risk": 50,
       "single": false,
       "dog": false,
-      "result": null,
+      "result": "miss",
       "odds_now": 1.74
      },
      {
@@ -123955,7 +123969,9 @@
   "betman:G101:260141:6103": "O",
   "betman:G101:260141:6105": "A",
   "betman:G101:260141:6106": "A",
-  "betman:G101:260141:6107": "U"
+  "betman:G101:260141:6107": "U",
+  "betman:G101:260141:6110": "A",
+  "betman:G101:260141:6111": "U"
  },
  "headline": "오늘 24경기 분석 완료. 가장 단단한 선택은 첼시 원정승, 추정 78%. 이후 105경기도 미리 분석했습니다."
 }
