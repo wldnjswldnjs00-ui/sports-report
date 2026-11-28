@@ -1,32 +1,32 @@
 {
- "updated": "2026-11-28T22:00:48+09:00",
+ "updated": "2026-11-28T23:06:03+09:00",
  "picks": {
   "all": {
-   "n": 645,
-   "hit_rate": 0.6248,
-   "expected": 0.6665,
-   "brier": 0.223,
-   "logloss": 0.6346
+   "n": 646,
+   "hit_rate": 0.6238,
+   "expected": 0.6664,
+   "brier": 0.2231,
+   "logloss": 0.6349
   },
   "30d": {
-   "n": 645,
-   "hit_rate": 0.6248,
-   "expected": 0.6665,
-   "brier": 0.223,
-   "logloss": 0.6346
+   "n": 646,
+   "hit_rate": 0.6238,
+   "expected": 0.6664,
+   "brier": 0.2231,
+   "logloss": 0.6349
   }
  },
  "calibration": [
   {
    "bucket": "30-40%",
    "n": 78,
-   "expected": 0.3801,
-   "actual": 0.3846
+   "expected": 0.3802,
+   "actual": 0.3718
   },
   {
    "bucket": "40-50%",
    "n": 210,
-   "expected": 0.4473,
+   "expected": 0.4472,
    "actual": 0.4286
   },
   {
@@ -38,19 +38,19 @@
   {
    "bucket": "60-70%",
    "n": 178,
-   "expected": 0.6416,
+   "expected": 0.642,
    "actual": 0.6011
   },
   {
    "bucket": "70-80%",
    "n": 103,
-   "expected": 0.7451,
+   "expected": 0.7452,
    "actual": 0.7087
   },
   {
    "bucket": "80-90%",
    "n": 89,
-   "expected": 0.8462,
+   "expected": 0.8461,
    "actual": 0.8202
   },
   {
@@ -214,7 +214,7 @@
   },
   {
    "date": "2026-11-28",
-   "n": 34,
+   "n": 35,
    "hit": 20
   }
  ]

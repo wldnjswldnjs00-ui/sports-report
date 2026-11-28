@@ -116598,7 +116598,8 @@
    "upset_risk": 28,
    "single": true,
    "dog": true,
-   "kelly": 0.0069
+   "kelly": 0.0069,
+   "result": "miss"
   },
   {
    "market_id": "betman:G101:260141:6484",
@@ -116625,7 +116626,8 @@
    "upset_risk": 40,
    "single": true,
    "dog": true,
-   "kelly": 0.0028
+   "kelly": 0.0028,
+   "result": null
   },
   {
    "market_id": "betman:G101:260141:6217",
@@ -116652,7 +116654,8 @@
    "upset_risk": 23,
    "single": true,
    "dog": true,
-   "kelly": 0.0027
+   "kelly": 0.0027,
+   "result": "miss"
   }
  ],
  "upsets": [
