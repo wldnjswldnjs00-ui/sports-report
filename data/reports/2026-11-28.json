@@ -6,8 +6,8 @@
  "calibration_alpha": 0.09,
  "demo": false,
  "sources": {
-  "betman": "369개 수집",
-  "odds_api": "45개 매칭",
+  "betman": "실패: ConnectionError",
+  "odds_api": "0개 매칭",
   "form": "369개 마켓",
   "bbook": "324개 마켓",
   "selfcheck": {
@@ -109724,7 +109724,8 @@
    "upset_risk": 28,
    "single": true,
    "dog": true,
-   "kelly": 0.0069
+   "kelly": 0.0069,
+   "result": null
   },
   {
    "market_id": "betman:G101:260141:6484",
@@ -109751,7 +109752,8 @@
    "upset_risk": 40,
    "single": true,
    "dog": true,
-   "kelly": 0.0031
+   "kelly": 0.0031,
+   "result": null
   },
   {
    "market_id": "betman:G101:260141:6217",
@@ -109778,7 +109780,8 @@
    "upset_risk": 23,
    "single": true,
    "dog": true,
-   "kelly": 0.0027
+   "kelly": 0.0027,
+   "result": null
   }
  ],
  "upsets": [
@@ -111635,5 +111638,6 @@
   "combos": 51
  },
  "outcomes": {},
- "headline": "오늘 68경기 분석 완료. 가장 단단한 선택은 인테르나치오날레 밀라노 홈승, 추정 77%. 이후 42경기도 미리 분석했습니다."
+ "headline": "오늘 68경기 분석 완료. 가장 단단한 선택은 인테르나치오날레 밀라노 홈승, 추정 77%. 이후 42경기도 미리 분석했습니다.",
+ "last_attempt": "2026-11-28T18:01:08+09:00"
 }
